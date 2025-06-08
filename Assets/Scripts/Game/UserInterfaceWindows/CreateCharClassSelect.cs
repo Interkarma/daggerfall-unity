@@ -1,5 +1,5 @@
-﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -55,11 +55,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     ClassFile classFile = new ClassFile(files[i]);
                     classList.Add(classFile.Career);
-                    listBox.AddItem(classFile.Career.Name);
+                    listBox.AddItem(TextManager.Instance.GetLocalizedText(classFile.Career.Name));
                 }
             }
             // Last option is for creating custom classes
-            listBox.AddItem("Custom");
+            listBox.AddItem(TextManager.Instance.GetLocalizedText("Custom"));
 
             OnItemPicked += DaggerfallClassSelectWindow_OnItemPicked;
         }
@@ -75,6 +75,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else 
             {
                 selectedClass = classList[index];
+                selectedClass.Name = className; // Ensures any localized display names are assigned after selection from list
                 selectedClassIndex = index;
 
                 TextFile.Token[] textTokens = DaggerfallUnity.Instance.TextProvider.GetRSCTokens(startClassDescriptionID + index);

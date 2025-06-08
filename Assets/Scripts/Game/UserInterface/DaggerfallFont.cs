@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Text;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Game.Utility.ModSupport;
 using DaggerfallWorkshop.Utility;
 using TMPro;
 
@@ -37,7 +38,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         const int defaultAsciiStart = 33;
         public const string invalidCode = "Font does not contain glyph for code: ";
         float classicGlyphSpacing = 1;
-        float sdfGlyphSpacing = 0.2f;
+        float sdfGlyphSpacing = 0f;
         float sdfShadowPositionScale = 0.4f;
 
         int glyphHeight;
@@ -51,6 +52,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         protected Texture2D atlasTexture;
         protected Rect[] atlasRects;
         protected int asciiStart = defaultAsciiStart;
+
+        TMP_FontAsset runtimeFontAsset = null;
+        Dictionary<uint, uint> missingCharacters = new Dictionary<uint, uint>();
 
         protected SDFFontInfo? sdfFontInfo;
 
@@ -154,7 +158,15 @@ namespace DaggerfallWorkshop.Game.UserInterface
         void DrawClassicGlyph(byte rawAscii, Rect targetRect, Color color)
         {
             Rect atlasRect = atlasRects[rawAscii - asciiStart];
-            Graphics.DrawTexture(targetRect, atlasTexture, atlasRect, 0, 0, 0, 0, color, DaggerfallUI.Instance.PixelFontMaterial);
+            if (SystemInfo.operatingSystemFamily == OperatingSystemFamily.MacOSX)
+            {
+                DaggerfallUI.Instance.PixelFontMaterial.SetColor(UIShaderParam._Color, color);
+                Graphics.DrawTexture(targetRect, atlasTexture, atlasRect, 0, 0, 0, 0, DaggerfallUI.Instance.PixelFontMaterial);
+            }
+            else
+            {
+                Graphics.DrawTexture(targetRect, atlasTexture, atlasRect, 0, 0, 0, 0, color, DaggerfallUI.Instance.PixelFontMaterial);
+            }
         }
 
         void DrawClassicGlyphWithShadow(byte rawAscii, Rect targetRect, Color color, Vector2 shadowPosition, Color shadowColor)
@@ -182,7 +194,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 // Get code and use ? for any character code not in dictionary
                 int code = BitConverter.ToInt32(utf32Bytes, i);
-                if (!sdfFontInfo.Value.glyphs.ContainsKey(code))
+                if (!HasSDFGlyph(code))
                     code = ErrorCode;
 
                 // Draw glyph and advance position
@@ -245,7 +257,16 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Rect targetRect = new Rect(xpos, ypos, glyph.size.x * scalingRatio, glyph.size.y * scalingRatio);
 
             // Draw glyph
-            Graphics.DrawTexture(targetRect, sdfFontInfo.Value.atlasTexture, glyph.rect, 0, 0, 0, 0, color, DaggerfallUI.Instance.SDFFontMaterial);
+            if (SystemInfo.operatingSystemFamily == OperatingSystemFamily.MacOSX)
+            {
+                DaggerfallUI.Instance.SDFFontMaterial.SetColor(UIShaderParam._Color, color);
+                Graphics.DrawTexture(targetRect, sdfFontInfo.Value.atlasTexture, glyph.rect, 0, 0, 0, 0, DaggerfallUI.Instance.SDFFontMaterial);
+            }
+            else
+            {
+                Graphics.DrawTexture(targetRect, sdfFontInfo.Value.atlasTexture, glyph.rect, 0, 0, 0, 0, color, DaggerfallUI.Instance.SDFFontMaterial);
+            }
+
             return GetGlyphWidth(glyph, scale, GlyphSpacing);
         }
 
@@ -358,7 +379,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 {
                     // Get code and use ? for any character code not in dictionary
                     int code = BitConverter.ToInt32(utf32Bytes, i);
-                    if (!sdfFontInfo.Value.glyphs.ContainsKey(code))
+                    if (!HasSDFGlyph(code))
                         code = ErrorCode;
 
                     width += GetGlyphWidth(code, scale, GlyphSpacing);
@@ -395,7 +416,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (!IsSDFCapable || sdfFontInfo == null)
                 return false;
 
-            return sdfFontInfo.Value.glyphs.ContainsKey(code);
+            bool glyphPresent = sdfFontInfo.Value.glyphs.ContainsKey(code);
+
+            // Attempt to load missing glyph
+            if (!glyphPresent)
+                glyphPresent = TryAddCharacter((uint)code);
+
+            return glyphPresent;
         }
 
         public void AddGlyph(int ascii, GlyphInfo info)
@@ -413,7 +440,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public SDFGlyphInfo GetSDFGlyph(int code)
         {
-            if (!IsSDFCapable || !sdfFontInfo.Value.glyphs.ContainsKey(code))
+            if (!IsSDFCapable || !HasSDFGlyph(code))
                 throw new Exception(invalidCode + code);
 
             return sdfFontInfo.Value.glyphs[code];
@@ -454,18 +481,39 @@ namespace DaggerfallWorkshop.Game.UserInterface
         }
 
         /// <summary>
-        /// Load a TextMeshPro 2.0.x asset used for this to use for SDF rendering.
+        /// Load a TextMeshPro 2.0.x font asset to use for SDF rendering.
         /// Mods can use DaggerfallUI.Instance.Font0 through Font4 to access the instances used by other game windows.
         /// Custom font should be set only during startup.
+        /// Note: Asset must be in a Resources folder.
         /// </summary>
-        /// <param name="path">Path to a TextMeshPro 1.3.x font asset.</param>
-        public void LoadSDFFontAsset(string path)
+        /// <param name="path">Path to a TextMeshPro 2.0.x font asset.</param>
+        /// <returns>True if successful.</returns>
+        public bool LoadSDFFontAsset(string path)
         {
             // Attempt to load a TextMeshPro font asset
             TMP_FontAsset tmpFont = Resources.Load<TMP_FontAsset>(path);
             if (!tmpFont)
-                return;
+                return false;
 
+            // Attempt to ingest a StreamingAssets/Fonts .ttf override file
+            TMP_FontAsset replacement;
+            if (ReplaceTMPFontFromFile(Path.GetFileNameWithoutExtension(path), tmpFont, out replacement))
+            {
+                tmpFont = replacement;
+                runtimeFontAsset = tmpFont;
+            }
+
+            UseSDFFontAsset(tmpFont);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Use provided TextMeshPro 2.0.x font asset for SDF rendering.
+        /// </summary>
+        /// <param name="tmpFont">TMP font asset to use for this font.</param>
+        public void UseSDFFontAsset(TMP_FontAsset tmpFont)
+        {
             // Create font info
             SDFFontInfo fi = new SDFFontInfo();
             fi.pointSize = tmpFont.faceInfo.pointSize;
@@ -500,6 +548,26 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             // Set live font info
             sdfFontInfo = fi;
+        }
+
+        /// <summary>
+        /// Gets array of unicode values from currently loaded SDF font.
+        /// </summary>
+        /// <returns>Array of unicode characters. Can be null or empty.</returns>
+        public uint[] GetUnicodes()
+        {
+            // Must have a previously loaded SDF font
+            if (sdfFontInfo == null)
+                return null;
+
+            // Get unicode values loaded for this font
+            List<uint> unicodes = new List<uint>();
+            foreach (var key in sdfFontInfo.Value.glyphs.Keys)
+            {
+                unicodes.Add((uint)key);
+            }
+
+            return unicodes.ToArray();
         }
 
         #endregion
@@ -571,6 +639,192 @@ namespace DaggerfallWorkshop.Game.UserInterface
         float GetGlyphSpacing()
         {
             return (!IsSDFCapable) ? classicGlyphSpacing : sdfGlyphSpacing;
+        }
+
+        /// <summary>
+        /// Replace TMP font asset using a .ttf or .otf font in StreamingAssets/Fonts or in dfmod asset
+        /// </summary>
+        /// <param name="filename">Filename of replacement font including .ttf extension. Font file must be present in StreamingAssets/Fonts or in dfmod asset to load.</param>
+        /// <param name="source">Source TMP font for initial character table population.</param>
+        /// <param name="replacement">Replacement TMP font output.</param>
+        /// <returns>True is successfully created replacement TMP font.</returns>
+        bool ReplaceTMPFontFromFile(string filename, TMP_FontAsset source, out TMP_FontAsset replacement)
+        {
+            const string ttfExt = ".ttf";
+            const string otfExt = ".otf";
+            replacement = null;
+
+            Font otfFontFromMods = null;
+            Font ttfFontFromMods = null;
+
+            // Seek font replacement file from mods
+            if (ModManager.Instance != null)
+            {
+                if (!ModManager.Instance.TryGetAsset(filename + otfExt, false, out otfFontFromMods))
+                {
+                    ModManager.Instance.TryGetAsset(filename + ttfExt, false, out ttfFontFromMods);
+                }
+            }
+
+            if (otfFontFromMods != null)
+            {
+                replacement = TMP_FontAsset.CreateFontAsset(otfFontFromMods, 45, 6, UnityEngine.TextCore.LowLevel.GlyphRenderMode.SDFAA, 4096, 4096, AtlasPopulationMode.Dynamic);
+            }
+            else if (ttfFontFromMods != null)
+            {
+                replacement = TMP_FontAsset.CreateFontAsset(ttfFontFromMods, 45, 6, UnityEngine.TextCore.LowLevel.GlyphRenderMode.SDFAA, 4096, 4096, AtlasPopulationMode.Dynamic);
+            }
+
+            // Compose path to font file
+            var path = Path.Combine(Application.streamingAssetsPath, "Fonts", filename);
+
+            if (replacement == null)
+            {
+                // Check file exists
+                replacement = null;
+                if (File.Exists(path + ttfExt))
+                    path += ttfExt;
+                else if (File.Exists(path + otfExt))
+                    path += otfExt;
+                else
+                    return false;
+
+                // Create replacement TMP font asset from path
+                Font replacementFont = new Font(path);
+                replacement = TMP_FontAsset.CreateFontAsset(replacementFont, 45, 6, UnityEngine.TextCore.LowLevel.GlyphRenderMode.SDFAA, 4096, 4096, AtlasPopulationMode.Dynamic);
+            }
+
+            if (replacement == null)
+                return false;
+
+            // Get characters of source font
+            List<uint> sourceUnicodes = new List<uint>();
+            foreach(TMP_Character c in source.characterTable)
+            {
+                sourceUnicodes.Add(c.unicode);
+            }
+
+            // Attempt to add unicode characters from source
+            uint[] missingUnicodesSource = null;
+            if (!replacement.TryAddCharacters(sourceUnicodes.ToArray(), out missingUnicodesSource))
+            {
+                // Format list of missing default characters in replacement font
+                // This isn't always a problem, and missing characters aren't always important to game
+                // Just log message to help with troubleshooting if needed
+                string missingCharsString = string.Empty;
+                for (int c = 0; c < missingUnicodesSource.Length; c++)
+                {
+                    uint missingCode = missingUnicodesSource[c];
+                    missingCharsString += string.Format("{0}[{1}] ", Convert.ToChar(missingCode), missingCode);
+                    if (!missingCharacters.ContainsKey(missingCode))
+                        missingCharacters.Add(missingCode, missingCode);
+                }
+                Debug.LogFormat("Some default characters could not be found in font {0}: '{1}': ", filename, missingCharsString);
+            }
+
+            // Attempt to add user-specified unicode characters from a source file
+            LoadCustomFontChars(Path.GetFileNameWithoutExtension(path) + ".txt", replacement);
+
+            return true;
+        }
+
+        /// <summary>
+        /// Attempt to add specific font characters to SDF font loaded from a .txt file with same name as font.
+        /// For example, "FONT0003-SDF.ttf" might be a Cyrillic font and "FONT0003-SDF.txt" the Cyrillic alphabet.
+        /// Some fonts (e.g. Noto Sans JP) may contain many thousands of character codes for different languages, far too many to add all to SDF atlas.
+        /// The .txt file tells DFU which character codes are actually required in SDF atlas by translator matching their alphabet and language.
+        /// All Latin character codes are added by default if present in font.
+        /// It is recommended custom fonts always have Latin characters for any parts of game not translated or supported yet.
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="replacement"></param>
+        void LoadCustomFontChars(string filename, TMP_FontAsset replacement)
+        {
+            // Compose path to character file
+            string path = Path.Combine(Application.streamingAssetsPath, "Fonts", filename);
+
+            // Check file exists
+            if (!File.Exists(path))
+                return;
+
+            // Attempt to add unicode characters from source file
+            string text = File.ReadAllText(path);
+            if (!string.IsNullOrEmpty(text))
+            {
+                // Read unicodes from source file
+                List<uint> sourceUnicodes = new List<uint>(text.Length);
+                for (int c = 0; c < text.Length; c++)
+                {
+                    if (text[c] >= 0x09 && text[c] <= 0x0d || sourceUnicodes.Contains(text[c]))
+                        continue; // Filter out codes 09-0d (tab through carriage return) so input txt can format a bit
+                    else
+                        sourceUnicodes.Add(text[c]);
+                }
+
+                // Attempt to add unicode characters from source file
+                uint[] missingUnicodesSource = null;
+                if (!replacement.TryAddCharacters(sourceUnicodes.ToArray(), out missingUnicodesSource))
+                {
+                    // Format list of missing default characters in replacement font
+                    // This is considered a warning at least as modder specifically requested these characters from font
+                    string missingCharsString = string.Empty;
+                    for (int c = 0; c < missingUnicodesSource.Length; c++)
+                    {
+                        uint missingCode = missingUnicodesSource[c];
+                        missingCharsString += string.Format("{0}[{1}] ", Convert.ToChar(missingCode), missingCode);
+                        if (!missingCharacters.ContainsKey(missingCode))
+                            missingCharacters.Add(missingCode, missingCode);
+                    }
+                    Debug.LogWarningFormat("Some requested characters could not be found in font {0}: '{1}': ", filename, missingCharsString);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Attempt to load a missing glyph into dynamic font asset at runtime.
+        /// If character cannot be added then code is added to missing characters dictionary.
+        /// Codes in missing characters dictionary will not be tried again.
+        /// If character added successfully then glyph info is added to sdfFontInfo.
+        /// </summary>
+        /// <param name="code">Unicode of character.</param>
+        /// <returns>True if successful, otherwise false.</returns>
+        bool TryAddCharacter(uint code)
+        {
+            // Do nothing if font asset null or this character is missing
+            if (runtimeFontAsset == null || missingCharacters.ContainsKey(code))
+                return false;
+
+            // Attempt to add the character
+            if (!runtimeFontAsset.TryAddCharacters(new uint[1] { code }))
+            {
+                missingCharacters.Add(code, code);
+                return false;
+            }
+
+            // Compose glyph rect in atlas
+            float atlasWidth = runtimeFontAsset.atlasTexture.width;
+            float atlasHeight = runtimeFontAsset.atlasTexture.height;
+            TMP_Character character = runtimeFontAsset.characterLookupTable[code];
+            float atlasGlyphX = character.glyph.glyphRect.x / atlasWidth;
+            float atlasGlyphY = character.glyph.glyphRect.y / atlasHeight;
+            float atlasGlyphWidth = character.glyph.glyphRect.width / atlasWidth;
+            float atlasGlyphHeight = character.glyph.glyphRect.height / atlasHeight;
+            Rect atlasGlyphRect = new Rect(atlasGlyphX, atlasGlyphY, atlasGlyphWidth, atlasGlyphHeight);
+
+            // Store information about this glyph
+            SDFGlyphInfo glyphInfo = new SDFGlyphInfo()
+            {
+                code = (int)code,
+                rect = atlasGlyphRect,
+                offset = new Vector2(character.glyph.metrics.horizontalBearingX, character.glyph.metrics.horizontalBearingY),
+                size = new Vector2(character.glyph.metrics.width, character.glyph.metrics.height),
+                advance = character.glyph.metrics.horizontalAdvance,
+            };
+            sdfFontInfo.Value.glyphs.Add((int)code, glyphInfo);
+
+            //Debug.LogFormat("Added code: {0}", code);
+
+            return true;
         }
 
         #endregion

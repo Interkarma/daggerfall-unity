@@ -1,0 +1,1122 @@
+{
+    "Breton": {
+        "setCount": 6,
+        "sets": [
+            {
+                "setIndex": 0,
+                "parts": [
+                    "Theod",
+                    "And",
+                    "Bed",
+                    "Per",
+                    "Rod",
+                    "Gond",
+                    "Edw",
+                    "Mord",
+                    "Agr",
+                    "Trist",
+                    "Dun",
+                    "Alab",
+                    "Uth"
+                ]
+            },
+            {
+                "setIndex": 1,
+                "parts": [
+                    "ore",
+                    "ynak",
+                    "ywyr",
+                    "yval",
+                    "yrick",
+                    "oryan",
+                    "ard",
+                    "yn",
+                    "yctor",
+                    "ane",
+                    "istair",
+                    "astyr",
+                    "istyr"
+                ]
+            },
+            {
+                "setIndex": 2,
+                "parts": [
+                    "Morg",
+                    "Gwyn",
+                    "El",
+                    "Ys",
+                    "Elyz",
+                    "Vyct",
+                    "Lys",
+                    "Vann",
+                    "Chryst",
+                    "Evel",
+                    "Carol",
+                    "Barb",
+                    "Bellad"
+                ]
+            },
+            {
+                "setIndex": 3,
+                "parts": [
+                    "anna",
+                    "yvyra",
+                    "ayne",
+                    "olda",
+                    "abyth",
+                    "ausa",
+                    "orya",
+                    "yssa",
+                    "yrrya",
+                    "yn",
+                    "yna",
+                    "ara",
+                    "ona"
+                ]
+            },
+            {
+                "setIndex": 4,
+                "parts": [
+                    "Hawk",
+                    "Wood",
+                    "Yeom",
+                    "Hearth",
+                    "King",
+                    "Green",
+                    "Gaer",
+                    "Master",
+                    "Moor",
+                    "Copper",
+                    "Bucking",
+                    "Ash",
+                    "Wick"
+                ]
+            },
+            {
+                "setIndex": 5,
+                "parts": [
+                    "wing",
+                    "house",
+                    "sly",
+                    "croft",
+                    "sley",
+                    "hart",
+                    "field",
+                    "ston",
+                    "ing",
+                    "smith",
+                    "ham",
+                    "ton",
+                    "ford"
+                ]
+            }
+        ]
+    },
+    "Redguard": {
+        "setCount": 5,
+        "sets": [
+            {
+                "setIndex": 0,
+                "parts": [
+                    "B",
+                    "Ba",
+                    "Bo",
+                    "Bl",
+                    "B'",
+                    "C",
+                    "Cy",
+                    "Ca",
+                    "C'",
+                    "Ch",
+                    "D",
+                    "D'",
+                    "Dh",
+                    "F",
+                    "F'",
+                    "Fl",
+                    "Fh",
+                    "Fa",
+                    "G",
+                    "Gl",
+                    "Gr",
+                    "Gh",
+                    "K",
+                    "Kl",
+                    "Kr",
+                    "Kh",
+                    "L",
+                    "Lh",
+                    "M",
+                    "Ma",
+                    "Mh",
+                    "M'",
+                    "N",
+                    "Nh",
+                    "R",
+                    "Ra",
+                    "Rh",
+                    "Rl",
+                    "S",
+                    "Sa",
+                    "Sl",
+                    "St",
+                    "Sh",
+                    "Shr",
+                    "T",
+                    "T'",
+                    "Tl",
+                    "Th",
+                    "V",
+                    "Vl",
+                    "V'"
+                ]
+            },
+            {
+                "setIndex": 1,
+                "parts": [
+                    "a",
+                    "e",
+                    "i",
+                    "o",
+                    "u"
+                ]
+            },
+            {
+                "setIndex": 2,
+                "parts": [
+                    "th",
+                    "ch",
+                    "rc",
+                    "rd",
+                    "j",
+                    "rk",
+                    "ll",
+                    "g",
+                    "rg",
+                    "rch",
+                    "ght",
+                    "rht",
+                    "fyl",
+                    "ld",
+                    "rm",
+                    "rn",
+                    "rp",
+                    "lp",
+                    "r",
+                    "s",
+                    "sh",
+                    "rt",
+                    "st",
+                    "ct",
+                    "v",
+                    "z"
+                ]
+            },
+            {
+                "setIndex": 3,
+                "parts": [
+                    "an",
+                    "en",
+                    "in",
+                    "on",
+                    "un",
+                    "e",
+                    "am",
+                    "em",
+                    "im",
+                    "om",
+                    "um",
+                    "t",
+                    "ke",
+                    "'kern",
+                    "rn",
+                    "er",
+                    "ar",
+                    "ir",
+                    "ur",
+                    "te",
+                    "ta",
+                    "ten"
+                ]
+            },
+            {
+                "setIndex": 4,
+                "parts": [
+                    "i",
+                    "-i",
+                    "-si",
+                    "ti",
+                    "ta",
+                    "tha",
+                    "ba",
+                    "ja",
+                    "fa",
+                    "ca",
+                    "sa",
+                    "ki",
+                    "ga",
+                    "ka",
+                    "-e"
+                ]
+            }
+        ]
+    },
+    "Nord": {
+        "setCount": 4,
+        "sets": [
+            {
+                "setIndex": 0,
+                "parts": [
+                    "Er",
+                    "Kj",
+                    "Torb",
+                    "Fenr",
+                    "Moj",
+                    "Ingm",
+                    "Asg",
+                    "Al",
+                    "Bj",
+                    "Sor",
+                    "Har",
+                    "Jurg",
+                    "Ulr"
+                ]
+            },
+            {
+                "setIndex": 1,
+                "parts": [
+                    "ik",
+                    "eld",
+                    "en",
+                    "is",
+                    "ens",
+                    "ar",
+                    "er",
+                    "arik",
+                    "orn",
+                    "arke",
+                    "ald",
+                    "an",
+                    "arne"
+                ]
+            },
+            {
+                "setIndex": 2,
+                "parts": [
+                    "Hell",
+                    "Jyt",
+                    "Kirst",
+                    "Ull",
+                    "An",
+                    "Bet",
+                    "Han",
+                    "Morg",
+                    "Dor",
+                    "Met",
+                    "Ell",
+                    "Sill",
+                    "Ing"
+                ]
+            },
+            {
+                "setIndex": 3,
+                "parts": [
+                    "e",
+                    "te",
+                    "en",
+                    "a",
+                    "ne",
+                    "ina",
+                    "ia"
+                ]
+            }
+        ]
+    },
+	"DarkElf": {
+        "setCount": 6,
+        "sets": [
+            {
+                "setIndex": 0,
+                "parts": [
+                    "Shur",
+                    "Zan",
+                    "Shal",
+                    "Ereb",
+                    "Nis",
+                    "Vanik",
+                    "Hel",
+                    "Zir",
+                    "Tur",
+                    "Ul",
+                    "Cas",
+                    "Azar"
+                ]
+            },
+            {
+                "setIndex": 1,
+                "parts": [
+                    "ik",
+                    "far",
+                    "imar",
+                    "on",
+                    "il",
+                    "ain",
+                    "seth",
+                    "kan",
+                    "imal",
+                    "ien",
+                    "par",
+                    "ath"
+                ]
+            },
+            {
+                "setIndex": 2,
+                "parts": [
+                    "Lol",
+                    "Vayn",
+                    "Tab",
+                    "Lil",
+                    "Hek",
+                    "Verm",
+                    "Sher",
+                    "Dem",
+                    "Golg",
+                    "Cru",
+                    "Shel",
+                    "Neph"
+                ]
+            },
+            {
+                "setIndex": 3,
+                "parts": [
+                    "th",
+                    "iah",
+                    "ithah",
+                    "ith",
+                    "atah",
+                    "inah",
+                    "ivah",
+                    "onah",
+                    "othah",
+                    "elle",
+                    "obah",
+                    "ethys"
+                ]
+            },
+            {
+                "setIndex": 4,
+                "parts": [
+                    "R'",
+                    "Enak",
+                    "Adl",
+                    "Helb",
+                    "Moab",
+                    "Sail",
+                    "R'zam",
+                    "T'riz",
+                    "S'th",
+                    "Grul",
+                    "Aval",
+                    "Rall"
+                ]
+            },
+            {
+                "setIndex": 5,
+                "parts": [
+                    "is",
+                    "ul",
+                    "an",
+                    "one",
+                    "en",
+                    "enar",
+                    "on",
+                    "am",
+                    "ain",
+                    "bruk",
+                    "aron",
+                    "athil"
+                ]
+            }
+        ]
+    },
+    "HighElf": {
+        "setCount": 6,
+        "sets": [
+            {
+                "setIndex": 0,
+                "parts": [
+                    "Soli",
+                    "Corri",
+                    "Lovi",
+                    "Lilland",
+                    "Mith",
+                    "Kelkemme",
+                    "Kala",
+                    "Saru",
+                    "Sau",
+                    "Gan",
+                    "Core",
+                    "Cyre"
+                ]
+            },
+            {
+                "setIndex": 1,
+                "parts": [
+                    "nar",
+                    "lian",
+                    "tar",
+                    "ril",
+                    "ra",
+                    "riil",
+                    "mon",
+                    "man",
+                    "ron",
+                    "dalf",
+                    "llon",
+                    "las"
+                ]
+            },
+            {
+                "setIndex": 2,
+                "parts": [
+                    "Kori",
+                    "Cymba",
+                    "Valli",
+                    "Zeno",
+                    "Lora",
+                    "Saur",
+                    "Mor",
+                    "Psy",
+                    "Lili",
+                    "Andra",
+                    "Ca",
+                    "Sha"
+                ]
+            },
+            {
+                "setIndex": 3,
+                "parts": [
+                    "mia",
+                    "lina",
+                    "na",
+                    "sara",
+                    "lia",
+                    "na",
+                    "sephona",
+                    "sha",
+                    "tha",
+                    "ginia"
+                ]
+            },
+            {
+                "setIndex": 4,
+                "parts": [
+                    "Gae",
+                    "Ad",
+                    "Throm",
+                    "Elsin",
+                    "Caem",
+                    "High",
+                    "Silin",
+                    "Jor",
+                    "Spell",
+                    "Storm",
+                    "Gray",
+                    "Lareth"
+                ]
+            },
+            {
+                "setIndex": 5,
+                "parts": [
+                    "orin",
+                    "ian",
+                    "us",
+                    "or",
+                    "ire",
+                    "watch",
+                    "thar",
+                    "al",
+                    "binder",
+                    "lock",
+                    "aire",
+                    "ius"
+                ]
+            }
+        ]
+    },
+    "WoodElf": {
+        "setCount": 6,
+        "sets": [
+            {
+                "setIndex": 0,
+                "parts": [
+                    "Elis",
+                    "An",
+                    "Ara",
+                    "Sil",
+                    "Ar",
+                    "Li",
+                    "Co",
+                    "Lego",
+                    "Ta",
+                    "Ria",
+                    "Karo",
+                    "Pali"
+                ]
+            },
+            {
+                "setIndex": 1,
+                "parts": [
+                    "tan",
+                    "driel",
+                    "gorn",
+                    "van",
+                    "cher",
+                    "gan",
+                    "rim",
+                    "las",
+                    "nis",
+                    "man",
+                    "dell",
+                    "nor"
+                ]
+            },
+            {
+                "setIndex": 2,
+                "parts": [
+                    "Min",
+                    "U",
+                    "Si",
+                    "Cas",
+                    "Lilis",
+                    "Rilli",
+                    "Lare",
+                    "Phy",
+                    "Cyl",
+                    "Lego",
+                    "Des"
+                ]
+            },
+            {
+                "setIndex": 3,
+                "parts": [
+                    "gina",
+                    "na",
+                    "lerva",
+                    "sandra",
+                    "sa",
+                    "fina",
+                    "thia",
+                    "nia",
+                    "dra",
+                    "landra"
+                ]
+            },
+            {
+                "setIndex": 4,
+                "parts": [
+                    "Moss",
+                    "Oak",
+                    "Willow",
+                    "Pine",
+                    "Fern",
+                    "Ivy",
+                    "Night",
+                    "Spring",
+                    "Shady",
+                    "Blue",
+                    "River",
+                    "Forest"
+                ]
+            },
+            {
+                "setIndex": 5,
+                "parts": [
+                    "wood",
+                    "thorn",
+                    "wind",
+                    "hollow",
+                    "pool",
+                    "run",
+                    "shade",
+                    "brook",
+                    "vale",
+                    "sky",
+                    "dale",
+                    "lake"
+                ]
+            }
+        ]
+    },
+    "Khajiit": {
+        "setCount": 6,
+        "sets": [
+            {
+                "setIndex": 0,
+                "parts": [
+                    "Moj",
+                    "Ab'",
+                    "Ak'",
+                    "Mo",
+                    "Na",
+                    "Moham",
+                    "Sin",
+                    "Om",
+                    "Hus",
+                    "Am",
+                    "Fa'",
+                    "Sha",
+                    "Zan'",
+                    "Za'",
+                    "Akh'"
+                ]
+            },
+            {
+                "setIndex": 1,
+                "parts": [
+                    "taba",
+                    "tabe",
+                    "dul",
+                    "bar",
+                    "bil",
+                    "med",
+                    "der",
+                    "ir",
+                    "soud",
+                    "sien",
+                    "gh",
+                    "ar",
+                    "nir",
+                    "noud",
+                    "kir",
+                    "urabi"
+                ]
+            },
+            {
+                "setIndex": 2,
+                "parts": [
+                    "Fa",
+                    "Azi",
+                    "Sha",
+                    "Mo",
+                    "So",
+                    "Ela",
+                    "Na",
+                    "Sa",
+                    "A",
+                    "Za",
+                    "Ki",
+                    "Kha",
+                    "Ta",
+                    "Ri",
+                    "Ra"
+                ]
+            },
+            {
+                "setIndex": 3,
+                "parts": [
+                    "tima",
+                    "riba",
+                    "zita",
+                    "ahin",
+                    "jjan",
+                    "hrazad",
+                    "heh",
+                    "srin",
+                    "raya",
+                    "khtar",
+                    "shima",
+                    "feliz",
+                    "ahni",
+                    "hana",
+                    "nita"
+                ]
+            },
+            {
+                "setIndex": 4,
+                "parts": [
+                    "Ja",
+                    "Bara",
+                    "Za",
+                    "Si",
+                    "Hammu",
+                    "Ki",
+                    "Mah",
+                    "Sa",
+                    "Ro",
+                    "A",
+                    "Rai",
+                    "Sol",
+                    "Kha",
+                    "Tavak",
+                    "Za"
+                ]
+            },
+            {
+                "setIndex": 5,
+                "parts": [
+                    "han",
+                    "bus",
+                    "hir",
+                    "kar",
+                    "rabi",
+                    "nai",
+                    "davi",
+                    "vandi",
+                    "stae",
+                    "mnin",
+                    "spoor",
+                    "tani",
+                    "biri",
+                    "oni",
+                    "manni"
+                ]
+            }
+        ]
+    },
+    "Imperial": {
+        "setCount": 6,
+        "sets": [
+            {
+                "setIndex": 0,
+                "parts": [
+                    "Tib",
+                    "Claud",
+                    "August",
+                    "Calig",
+                    "Ner",
+                    "German",
+                    "Pil",
+                    "Dioclet",
+                    "Antigon",
+                    "Demetr",
+                    "Alex",
+                    "Jul",
+                    "Her"
+                ]
+            },
+            {
+                "setIndex": 1,
+                "parts": [
+                    "erius",
+                    "ius",
+                    "us",
+                    "ula",
+                    "os",
+                    "icus",
+                    "ate",
+                    "ian",
+                    "ides",
+                    "ios",
+                    "andros",
+                    "iar",
+                    "acles"
+                ]
+            },
+            {
+                "setIndex": 2,
+                "parts": [
+                    "Tab",
+                    "Per",
+                    "Ter",
+                    "Art",
+                    "Aph",
+                    "Jud",
+                    "Her",
+                    "Ath",
+                    "Dem",
+                    "Tyr",
+                    "Hec",
+                    "Nik",
+                    "Maced"
+                ]
+            },
+            {
+                "setIndex": 3,
+                "parts": [
+                    "ia",
+                    "icla",
+                    "iana",
+                    "emis",
+                    "ina",
+                    "ithea",
+                    "rodite",
+                    "ena",
+                    "etera",
+                    "osyna",
+                    "atea",
+                    "omeda",
+                    "onia"
+                ]
+            },
+            {
+                "setIndex": 4,
+                "parts": [
+                    "Cae",
+                    "Andro",
+                    "Augus",
+                    "Cali",
+                    "Per",
+                    "Mag",
+                    "Theo",
+                    "Xer",
+                    "Gal",
+                    "Tiber",
+                    "Ca",
+                    "Me",
+                    "Ni"
+                ]
+            },
+            {
+                "setIndex": 5,
+                "parts": [
+                    "sar",
+                    "cles",
+                    "tus",
+                    "gulus",
+                    "seus",
+                    "mus",
+                    "dorus",
+                    "nes",
+                    "lus",
+                    "sion",
+                    "ssius",
+                    "des",
+                    "mean"
+                ]
+            }
+        ]
+    },
+    "Monster1": {
+        "setCount": 3,
+        "sets": [
+            {
+                "setIndex": 0,
+                "parts": [
+                    "Grol",
+                    "Tricer",
+                    "Nor",
+                    "Sek",
+                    "Mor",
+                    "Ye",
+                    "Verm",
+                    "Trog",
+                    "Sko",
+                    "Sash",
+                    "Voj",
+                    "Az",
+                    "Yag",
+                    "Dru",
+                    "Dag",
+                    "Grum",
+                    "Ve",
+                    "Hez",
+                    "Skul",
+                    "Grom",
+                    "An",
+                    "Ratt",
+                    "Hel",
+                    "Mor",
+                    "Grip"
+                ]
+            },
+            {
+                "setIndex": 1,
+                "parts": [
+                    "an",
+                    "a",
+                    "ga",
+                    "o",
+                    "ri",
+                    "no",
+                    "i",
+                    "lo",
+                    "ra",
+                    "e",
+                    "u",
+                    "ra",
+                    "ot",
+                    "ar",
+                    "er",
+                    "ir"
+                ]
+            },
+            {
+                "setIndex": 2,
+                "parts": [
+                    "tor",
+                    "vor",
+                    "rath",
+                    "lath",
+                    "gon",
+                    "ghu",
+                    "thrac",
+                    "don",
+                    "us",
+                    "las",
+                    "ten",
+                    "thoth",
+                    "hoth",
+                    "god",
+                    "doth",
+                    "loth",
+                    "rock",
+                    "rog",
+                    "ker",
+                    "thor",
+                    "bith",
+                    "rugoth",
+                    "goth",
+                    "dred",
+                    "phang"
+                ]
+            }
+        ]
+    },
+    "Monster2": {
+        "setCount": 4,
+        "sets": [
+            {
+                "setIndex": 0,
+                "parts": [
+                    "Dem",
+                    "Jub",
+                    "Mar",
+                    "Asm",
+                    "Baal",
+                    "Disp",
+                    "Ger",
+                    "Mael",
+                    "Bal",
+                    "Homun",
+                    "Mork",
+                    "Sah"
+                ]
+            },
+            {
+                "setIndex": 1,
+                "parts": [
+                    "og",
+                    "ibl",
+                    "il",
+                    "od",
+                    "eb",
+                    "at",
+                    "y",
+                    "ebr",
+                    "uch",
+                    "ul",
+                    "uag",
+                    "iam"
+                ]
+            },
+            {
+                "setIndex": 2,
+                "parts": [
+                    "orgon",
+                    "ex",
+                    "ith",
+                    "eus",
+                    "ul",
+                    "er",
+                    "on",
+                    "anx",
+                    "ither",
+                    "as",
+                    "oth",
+                    "inx"
+                ]
+            },
+            {
+                "setIndex": 3,
+                "parts": [
+                    "a",
+                    "ah",
+                    "ia",
+                    "iah",
+                    "ena",
+                    "essa",
+                    "ulla",
+                    "una",
+                    "ullah",
+                    "unah",
+                    "ivah",
+                    "iva"
+                ]
+            }
+        ]
+    },
+    "Monster3": {
+        "setCount": 4,
+        "sets": [
+            {
+                "setIndex": 0,
+                "parts": [
+                    "Vlad",
+                    "Mor",
+                    "Gar",
+                    "Balth",
+                    "Nebuch",
+                    "Ver",
+                    "Dark",
+                    "Magn",
+                    "Lith",
+                    "Stad",
+                    "Bar",
+                    "Inver",
+                    "Corr",
+                    "Necrom"
+                ]
+            },
+            {
+                "setIndex": 1,
+                "parts": [
+                    "im",
+                    "eh",
+                    "el",
+                    "ez",
+                    "en",
+                    "ob",
+                    "ul",
+                    "iv",
+                    "ing",
+                    "ivar",
+                    "ogh",
+                    "om",
+                    "ov",
+                    "an"
+                ]
+            },
+            {
+                "setIndex": 2,
+                "parts": [
+                    "on",
+                    "aus",
+                    "eon",
+                    "ar",
+                    "ezzar",
+                    "am",
+                    "or",
+                    "us",
+                    "oth",
+                    "ius",
+                    "ulon",
+                    "yth",
+                    "an",
+                    "ion"
+                ]
+            }
+			{
+                "setIndex": 3,
+                "parts": [
+                    "Lord",
+                    "Count",
+                    "Baron",
+                    "Viscount",
+                    "Marquis",
+                    "Duke"
+                ]
+            },
+        ]
+    }
+}

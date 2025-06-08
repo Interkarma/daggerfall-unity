@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -20,16 +20,9 @@ namespace DaggerfallWorkshop.Utility
     {
         public RenderTexture RetroPresentationSource;
 
-        private void Start()
-        {
-            // Disable self if retro mode not enabled
-            if (DaggerfallUnity.Settings.RetroRenderingMode == 0)
-                gameObject.SetActive(false);
-        }
-
         private void OnRenderImage(RenderTexture source, RenderTexture destination)
         {
-            if (RetroPresentationSource)
+            if (RetroPresentationSource && DaggerfallUnity.Settings.RetroRenderingMode != 0)
             {
                 // Present retro render
                 Graphics.Blit(RetroPresentationSource, null as RenderTexture);

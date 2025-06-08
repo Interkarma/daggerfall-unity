@@ -1,0 +1,1486 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Internal_Factions_en
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: 59a31cda23f9abc4cb619f502133bbec, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 2439333277696
+    m_Localized: Oblivion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443520
+    m_Localized: Clavicus Vile
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443521
+    m_Localized: Mehrunes Dagon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443522
+    m_Localized: Molag Bal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443523
+    m_Localized: Hircine
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443524
+    m_Localized: Sanguine
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443525
+    m_Localized: Peryite
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443526
+    m_Localized: Malacath
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443527
+    m_Localized: Hermaeus Mora
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443528
+    m_Localized: Boethiah
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443529
+    m_Localized: Namira
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443530
+    m_Localized: Meridia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443531
+    m_Localized: Vaernima
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443532
+    m_Localized: Nocturnal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443533
+    m_Localized: Mephala
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443534
+    m_Localized: The Night Mother
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443535
+    m_Localized: The Dark Brotherhood
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443536
+    m_Localized: Dark Trainers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443537
+    m_Localized: Dark Mixers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443538
+    m_Localized: Venom Masters
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443539
+    m_Localized: Dark Plotters
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443540
+    m_Localized: Dark Binders
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443541
+    m_Localized: Dark Slayers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443542
+    m_Localized: Azura
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443543
+    m_Localized: Sheogorath
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443544
+    m_Localized: Generic Temple
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443545
+    m_Localized: Temple Missionaries
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443546
+    m_Localized: Temple Treasurers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443547
+    m_Localized: Temple Healers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443548
+    m_Localized: Temple Blessers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443549
+    m_Localized: Ebonarm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443550
+    m_Localized: The Citadel of Ebonarm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443551
+    m_Localized: The Battlelords
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443552
+    m_Localized: Arkay
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443553
+    m_Localized: The Order of Arkay
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443554
+    m_Localized: The Knights of the Circle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443555
+    m_Localized: Apothecaries of Arkay
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443556
+    m_Localized: Mixers of Arkay
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443557
+    m_Localized: Summoners of Arkay
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443558
+    m_Localized: Binders of Arkay
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443559
+    m_Localized: Teachers of Arkay
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443560
+    m_Localized: Zen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443561
+    m_Localized: The Resolution of Z'en
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443562
+    m_Localized: The Knights of Iron
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443563
+    m_Localized: Apothecaries of Z'en
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443564
+    m_Localized: Mixers of Z'en
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443565
+    m_Localized: Summonists of Z'en
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443566
+    m_Localized: Teachers of Z'en
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443567
+    m_Localized: Mara
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443568
+    m_Localized: The Benevolence of Mara
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443569
+    m_Localized: Lord Quistley
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443570
+    m_Localized: The Maran Knights
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443571
+    m_Localized: Apothecaries of Mara
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443572
+    m_Localized: Mixers of Mara
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443573
+    m_Localized: Summoners of Mara
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443574
+    m_Localized: Teachers of Mara
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443575
+    m_Localized: Akatosh
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443576
+    m_Localized: The Akatosh Chantry
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443577
+    m_Localized: The Order of the Hour
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443578
+    m_Localized: Charvek-si
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443579
+    m_Localized: Apothecaries of Akatosh
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443580
+    m_Localized: Mixers of Akatosh
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443581
+    m_Localized: Summoners of Akatosh
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443582
+    m_Localized: Teachers of Akatosh
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443583
+    m_Localized: Julianos
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443584
+    m_Localized: The School of Julianos
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443585
+    m_Localized: The Knights Mentor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443586
+    m_Localized: Br'itsa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443587
+    m_Localized: Crafters of Julianos
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443588
+    m_Localized: Smiths of Julianos
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443589
+    m_Localized: Summoners of Julianos
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443590
+    m_Localized: Teachers of Julianos
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443591
+    m_Localized: Dibella
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443592
+    m_Localized: The House of Dibella
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443593
+    m_Localized: The Order of the Lily
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443594
+    m_Localized: Apothecaries of Dibella
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443595
+    m_Localized: Mixers of Dibella
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443596
+    m_Localized: Summoners of Dibella
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443597
+    m_Localized: Teachers of Dibella
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443598
+    m_Localized: Stendarr
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443599
+    m_Localized: The Temple of Stendarr
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443600
+    m_Localized: The Crusaders
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443601
+    m_Localized: Apothecaries of Stendarr
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443602
+    m_Localized: Mixers of Stendarr
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443603
+    m_Localized: Summoners of Stendarr
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443604
+    m_Localized: Teachers of Stendarr
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443605
+    m_Localized: Kynareth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443606
+    m_Localized: The Temple of Kynareth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443607
+    m_Localized: The Kynaran Order
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443608
+    m_Localized: Lord Coulder
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443609
+    m_Localized: Spellsmiths of Kynareth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443610
+    m_Localized: Summoners of Kynareth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443611
+    m_Localized: Enchanters of Kynareth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443612
+    m_Localized: Teachers of Kynareth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443613
+    m_Localized: Secret of Oblivion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443614
+    m_Localized: The Mages Guild
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443615
+    m_Localized: The Archmagister
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443616
+    m_Localized: The Guildmagister
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443617
+    m_Localized: Popudax
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443618
+    m_Localized: Karethys
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443619
+    m_Localized: The Master of Incunabula
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443620
+    m_Localized: The Master of Academia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443621
+    m_Localized: The Master of the Scry
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443622
+    m_Localized: The Master at Arms
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443623
+    m_Localized: The Palatinus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443624
+    m_Localized: The Master of Initiates
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443625
+    m_Localized: The Academics
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443626
+    m_Localized: The Patricians
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443627
+    m_Localized: The Travelers League
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443628
+    m_Localized: The Mercenary Mages
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443629
+    m_Localized: The Isolationists
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443630
+    m_Localized: The Utility Mages
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443631
+    m_Localized: The Cabal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443632
+    m_Localized: The Order of the Lamp
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443633
+    m_Localized: The Odylic Mages
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443634
+    m_Localized: The Crafters
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443635
+    m_Localized: The Vraseth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443636
+    m_Localized: The Haarvenu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443637
+    m_Localized: The Thrafey
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443638
+    m_Localized: The Lyrezi
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443639
+    m_Localized: The Montalion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443640
+    m_Localized: The Khulari
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443641
+    m_Localized: The Garlythi
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443642
+    m_Localized: The Anthotis
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443643
+    m_Localized: The Selenu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443644
+    m_Localized: The Fighters Guild
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443645
+    m_Localized: Fighter Trainers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443646
+    m_Localized: Fighter Equippers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443647
+    m_Localized: Fighter Questers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443648
+    m_Localized: The Thieves Guild
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443649
+    m_Localized: The Guildmaster
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443650
+    m_Localized: The Crow
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443651
+    m_Localized: Thaik
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443652
+    m_Localized: The Squid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443653
+    m_Localized: Lord Bertram Spode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443654
+    m_Localized: Thyr Topfield
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443655
+    m_Localized: Whitka
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443656
+    m_Localized: The Master of Initiates
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443657
+    m_Localized: The Shadow Trainers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443658
+    m_Localized: The Shadow Schemers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443659
+    m_Localized: The Shadow Appraisers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443660
+    m_Localized: The Shadow Spies
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443661
+    m_Localized: Random Ruler
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443662
+    m_Localized: Random Noble
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443663
+    m_Localized: Random Knight
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443664
+    m_Localized: Dwynnen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443665
+    m_Localized: Court of Dwynnen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443666
+    m_Localized: People of Dwynnen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443667
+    m_Localized: The Order of the Raven
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443668
+    m_Localized: Generic Knightly Order
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443669
+    m_Localized: Smiths
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443670
+    m_Localized: Questers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443671
+    m_Localized: Healers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443672
+    m_Localized: Seneschal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443673
+    m_Localized: Daggerfall
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443674
+    m_Localized: King Gothryd
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443675
+    m_Localized: Mobar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443676
+    m_Localized: The Royal Guard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443677
+    m_Localized: Queen Aubk-i
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443678
+    m_Localized: Cyndassa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443679
+    m_Localized: Mynisera
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443680
+    m_Localized: Lord Bridwell
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443681
+    m_Localized: The Knights of the Dragon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443682
+    m_Localized: Lady Bridwell
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443683
+    m_Localized: Lady Northbridge
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443684
+    m_Localized: Court of Daggerfall
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443685
+    m_Localized: People of Daggerfall
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443686
+    m_Localized: Betony
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443687
+    m_Localized: Court of Betony
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443688
+    m_Localized: People of Betony
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443689
+    m_Localized: Glenpoint
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443690
+    m_Localized: Court of Glenpoint
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443691
+    m_Localized: People of Glenpoint
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443692
+    m_Localized: The Knights of the Owl
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443693
+    m_Localized: Sentinel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443694
+    m_Localized: Queen Akorithi
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443695
+    m_Localized: Lord Vhosek
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443696
+    m_Localized: The Royal Guards
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443697
+    m_Localized: Prince Greklith
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443698
+    m_Localized: Prince Lhotun
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443699
+    m_Localized: Lord K'avar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443700
+    m_Localized: The Order of the Candle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443701
+    m_Localized: Lord Provlith
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443702
+    m_Localized: Court of Sentinel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443703
+    m_Localized: People of Sentinel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443704
+    m_Localized: Anticlere
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443705
+    m_Localized: Lady Doryanna Flyte
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443706
+    m_Localized: The Knights of the Flame
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443707
+    m_Localized: Lord Auberon Flyte
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443708
+    m_Localized: Farrington
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443709
+    m_Localized: Lord Perwright
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443710
+    m_Localized: Court of Anticlere
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443711
+    m_Localized: People of Anticlere
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443712
+    m_Localized: Lainlyn
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443713
+    m_Localized: Baron Shrike
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443714
+    m_Localized: The Host of the Horn
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443715
+    m_Localized: Baroness Dh'emka
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443716
+    m_Localized: Lord Kain
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443717
+    m_Localized: Court of Lainlyn
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443718
+    m_Localized: People of Lainlyn
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443719
+    m_Localized: Wayrest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443720
+    m_Localized: King Eadwyre
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443721
+    m_Localized: Queen Barenziah
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443722
+    m_Localized: Princess Elysana
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443723
+    m_Localized: Prince Helseth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443724
+    m_Localized: Princess Morgiah
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443725
+    m_Localized: Lord Castellian
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443726
+    m_Localized: Lord Darkworth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443727
+    m_Localized: The Knights of the Rose
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443728
+    m_Localized: Lord Woodborne
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443729
+    m_Localized: Court of Wayrest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443730
+    m_Localized: People of Wayrest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443731
+    m_Localized: Northmoor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443732
+    m_Localized: Court of Northmoor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443733
+    m_Localized: People of Northmoor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443734
+    m_Localized: Menevia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443735
+    m_Localized: Court of Menevia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443736
+    m_Localized: People of Menevia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443737
+    m_Localized: Alcaire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443738
+    m_Localized: Court of Alcaire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443739
+    m_Localized: People of Alcaire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443740
+    m_Localized: Koegria
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443741
+    m_Localized: Court of Koegria
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443742
+    m_Localized: People of Koegria
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443743
+    m_Localized: Bhoriane
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443744
+    m_Localized: Court of Bhoriane
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443745
+    m_Localized: People of Bhoriane
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443746
+    m_Localized: Kambria
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443747
+    m_Localized: Court of Kambria
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443748
+    m_Localized: People of Kambria
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443749
+    m_Localized: Phrygias
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443750
+    m_Localized: Court of Phrygias
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443751
+    m_Localized: People of Phrygias
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443752
+    m_Localized: Urvaius
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443753
+    m_Localized: Court of Urvaius
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443754
+    m_Localized: People of Urvaius
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443755
+    m_Localized: Ykalon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443756
+    m_Localized: Court of Ykalon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443757
+    m_Localized: People of Ykalon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443758
+    m_Localized: Daenia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443759
+    m_Localized: Court of Daenia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443760
+    m_Localized: People of Daenia
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443761
+    m_Localized: Shalgora
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443762
+    m_Localized: Court of Shalgora
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443763
+    m_Localized: People of Shalgora
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443764
+    m_Localized: Abibon-Gora
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443765
+    m_Localized: Court of Abibon-Gora
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443766
+    m_Localized: People of Abibon-Gora
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443767
+    m_Localized: The Knights of the Wheel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443768
+    m_Localized: Kairou
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443769
+    m_Localized: Court of Kairou
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443770
+    m_Localized: People of Kairou
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443771
+    m_Localized: Pothago
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443772
+    m_Localized: Court of Pothago
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443773
+    m_Localized: People of Pothago
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443774
+    m_Localized: Myrkwasa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443775
+    m_Localized: Court of Myrkwasa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443776
+    m_Localized: People of Myrkwasa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443777
+    m_Localized: Ayasofya
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443778
+    m_Localized: Court of Ayasofya
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443779
+    m_Localized: People of Ayasofya
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443780
+    m_Localized: Tigonus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443781
+    m_Localized: Court of Tigonus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443782
+    m_Localized: People of Tigonus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443783
+    m_Localized: Kozanset
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443784
+    m_Localized: Court of Kozanset
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443785
+    m_Localized: People of Kozanset
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443786
+    m_Localized: Satakalaam
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443787
+    m_Localized: Court of Satakalaam
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443788
+    m_Localized: People of Satakalaam
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443789
+    m_Localized: Totambu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443790
+    m_Localized: Court of Totambu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443791
+    m_Localized: People of Totambu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443792
+    m_Localized: The Order of the Scarab
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443793
+    m_Localized: Mournoth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443794
+    m_Localized: Court of Mournoth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443795
+    m_Localized: People of Mournoth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443796
+    m_Localized: Ephesus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443797
+    m_Localized: Court of Ephesus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443798
+    m_Localized: People of Ephesus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443799
+    m_Localized: Santaki
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443800
+    m_Localized: Court of Santaki
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443801
+    m_Localized: People of Santaki
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443802
+    m_Localized: Antiphyllos
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443803
+    m_Localized: Court of Antiphyllos
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443804
+    m_Localized: People of Antiphyllos
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443805
+    m_Localized: The Knights of the Hawk
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443806
+    m_Localized: Bergama
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443807
+    m_Localized: Court of Bergama
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443808
+    m_Localized: People of Bergama
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443809
+    m_Localized: Gavaudon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443810
+    m_Localized: Court of Gavaudon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443811
+    m_Localized: People of Gavaudon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443812
+    m_Localized: Tulune
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443813
+    m_Localized: Court of Tulune
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443814
+    m_Localized: People of Tulune
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443815
+    m_Localized: Ilessan Hills
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443816
+    m_Localized: Court of Ilessan Hills
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443817
+    m_Localized: People of Ilessan Hills
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443818
+    m_Localized: Cybiades
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443819
+    m_Localized: Court of Cybiades
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443820
+    m_Localized: People of Cybiades
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443821
+    m_Localized: The Oracle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443822
+    m_Localized: The Acolyte
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443823
+    m_Localized: Nulfaga
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443824
+    m_Localized: Skakmat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443825
+    m_Localized: King of Worms
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443826
+    m_Localized: The Necromancers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443827
+    m_Localized: The Septim Empire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443828
+    m_Localized: The Great Knight
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443829
+    m_Localized: The Blades
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443830
+    m_Localized: Lady Brisienna
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443831
+    m_Localized: The Underking
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443832
+    m_Localized: Agents of The Underking
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443833
+    m_Localized: Lord Harth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443834
+    m_Localized: The Host of the True Horn
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443835
+    m_Localized: Orsinium
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443836
+    m_Localized: Gortwog
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443837
+    m_Localized: Court of Orsinium
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439358443838
+    m_Localized: People of Orsinium
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220736
+    m_Localized: Lord Plessington
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220737
+    m_Localized: The Order of the Cup
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220738
+    m_Localized: Lord Kilbar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220739
+    m_Localized: Chulmore Quill
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220740
+    m_Localized: The Quill Circus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220741
+    m_Localized: Baltham Greyman
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220742
+    m_Localized: Sylch Greenwood
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220743
+    m_Localized: The Glenmoril Witches
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220744
+    m_Localized: The Dust Witches
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220745
+    m_Localized: The Witches of Devilrock
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220746
+    m_Localized: The Tamarilyn Witches
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220747
+    m_Localized: The Sisters of the Bluff
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220748
+    m_Localized: The Daughters of Wroth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220749
+    m_Localized: The Skeffington Witches
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220750
+    m_Localized: The Witches of the Marsh
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220751
+    m_Localized: The Mountain Witches
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220752
+    m_Localized: The Daggerfall Witches
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220753
+    m_Localized: The Beldama
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220754
+    m_Localized: The Sisters of Kykos
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220755
+    m_Localized: The Tide Witches
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220756
+    m_Localized: The Witches of Alcaire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220757
+    m_Localized: The Merchants
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220758
+    m_Localized: The Bards
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220759
+    m_Localized: The Prostitutes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220760
+    m_Localized: The Fey
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220761
+    m_Localized: Children
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220762
+    m_Localized: Dancers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220763
+    m_Localized: Wrothgaria
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220764
+    m_Localized: Court of Wrothgaria
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220765
+    m_Localized: People of Wrothgaria
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220766
+    m_Localized: Dragontail
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220767
+    m_Localized: Court of Dragontail
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220768
+    m_Localized: People of Dragontail
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220769
+    m_Localized: Alik'ra
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220770
+    m_Localized: Court of Alik'ra
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220771
+    m_Localized: People of Alik'ra
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220772
+    m_Localized: Dak'fron
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220773
+    m_Localized: Court of Dak'fron
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220774
+    m_Localized: People of Dak'fron
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220775
+    m_Localized: Isle of Balfiera
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220776
+    m_Localized: Medora
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220777
+    m_Localized: Court of Balfiera
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220778
+    m_Localized: People of Balfiera
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220779
+    m_Localized: Glenumbra Moors
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220780
+    m_Localized: Court of Glenumbra Moors
+    m_Metadata:
+      m_Items: []
+  - m_Id: 2439375220781
+    m_Localized: People of Glenumbra Moors
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 1

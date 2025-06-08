@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -780,17 +780,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Draw background colour or mouse over background colour
             if (mouseOverComponent && mouseOverBackgroundColor != Color.clear && backgroundColorTexture)
             {
-                Color color = GUI.color;
-                GUI.color = mouseOverBackgroundColor;
-                GUI.DrawTexture(myRect, backgroundColorTexture, ScaleMode.StretchToFill);
-                GUI.color = color;
+                DaggerfallUI.DrawTexture(myRect, backgroundColorTexture, ScaleMode.StretchToFill, true, mouseOverBackgroundColor);
             }
             else if (backgroundColor != Color.clear && backgroundColorTexture)
             {
-                Color color = GUI.color;
-                GUI.color = backgroundColor;
-                GUI.DrawTexture(myRect, backgroundColorTexture, ScaleMode.StretchToFill);
-                GUI.color = color;
+                DaggerfallUI.DrawTexture(myRect, backgroundColorTexture, ScaleMode.StretchToFill, true, backgroundColor);
             }
 
             // Draw background texture if present
@@ -800,19 +794,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 {
                     case BackgroundLayout.Tile:
                         backgroundTexture.wrapMode = TextureWrapMode.Repeat;
-                        GUI.DrawTextureWithTexCoords(myRect, backgroundTexture, new Rect(0, 0, myRect.width / backgroundTexture.width, myRect.height / backgroundTexture.height));
+                        DaggerfallUI.DrawTextureWithTexCoords(myRect, backgroundTexture, new Rect(0, 0, myRect.width / backgroundTexture.width, myRect.height / backgroundTexture.height));
                         break;
                     case BackgroundLayout.StretchToFill:
                         backgroundTexture.wrapMode = TextureWrapMode.Clamp;
-                        GUI.DrawTexture(myRect, backgroundTexture, ScaleMode.StretchToFill);
+                        DaggerfallUI.DrawTexture(myRect, backgroundTexture, ScaleMode.StretchToFill);
                         break;
                     case BackgroundLayout.ScaleToFit:
                         backgroundTexture.wrapMode = TextureWrapMode.Clamp;
-                        GUI.DrawTexture(myRect, backgroundTexture, ScaleMode.ScaleToFit);
+                        DaggerfallUI.DrawTexture(myRect, backgroundTexture, ScaleMode.ScaleToFit);
                         break;
                     case BackgroundLayout.Cropped:
                         backgroundTexture.wrapMode = TextureWrapMode.Clamp;
-                        GUI.DrawTextureWithTexCoords(myRect, backgroundTexture, new Rect(
+                        DaggerfallUI.DrawTextureWithTexCoords(myRect, backgroundTexture, new Rect(
                             BackgroundCroppedRect.x / backgroundTexture.width,
                             BackgroundCroppedRect.y / backgroundTexture.height,
                             BackgroundCroppedRect.width / backgroundTexture.width,
@@ -1138,10 +1132,17 @@ namespace DaggerfallWorkshop.Game.UserInterface
             }
             else
             {
-                if (rootSize == Vector2.zero)
-                    parentRect = new Rect(0, 0, Screen.width, Screen.height);
+                if (DaggerfallUI.Instance.CustomScreenRect != null)
+                {
+                    parentRect = DaggerfallUI.Instance.CustomScreenRect.Value;
+                }
                 else
-                    parentRect = new Rect(0, 0, rootSize.x, rootSize.y);
+                {
+                    if (rootSize == Vector2.zero)
+                        parentRect = new Rect(0, 0, Screen.width, Screen.height);
+                    else
+                        parentRect = new Rect(0, 0, rootSize.x, rootSize.y);
+                }
             }
 
             return parentRect;

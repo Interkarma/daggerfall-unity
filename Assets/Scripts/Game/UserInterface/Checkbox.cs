@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -131,15 +131,10 @@ namespace DaggerfallWorkshop.Game.UserInterface
             rect.height = checkTextureSize.y * LocalScale.y;
 
             // Draw checkbox in current state
-            Color guiColor = GUI.color;
-            GUI.color = checkboxColor;
             if (!isChecked)
-                GUI.DrawTexture(rect, uncheckedTexture);
+                DaggerfallUI.DrawTexture(rect, uncheckedTexture, ScaleMode.StretchToFill, true, checkboxColor);
             else
-                GUI.DrawTexture(rect, checkedTexture);
-
-            // Restore previous color
-            GUI.color = guiColor;
+                DaggerfallUI.DrawTexture(rect, checkedTexture, ScaleMode.StretchToFill, true, checkboxColor);
 
             // Draw label
             label.Position = new Vector2(checkTextureSize.x + checkTextHorzOffset, textOffset + checkTextVertOffset);

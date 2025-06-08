@@ -1,0 +1,926 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Internal_Flats_en
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: 6170d504a469fec46b1a7762508ddcf2, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 35641569329152
+    m_Localized: beautiful maiden
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641615466496
+    m_Localized: dark warrior
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641615466497
+    m_Localized: terrible child
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641615466498
+    m_Localized: horned man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660800
+    m_Localized: clawed monstrosity
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660801
+    m_Localized: green humanoid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660802
+    m_Localized: four-armed giant
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660803
+    m_Localized: dark woman
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660804
+    m_Localized: blonde woman
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660805
+    m_Localized: cloven-footed man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660806
+    m_Localized: dark woman
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660807
+    m_Localized: dark-clad woman
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660808
+    m_Localized: green serpent
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660809
+    m_Localized: crimson giant
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660810
+    m_Localized: elegant gentleman
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660811
+    m_Localized: wizened crone
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660812
+    m_Localized: dark-cloaked man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660813
+    m_Localized: dark-cloaked man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660814
+    m_Localized: bare-breasted dancer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660815
+    m_Localized: bare-breasted dancer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660816
+    m_Localized: dancer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660817
+    m_Localized: dark-cloaked man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660818
+    m_Localized: woman in black and red
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660819
+    m_Localized: cowled old man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660820
+    m_Localized: old man with a hat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660821
+    m_Localized: bald man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660822
+    m_Localized: blonde woman
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660823
+    m_Localized: man with glowing eyes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660824
+    m_Localized: magic crafter
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660825
+    m_Localized: cowled woman
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660826
+    m_Localized: red-cowled man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660827
+    m_Localized: red-cloaked man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660828
+    m_Localized: red-cloaked man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660829
+    m_Localized: man with glowing eyes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660830
+    m_Localized: red-cowled dancer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660831
+    m_Localized: red-cowled dancer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660832
+    m_Localized: naked dark-haired woman
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660833
+    m_Localized: naked woman
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660834
+    m_Localized: mysterious woman
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660835
+    m_Localized: black-cowled dancer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660836
+    m_Localized: red-haired woman
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660837
+    m_Localized: dark-haired woman in red
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660838
+    m_Localized: noblewoman wearing blue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660839
+    m_Localized: well-dressed man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660840
+    m_Localized: portly man in violet
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660841
+    m_Localized: blue-cloaked man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660842
+    m_Localized: young woman in blue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660843
+    m_Localized: blue-cloaked old man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660844
+    m_Localized: blue-cloaked boy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660845
+    m_Localized: beautiful blonde
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660846
+    m_Localized: dancer wearing blue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660847
+    m_Localized: blue-cloaked dancer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660848
+    m_Localized: blue-cloaked dancer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660849
+    m_Localized: white-haired old man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660850
+    m_Localized: fat bald man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660851
+    m_Localized: blond-bearded man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660852
+    m_Localized: bearded man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660853
+    m_Localized: well-dressed boy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660854
+    m_Localized: jester
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660855
+    m_Localized: jester
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660856
+    m_Localized: white-bearded man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660857
+    m_Localized: man in chef's hat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660858
+    m_Localized: woman in gray
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660859
+    m_Localized: woman in blue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660860
+    m_Localized: comely maiden
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660861
+    m_Localized: milk maid
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660862
+    m_Localized: man wearing brown
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660863
+    m_Localized: man in a brown hat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660864
+    m_Localized: blond aristocrat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660865
+    m_Localized: fair-bearded man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660866
+    m_Localized: blond-bearded man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660867
+    m_Localized: brown-haired young man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660868
+    m_Localized: man in a gray tunic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660869
+    m_Localized: man in a green coat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660870
+    m_Localized: old beggar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660871
+    m_Localized: cloaked old man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660872
+    m_Localized: man in a blue coat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660873
+    m_Localized: bearded old man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660874
+    m_Localized: scruffy-looking sailor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660875
+    m_Localized: young lady in green
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660876
+    m_Localized: elegantly dressed lady
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660877
+    m_Localized: blue-cloaked woman
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660878
+    m_Localized: pathetic old cripple
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660879
+    m_Localized: pitiful bald man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660880
+    m_Localized: pitiful bald man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660881
+    m_Localized: good-looking whore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660882
+    m_Localized: prostitute
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660883
+    m_Localized: blonde whore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660884
+    m_Localized: scruffy sailor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660885
+    m_Localized: snake charmer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660886
+    m_Localized: flute player
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660887
+    m_Localized: little girl
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660888
+    m_Localized: street sweeper
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660889
+    m_Localized: wise-looking man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660890
+    m_Localized: remarkable woman
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660891
+    m_Localized: page boy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660892
+    m_Localized: little boy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660893
+    m_Localized: old crone
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660894
+    m_Localized: adventuresome woman
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660895
+    m_Localized: handsome young man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660896
+    m_Localized: pretty young lady
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660897
+    m_Localized: blond whore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660898
+    m_Localized: juggler
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660899
+    m_Localized: flutist
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660900
+    m_Localized: lutist
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660901
+    m_Localized: drummer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660902
+    m_Localized: young bellringer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660903
+    m_Localized: hooded man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660904
+    m_Localized: hooded man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660905
+    m_Localized: hooded woman
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660906
+    m_Localized: nearly naked man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660907
+    m_Localized: nearly naked man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660908
+    m_Localized: blacksmith
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660909
+    m_Localized: regal fairie
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660910
+    m_Localized: regal fairie
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660911
+    m_Localized: guard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660912
+    m_Localized: guard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660913
+    m_Localized: noble-looking man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660914
+    m_Localized: flamboyant young man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660915
+    m_Localized: bearded king
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660916
+    m_Localized: king wearing a turban
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660917
+    m_Localized: white-haired queen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660918
+    m_Localized: brunette queen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660919
+    m_Localized: king
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660920
+    m_Localized: queen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660921
+    m_Localized: cowled monk
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660922
+    m_Localized: handsome young king
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660923
+    m_Localized: stunning brunette
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660924
+    m_Localized: blind old crone
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660925
+    m_Localized: stylish fat man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660926
+    m_Localized: bedraggled witch
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660927
+    m_Localized: gorgeous Redguard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660928
+    m_Localized: majestic orc
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660929
+    m_Localized: Dark Elf king
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660930
+    m_Localized: blonde queen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660931
+    m_Localized: well-to-do merchant
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660932
+    m_Localized: woman in a cloak
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660933
+    m_Localized: man in a green robe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660934
+    m_Localized: fat flutist
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660935
+    m_Localized: strapping young man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660936
+    m_Localized: beautiful blonde
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660937
+    m_Localized: bare-breasted wench
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660938
+    m_Localized: sleek-looking blonde
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660939
+    m_Localized: blonde strumpet
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660940
+    m_Localized: shapely brunette
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660941
+    m_Localized: dazzling blonde
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660942
+    m_Localized: naked blonde woman
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660943
+    m_Localized: naked brunette
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660944
+    m_Localized: naked blonde
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660945
+    m_Localized: naked brunette
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660946
+    m_Localized: ragged young boy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660947
+    m_Localized: chubby old man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660948
+    m_Localized: brawny peasant
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660949
+    m_Localized: tough she-devil
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660950
+    m_Localized: attractive blonde
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660951
+    m_Localized: man in purple
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660952
+    m_Localized: bearded old man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660953
+    m_Localized: woman with a staff
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660954
+    m_Localized: woman in green pants
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660955
+    m_Localized: dark-haired rogue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660956
+    m_Localized: fair-haired youth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660957
+    m_Localized: red-haired woman
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660958
+    m_Localized: pathetic beggar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660959
+    m_Localized: red-headed vixen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660960
+    m_Localized: blonde wearing blue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660961
+    m_Localized: dark-skinned woman
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660962
+    m_Localized: bald slave
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660963
+    m_Localized: dark warrior woman
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660964
+    m_Localized: dark buxom wench
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660965
+    m_Localized: man on horseback
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660966
+    m_Localized: Light
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660967
+    m_Localized: Light
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660968
+    m_Localized: Daedra
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660969
+    m_Localized: Summoning
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660970
+    m_Localized: Rest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660971
+    m_Localized: Court
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660972
+    m_Localized: Pit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660973
+    m_Localized: Effect
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660974
+    m_Localized: Entrance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660975
+    m_Localized: Path
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660976
+    m_Localized: Start
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660977
+    m_Localized: Quest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660978
+    m_Localized: Create
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660979
+    m_Localized: Prison
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660980
+    m_Localized: Prison exit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660981
+    m_Localized: Random monster
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660982
+    m_Localized: Monster
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660983
+    m_Localized: Gothryd
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660984
+    m_Localized: Aubki
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660985
+    m_Localized: Provlith
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660986
+    m_Localized: Popudax
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660987
+    m_Localized: Cyadasga
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660988
+    m_Localized: Myniseva
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660989
+    m_Localized: Mobar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660990
+    m_Localized: Bridwell
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660991
+    m_Localized: Prince Lhotun
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660992
+    m_Localized: Lady Northbridge
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660993
+    m_Localized: Queen Akorithi
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660994
+    m_Localized: Prince Greklith
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660995
+    m_Localized: Princess Elysana
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660996
+    m_Localized: Princess Morgiah
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660997
+    m_Localized: Queen Barenziah
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660998
+    m_Localized: King Eadwyre
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619660999
+    m_Localized: Prince Helseth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619661000
+    m_Localized: Karethys
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619661001
+    m_Localized: Lord Castellian
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619661002
+    m_Localized: blue-cloaked woman (court wayrest)
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619661003
+    m_Localized: guard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619661004
+    m_Localized: guard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619661005
+    m_Localized: guard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619661006
+    m_Localized: jester
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619661007
+    m_Localized: jester
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619661008
+    m_Localized: jester
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619661009
+    m_Localized: lutist
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619661010
+    m_Localized: stylish fat man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619661011
+    m_Localized: bearded old man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619661012
+    m_Localized: page boy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619661013
+    m_Localized: guard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619661014
+    m_Localized: guard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619661015
+    m_Localized: guard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619661016
+    m_Localized: wise-looking man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619661017
+    m_Localized: flute player
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619661018
+    m_Localized: woman in gray
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619661019
+    m_Localized: scruffy sailor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619661020
+    m_Localized: nearly naked man
+    m_Metadata:
+      m_Items: []
+  - m_Id: 35641619661021
+    m_Localized: blacksmith
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 1

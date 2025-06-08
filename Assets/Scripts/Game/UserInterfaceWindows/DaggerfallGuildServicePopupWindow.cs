@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -224,6 +224,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ItemCollection items = new ItemCollection();
             int numOfItems = (buildingDiscoveryData.quality / 2) + 1;
 
+            // Store state of random sequence
+            UnityEngine.Random.State prevState = UnityEngine.Random.state;
+
             // Seed random from game time to rotate magic stock every 24 game hours
             // This more or less resolves issue of magic item stock not being deterministic every time player opens window
             // Doesn't match classic exactly as classic stocking method unknown, but should be "good enough" for now
@@ -262,6 +265,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     items.AddItem(magicItem);
                 }
             }
+            UnityEngine.Random.state = prevState;   // Restore random state
             return items;
         }
 
@@ -322,6 +326,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 }
                 return;
             }
+
+            // Handle custom service
+            Services.CustomGuildService customService;
+            if (Services.GetCustomGuildService((int)service, out customService))
+            {
+                CloseWindow();
+                customService(this);
+                return;
+            }
+
             // Handle known service
             DaggerfallTradeWindow tradeWindow;
             switch (service)
@@ -433,11 +447,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 default:
                     CloseWindow();
-                    Services.CustomGuildService customService;
-                    if (Services.GetCustomGuildService((int)service, out customService))
-                        customService(this);
-                    else
-                        DaggerfallUI.MessageBox("Guild service not yet implemented.");
+                    DaggerfallUI.MessageBox("Guild service not yet implemented.");
                     break;
             }
         }
@@ -551,9 +561,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Get the faction id for affecting reputation on success/failure
             int factionId = GetFactionIdForGuild();
 
+            // Set the effective guild rank, player level can override for some guilds. (e.g. Mages/Knights)
+            int rank = guild.Rank;
+            if (guild.IsSatisfyQuestReqByLevel() && playerEntity.Level > rank)
+                rank = playerEntity.Level;
+
             // Set up a pool of available quests.
             QuestListsManager questListsManager = GameManager.Instance.QuestListsManager;
-            questPool = questListsManager.GetGuildQuestPool(guildGroup, status, factionId, guild.GetReputation(playerEntity), guild.Rank);
+            questPool = questListsManager.GetGuildQuestPool(guildGroup, status, factionId, guild.GetReputation(playerEntity), rank);
 
             // Show the quest selection list if that feature has been enabled.
             if (DaggerfallUnity.Settings.GuildQuestListBox)
@@ -618,7 +633,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     // Partially loading the quest to get the human readable quest name.
                     Quest quest = GameManager.Instance.QuestListsManager.LoadQuest(questPool[i], GetFactionIdForGuild(), true);
-                    questPicker.ListBox.AddItem(quest.DisplayName ?? quest.QuestName);
+                    string displayName = quest.DisplayName;
+                    string localizedDisplayName = QuestMachine.Instance.GetLocalizedQuestDisplayName(quest.QuestName);
+                    if (!string.IsNullOrEmpty(localizedDisplayName))
+                        displayName = localizedDisplayName;
+                    questPicker.ListBox.AddItem(displayName ?? quest.QuestName);
                     quest.Dispose();
                 }
                 catch (Exception)

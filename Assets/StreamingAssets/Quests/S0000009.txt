@@ -124,6 +124,11 @@ Message:  1018
  risk your life for a dead man?
  You are being watched.
 
+Message:  1019
+%pcn needs to die. No excuses.
+<ce>                                    
+<ce>                                 -- W.
+
 Message:  1020
 <ce>                      _foil_ says "Who were those
 <ce>                  barbarians? They almost killed you!
@@ -158,6 +163,7 @@ Item _note_ letter used 1013
 Item _reward_ gold
 Item _letter45_ letter used 1018
 Item _letter46_ letter used 1016
+Item _letter47_ letter used 1019
 Item _bribe_ gold
 
 Person _elysana_ named Princess_Elysana atHome
@@ -175,8 +181,6 @@ Foe _knights_ is Knight
 	start timer _giveLetter_ 
 	give pc _letter45_ notify 1015 
 	add _elysana_ as questor 
-	start task _spawnBarbarians_
-	start task _spawnKnights_
 
 _npcclicked_ task:
 	clicked npc _contact_ 
@@ -201,6 +205,8 @@ _yes_ task:
 	add _foil_ face 
 	change repute with _elysana_ by -25 
 	unset _clickedElysana_ 
+	start task _spawnBarbarians_
+	start task _spawnKnights_
 
 _no_ task:
 	say RefuseQuest 
@@ -212,7 +218,10 @@ _S.05_ task:
 
 _S.06_ task:
 	injured _knights_ 
-	give item _letter45_ to _knights_ 
+	give item _letter47_ to _knights_ 
+-- this was previously letter45, which was the one you get at the start of the quest.
+-- letter47 is a new addition with text 1019. enemy soldiers should not be carrying
+-- the letter you received previously.
 
 _S.07_ task:
 	killed 3 _barbarians_ 

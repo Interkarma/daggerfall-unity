@@ -131,7 +131,7 @@ Item _gold_ gold
 
 Person _qgiver_ group Questor
 
-Place _dungeon_ remote dungeon
+Place _dungeon_ remote dungeon7
 
 Clock _2dung_ 00:00 0 flag 17 range 0 2
 

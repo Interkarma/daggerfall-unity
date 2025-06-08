@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -19,9 +19,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region UI Rects
 
-        Rect talkButtonRect = new Rect(5, 5, 120, 7);
-        Rect serviceButtonRect = new Rect(5, 14, 120, 7);
-        Rect exitButtonRect = new Rect(44, 24, 43, 15);
+        protected Rect talkButtonRect = new Rect(5, 5, 120, 7);
+        protected Rect serviceButtonRect = new Rect(5, 14, 120, 7);
+        protected Rect exitButtonRect = new Rect(44, 24, 43, 15);
 
         #endregion
 

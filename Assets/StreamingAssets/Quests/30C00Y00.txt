@@ -120,9 +120,9 @@ Message:  1030
 --        _qgfriend_ occurs 12 times.
 
 QBN:
-Item _artifact_ artifact Ring_of_Namira used 1013
+Item _artifact_ artifact Ring_of_Namira anyInfo 1013
 
-Person _questgiver_ face 112 group Questor anyInfo 1013
+Person _questgiver_ face 112 named Namira
 Person _qgfriend_ group Librarian anyInfo 1011 rumors 1012
 
 Place _mondung_ remote dungeon

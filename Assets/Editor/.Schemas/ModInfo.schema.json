@@ -65,6 +65,15 @@
                     },
                     "uniqueItems": true
                 },
+                "QuestLists": {
+                    "type": "array",
+                    "description": "Names of additional quest lists to be automatically imported.",
+                    "items": {
+                        "type": "string",
+                        "description": "The name of a quest list file without extension and without 'QuestList' prefix."
+                    },
+                    "uniqueItems": true
+                },
                 "SpellIcons": {
                     "type": "array",
                     "description": "Names of spell icon packs. See https://www.dfworkshop.net/projects/daggerfall-unity/modding/additional-resources/#spell-icons for details.",

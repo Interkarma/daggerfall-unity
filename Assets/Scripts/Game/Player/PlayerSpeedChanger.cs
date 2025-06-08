@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -64,8 +64,6 @@ namespace DaggerfallWorkshop.Game
             currentRunSpeed = GetRunSpeed();
         }
 
-
-
         /// <summary>
         /// Record player input for speed adjustment
         /// </summary>
@@ -81,12 +79,18 @@ namespace DaggerfallWorkshop.Game
             else
                 sneakingMode = sneakingMode ^ InputManager.Instance.ActionStarted(InputManager.Actions.Sneak);
 
-            if (InputManager.Instance.ActionStarted(InputManager.Actions.AutoRun))
+            if (InputManager.Instance.ActionStarted(InputManager.Actions.AutoRun)
+                && !InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards))
             {
                 InputManager.Instance.ToggleAutorun = !InputManager.Instance.ToggleAutorun;
 
                 ToggleRun = InputManager.Instance.ToggleAutorun;
-                runningMode = runningMode ^ InputManager.Instance.ToggleAutorun;
+
+                // If we enabled autorunning, and we are currently not running, run.
+                // This allows a player already running to keep running instead of
+                // moving to "autowalking"
+                if (ToggleRun && !isRunning)
+                    runningMode = runningMode ^ InputManager.Instance.ToggleAutorun;
             }
 
             if (InputManager.Instance.ActionStarted(InputManager.Actions.MoveBackwards))

@@ -12,7 +12,7 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                          Our sister _witch_
-<ce>                    has been in imprisoned. We need
+<ce>                    has been imprisoned. We need
 <ce>                   someone like thee to rescue her.
 <ce>                           Art thou willing?
 

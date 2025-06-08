@@ -1,11 +1,11 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: TheLacus
 // Contributors:
-// 
+//
 // Notes:
 //
 
@@ -298,13 +298,16 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             float currentInstanceID;
             if (deserializedObjects.TryGetValue(assetKey, out currentInstanceID) && currentInstanceID == instanceID)
                 return;
-            
+
             fsSerializer.Context.Set(mod);
             object instance = gameObject;
             fsData fsData = fsJsonParser.Parse(LoadSerializedFile(mod, gameObject.name));
             fsResult fsResult = fsSerializer.TryDeserialize(fsData, typeof(GameObject), typeof(ImportedComponentsConverter), ref instance);
-            if (fsResult.Failed || fsResult.HasWarnings)
+            if (fsResult.Failed)
                 Debug.LogErrorFormat("Deserialization of {0} from {1} {2} with messages:\n{3}",
+                    gameObject.name, mod.Title, fsResult.Succeeded ? "succeeded" : "failed", fsResult.FormattedMessages);
+            else if(fsResult.HasWarnings)
+                Debug.LogWarningFormat("Deserialization of {0} from {1} {2} with messages:\n{3}",
                     gameObject.name, mod.Title, fsResult.Succeeded ? "succeeded" : "failed", fsResult.FormattedMessages);
 
             deserializedObjects[assetKey] = instanceID;

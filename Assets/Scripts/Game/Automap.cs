@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -1594,7 +1594,7 @@ namespace DaggerfallWorkshop.Game
         {
             // edit user note marker
             messageboxUserNote = new DaggerfallInputMessageBox(DaggerfallUI.UIManager, DaggerfallUI.Instance.AutomapWindow);
-            messageboxUserNote.SetTextBoxLabel("you note: ");
+            messageboxUserNote.SetTextBoxLabel(TextManager.Instance.GetLocalizedText("youNote"));
             messageboxUserNote.TextPanelDistanceX = 5;
             messageboxUserNote.TextPanelDistanceY = 8;            
             if (listUserNoteMarkers.ContainsKey(id))
@@ -1787,7 +1787,17 @@ namespace DaggerfallWorkshop.Game
                 {
                     for (int x = 0; x < microMapBlockSizeInPixels; x++)
                     {
-                        textureMicroMap.SetPixel(xBlockPos * microMapBlockSizeInPixels + x, yBlockPos * microMapBlockSizeInPixels + y, Color.yellow);
+                        if (DaggerfallUnity.Settings.DungeonMicMapQoL)
+                        {
+                            if (block.BlockName.Substring(0, 1) == "B")
+                                textureMicroMap.SetPixel(xBlockPos * microMapBlockSizeInPixels + x, yBlockPos * microMapBlockSizeInPixels + y, DaggerfallUnity.Settings.DunMicMapBorderColor);
+                            else
+                                textureMicroMap.SetPixel(xBlockPos * microMapBlockSizeInPixels + x, yBlockPos * microMapBlockSizeInPixels + y, DaggerfallUnity.Settings.DunMicMapInnerColor);
+                        }
+                        else
+                        {
+                            textureMicroMap.SetPixel(xBlockPos * microMapBlockSizeInPixels + x, yBlockPos * microMapBlockSizeInPixels + y, Color.yellow);
+                        }
                     }
                 }
             }
@@ -2577,6 +2587,7 @@ namespace DaggerfallWorkshop.Game
 
                 Vector3 playerAdvancedPos = gameObjectPlayerAdvanced.transform.position;
                 Material automapMaterial = new Material(Shader.Find("Daggerfall/Automap"));
+                automapMaterial.SetColor("_WaterColor", GameManager.Instance.PlayerEnterExit.UnderwaterFog.waterMapColor);
 
                 OnInjectMeshAndMaterialProperties(playerIsInsideBuilding, playerAdvancedPos, automapMaterial, resetDiscoveryState);
             }

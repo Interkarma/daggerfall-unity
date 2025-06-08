@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -47,7 +47,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 videoPlayer.playOnAwake = false;
             }
 
-            ScaleMode = DaggerfallUnity.Settings.FreeScaling ? ScaleMode.StretchToFill : ScaleMode.ScaleToFit;
+            ScaleMode = DaggerfallUnity.Settings.RetroRenderingMode != 0 && DaggerfallUnity.Settings.RetroModeAspectCorrection != 0 ? ScaleMode.StretchToFill : ScaleMode.ScaleToFit;
         }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
             base.Draw();
 
-            GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), videoPlayer.texture, ScaleMode);
+            DaggerfallUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), videoPlayer.texture, ScaleMode);
         }
 
         /// <summary>

@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -508,11 +508,15 @@ namespace DaggerfallConnect.Arena2
             }
             else if (block == 945 || block == 946)  // N0000022.RDB or N0000023.RDB
             {
-                blocks[block].DFBlock.RdbBlock.ObjectRootList[2].RdbObjects = null;
+                blocks[block].DFBlock.RdbBlock.ObjectRootList[2].RdbObjects = null; // Remove bad door
             }
             else if (block == 958)  // N0000035.RDB
             {
-                blocks[block].DFBlock.RdbBlock.ObjectRootList[0].RdbObjects[36].YPos = -300;
+                blocks[block].DFBlock.RdbBlock.ObjectRootList[0].RdbObjects[36].YPos = -300; // Correct door height
+            }
+            else if (block == 975)  // N0000052.RDB
+            {
+                blocks[block].DFBlock.RdbBlock.ObjectRootList[0].RdbObjects[24].XPos = 543; // Correct lever placement
             }
             else if (block == 1025) // W0000009.RDB
             {
@@ -842,18 +846,19 @@ namespace DaggerfallConnect.Arena2
             BuildingReplacementData buildingReplacementData;
             for (int i = 0; i < recordCount; i++)
             {
-                // Check for replacement building data and use it if found
+                // Check for replacement building data and use it, if found
                 if (WorldDataReplacement.GetBuildingReplacementData(blocks[block].Name, block, i, out buildingReplacementData))
                 {
                     blocks[block].DFBlock.RmbBlock.SubRecords[i] = buildingReplacementData.RmbSubRecord;
-                    blocks[block].DFBlock.RmbBlock.FldHeader.BuildingDataList[i].FactionId = buildingReplacementData.FactionId;
+                    if (buildingReplacementData.FactionId > 0)
+                        blocks[block].DFBlock.RmbBlock.FldHeader.BuildingDataList[i].FactionId = buildingReplacementData.FactionId;
                     blocks[block].DFBlock.RmbBlock.FldHeader.BuildingDataList[i].BuildingType = (DFLocation.BuildingTypes)buildingReplacementData.BuildingType;
                     if (buildingReplacementData.Quality > 0)
                         blocks[block].DFBlock.RmbBlock.FldHeader.BuildingDataList[i].Quality = buildingReplacementData.Quality;
                     if (buildingReplacementData.NameSeed > 0)
                         blocks[block].DFBlock.RmbBlock.FldHeader.BuildingDataList[i].NameSeed = buildingReplacementData.NameSeed;
-                    if (buildingReplacementData.AutoMapData != null && buildingReplacementData.AutoMapData.Length == 64 * 64)
-                        blocks[block].DFBlock.RmbBlock.FldHeader.AutoMapData = buildingReplacementData.AutoMapData;
+
+                    WorldDataReplacement.ApplyBuildingReplacementAutoMapData(buildingReplacementData, ref blocks[block].DFBlock.RmbBlock.FldHeader.AutoMapData);
                 }
                 else
                 {

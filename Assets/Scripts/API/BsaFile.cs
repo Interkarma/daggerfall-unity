@@ -1,5 +1,5 @@
-﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -208,7 +208,7 @@ namespace DaggerfallConnect.Arena2
         public int GetRecordLength(int record)
         {
             // Validate
-            if (record >= header.DirectoryCount)
+            if (record < 0 || record >= header.DirectoryCount)
                 return 0;
 
             // Return length of this record
@@ -231,7 +231,7 @@ namespace DaggerfallConnect.Arena2
         public string GetRecordName(int record)
         {
             // Validate
-            if (record >= header.DirectoryCount)
+            if (record < 0 || record >= header.DirectoryCount)
                 return string.Empty;
 
             // Return name of this record
@@ -254,7 +254,7 @@ namespace DaggerfallConnect.Arena2
         public uint GetRecordId(int record)
         {
             // Validate
-            if (record >= header.DirectoryCount || header.DirectoryType != DirectoryTypes.NumberRecord)
+            if (record < 0 || record >= header.DirectoryCount || header.DirectoryType != DirectoryTypes.NumberRecord)
                 return 0;
 
             return numberRecordDirectory[record].RecordId;
@@ -268,7 +268,7 @@ namespace DaggerfallConnect.Arena2
         public byte[] GetRecordBytes(int record)
         {
             // Validate
-            if (record >= header.DirectoryCount)
+            if (record < 0 || record >= header.DirectoryCount)
                 return null;
 
             // Read record data into buffer

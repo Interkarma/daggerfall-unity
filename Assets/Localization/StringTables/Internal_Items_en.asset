@@ -1,0 +1,1174 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Internal_Items_en
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: 70b313a955a9d7247a7bcb5c4227f006, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 240214448009216
+    m_Localized: Ruby
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214473175040
+    m_Localized: Emerald
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214473175041
+    m_Localized: Sapphire
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214473175042
+    m_Localized: Diamond
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369344
+    m_Localized: Jade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369345
+    m_Localized: Turquoise
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369346
+    m_Localized: Malachite
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369347
+    m_Localized: Amber
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369348
+    m_Localized: Twigs
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369349
+    m_Localized: Green Leaves
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369350
+    m_Localized: Red Flowers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369351
+    m_Localized: Yellow Flowers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369352
+    m_Localized: Root Tendrils
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369353
+    m_Localized: Root Bulb
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369354
+    m_Localized: Pine Branch
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369355
+    m_Localized: Green Berries
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369356
+    m_Localized: Red Berries
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369357
+    m_Localized: Yellow Berries
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369358
+    m_Localized: Clover
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369359
+    m_Localized: Red Rose
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369360
+    m_Localized: Yellow Rose
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369361
+    m_Localized: Black Rose
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369362
+    m_Localized: White Rose
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369363
+    m_Localized: Red Poppy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369364
+    m_Localized: Black Poppy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369365
+    m_Localized: Golden Poppy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369366
+    m_Localized: White Poppy
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369367
+    m_Localized: Ginkgo Leaves
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369368
+    m_Localized: Bamboo
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369369
+    m_Localized: Palm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369370
+    m_Localized: Aloe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369371
+    m_Localized: Fig
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369372
+    m_Localized: Cactus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369373
+    m_Localized: Werewolf's Blood
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369374
+    m_Localized: Wereboar's Tusk
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369375
+    m_Localized: Fairy Dragon's Scales
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369376
+    m_Localized: Nymph Hair
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369377
+    m_Localized: Unicorn Horn
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369378
+    m_Localized: Wraith Essence
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369379
+    m_Localized: Ectoplasm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369380
+    m_Localized: Ghoul's Tongue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369381
+    m_Localized: Spider's Venom
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369382
+    m_Localized: Troll's Blood
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369383
+    m_Localized: Snake Venom
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369384
+    m_Localized: Gorgon Snake
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369385
+    m_Localized: Lich Dust
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369386
+    m_Localized: Dragon's Scales
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369387
+    m_Localized: Giant Scorpion Stinger
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369388
+    m_Localized: Small Scorpion Stinger
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369389
+    m_Localized: Mummy Wrappings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369390
+    m_Localized: Giant's Blood
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369391
+    m_Localized: Basilisk's Eye
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369392
+    m_Localized: Gryphon's Feather
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369393
+    m_Localized: Daedra's Heart
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369394
+    m_Localized: Saint's Hair
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369395
+    m_Localized: Holy Relic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369396
+    m_Localized: Big Tooth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369397
+    m_Localized: Medium Tooth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369398
+    m_Localized: Small Tooth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369399
+    m_Localized: Pure Water
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369400
+    m_Localized: Rain Water
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369401
+    m_Localized: Orc's Blood
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369402
+    m_Localized: Elixir Vitae
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369403
+    m_Localized: Nectar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369404
+    m_Localized: Ichor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369405
+    m_Localized: Mercury
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369406
+    m_Localized: Tin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369407
+    m_Localized: Brass
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369408
+    m_Localized: Lodestone
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369409
+    m_Localized: Sulphur
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369410
+    m_Localized: Lead
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369411
+    m_Localized: Iron
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369412
+    m_Localized: Copper
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369413
+    m_Localized: Silver
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369414
+    m_Localized: Gold
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369415
+    m_Localized: Platinum
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369416
+    m_Localized: Ivory
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369417
+    m_Localized: Pearl
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369418
+    m_Localized: Indulcet
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369419
+    m_Localized: Sursum
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369420
+    m_Localized: Quaesto Vil
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369421
+    m_Localized: Aegrotat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369422
+    m_Localized: Glass Jar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369423
+    m_Localized: Glass Bottle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369424
+    m_Localized: Decanter
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369425
+    m_Localized: Clay Jar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369426
+    m_Localized: Small Sack
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369427
+    m_Localized: Large Sack
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369428
+    m_Localized: Quiver
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369429
+    m_Localized: Backpack
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369430
+    m_Localized: Small Chest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369431
+    m_Localized: Wine Rack
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369432
+    m_Localized: Large Chest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369433
+    m_Localized: Small Cart
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369434
+    m_Localized: Horse
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369435
+    m_Localized: Rowboat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369436
+    m_Localized: Large Boat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369437
+    m_Localized: Small Ship
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369438
+    m_Localized: Large Galley
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369439
+    m_Localized: Deed to Townhouse
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369440
+    m_Localized: Deed to House
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369441
+    m_Localized: Deed to Manor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369442
+    m_Localized: Cuirass
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369443
+    m_Localized: Gauntlets
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369444
+    m_Localized: Greaves
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369445
+    m_Localized: Left Pauldron
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369446
+    m_Localized: Right Pauldron
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369447
+    m_Localized: Helm
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369448
+    m_Localized: Boots
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369449
+    m_Localized: Buckler
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369450
+    m_Localized: Round Shield
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369451
+    m_Localized: Kite Shield
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369452
+    m_Localized: Tower Shield
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369453
+    m_Localized: Dagger
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369454
+    m_Localized: Tanto
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369455
+    m_Localized: Staff
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369456
+    m_Localized: Shortsword
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369457
+    m_Localized: Wakazashi
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369458
+    m_Localized: Broadsword
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369459
+    m_Localized: Saber
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369460
+    m_Localized: Longsword
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369461
+    m_Localized: Katana
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369462
+    m_Localized: Claymore
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369463
+    m_Localized: Dai-katana
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369464
+    m_Localized: Mace
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369465
+    m_Localized: Flail
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369466
+    m_Localized: Warhammer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369467
+    m_Localized: Battle Axe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369468
+    m_Localized: War Axe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369469
+    m_Localized: Short Bow
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369470
+    m_Localized: Long Bow
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369471
+    m_Localized: Arrow
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369472
+    m_Localized: Spellbook
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369473
+    m_Localized: Amulet
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369474
+    m_Localized: Bracer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369475
+    m_Localized: Ring
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369476
+    m_Localized: Bracelet
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369477
+    m_Localized: Mark
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369478
+    m_Localized: Torc
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369479
+    m_Localized: Cloth Amulet
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369480
+    m_Localized: Wand
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369481
+    m_Localized: Straps
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369482
+    m_Localized: Armbands
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369483
+    m_Localized: Kimono
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369484
+    m_Localized: Fancy Armbands
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369485
+    m_Localized: Sash
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369486
+    m_Localized: Eodoric
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369487
+    m_Localized: Shoes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369488
+    m_Localized: Tall Boots
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369489
+    m_Localized: Boots
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369490
+    m_Localized: Sandals
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369491
+    m_Localized: Casual Pants
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369492
+    m_Localized: Breeches
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369493
+    m_Localized: Short Skirt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369494
+    m_Localized: Casual Cloak
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369495
+    m_Localized: Formal Cloak
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369496
+    m_Localized: Khajiit Suit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369497
+    m_Localized: Dwynnen Surcoat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369498
+    m_Localized: Short Tunic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369499
+    m_Localized: Formal Tunic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369500
+    m_Localized: Toga
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369501
+    m_Localized: Reversible Tunic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369502
+    m_Localized: Loincloth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369503
+    m_Localized: Plain Robes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369504
+    m_Localized: Priest Robes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369505
+    m_Localized: Short Shirt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369506
+    m_Localized: Short Shirt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369507
+    m_Localized: Long Shirt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369508
+    m_Localized: Long Shirt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369509
+    m_Localized: Short Shirt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369510
+    m_Localized: Short Shirt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369511
+    m_Localized: Long Shirt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369512
+    m_Localized: Long Shirt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369513
+    m_Localized: Open Tunic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369514
+    m_Localized: Wrap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369515
+    m_Localized: Long Skirt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369516
+    m_Localized: Anticlere Surcoat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369517
+    m_Localized: Challenger Straps
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369518
+    m_Localized: Short Shirt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369519
+    m_Localized: Long Shirt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369520
+    m_Localized: Vest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369521
+    m_Localized: Champion Straps
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369522
+    m_Localized: Brassiere
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369523
+    m_Localized: Formal Brassiere
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369524
+    m_Localized: Peasant Blouse
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369525
+    m_Localized: Eodoric
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369526
+    m_Localized: Shoes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369527
+    m_Localized: Tall Boots
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369528
+    m_Localized: Boots
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369529
+    m_Localized: Sandals
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369530
+    m_Localized: Casual Pants
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369531
+    m_Localized: Casual Cloak
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369532
+    m_Localized: Formal Cloak
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369533
+    m_Localized: Khajiit Suit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369534
+    m_Localized: Formal Eodoric
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369535
+    m_Localized: Evening Gown
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369536
+    m_Localized: Day Gown
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369537
+    m_Localized: Casual Dress
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369538
+    m_Localized: Strapless Dress
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369539
+    m_Localized: Loincloth
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369540
+    m_Localized: Plain Robes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369541
+    m_Localized: Priestess Robes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369542
+    m_Localized: Short Shirt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369543
+    m_Localized: Short Shirt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369544
+    m_Localized: Long Shirt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369545
+    m_Localized: Long Shirt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369546
+    m_Localized: Short Shirt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369547
+    m_Localized: Short Shirt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369548
+    m_Localized: Long Shirt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369549
+    m_Localized: Long Shirt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369550
+    m_Localized: Open Tunic
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369551
+    m_Localized: Wrap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369552
+    m_Localized: Long Skirt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369553
+    m_Localized: Tights
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369554
+    m_Localized: Short Shirt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369555
+    m_Localized: Long Shirt
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369556
+    m_Localized: Vest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369557
+    m_Localized: Plain Single Bed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369558
+    m_Localized: Fancy Single Bed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369559
+    m_Localized: Plain Double Bed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369560
+    m_Localized: Fancy Double Bed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369561
+    m_Localized: Large Oak Table
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369562
+    m_Localized: Large Cherry Table
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369563
+    m_Localized: Large Mahogany Table
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369564
+    m_Localized: Large Teak Table
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369565
+    m_Localized: Small Oak Table
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369566
+    m_Localized: Small Cherry Table
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369567
+    m_Localized: Small Mahogany Table
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369568
+    m_Localized: Small Teak Table
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369569
+    m_Localized: Oak Chair
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369570
+    m_Localized: Cherry Chair
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369571
+    m_Localized: Mahogany Chair
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369572
+    m_Localized: Teak Chair
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369573
+    m_Localized: Curtains
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369574
+    m_Localized: Fancy Curtains
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369575
+    m_Localized: Large Pillow
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369576
+    m_Localized: Small Pillow
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369577
+    m_Localized: Small Plain Rug
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369578
+    m_Localized: Large Plain Rug
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369579
+    m_Localized: Small Fine Rug
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369580
+    m_Localized: Large Fine Rug
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369581
+    m_Localized: Large Tapestry
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369582
+    m_Localized: Medium Tapestry
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369583
+    m_Localized: Small Tapestry
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369584
+    m_Localized: Large Skins
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369585
+    m_Localized: Small Skins
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369586
+    m_Localized: Candelabra
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369587
+    m_Localized: Torch
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369588
+    m_Localized: Lantern
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369589
+    m_Localized: Bandage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369590
+    m_Localized: Shubbery
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369591
+    m_Localized: Flowers
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369592
+    m_Localized: Oil
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369593
+    m_Localized: Candle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369594
+    m_Localized: Telescope
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369595
+    m_Localized: Scales
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369596
+    m_Localized: Globe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369597
+    m_Localized: Skeleton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369598
+    m_Localized: Prayer Beads
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369599
+    m_Localized: Rare Symbol
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369600
+    m_Localized: Common Symbol
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369601
+    m_Localized: Bell
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369602
+    m_Localized: Holy Water
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369603
+    m_Localized: Talisman
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369604
+    m_Localized: Religious Item
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369605
+    m_Localized: Small Statue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369606
+    m_Localized: Large Statue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369607
+    m_Localized: Icon
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369608
+    m_Localized: Scarab
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369609
+    m_Localized: Holy Candle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369610
+    m_Localized: Holy Dagger
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369611
+    m_Localized: Holy Tome
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369612
+    m_Localized: Altar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369613
+    m_Localized: Font
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369614
+    m_Localized: Soul Trap
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369615
+    m_Localized: Letter of Credit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369616
+    m_Localized: Gold Pieces
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369617
+    m_Localized: Book
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369618
+    m_Localized: Potion Recipe
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369619
+    m_Localized: Parchment
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369620
+    m_Localized: Totem
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369621
+    m_Localized: Dead Body
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369622
+    m_Localized: Mantella
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369623
+    m_Localized: Finger
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369624
+    m_Localized: Painting
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369625
+    m_Localized: House Deed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369626
+    m_Localized: Ship Deed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 240214477369627
+    m_Localized: Map
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 1

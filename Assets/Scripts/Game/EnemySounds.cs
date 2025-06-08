@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -12,6 +12,7 @@
 using UnityEngine;
 using System.Collections;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Entity;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -217,7 +218,8 @@ namespace DaggerfallWorkshop.Game
 
         private bool IgnoreHumanSounds()
         {
-            if (mobile.Enemy.ID > 127 && mobile.Enemy.ID != 146 && MuteHumanSounds)
+            // Mute all class enemies, except the City watch
+            if ((mobile.Enemy.ID != (int)MobileTypes.Knight_CityWatch && DaggerfallEntity.IsClassEnemyId(mobile.Enemy.ID)) && MuteHumanSounds)
                 return true;
             else
                 return false;

@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -1057,6 +1057,11 @@ namespace DaggerfallConnect
 
             /// <summary>Action flag.</summary>
             public Byte Action;
+
+            /* DFU custom fields */
+
+            /// <summary>True if the data is custom data placed by a DFU tool. False if the data comes from arena2</summary>
+            public bool IsCustomData;
         }
 
         /// <summary>

@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -17,6 +17,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game;
 using System.Linq;
+using DaggerfallWorkshop.Game.Questing;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -40,7 +41,9 @@ namespace DaggerfallWorkshop.Utility
         public const uint CityGateClosedModelID = 447;
         public const uint BulletinBoardModelID = 41739;
 
+#if !UNITY_EDITOR
         private static int maxLocationCacheSize = 12;
+#endif
         private static List<KeyValuePair<int, DFBlock[]>> locationCache = new List<KeyValuePair<int, DFBlock[]>>();
 
         /// <summary>Clear the location cache. Use if block data is changed dynamically.</summary>
@@ -50,9 +53,6 @@ namespace DaggerfallWorkshop.Utility
         }
 
         #endregion
-
-        // Animal sounds range. Matched to classic.
-        const float animalSoundMaxDistance = 768 * MeshReader.GlobalScale;
 
         #region Structures
 
@@ -73,7 +73,7 @@ namespace DaggerfallWorkshop.Utility
         /// <returns>Vector3 with the scaling factors</returns>
         public static Vector3 GetModelScaleVector(DFBlock.RmbBlock3dObjectRecord obj)
         {
-            return new Vector3(obj.XScale == 0 ? 1 : obj.XScale, obj.YScale == 0 ? 1 : obj.YScale, obj.ZScale == 0 ? 1 : obj.YScale);
+            return new Vector3(obj.XScale == 0 ? 1 : obj.XScale, obj.YScale == 0 ? 1 : obj.YScale, obj.ZScale == 0 ? 1 : obj.ZScale);
         }
 
         /// <summary>
@@ -348,48 +348,33 @@ namespace DaggerfallWorkshop.Utility
                     obj.XPos,
                     -obj.YPos + blockFlatsOffsetY,
                     obj.ZPos + BlocksFile.RMBDimension) * MeshReader.GlobalScale;
-
-                // Import custom 3d gameobject instead of flat
-                if (MeshReplacement.ImportCustomFlatGameobject(obj.TextureArchive, obj.TextureRecord, billboardPosition, flatsParent) != null)
-                    continue;
-
-                //// Use misc billboard atlas where available
-                //if (miscBillboardsAtlas != null && miscBillboardsBatch != null)
-                //{
-                //    TextureAtlasBuilder.AtlasItem item = miscBillboardsAtlas.GetAtlasItem(obj.TextureArchive, obj.TextureRecord);
-                //    if (item.key != -1)
-                //    {
-                //        miscBillboardsBatch.AddItem(item.rect, item.textureItem.size, item.textureItem.scale, billboardPosition);
-                //        continue;
-                //    }
-                //}
-
-                // Add to batch where available
-                //if (obj.TextureArchive == TextureReader.AnimalsTextureArchive && animalsBillboardBatch != null)
-                //{
-                //    animalsBillboardBatch.AddItem(obj.TextureRecord, billboardPosition);
-                //    continue;
-                //}
-
-                // Add standalone billboard gameobject
-                GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, flatsParent);
-                go.transform.position = billboardPosition;
-                AlignBillboardToBase(go);
+                
+                GameObject go = MeshReplacement.ImportCustomFlatGameobject(obj.TextureArchive, obj.TextureRecord, billboardPosition, flatsParent);
+                if (go == null)
+                {
+                    // Add standalone billboard gameobject
+                    go = GameObjectHelper.CreateDaggerfallBillboardGameObject(obj.TextureArchive, obj.TextureRecord, flatsParent);
+                    go.transform.position = billboardPosition;
+                    AlignBillboardToBase(go);
+                }
 
                 // Add animal sound
                 if (obj.TextureArchive == TextureReader.AnimalsTextureArchive)
-                    AddAnimalAudioSource(go);
+                    GameObjectHelper.AddAnimalAudioSource(go, obj.TextureRecord);
 
                 // If flat record has a non-zero faction id, then it's an exterior NPC
                 if (obj.FactionID != 0)
                 {
                     // Add RMB data to billboard
-                    DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
-                    dfBillboard.SetRMBPeopleData(obj.FactionID, obj.Flags, obj.Position);
+                    Billboard dfBillboard = go.GetComponent<Billboard>();
+                    if (dfBillboard != null)
+                        dfBillboard.SetRMBPeopleData(obj.FactionID, obj.Flags, obj.Position);
 
                     // Add StaticNPC behaviour
                     StaticNPC npc = go.AddComponent<StaticNPC>();
                     npc.SetLayoutData(obj, mapId, locationIndex);
+
+                    QuestMachine.Instance.SetupIndividualStaticNPC(go, obj.FactionID);
                 }
             }
         }
@@ -439,33 +424,37 @@ namespace DaggerfallWorkshop.Utility
                         billboardPosition.z = natureFlatsOffsetY;
                     }
 
-                    // Import custom 3d gameobject instead of flat
-                    if (MeshReplacement.ImportCustomFlatGameobject(archive, obj.TextureRecord, billboardPosition, flatsParent) != null)
-                        continue;
-
-                    // Add standalone billboard gameobject
-                    GameObject go = GameObjectHelper.CreateDaggerfallBillboardGameObject(archive, obj.TextureRecord, flatsParent);
-                    go.transform.position = billboardPosition;
-                    AlignBillboardToBase(go);
+                    GameObject go = MeshReplacement.ImportCustomFlatGameobject(archive, obj.TextureRecord, billboardPosition, flatsParent);
+                    bool isImported = go != null;
+                    if (!isImported)
+                    {
+                        // Add standalone billboard gameobject
+                        go = GameObjectHelper.CreateDaggerfallBillboardGameObject(archive, obj.TextureRecord, flatsParent);
+                        go.transform.position = billboardPosition;
+                        AlignBillboardToBase(go);
+                    }
 
                     // Add animal sound
                     if (archive == TextureReader.AnimalsTextureArchive)
-                        AddAnimalAudioSource(go);
+                        GameObjectHelper.AddAnimalAudioSource(go, obj.TextureRecord);
 
                     // If flat record has a non-zero faction id, then it's an exterior NPC
                     if (obj.FactionID != 0)
                     {
                         // Add RMB data to billboard
-                        DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
-                        dfBillboard.SetRMBPeopleData(obj.FactionID, obj.Flags, obj.Position);
+                        Billboard dfBillboard = go.GetComponent<Billboard>();
+                        if (dfBillboard != null)
+                            dfBillboard.SetRMBPeopleData(obj.FactionID, obj.Flags, obj.Position);
 
                         // Add StaticNPC behaviour
                         StaticNPC npc = go.AddComponent<StaticNPC>();
                         npc.SetLayoutData(obj, mapId, locationIndex);
+
+                        QuestMachine.Instance.SetupIndividualStaticNPC(go, obj.FactionID);
                     }
 
                     // If this is a light flat, import light prefab
-                    if (archive == TextureReader.LightsTextureArchive)
+                    if (archive == TextureReader.LightsTextureArchive && !isImported)
                     {
                         if (dfUnity.Option_CityLightPrefab == null)
                             return;
@@ -490,7 +479,7 @@ namespace DaggerfallWorkshop.Utility
         /// <param name="go">GameObject with DaggerfallBillboard component.</param>
         public static void AlignBillboardToBase(GameObject go)
         {
-            DaggerfallBillboard c = go.GetComponent<DaggerfallBillboard>();
+            Billboard c = go.GetComponent<Billboard>();
             if (c)
             {
                 c.AlignToBase();
@@ -642,6 +631,11 @@ namespace DaggerfallWorkshop.Utility
                     DFBlock block;
                     if (!contentReader.GetBlock(blockName, out block))
                         throw new Exception("GetCompleteBuildingData() could not read block " + blockName);
+
+                    // Make a copy of the building data array for our block copy since we're modifying it
+                    DFLocation.BuildingData[] buildingArray = new DFLocation.BuildingData[block.RmbBlock.FldHeader.BuildingDataList.Length];
+                    Array.Copy(block.RmbBlock.FldHeader.BuildingDataList, buildingArray, block.RmbBlock.FldHeader.BuildingDataList.Length);
+                    block.RmbBlock.FldHeader.BuildingDataList = buildingArray;
 
                     // Assign building data for this block
                     BuildingReplacementData buildingReplacementData;
@@ -846,47 +840,58 @@ namespace DaggerfallWorkshop.Utility
 
                     // Get model data
                     ModelData modelData;
-                    dfUnity.MeshReader.GetModelData(obj.ModelIdNum, out modelData);
+                    bool hasModelData = dfUnity.MeshReader.GetModelData(obj.ModelIdNum, out modelData);
 
-                    // Does this model have doors?
+                    // Does this Daggerfall model have any static doors?
                     StaticDoor[] staticDoors = null;
                     if (modelData.Doors != null)
                         staticDoors = GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, recordCount, modelMatrix);
 
+                    // Import custom GameObject, or else use the Daggerfall model
+                    GameObject go;
+                    if (!(go = MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, parent, modelMatrix)))
+                    {
+                        if (!hasModelData) {
+                            Debug.LogError($"Could not load model '{obj.ModelIdNum}' in block '{blockData.Name}'");
+                            continue;
+                        } else if (combiner == null || IsCityGate(obj.ModelIdNum) || IsBulletinBoard(obj.ModelIdNum) || PlayerActivate.HasCustomActivation(obj.ModelIdNum)) {
+                            AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent);
+                        } else {
+                            combiner.Add(ref modelData, modelMatrix);
+                        }
+                    }
+
                     // Store building information for first model of record
                     // First model is main record structure, others are attachments like posts
                     // Only main structure is needed to resolve building after hit-test
-                    int buildingKey = 0;
                     if (firstModel)
                     {
-                        // Create building key for this record - considered experimental for now
-                        buildingKey = BuildingDirectory.MakeBuildingKey((byte)layoutX, (byte)layoutY, (byte)recordCount);
-
                         StaticBuilding staticBuilding = new StaticBuilding();
                         staticBuilding.modelMatrix = modelMatrix;
                         staticBuilding.recordIndex = recordCount;
-                        staticBuilding.centre = new Vector3(modelData.DFMesh.Centre.X, modelData.DFMesh.Centre.Y, modelData.DFMesh.Centre.Z) * MeshReader.GlobalScale;
-                        staticBuilding.size = new Vector3(modelData.DFMesh.Size.X, modelData.DFMesh.Size.Y, modelData.DFMesh.Size.Z) * MeshReader.GlobalScale;
+                        if (go == null || modelData.Indices != null) {
+                            staticBuilding.size = new Vector3(modelData.DFMesh.Size.X, modelData.DFMesh.Size.Y, modelData.DFMesh.Size.Z) * MeshReader.GlobalScale;
+                            staticBuilding.centre = new Vector3(0, modelData.DFMesh.Size.Y / 2, 0) * MeshReader.GlobalScale; // All DF meshes are already centred on X & Z, moved this assumption to here from DaggerfallStaticBuildings.hasHit()
+                        } else {
+                            Renderer goRenderer = go.GetComponent<Renderer>();
+                            staticBuilding.centre = new Vector3(goRenderer.bounds.center.x, goRenderer.bounds.center.y, goRenderer.bounds.center.z) - go.transform.position;
+                            staticBuilding.size = new Vector3(goRenderer.bounds.size.x, goRenderer.bounds.size.y, goRenderer.bounds.size.z);
+                        }
                         buildingsOut.Add(staticBuilding);
                         firstModel = false;
                     }
 
-                    bool dontCreateStaticDoors = false;
-
-                    // Import custom GameObject or use Daggerfall Model
-                    GameObject go;
-                    if (go = MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, parent, modelMatrix))
+                    // For a custom model, create building key for this record and initialise any custom doors
+                    bool disableClassicDoors = false;
+                    if (go != null)
                     {
-                        // Find doors
-                        if (staticDoors != null && staticDoors.Length > 0)
-                            CustomDoor.InitDoors(go, staticDoors, buildingKey, out dontCreateStaticDoors);
+                        int buildingKey = BuildingDirectory.MakeBuildingKey((byte)layoutX, (byte)layoutY, (byte)recordCount);
+                        List<StaticDoor> customStaticDoors = CustomDoor.InitDoors(go, staticDoors, buildingKey, blockData.Index, recordCount, modelMatrix, out disableClassicDoors);
+                        doorsOut.AddRange(customStaticDoors);
                     }
-                    else if (combiner == null || IsCityGate(obj.ModelIdNum) || IsBulletinBoard(obj.ModelIdNum) || PlayerActivate.HasCustomActivation(obj.ModelIdNum))
-                        AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent);
-                    else
-                        combiner.Add(ref modelData, modelMatrix);
 
-                    if (modelData.Doors != null && !dontCreateStaticDoors)
+                    // Add any DF model static doors unless suppressed
+                    if (modelData.Doors != null && !disableClassicDoors)
                         doorsOut.AddRange(staticDoors);
                 }
 
@@ -1011,42 +1016,6 @@ namespace DaggerfallWorkshop.Utility
             return modelID == BulletinBoardModelID;
         }
 
-        private static void AddAnimalAudioSource(GameObject go)
-        {
-            DaggerfallAudioSource source = go.AddComponent<DaggerfallAudioSource>();
-            source.AudioSource.maxDistance = animalSoundMaxDistance;
-
-            DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
-            SoundClips sound = SoundClips.None;
-            switch (dfBillboard.Summary.Record)
-            {
-                case 0:
-                case 1:
-                    sound = SoundClips.AnimalHorse;
-                    break;
-                case 3:
-                case 4:
-                    sound = SoundClips.AnimalCow;
-                    break;
-                case 5:
-                case 6:
-                    sound = SoundClips.AnimalPig;
-                    break;
-                case 7:
-                case 8:
-                    sound = SoundClips.AnimalCat;
-                    break;
-                case 9:
-                case 10:
-                    sound = SoundClips.AnimalDog;
-                    break;
-                default:
-                    sound = SoundClips.None;
-                    break;
-            }
-
-            source.SetSound(sound, AudioPresets.PlayRandomlyIfPlayerNear);
-        }
 
         #endregion
     }

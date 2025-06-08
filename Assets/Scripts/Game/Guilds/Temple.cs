@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -269,11 +269,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Properties & Data
 
-        readonly string[] rankTitles = {
-                "Novice", "Initiate", "Acolyte", "Adept", "Curate", "Disciple", "Brother", "Diviner", "Master", "Patriarch"
-        };
-
-        public override string[] RankTitles { get { return rankTitles; } }
+        public override string[] RankTitles { get { return TextManager.Instance.GetLocalizedTextList("templeRanks"); } }
 
         public override List<DFCareer.Skills> GuildSkills { get { return guildSkills[deity]; } }
 
@@ -321,6 +317,15 @@ namespace DaggerfallWorkshop.Game.Guilds
                 if (Enum.IsDefined(typeof(Divines), factionData.parent))
                     return (Divines)factionData.parent;
             }
+            throw new ArgumentOutOfRangeException("There is no Divine that matches the factionId: " + factionId);
+        }
+
+        public static string GetDivineLocalized(int factionId)
+        {
+            string god = Temple.GetDivine(factionId).ToString();
+            if (!string.IsNullOrEmpty(god))
+                return TextManager.Instance.GetLocalizedText(god);
+
             throw new ArgumentOutOfRangeException("There is no Divine that matches the factionId: " + factionId);
         }
 
@@ -385,11 +390,11 @@ namespace DaggerfallWorkshop.Game.Guilds
         {
             if (GameManager.Instance.PlayerEntity.Gender == Genders.Female)
                 if (rank == 9)
-                    return "Matriarch";     // Not calling female chars 'Patriarch'!
+                    return TextManager.Instance.GetLocalizedText("matriarch");     // Not calling female chars 'Patriarch'!
                 else if (rank == 6)
-                    return "Sister";        // Not calling female chars 'Brother'!
+                    return TextManager.Instance.GetLocalizedText("sister");        // Not calling female chars 'Brother'!
 
-            return IsMember() ? rankTitles[rank] : "non-member";
+            return IsMember() ? RankTitles[rank] : TextManager.Instance.GetLocalizedText("nonMember");
         }
 
         #endregion

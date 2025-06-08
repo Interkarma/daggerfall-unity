@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -16,6 +16,7 @@ using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game.MagicAndEffects
 {
+    [RequireComponent(typeof(Light))]
     public class MagicCandleBehaviour : MonoBehaviour
     {
         const int candleArchive = 210;
@@ -37,6 +38,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
             SaveLoadManager.OnStartLoad += SaveLoadManager_OnStartLoad;
             StartGameBehaviour.OnNewGame += StartGameBehaviour_OnNewGame;
+
+            // Observe spell shadow setting
+            GetComponent<Light>().shadows = (DaggerfallUnity.Settings.EnableSpellShadows) ? LightShadows.Soft : LightShadows.None;
+
+            // Disable candle collider on start (if present)
+            // This can happen when a mod has registered a custom activation to candle sprite
+            // The magic candle sprite should remain non-collidable or it will block spells
+            DisableCollider();
         }
 
         private void Update()
@@ -63,6 +72,13 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             if (gameObject != null)
                 Destroy(gameObject);
         }
+
+        public void DisableCollider()
+        {
+            Collider collider = GetComponentInChildren<Collider>();
+            if (collider)
+                collider.enabled = false;
+        }    
 
         private void StartGameBehaviour_OnNewGame()
         {

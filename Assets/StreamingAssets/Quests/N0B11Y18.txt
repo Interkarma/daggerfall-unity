@@ -53,10 +53,10 @@ Message:  1020
 Message:  1021
 %qdt:
  I agreed to spare _rebel_'s life.
- %g said I should just tell _questgiver_
+ He said I should just tell _questgiver_
  that I found no sign of _rebel_ in 
  ___rebelhouse_, except for a letter which
- %g gave me.
+ he gave me.
 
 Message:  1030
 <ce>                   So, _questgiver_ has sent another
@@ -109,12 +109,12 @@ Message:  1041
 <ce>                     Why...that impertinent!  I am
 <ce>                      speechless!  You can now see
 <ce>                      why _rebel_ must be stopped
-<ce>                   at all costs, before %g undermines
+<ce>                   at all costs, before he undermines
 <ce>                    everything the Guild stands for.
 <ce>                   It is unfortunate that you missed
 <ce>                 that miserable little sot, but I have
 <ce>                       no doubt that we will soon
-<ce>                         track %g2 down again.
+<ce>                         track him down again.
 
 Message:  1042
 <ce>                   Very good, %pct.  The Mages Guild
@@ -219,8 +219,7 @@ _clearclick_ task:
 	clear _qgclicked_ _clearclick_ 
 
 _S.02_ task:
---	start quest 502 502 
--- disabling followup quest until it can be assured working
+	start quest 502 502 
 	log 1021 step 1 
 	get item _letter_ 
 	say 1031 

@@ -1,0 +1,28 @@
+﻿.row {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.tab {
+    flex-grow: 1;
+    flex-shrink: 1;
+    background-color: #2A2A2A;
+    border-width: 0;
+    border-radius: 0;
+    margin: 0;
+}
+
+.tab:hover{
+    background-color: #313030;
+}
+
+.tab.selected {
+    background-color: #383838;
+    border-top-width: 3px;
+    border-top-color: dodgerblue;
+}
+
+.hidden {
+    display: none;
+}

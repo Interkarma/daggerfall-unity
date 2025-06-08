@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -182,7 +182,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #endregion
 
-            #region Private Methods
+        #region Private Methods
 
         void SetScrollIndex(int value, bool doNotRaiseScrollEvent = false)
         {
@@ -216,9 +216,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             Rect topRect = new Rect((int)totalRect.x, (int)(totalRect.y + thumbY), (int)totalRect.width, (int)topTextureHeight);
             Rect bodyRect = new Rect((int)totalRect.x, (int)topRect.yMax, (int)totalRect.width, (int)(thumbHeight - topTextureHeight - bottomTextureHeight));
             Rect bottomRect = new Rect((int)totalRect.x, (int)bodyRect.yMax, (int)totalRect.width, (int)bottomTextureHeight);
-            GUI.DrawTexture(topRect, vScrollThumbTop, ScaleMode.StretchToFill);
-            GUI.DrawTexture(bodyRect, vScrollThumbBody, ScaleMode.StretchToFill);
-            GUI.DrawTexture(bottomRect, vScrollThumbBottom, ScaleMode.StretchToFill);
+            DaggerfallUI.DrawTexture(topRect, vScrollThumbTop, ScaleMode.StretchToFill);
+            DaggerfallUI.DrawTexture(bodyRect, vScrollThumbBody, ScaleMode.StretchToFill);
+            DaggerfallUI.DrawTexture(bottomRect, vScrollThumbBottom, ScaleMode.StretchToFill);
         }
 
         #endregion

@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -927,6 +927,53 @@ namespace DaggerfallWorkshop.Game.Entity
                 throw new Exception("Could not load " + MonsterFile.Filename);
 
             return monsterFile.GetMonsterClass((int)career);
+        }
+
+        /// <summary>
+        /// Allows mods to register a DFCareer template for IDs outside of the values in MobileTypes
+        /// </summary>
+        static readonly Dictionary<int, DFCareer> CustomCareerTemplates = new Dictionary<int, DFCareer>();
+
+        /// <summary>
+        /// Gets the career template for a custom (ie: mod-provided) enemy type
+        /// </summary>
+        /// <param name="enemyId">ID, as defined in EnemyBasics.Enemies</param>
+        /// <returns>The custom DFCareer template registered for this id, or null</returns>
+        public static DFCareer GetCustomCareerTemplate(int enemyId)
+        {
+            if (!CustomCareerTemplates.TryGetValue(enemyId, out DFCareer value))
+            {
+                return null;
+            }
+
+            return value;
+        }
+
+        /// <summary>
+        /// Sets the career template for a custom (ie: mod-provided) enemy type. 
+        /// </summary>
+        /// <param name="enemyId">ID, as defined in EnemyBasics.Enemies</param>
+        /// <param name="career">The custom DFCareer template to register</param>
+        public static void RegisterCustomCareerTemplate(int enemyId, DFCareer career)
+        {
+            // Use indexer so that mods can overwrite previous values added by mods
+            // ex: mod 1 provides new enemies, mod 2 rebalances them
+            CustomCareerTemplates[enemyId] = career;
+        }
+
+        /// <summary>
+        /// Returns whether the provided enemy id refers to a Class enemy (as opposed to a Monster enemy)
+        /// For custom enemies, we use the 7th bit to tell whether a class or monster was intended
+        /// 0-127 is monster
+        /// 128-255 is class
+        /// 256-383 is monster again
+        /// etc
+        /// </summary>
+        /// <param name="enemyId">Id of the enemy type</param>
+        /// <returns>True if Class type enemy, False if Monster type enemy</returns>
+        public static bool IsClassEnemyId(int enemyId)
+        {
+            return (enemyId & 128) != 0;
         }
 
         public static SoundClips GetRaceGenderAttackSound(Races race, Genders gender, bool isPlayerAttack = false)

@@ -1,5 +1,5 @@
-﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+﻿// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -60,7 +60,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             base.Draw();
 
-            GUI.DrawTextureWithTexCoords(buttonRect, highlightTexture, highlightRect);
+            DaggerfallUI.DrawTextureWithTexCoords(buttonRect, highlightTexture, highlightRect);
         }
 
         #region Private Methods

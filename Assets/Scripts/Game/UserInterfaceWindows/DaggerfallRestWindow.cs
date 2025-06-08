@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -24,12 +24,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region UI Rects
 
-        Rect whileButtonRect = new Rect(4, 13, 48, 24);
-        Rect healedButtonRect = new Rect(53, 13, 48, 24);
-        Rect loiterButtonRect = new Rect(102, 13, 48, 24);
-        Rect counterPanelRect = new Rect(0, 50, 105, 41);
-        Rect counterTextPanelRect = new Rect(4, 10, 16, 8);
-        Rect stopButtonRect = new Rect(33, 26, 40, 10);
+        protected Rect whileButtonRect = new Rect(4, 13, 48, 24);
+        protected Rect healedButtonRect = new Rect(53, 13, 48, 24);
+        protected Rect loiterButtonRect = new Rect(102, 13, 48, 24);
+        protected Rect counterPanelRect = new Rect(0, 50, 105, 41);
+        protected Rect counterTextPanelRect = new Rect(4, 10, 16, 8);
+        protected Rect stopButtonRect = new Rect(33, 26, 40, 10);
 
         #endregion
 
@@ -116,6 +116,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             : base(uiManager)
         {
             this.ignoreAllocatedBed = ignoreAllocatedBed;
+            // Prevent duplicate close calls with base class's exitKey (Escape)
+            AllowCancel = false;
         }
 
         #endregion
@@ -188,7 +190,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             {
                 // Toggle window closed with same hotkey used to open it, or the DaggerfallBaseWindow's exitKey
                 // Window will properly end the rest if the player was currently resting
-                if (InputManager.Instance.GetKeyUp(toggleClosedBinding) || Input.GetKeyUp(exitKey))
+                if (InputManager.Instance.GetKeyUp(toggleClosedBinding) || InputManager.Instance.GetBackButtonUp())
                     if (currentRestMode != RestModes.Selection)
                         EndRest();
                     else

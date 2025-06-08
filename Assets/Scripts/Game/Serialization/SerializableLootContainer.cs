@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -70,6 +70,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.textureArchive = loot.TextureArchive;
             data.textureRecord = loot.TextureRecord;
             data.stockedDate = loot.stockedDate;
+            data.corpseQuestUID = loot.corpseQuestUID;
             data.playerOwned = loot.playerOwned;
             data.customDrop = loot.customDrop;
             data.items = loot.Items.SerializeItems();
@@ -93,7 +94,7 @@ namespace DaggerfallWorkshop.Game.Serialization
                 loot.ContainerType == LootContainerTypes.CorpseMarker ||
                 loot.ContainerType == LootContainerTypes.DroppedLoot)
             {
-                DaggerfallBillboard billboard = loot.GetComponent<DaggerfallBillboard>();
+                Billboard billboard = loot.GetComponent<Billboard>();
 
                 // Interiors and exteriors need special handling to ensure loot is always placed correctly for pre and post floating y saves
                 // Dungeons are not involved with floating y and don't need any changes
@@ -148,6 +149,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             loot.TextureArchive = data.textureArchive;
             loot.TextureRecord = data.textureRecord;
             loot.stockedDate = data.stockedDate;
+            loot.corpseQuestUID = data.corpseQuestUID;
             loot.playerOwned = data.playerOwned;
             loot.customDrop = data.customDrop;
             loot.entityName = data.entityName;

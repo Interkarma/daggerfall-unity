@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -90,11 +90,11 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
 
             messageBox.AddButton((DaggerfallMessageBox.MessageBoxButtons)opt1button, true);
             messageBox.AddButton((DaggerfallMessageBox.MessageBoxButtons)opt2button);
-            if (opt3button != 0) {
+            if (opt3TaskSymbol != null) {
                 messageBox.ButtonSpacing = 28;
                 messageBox.AddButton((DaggerfallMessageBox.MessageBoxButtons)opt3button);
             }
-            if (opt4button != 0) {
+            if (opt4TaskSymbol != null) {
                 messageBox.ButtonSpacing = 24;
                 messageBox.AddButton((DaggerfallMessageBox.MessageBoxButtons)opt4button);
             }

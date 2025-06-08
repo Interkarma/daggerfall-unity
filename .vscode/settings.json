@@ -99,5 +99,6 @@
             ],
             "url": "/Assets/Editor/.Schemas/SpellIcons.schema.json"
         }
-    ]
+    ],
+    "dotnet.defaultSolution": "daggerfall-unity.sln"
 }

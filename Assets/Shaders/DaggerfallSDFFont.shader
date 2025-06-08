@@ -4,6 +4,7 @@ Shader "Daggerfall/SDFFont"
     {
         _MainTex ("Texture", any) = "" {}
         _ScissorRect("Scissor Rectangle", Vector) = (0,1,0,1)   // x=left, y=right, z=bottom, w=top - fullscreen is (0,1,0,1)
+		_Color("Color", Color) = (1.0, 1.0, 1.0, 1.0)
     }
 
 	SubShader {
@@ -21,6 +22,7 @@ Shader "Daggerfall/SDFFont"
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
+            #pragma multi_compile_local __ _MacOSX
 
 			#include "UnityCG.cginc"
 
@@ -40,6 +42,7 @@ Shader "Daggerfall/SDFFont"
 			sampler2D _MainTex;
             uniform float4 _MainTex_ST;
             float4 _ScissorRect;
+			float4 _Color;
 			
 			v2f vert (appdata_t v)
 			{
@@ -60,7 +63,11 @@ Shader "Daggerfall/SDFFont"
                 float dist = tex2D(_MainTex, i.texcoord).a;
                 float smoothing = fwidth(dist);
                 float alpha = smoothstep(0.5 - smoothing, 0.5 + smoothing, dist);
-                return float4(i.color.rgb, alpha);
+                #ifdef _MacOSX
+                    return float4(_Color.rgb, alpha);
+                #else
+                    return float4(i.color.rgb, alpha);
+                #endif
 
                 //return float4(float3(1,1,1), 1 - alpha);  // Glyph visualisation
                 //return float4(float3(i.screenPos.x, i.screenPos.y, 0), 1 - alpha);  // screenPos visualisation

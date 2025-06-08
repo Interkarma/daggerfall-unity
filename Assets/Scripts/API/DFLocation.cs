@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -35,6 +35,8 @@ namespace DaggerfallConnect
 
         /// <summary>
         /// Name of the parent region.
+        /// IMPORTANT: This RegionName is used in many places as a string key and must always be the non-localized version as found in MAPS.BSA.
+        ///            Anywhere using this for display to player should use TextProvider.GetLocalizedRegionName() instead.
         /// </summary>
         public string RegionName;
 

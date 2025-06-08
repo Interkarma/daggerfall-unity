@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -192,7 +192,16 @@ namespace DaggerfallWorkshop.Game.Utility
                 {
                     poolItem.npc.Motor.gameObject.SetActive(true);
                     poolItem.scheduleEnable = false;
-                    poolItem.npc.RandomiseNPC(GetEntityRace());
+
+                    if (MobileNPCGenerator != null)
+                    {
+                        MobileNPCGenerator(poolItem);
+                    }
+                    else
+                    {
+                        poolItem.npc.RandomiseNPC(GetEntityRace());
+                    }
+
                     poolItem.npc.Motor.InitMotor();
 
                     // Adjust billboard position for actual size
@@ -279,6 +288,7 @@ namespace DaggerfallWorkshop.Game.Utility
             PoolItem poolItem = new PoolItem();
             poolItem.npc = npc;
             poolItem.npc.Motor = motor;
+            poolItem.npc.Asset = motor.MobileAsset;
 
             // Add to pool
             populationPool.Add(poolItem);
@@ -332,6 +342,10 @@ namespace DaggerfallWorkshop.Game.Utility
         //OnMobileNPCCreate
         public delegate void OnMobileNPCCreateHandler(PoolItem poolItem);
         public static event OnMobileNPCCreateHandler OnMobileNPCCreate;
+
+        // MobileNPCGenerator
+        public delegate void MobileNPCGenerationHandler(PoolItem poolItem);
+        public static MobileNPCGenerationHandler MobileNPCGenerator;
 
         //OnMobileNPCEnable
         public delegate void OnMobileNPCEnableHandler(PoolItem poolItem);

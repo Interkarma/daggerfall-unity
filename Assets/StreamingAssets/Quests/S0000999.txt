@@ -43,7 +43,7 @@ Message:  1011
  of these fiefdoms.
 
 Message:  1026
-<ce>       You approached by a young page who smiles in recognition
+<ce>       You are approached by a young page who smiles in recognition
 <ce>        and does not ask your name before he hands you a letter
 <ce>         addressed to you. To all of your questions, he merely
 <ce>                responds with a blank look and a smile.

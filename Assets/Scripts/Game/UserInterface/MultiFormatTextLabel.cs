@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -212,6 +212,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public TextLabel AddTextLabel(string text, DaggerfallFont font, Color color)
         {
             TextLabel textLabel = new TextLabel();
+
+            textLabel.Parent = this; //Establish parent early.
+
             textLabel.AutoSize = AutoSizeModes.None;
             textLabel.MinTextureDim = minTextureDimTextLabel;
             textLabel.Font = font;
@@ -224,7 +227,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             if (maxTextWidth > 0)
                 textLabel.MaxWidth = maxTextWidth;
             textLabel.Text = text;
-            textLabel.Parent = this;
             textLabel.TextColor = color;
             textLabel.ShadowColor = ShadowColor;
             textLabel.ShadowPosition = ShadowPosition;

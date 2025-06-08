@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd"
+>
+    <engine:VisualElement class="row pl">
+        <engine:VisualElement class="col-1">
+            <engine:Label text="Position: "/>
+        </engine:VisualElement>
+        <engine:VisualElement class="col-1">
+            <editor:IntegerField name="rmb-block-position"
+                              tooltip="This is the position of the data in the original data. It is used to create load ids so try to make it unique."/>
+        </engine:VisualElement>
+    </engine:VisualElement>
+
+    <engine:VisualElement class="row pl">
+        <engine:VisualElement class="col-1">
+            <engine:Label text="Index: "/>
+        </engine:VisualElement>
+        <engine:VisualElement class="col-1">
+            <editor:IntegerField name="rmb-block-index"
+                              tooltip="Index of block. Leave as set for original blocks being altered. Set to 0 for new blocks since it will be auto assigned."/>
+        </engine:VisualElement>
+    </engine:VisualElement>
+
+    <engine:VisualElement class="row pl">
+        <engine:VisualElement class="col-1">
+            <engine:Label text="Name: "/>
+        </engine:VisualElement>
+        <engine:VisualElement class="col-1">
+            <engine:TextField name="rmb-block-name"
+                              tooltip="Name of the block. It should match the filename and end with '.RDB'. It is used to reference the block from location data."/>
+        </engine:VisualElement>
+    </engine:VisualElement>
+    <engine:VisualElement class="row pl">
+        <engine:VisualElement class="col-1">
+            <engine:Label text="Type: "/>
+        </engine:VisualElement>
+        <engine:VisualElement class="col-1">
+            <editor:EnumField name="rmb-block-type"/>
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>

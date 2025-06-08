@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -47,6 +47,11 @@ namespace DaggerfallWorkshop.Game.Guilds
         public abstract List<DFCareer.Skills> GuildSkills { get; }
 
         public abstract List<DFCareer.Skills> TrainingSkills { get; }
+
+        public virtual bool IsSatisfyQuestReqByLevel()
+        {
+            return false;
+        }
 
         #endregion
 
@@ -165,14 +170,14 @@ namespace DaggerfallWorkshop.Game.Guilds
         public virtual string GetAffiliation()
         {
             FactionFile.FactionData factionData;
-            if (DaggerfallUnity.Instance.ContentReader.FactionFileReader.GetFactionData(GetFactionId(), out factionData))
+            if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(GetFactionId(), out factionData))
                 return factionData.name;
             return "unknown-guild";
         }
 
         public virtual string GetTitle()
         {
-            return IsMember() ? RankTitles[rank] : "Expelled";
+            return IsMember() ? RankTitles[rank] : GameManager.Instance.PlayerEntity.Name;
         }
 
         #endregion

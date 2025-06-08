@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -79,15 +79,30 @@ namespace DaggerfallWorkshop.Game
             // Show death message
             string deathMessage = TextManager.Instance.GetLocalizedText("thingJustDied");
             deathMessage = deathMessage.Replace("%s", TextManager.Instance.GetLocalizedEnemyName(mobile.Enemy.ID));
-            DaggerfallUI.Instance.PopupMessage(deathMessage);
+            if (!DaggerfallUnity.Settings.DisableEnemyDeathAlert)
+                DaggerfallUI.Instance.PopupMessage(deathMessage);
+
+            int corpseTexture;
+            if(mobile.Enemy.Gender == MobileGender.Female && mobile.Enemy.FemaleCorpseTexture != 0)
+            {
+                corpseTexture = mobile.Enemy.FemaleCorpseTexture;
+            }
+            else
+            {
+                corpseTexture = mobile.Enemy.CorpseTexture;
+            }
 
             // Generate lootable corpse marker
             DaggerfallLoot loot = GameObjectHelper.CreateLootableCorpseMarker(
                 GameManager.Instance.PlayerObject,
                 entityBehaviour.gameObject,
                 enemyEntity,
-                mobile.Enemy.CorpseTexture,
+                corpseTexture,
                 DaggerfallUnity.NextUID);
+
+            // Tag corpse loot marker with quest UID
+            if (questResourceBehaviour)
+                loot.corpseQuestUID = questResourceBehaviour.QuestUID;
 
             // This is still required so enemy equipment is not marked as equipped
             // This item collection is transferred to loot container below

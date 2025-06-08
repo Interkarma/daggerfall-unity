@@ -247,7 +247,7 @@ Message:  1019
 Message:  1020
 %qdat:
  I am on the trail of the Slayer
- of ___bookstore_. %rt _qgiver_ wants
+ of ___bookstore_. The %rt wants
  the ___bookstore_ Slayer caught in =total_ days
  before the murders inflame the populace
  to riot. _qgiver_ has a scientist
@@ -344,6 +344,9 @@ _contact_ is dissecting the Slayer's victims and someone doesn't like that.
 <--->
 _contact_'s a scientist at _bookstore_, who has been getting threat letters.
 
+Message:  1029
+<ce>  The Mad Slayer is no more.
+
 Message:  1050
 <ce>                   By killing _rippername_, you have
 <ce>                 aided both %reg and myself. For this,
@@ -391,10 +394,10 @@ Item _I.00_ letter used 1011
 Item _I.01_ letter used 1012
 Item letter31 letter used 1013
 Item _I.03_ letter used 1014
-Item _I.04_ dead_body
+-Item _I.04_ dead_body
 Item _reward_ gold
 Item _reward2_ trinket
-Item _I.08_ item class 26 subclass 3
+-Item _I.08_ item class 26 subclass 3
 Item _I.09_ item class 15 subclass 13
 
 Person _qgiver_ group Questor
@@ -415,7 +418,7 @@ Clock _total_ 3.00:00 0 flag 1 range 0 1
 Foe _murder_ is Vampire
 
 --	Quest start-up:
-	place item _I.08_ at _bookstore_ 
+-	place item _I.08_ at _bookstore_ 
 	dialog link for location _ripperhouse_ person _rippername_ 
 	dialog link for person _widow_ 
 	dialog link for person _vamp_ 
@@ -425,10 +428,14 @@ Foe _murder_ is Vampire
 	place npc _contact_ at _bookstore_ 
 	place npc _vamp_ at _hookerhouse_ 
 	place npc _widow_ at _widowhouse_ 
-	have _I.04_ set _deadbody_
+-	have _I.04_ set _deadbody_
+--removing everything related to the dead body. It's out of place for
+--the quest, has no relevance and no function. Also had a sprite change
+--since last checked? In any case, not useful.
 
 _S.00_ task:
 	killed 1 _murder_ 
+	say 1029
 
 _1stparton_ task:
 	start timer _2ndparton_ 
@@ -440,7 +447,7 @@ _S.03_ task:
 	place item _I.01_ at _bookstore_ 
 	place item _I.00_ at _bookstore_ 
 	place item letter31 at _bookstore_ 
-	place item _I.04_ at _bookstore_ 
+-	place item _I.04_ at _bookstore_ 
 	hide npc _contact_ 
 
 _vampclicked_ task:
@@ -449,14 +456,18 @@ _vampclicked_ task:
 _qgclicked_ task:
 	clicked npc _qgiver_ 
 
+_qgclearclick_ task:
+	when not _S.00_ and _qgclicked_ 
+	clear _qgclicked_ _qgclearclick_
+
 _pcgetsgold_ task:
 	when _S.00_ and _qgclicked_ 
 	give pc _reward_ 
 	unset _qgclicked_ 
 	end quest 
 
-_deadbody_ task:
-	take _I.04_ from pc
+-_deadbody_ task:
+-	take _I.04_ from pc
 --added deadbody task. otherwise body would clog inventory
 
 _S.07_ task:
@@ -470,18 +481,24 @@ _S.08_ task:
 	say 1026 
 
 _S.09_ task:
-	toting _I.03_ and _vamp_ clicked 
+	when _hasletter_ and _vampclicked_
 	add dialog for person _widow_ 
 	log 1023 step 3 
 	get item _I.09_ 
 	say 1015 
 
+variable _hasletter_
 _S.10_ task:
 	clicked npc _contact_ 
 	add dialog for person _vamp_ 
 	log 1021 step 1 
 	get item _I.03_
-	say 1010 
+	setvar _hasletter_
+	say 1010
+
+_vampclearclick_ task:
+	when _vampclicked_ and not _S.00_
+	clear _vampclicked_ _vampclearclick_
 
 _S.11_ task:
 	add dialog for person _vamp_ 

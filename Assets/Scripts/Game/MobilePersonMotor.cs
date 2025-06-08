@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -55,6 +55,11 @@ namespace DaggerfallWorkshop.Game
         // References
         DaggerfallEntityBehaviour entityBehaviour;
         MobilePersonAsset mobileAsset;
+        public MobilePersonAsset MobileAsset
+        {
+            get { return mobileAsset; }
+            set { mobileAsset = value; }
+        }
 
         #endregion
 

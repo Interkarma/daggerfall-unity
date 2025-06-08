@@ -1,5 +1,5 @@
-﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -43,8 +43,8 @@ namespace DaggerfallWorkshop.Game
                 alphaFadeValue -= fadeSpeed * Time.deltaTime;
                 if (alphaFadeValue > 0)
                 {
-                    GUI.color = new Color(1, 0, 0, alphaFadeValue);
-                    GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), damageTexture);
+                    Color color = new Color(1, 0, 0, alphaFadeValue);
+                    DaggerfallUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), damageTexture, ScaleMode.StretchToFill, true, color);
                 }
                 else
                 {

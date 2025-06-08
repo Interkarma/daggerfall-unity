@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -148,6 +148,11 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         public void SetClassSkills(DFCareer dfClass)
         {
+            SetClassSkills(dfClass, true);
+        }
+
+        public void SetClassSkills(DFCareer dfClass, bool doReroll = true)
+        {
             // Set primary, major, minor skills from class template
             primarySkills[0] = dfClass.PrimarySkill1;
             primarySkills[1] = dfClass.PrimarySkill2;
@@ -163,7 +168,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             minorSkills[5] = dfClass.MinorSkill6;
 
             UpdateSkillLabels();
-            Reroll();
+            if (doReroll)
+                Reroll();
         }
 
         #endregion

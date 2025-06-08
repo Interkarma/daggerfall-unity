@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -46,6 +46,12 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// The display name of this potion recipe.
         /// </summary>
         public string DisplayNameKey { get; set; }
+
+        /// <summary>
+        /// Custom display name of this potion recipe.
+        /// If set, this property will be returned by DisplayName.
+        /// </summary>
+        public string CustomDisplayName { get; set; }
 
         /// <summary>
         /// The price of this potion recipe.
@@ -218,6 +224,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         public string GetDisplayName()
         {
+            // Allow for custom display name when set
+            if (!string.IsNullOrEmpty(CustomDisplayName))
+                return CustomDisplayName;
+
+            // Resolve default name based on localization key
             if (string.IsNullOrEmpty(DisplayNameKey))
                 return TextManager.Instance.GetLocalizedText("unknownPowers");
             else

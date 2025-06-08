@@ -393,8 +393,9 @@ _S.12_ task:
 _S.13_ task:
 	drop _child_ face 
 	change repute with _local_ by +6 
-	change repute with _child_ by -10 
+	change repute with _witch_ by -10 
 	end quest 
+--reputation drop should be with witch, not child. changed to _witch_
 
 _S.14_ task:
 	change repute with _ruler_ by -50 
@@ -402,7 +403,6 @@ _S.14_ task:
 _S.15_ task:
 	when _S.01_ and not _S.13_ and _S.00_ 
 	reveal _dungeon2_
-	clear _S.01_ 
 
 _S.16_ task:
 	when _S.00_ and not _S.01_ 

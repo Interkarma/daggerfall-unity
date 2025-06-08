@@ -36,6 +36,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(HelpCommand.name, HelpCommand.description, HelpCommand.usage, HelpCommand.Execute);
             ConsoleCommandsDatabase.RegisterCommand(LoadCommand.name, LoadCommand.description, LoadCommand.usage, LoadCommand.Execute);
             ConsoleCommandsDatabase.RegisterCommand(GodCommand.name, GodCommand.description, GodCommand.usage, GodCommand.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(NoClipCommand.name, NoClipCommand.description, NoClipCommand.usage, NoClipCommand.Execute);
             ConsoleCommandsDatabase.RegisterCommand(NoTargetCommand.name, NoTargetCommand.description, NoTargetCommand.usage, NoTargetCommand.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ToggleAICommand.name, ToggleAICommand.description, ToggleAICommand.usage, ToggleAICommand.Execute);
             ConsoleCommandsDatabase.RegisterCommand(CreateMobileCommand.name, CreateMobileCommand.description, CreateMobileCommand.usage, CreateMobileCommand.Execute);
@@ -68,10 +69,8 @@ namespace Wenzil.Console
 
             ConsoleCommandsDatabase.RegisterCommand(SetWalkSpeed.name, SetWalkSpeed.description, SetWalkSpeed.usage, SetWalkSpeed.Execute);
             ConsoleCommandsDatabase.RegisterCommand(SetMouseSensitivity.name, SetMouseSensitivity.description, SetMouseSensitivity.usage, SetMouseSensitivity.Execute);
-            ConsoleCommandsDatabase.RegisterCommand(ToggleMouseSmoothing.name, ToggleMouseSmoothing.description, ToggleMouseSmoothing.usage, ToggleMouseSmoothing.Execute);
             ConsoleCommandsDatabase.RegisterCommand(AddPopupText.name, AddPopupText.description, AddPopupText.usage, AddPopupText.Execute);
 
-            //ConsoleCommandsDatabase.RegisterCommand(SetMouseSmoothing.name, SetMouseSmoothing.description, SetMouseSmoothing.usage, SetMouseSmoothing.Execute);
             ConsoleCommandsDatabase.RegisterCommand(SetVSync.name, SetVSync.description, SetVSync.usage, SetVSync.Execute);
             ConsoleCommandsDatabase.RegisterCommand(SetRunSpeed.name, SetRunSpeed.description, SetRunSpeed.usage, SetRunSpeed.Execute);
             ConsoleCommandsDatabase.RegisterCommand(SetJumpSpeed.name, SetJumpSpeed.description, SetJumpSpeed.usage, SetJumpSpeed.Execute);
@@ -114,6 +113,7 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(ClearCrimeCommitted.name, ClearCrimeCommitted.description, ClearCrimeCommitted.usage, ClearCrimeCommitted.Execute);
             ConsoleCommandsDatabase.RegisterCommand(PrintLegalRep.name, PrintLegalRep.description, PrintLegalRep.usage, PrintLegalRep.Execute);
             ConsoleCommandsDatabase.RegisterCommand(ClearNegativeLegalRep.name, ClearNegativeLegalRep.description, ClearNegativeLegalRep.usage, ClearNegativeLegalRep.Execute);
+            ConsoleCommandsDatabase.RegisterCommand(RefreshBuildingNames.name, RefreshBuildingNames.description, RefreshBuildingNames.usage, RefreshBuildingNames.Execute);
 
             ConsoleCommandsDatabase.RegisterCommand(PrintQuests.name, PrintQuests.description, PrintQuests.usage, PrintQuests.Execute);
 
@@ -385,6 +385,31 @@ namespace Wenzil.Console
             }
         }
 
+        private static class NoClipCommand
+        {
+            public static readonly string name = "tcl";
+            public static readonly string error = "Failed to set TCL, PlayerEntity or Levitate could not be found";
+            public static readonly string usage = "tcl";
+            public static readonly string description = "Toggle noclip by turning off all collisions and activates levitate";
+
+            public static string Execute(params string[] args)
+            {
+                PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+                LevitateMotor levitateMotor = GameManager.Instance.PlayerMotor.GetComponent<LevitateMotor>();
+
+                if (playerEntity != null && levitateMotor != null)
+                {
+                    playerEntity.NoClipMode = !playerEntity.NoClipMode;
+                    levitateMotor.IsLevitating = playerEntity.NoClipMode;
+                    GameManager.Instance.PlayerController.gameObject.layer = playerEntity.NoClipMode ? LayerMask.NameToLayer("NoclipLayer") : LayerMask.NameToLayer("Player");
+
+                    return string.Format("Noclip enabled: {0}", playerEntity.NoClipMode);
+                }
+                else
+                    return error;
+            }
+        }
+
         private static class NoTargetCommand
         {
             public static readonly string name = "nt";
@@ -443,7 +468,7 @@ namespace Wenzil.Console
                     if (!int.TryParse(args[0], out id))
                         return "Invalid mobile ID.";
 
-                    if (!Enum.IsDefined(typeof(MobileTypes), id))
+                    if (!Enum.IsDefined(typeof(MobileTypes), id) && DaggerfallEntity.GetCustomCareerTemplate(id) == null)
                         return "Invalid mobile ID.";
 
                     int team = 0;
@@ -837,58 +862,6 @@ namespace Wenzil.Console
 
         }
 
-
-        private static class ToggleMouseSmoothing
-        {
-            public static readonly string name = "tmsmooth";
-            public static readonly string error = "Failed to toggle mouse smoothing - PlayerMouseLook object not found?";
-            public static readonly string description = "Toggle mouse smoothing.";
-            public static readonly string usage = "tmsmooth";
-
-            public static string Execute(params string[] args)
-            {
-                PlayerMouseLook mLook = GameManager.Instance.PlayerMouseLook;//GameObject.FindObjectOfType<PlayerMouseLook>();
-                if (mLook == null)
-                    return error;
-                else
-                {
-                    //mLook.smoothing = new Vector2(speed, speed);
-                    mLook.enableSmoothing = !mLook.enableSmoothing;
-                    return string.Format("Mouse smoothing is on: {0}", mLook.enableSmoothing.ToString());
-                }
-            }
-
-        }
-
-
-        private static class SetMouseSmoothing
-        {
-            public static readonly string name = "set_msmooth";
-            public static readonly string error = "Failed to set mouse smoothing - invalid setting or PlayerMouseLook object not found";
-            public static readonly string description = "Set mouse smoothing. Default is 3";
-            public static readonly string usage = "set_msmooth [#]";
-
-            public static string Execute(params string[] args)
-            {
-                PlayerMouseLook mLook = GameManager.Instance.PlayerMouseLook;//GameObject.FindObjectOfType<PlayerMouseLook>();
-                float speed = 0;
-                if (args == null || args.Length < 1 || !float.TryParse(args[0], out speed))
-                {
-                    if (mLook)
-                        Console.Log(string.Format("Current mouse smoothing: {0}", mLook.smoothing));
-                    return HelpCommand.Execute(SetMouseSmoothing.name);
-                }
-                else if (mLook == null)
-                    return error;
-                else
-                {
-                    mLook.smoothing = new Vector2(speed, speed);
-                    return string.Format("Set mouse smoothing to: {0}", mLook.smoothing.ToString());
-                }
-            }
-
-        }
-
         private static class SetVSync
         {
             public static readonly string name = "set_vsync";
@@ -924,12 +897,12 @@ namespace Wenzil.Console
         {
             public static readonly string name = "set_grav";
             public static readonly string error = "Failed to set gravity - invalid setting or PlayerMotor object not found";
-            public static readonly string description = "Set gravity. Default is 20";
+            public static readonly string description = string.Format("Set gravity. Use -1 for default (namely, {0})", AcrobatMotor.defaultGravity);
             public static readonly string usage = "set_grav [#]";
 
             public static string Execute(params string[] args)
             {
-                int gravity = 0;
+                float gravity = 0;
                 AcrobatMotor acrobatMotor = GameManager.Instance.AcrobatMotor;
 
                 if (acrobatMotor == null)
@@ -948,11 +921,13 @@ namespace Wenzil.Console
                     }
 
                 }
-                else if (!int.TryParse(args[0], out gravity))
+                else if (!float.TryParse(args[0], out gravity))
+                    return error;
+                else if (gravity != -1 && gravity < 0)
                     return error;
                 else
                 {
-                    acrobatMotor.gravity = gravity;
+                    acrobatMotor.gravity = gravity == -1 ? AcrobatMotor.defaultGravity : gravity;
                     return string.Format("Gravity set to: {0}", acrobatMotor.gravity);
                 }
 
@@ -963,12 +938,12 @@ namespace Wenzil.Console
         {
             public static readonly string name = "set_jump";
             public static readonly string error = "Failed to set jump speed - invalid setting or PlayerMotor object not found";
-            public static readonly string description = "Set jump speed. Default is 8";
+            public static readonly string description = string.Format("Set jump speed. Use -1 for default (namely, {0})", AcrobatMotor.defaultJumpSpeed);
             public static readonly string usage = "set_jump [#]";
 
             public static string Execute(params string[] args)
             {
-                int speed;
+                float speed;
                 AcrobatMotor acrobatMotor = GameManager.Instance.AcrobatMotor;
 
                 if (acrobatMotor == null)
@@ -987,11 +962,13 @@ namespace Wenzil.Console
                         return HelpCommand.Execute(SetJumpSpeed.name);
                     }
                 }
-                else if (!int.TryParse(args[0], out speed))
+                else if (!float.TryParse(args[0], out speed))
+                    return error;
+                else if (speed != -1 && speed < 0)
                     return error;
                 else
                 {
-                    acrobatMotor.jumpSpeed = speed;
+                    acrobatMotor.jumpSpeed = speed == -1 ? AcrobatMotor.defaultJumpSpeed : speed;
                     return string.Format("Jump speed set to: {0}", acrobatMotor.jumpSpeed);
                 }
             }
@@ -1511,13 +1488,13 @@ namespace Wenzil.Console
                     return error;
                 else
                 {
-                    DaggerfallActionDoor[] doors = GameObject.FindObjectsOfType<DaggerfallActionDoor>();
                     int count = 0;
-                    for (int i = 0; i < doors.Length; i++)
+                    IEnumerable<DaggerfallActionDoor> doors = ActiveGameObjectDatabase.GetActiveActionDoors();
+                    foreach (DaggerfallActionDoor door in doors)
                     {
-                        if (!doors[i].IsOpen)
+                        if (!door.IsOpen)
                         {
-                            doors[i].SetOpen(true, false, true);
+                            door.SetOpen(true, false, true);
                             count++;
                         }
                     }
@@ -1597,11 +1574,9 @@ namespace Wenzil.Console
 
             public static string Execute(params string[] args)
             {
-                DaggerfallEntityBehaviour[] entityBehaviours = FindObjectsOfType<DaggerfallEntityBehaviour>();
                 int count = 0;
-                for (int i = 0; i < entityBehaviours.Length; i++)
+                foreach(DaggerfallEntityBehaviour entityBehaviour in ActiveGameObjectDatabase.GetActiveEnemyBehaviours())
                 {
-                    DaggerfallEntityBehaviour entityBehaviour = entityBehaviours[i];
                     if (entityBehaviour.EntityType == EntityTypes.EnemyMonster || entityBehaviour.EntityType == EntityTypes.EnemyClass)
                     {
                         entityBehaviour.Entity.SetHealth(0);
@@ -1724,7 +1699,7 @@ namespace Wenzil.Console
         {
             public static readonly string name = "add";
             public static readonly string description = "Adds n inventory items to the character, based on the given keyword. n = 1 by default";
-            public static readonly string usage = "add (book|weapon|armor|cloth|ingr|relig|soul|gold|magic|drug|map|torch|potion) [n]";
+            public static readonly string usage = "add (book|weapon|armor|cloth|ingr|relig|soul|gold|magic|drug|map|torch|potion|recipe|painting) [n]";
 
             public static string Execute(params string[] args)
             {
@@ -1795,6 +1770,12 @@ namespace Wenzil.Console
                             break;
                         case "potion":
                             newItem = ItemBuilder.CreateRandomPotion();
+                            break;
+                        case "recipe":
+                            newItem = ItemBuilder.CreateRandomRecipe();
+                            break;
+                        case "painting":
+                            newItem = ItemBuilder.CreateItem(ItemGroups.Paintings, (int)Paintings.Painting);
                             break;
                         default:
                             return "unrecognized keyword. see usage";
@@ -2291,6 +2272,7 @@ namespace Wenzil.Console
                 if (quest != null)
                 {
                     QuestMachine.Instance.StartQuest(quest);
+                    QuestMachine.Instance.RestoreLocalizedQuestMessages(quest.QuestName);
                     return "Started quest '" + quest.DisplayName + "'";
                 }
                 else
@@ -2563,7 +2545,7 @@ namespace Wenzil.Console
                 {
                     for (int region = 0; region < GameManager.Instance.PlayerEntity.RegionData.Length; region++)
                     {
-                        string regionName = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegionName(region);
+                        string regionName = TextManager.Instance.GetLocalizedRegionName(region);
                         string reputationString = string.Empty;
                         int rep = GameManager.Instance.PlayerEntity.RegionData[region].LegalRep;
                         if (rep > 80)
@@ -2619,7 +2601,7 @@ namespace Wenzil.Console
                 {
                     for (int region = 0; region < GameManager.Instance.PlayerEntity.RegionData.Length; region++)
                     {
-                        string regionName = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegionName(region);
+                        string regionName = TextManager.Instance.GetLocalizedRegionName(region);
                         int rep = GameManager.Instance.PlayerEntity.RegionData[region].LegalRep;
                         if (rep < 0)
                         {
@@ -2636,6 +2618,19 @@ namespace Wenzil.Console
                 }
 
                 return output;
+            }
+        }
+
+        private static class RefreshBuildingNames
+        {
+            public static readonly string name = "refresh_buildingnames";
+            public static readonly string description = "Refresh discovered building names in current location. Used for testing localization and debugging stale discovery data.";
+            public static readonly string usage = "refresh_buildingnames";
+
+            public static string Execute(params string[] args)
+            {
+                GameManager.Instance.PlayerGPS.RefreshBuildingNamesInCurrentLocation();
+                return "Finished";
             }
         }
 

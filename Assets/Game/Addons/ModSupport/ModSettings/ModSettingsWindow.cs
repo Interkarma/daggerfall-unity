@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -43,12 +43,12 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         const float textScale                       = 0.7f;
         const int startX                            = 10;
         const int startY                            = 15;
-        const int columnHeight                      = 165;
         const int columnWidth                       = 140;
+        const int columnHeight                      = 165;
         const int columnsOffset                     = columnWidth + startX * 2;
 
-        const KeyCode nextPageKey                   = KeyCode.Tab;
-        const KeyCode previousPageKey               = KeyCode.LeftShift;
+        const KeyCode nextPageKey                   = KeyCode.PageDown;
+        const KeyCode previousPageKey               = KeyCode.PageUp;
 
         Color panelBackgroundColor                  = new Color(0, 0, 0, 0.7f);
         Color resetButtonColor                      = new Color(1, 0, 0, 0.4f);           // red with alpha
@@ -133,6 +133,19 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             titleLabel.HorizontalAlignment = HorizontalAlignment.Center;
             mainPanel.Components.Add(titleLabel);
 
+            if (liveChange)
+            {
+                // Add warning label that some settings may not be applied while game is running
+                TextLabel warningLabel = new TextLabel(DaggerfallUI.DefaultFont);
+                warningLabel.Text = TextManager.Instance.GetLocalizedText("settingsNotApplied");
+                warningLabel.Position = new Vector2(0, columnHeight + 12);
+                warningLabel.TextScale = 0.85f;
+                warningLabel.HorizontalAlignment = HorizontalAlignment.Center;
+                warningLabel.ShadowPosition = Vector2.zero;
+                warningLabel.TextColor = new Color(0.8f, 0.8f, 0.8f, 1.0f);
+                mainPanel.Components.Add(warningLabel);
+            }
+
             // Reset button
             Button resetButton = GetButton(ModManager.GetText("reset"), HorizontalAlignment.Left, resetButtonColor);
             resetButton.OnMouseClick += ResetButton_OnMouseClick;
@@ -149,11 +162,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
             Button presetButton = new Button();
             presetButton.Size = new Vector2(35, 9);
             presetButton.Position = new Vector2(mainPanel.Size.x - 37, 2);
+            presetButton.BackgroundColor = saveButtonColor;
             presetButton.Label.Text = ModManager.GetText("presets");
-            presetButton.Label.Font = DaggerfallUI.Instance.Font1;
-            presetButton.Label.TextScale = 0.4f;
-            presetButton.Label.TextColor = sectionTitleColor;
-            presetButton.Label.ShadowColor = sectionTitleShadow;
+            presetButton.Outline.Enabled = true;
             presetButton.OnMouseClick += PresetButton_OnMouseClick;
             mainPanel.Components.Add(presetButton);
 

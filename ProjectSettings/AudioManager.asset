@@ -5,7 +5,7 @@ AudioManager:
   m_ObjectHideFlags: 0
   m_Volume: 1
   Rolloff Scale: 1
-  Doppler Factor: 1
+  Doppler Factor: 0
   Default Speaker Mode: 2
   m_SampleRate: 0
   m_DSPBufferSize: 0

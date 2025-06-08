@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -121,6 +121,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             : base(uiManager, previous)
         {
             this.buyMode = buyMode;
+            // Prevent duplicate close calls with base class's exitKey (Escape)
+            AllowCancel = false;
         }
 
         #endregion
@@ -207,7 +209,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (DaggerfallUI.Instance.HotkeySequenceProcessed == HotkeySequence.HotkeySequenceProcessStatus.NotFound)
             {
                 // Toggle window closed with same hotkey used to open it
-                if (InputManager.Instance.GetKeyUp(toggleClosedBinding))
+                if (InputManager.Instance.GetKeyUp(toggleClosedBinding) || InputManager.Instance.GetBackButtonUp())
                     CloseWindow();
             }
         }
@@ -345,7 +347,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             spellsListBox.Position = new Vector2(spellsListBoxRect.x, spellsListBoxRect.y);
             spellsListBox.Size = new Vector2(spellsListBoxRect.width, spellsListBoxRect.height);
             spellsListBox.RowsDisplayed = 16;
-            spellsListBox.MaxCharacters = 22;
+            spellsListBox.RectRestrictedRenderArea = spellsListBoxRect;
+            spellsListBox.RestrictedRenderAreaCoordinateType = BaseScreenComponent.RestrictedRenderArea_CoordinateType.ParentCoordinates;
             spellsListBox.OnSelectItem += SpellsListBox_OnSelectItem;
             if (buyMode)
                 spellsListBox.OnMouseDoubleClick += BuyButton_OnMouseClick;
@@ -457,7 +460,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Spell name
             spellNameLabel = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, spellNameLabelPos, string.Empty, mainPanel);
             spellNameLabel.ShadowColor = DaggerfallUI.DaggerfallAlternateShadowColor1;
-            spellNameLabel.MaxCharacters = 18;
+            spellNameLabel.RectRestrictedRenderArea = new Rect(spellNameLabelPos, new Vector2(110, 10));
+            spellNameLabel.RestrictedRenderAreaCoordinateType = BaseScreenComponent.RestrictedRenderArea_CoordinateType.ParentCoordinates;
             spellNameLabel.OnMouseClick += SpellNameLabel_OnMouseClick;
 
             // Spell cost

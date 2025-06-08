@@ -186,14 +186,14 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
-        /// Gets a Standard material from current atlas texture.
+        /// Gets a Daggerfall/Default or Daggerfall/Billboard material from current atlas texture based on blendMode.
         /// Does not return normal or emission map.
         /// </summary>
-        /// <param name="blendMode">Blend mode of material.</param>
+        /// <param name="blendMode">Blend mode of material used to determine material returned.</param>
         /// <returns>Material.</returns>
         public Material GetMaterial(MaterialReader.CustomBlendMode blendMode = MaterialReader.CustomBlendMode.Cutout)
         {
-            Material material = MaterialReader.CreateStandardMaterial(blendMode);
+            Material material = (blendMode == MaterialReader.CustomBlendMode.Cutout) ? MaterialReader.CreateBillboardMaterial() : MaterialReader.CreateDefaultMaterial();
             material.name = "SuperAtlas Material";
             material.mainTexture = atlasTexture;
             material.mainTexture.filterMode = DaggerfallUnity.Instance.MaterialReader.MainFilterMode;

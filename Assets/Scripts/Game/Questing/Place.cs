@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -15,15 +15,13 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Linq;
-using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using FullSerializer;
 using DaggerfallWorkshop.Game.Banking;
+using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Guilds;
-using DaggerfallWorkshop.Game.Serialization;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -145,9 +143,11 @@ namespace DaggerfallWorkshop.Game.Questing
             base.SetResource(line);
 
             // Match string for Place variants
-            string matchStr = @"(Place|place) (?<symbol>[a-zA-Z0-9_.-]+) (?<siteType>local|remote|permanent) (?<siteName>\w+)";
+            string matchStr = @"(Place|place) (?<symbol>[a-zA-Z0-9_.-]+) (?<siteType>local|remote|permanent) (?<siteName>\w+)|" +
+                              @"(Place|place) (?<symbol>[a-zA-Z0-9_.-]+) (?<siteType>randompermanent) (?<siteList>[a-zA-Z0-9_.,]+)";
 
             // Try to match source line with pattern
+            bool randomSiteList = false;
             Match match = Regex.Match(line, matchStr);
             if (match.Success)
             {
@@ -171,6 +171,12 @@ namespace DaggerfallWorkshop.Game.Questing
                     // This is a permanent place
                     scope = Scopes.Fixed;
                 }
+                else if (string.Compare(siteType, "randompermanent", true) == 0)
+                {
+                    // This is a comma-separated list of random sites
+                    scope = Scopes.Fixed;
+                    randomSiteList = true;
+                }
                 else
                 {
                     throw new Exception(string.Format("Place found no site type match found for source: '{0}'. Must be local|remote|permanent.", line));
@@ -178,9 +184,19 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 // Get place name for parameter lookup
                 name = match.Groups["siteName"].Value;
-                if (string.IsNullOrEmpty(name))
+                if (string.IsNullOrEmpty(name) && !randomSiteList)
                 {
                     throw new Exception(string.Format("Place site name empty for source: '{0}'", line));
+                }
+
+                // Pick one permanent place from random site list
+                if (randomSiteList)
+                {
+                    string srcSiteList = match.Groups["siteList"].Value;
+                    string[] siteNames = srcSiteList.Split(',');
+                    if (siteNames == null || siteNames.Length == 0)
+                        throw new Exception(string.Format("Place randompermanent must have at least one site name in source: '{0}'", line));
+                    name = siteNames[UnityEngine.Random.Range(0, siteNames.Length)];
                 }
 
                 // Try to read place variables from data table
@@ -242,15 +258,28 @@ namespace DaggerfallWorkshop.Game.Questing
                     break;
 
                 case MacroTypes.NameMacro2:             // Name of location/dungeon (e.g. Gothway Garden)
-                    textOut = siteDetails.locationName;
+                    textOut = TextManager.Instance.GetLocalizedLocationName(siteDetails.mapId, siteDetails.locationName);
                     break;
 
                 case MacroTypes.NameMacro3:             // Name of dungeon (e.g. Privateer's Hold) - Not sure about this one, need to test
-                    textOut = siteDetails.locationName;
+                    textOut = TextManager.Instance.GetLocalizedLocationName(siteDetails.mapId, siteDetails.locationName);
                     break;
 
                 case MacroTypes.NameMacro4:             // Name of region (e.g. Tigonus)
-                    textOut = siteDetails.regionName;
+                    if (siteDetails.regionIndex == 0 && siteDetails.regionName != "Alik'r Desert")
+                    {
+                        // Workaround for older saves where regionIndex was not present and will always be 0 in save data (Alik'r Desert)
+                        // This can result in improper region name being displayed when loading an older save and quest not actually set in Alik'r Desert.
+                        // In these cases display name using the legacy regionName field stored in place data
+                        var index =
+                            DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegionIndex(siteDetails.regionName);
+                        textOut = TextManager.Instance.GetLocalizedRegionName(index);
+                    }
+                    else
+                    {
+                        // Return localized region name based on regionIndex
+                        textOut = TextManager.Instance.GetLocalizedRegionName(siteDetails.regionIndex);
+                    }
                     break;
 
                 default:                                // Macro not supported
@@ -307,6 +336,7 @@ namespace DaggerfallWorkshop.Game.Questing
             siteDetails.siteType = siteType;
             siteDetails.mapId = location.MapTableData.MapId;
             siteDetails.locationId = location.Exterior.ExteriorData.LocationId;
+            siteDetails.regionIndex = location.RegionIndex;
             siteDetails.buildingKey = buildingKey;
             siteDetails.buildingName = buildingName;
             siteDetails.regionName = location.RegionName;
@@ -495,10 +525,10 @@ namespace DaggerfallWorkshop.Game.Questing
                 }
             }
 
-            // Hot-remove resource is player already at this Place and resource was moved elsewhere
+            // Hot-remove resource if moved somewhere player is not
             if (!IsPlayerHere() && resource.QuestResourceBehaviour)
             {
-                resource.QuestResourceBehaviour.gameObject.SetActive(false);
+                GameObject.Destroy(resource.QuestResourceBehaviour.gameObject);
             }
         }
 
@@ -637,6 +667,25 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 return buildingType == p2;
             }
+        }
+
+        /// For dungeon types check StreamingAssets\Tables\Quests-Places.txt
+        public static bool IsPlayerAtDungeonType(int p2)
+        {
+            // Get component handling player world status and transitions
+            PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
+            if (!playerEnterExit)
+                return false;
+
+            // Only dungeons
+            if (!playerEnterExit.IsPlayerInsideDungeon)
+                return false;
+
+            // Any dungeon will do
+            if (p2 == -1)
+                return true;
+
+            return p2 == (int)GameManager.Instance.PlayerEnterExit.Dungeon.Summary.DungeonType;
         }
 
         #endregion
@@ -875,6 +924,7 @@ namespace DaggerfallWorkshop.Game.Questing
             siteDetails.siteType = SiteTypes.Dungeon;
             siteDetails.mapId = location.MapTableData.MapId;
             siteDetails.locationId = location.Exterior.ExteriorData.LocationId;
+            siteDetails.regionIndex = location.RegionIndex;
             siteDetails.regionName = location.RegionName;
             siteDetails.locationName = location.Name;
             siteDetails.questSpawnMarkers = questSpawnMarkers;
@@ -921,6 +971,7 @@ namespace DaggerfallWorkshop.Game.Questing
             siteDetails.siteType = SiteTypes.Town;
             siteDetails.mapId = location.MapTableData.MapId;
             siteDetails.locationId = location.Exterior.ExteriorData.LocationId;
+            siteDetails.regionIndex = location.RegionIndex;
             siteDetails.regionName = location.RegionName;
             siteDetails.locationName = location.Name;
             siteDetails.questSpawnMarkers = null;
@@ -1041,6 +1092,7 @@ namespace DaggerfallWorkshop.Game.Questing
             siteDetails.siteType = siteType;
             siteDetails.mapId = location.MapTableData.MapId;
             siteDetails.locationId = location.Exterior.ExteriorData.LocationId;
+            siteDetails.regionIndex = location.RegionIndex;
             siteDetails.regionName = location.RegionName;
             siteDetails.locationName = location.Name;
             siteDetails.buildingKey = buildingKey;
@@ -1177,6 +1229,7 @@ namespace DaggerfallWorkshop.Game.Questing
                             site.siteType = SiteTypes.Building;
                             site.mapId = location.MapTableData.MapId;
                             site.locationId = location.Exterior.ExteriorData.LocationId;
+                            site.regionIndex = location.RegionIndex;
                             site.regionName = location.RegionName;
                             site.locationName = location.Name;
                             site.buildingKey = buildingSummary[i].buildingKey;
@@ -1201,8 +1254,17 @@ namespace DaggerfallWorkshop.Game.Questing
                 foreach (QuestResource resource in parentQuestPlaceResources)
                 {
                     Place place = (Place)resource;
+
+                    // Exclude guild halls from same-building check as this breaks guild quests assigned to same building as questor
+                    // For example, N0B10Y03 questor is assigned to home guild and quest hosts action in same building
+                    // There can only be one guild hall of a type within a single location, so the same-building check isn't generally helpful in these cases anyway
+                    // The same-building check is more for preventing duplicates in quests requiring multiple local taverns, homes, etc.
+                    if (buildingSummary.BuildingType == DFLocation.BuildingTypes.GuildHall)
+                        continue;
+
+                    // Check for same-building match
                     if (place.siteDetails.siteType == SiteTypes.Building &&
-                        place.siteDetails.mapId == location.Exterior.ExteriorData.MapId &&
+                        place.siteDetails.mapId == location.MapTableData.MapId &&
                         place.siteDetails.buildingKey == buildingSummary.buildingKey)
                         return true;
                 }
@@ -1214,7 +1276,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 foreach (SiteDetails site in activeQuestSites)
                 {
                     if (site.siteType == SiteTypes.Building &&
-                        site.mapId == location.Exterior.ExteriorData.MapId &&
+                        site.mapId == location.MapTableData.MapId &&
                         site.buildingKey == buildingSummary.buildingKey)
                         return true;
                 }
@@ -1239,8 +1301,13 @@ namespace DaggerfallWorkshop.Game.Questing
             if (RMBLayout.IsResidence(buildingType))
             {
                 // Generate a random surname for this residence
-                //DFRandom.srand(Time.renderedFrameCount);
-                string surname = DaggerfallUnity.Instance.NameHelper.Surname(Utility.NameHelper.BankTypes.Breton);
+                string surname = DaggerfallUnity.Instance.NameHelper.Surname(MapsFile.GetNameBankOfRegion(location.RegionIndex));
+                if (string.IsNullOrEmpty(surname))
+                {
+                    // Redguards have just a single name
+                    surname = DaggerfallUnity.Instance.NameHelper.FirstName(MapsFile.GetNameBankOfRegion(location.RegionIndex), (Genders)UnityEngine.Random.Range(0, 1));
+                }
+
                 buildingName = TextManager.Instance.GetLocalizedText("theNamedResidence").Replace("%s", surname);
             }
             else
@@ -1250,8 +1317,8 @@ namespace DaggerfallWorkshop.Game.Questing
                     buildingSummary[buildingIndex].NameSeed,
                     buildingSummary[buildingIndex].BuildingType,
                     buildingSummary[buildingIndex].FactionId,
-                    location.Name,
-                    location.RegionName);
+                    TextManager.Instance.GetLocalizedLocationName(location.MapTableData.MapId, location.Name),
+                    TextManager.Instance.GetLocalizedRegionName(location.RegionIndex));
             }
 
             return buildingName;

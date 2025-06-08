@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -94,8 +94,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region Properties
 
-        public DFPosition EndPos { get { return endPos; } internal set { endPos = value;} }
-        public DaggerfallTravelMapWindow TravelWindow { get { return travelWindow; } internal set { travelWindow = value; } }
+        public DFPosition EndPos { get { return endPos; } set { endPos = value;} }
+        public DaggerfallTravelMapWindow TravelWindow { get { return travelWindow; } protected internal set { travelWindow = value; } }
         public bool SpeedCautious { get { return speedCautious;} set {speedCautious = value; } }
         public bool TravelShip { get { return travelShip;} set { travelShip = value;} }
         public bool SleepModeInn { get { return sleepModeInn; } set { sleepModeInn = value; } }
@@ -323,6 +323,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         // perform fast travel actions
         private void performFastTravel()
         {
+            DeductFastTravelGold();
+
             RaiseOnPreFastTravelEvent();
 
             // Cache scene first, if fast travelling while on ship.
@@ -460,13 +462,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 showNotEnoughGoldPopup();
                 return;
             }
-            else
-            {
-                GameManager.Instance.PlayerEntity.GoldPieces -= travelTimeCalculator.PiecesCost;
-                GameManager.Instance.PlayerEntity.DeductGoldAmount(travelTimeCalculator.TotalCost - travelTimeCalculator.PiecesCost);
-            }
-
+            
             doFastTravel = true; // initiate fast travel (Update() function will perform fast travel when this flag is true)
+        }
+
+        private void DeductFastTravelGold()
+        {
+            GameManager.Instance.PlayerEntity.GoldPieces -= travelTimeCalculator.PiecesCost;
+            GameManager.Instance.PlayerEntity.DeductGoldAmount(travelTimeCalculator.TotalCost - travelTimeCalculator.PiecesCost);
         }
 
         public virtual void ExitButtonOnClickHandler(BaseScreenComponent sender, Vector2 position)

@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -758,6 +758,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             //Debug.LogFormat("Effect '{0}' has a {1}% chance of succeeding and rolled {2} for a {3}", Key, ChanceValue(), roll, (outcome) ? "success" : "fail");
 
             return outcome;
+        }
+
+        /// <summary>
+        /// Helper to compare the settings of this effect with another effect.
+        /// Used to determine if the Duration, Chance, Magnitude settings are equivalent in both effects.
+        /// </summary>
+        /// <param name="other">Other effect for comparison.</param>
+        public virtual bool CompareSettings(IEntityEffect other)
+        {
+            return this.Settings.Equals(other.Settings);
         }
 
         #endregion

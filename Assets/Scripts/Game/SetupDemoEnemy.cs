@@ -78,7 +78,10 @@ namespace DaggerfallWorkshop.Game
         {
             DaggerfallUnity dfUnity = DaggerfallUnity.Instance;
             Dictionary<int, MobileEnemy> enemyDict = GameObjectHelper.EnemyDict;
-            MobileEnemy mobileEnemy = enemyDict[(int)EnemyType];
+
+            if (!enemyDict.TryGetValue((int)EnemyType, out MobileEnemy mobileEnemy))
+                return;
+
             if (AlliedToPlayer)
                 mobileEnemy.Team = MobileTeams.PlayerAlly;
 
@@ -167,6 +170,18 @@ namespace DaggerfallWorkshop.Game
                         entityBehaviour.EntityType = EntityTypes.EnemyClass;
                         entity.SetEnemyCareer(mobileEnemy, entityBehaviour.EntityType);
                     }
+                    else if (DaggerfallEntity.GetCustomCareerTemplate(enemyIndex) != null)
+                    {
+                        if (DaggerfallEntity.IsClassEnemyId(enemyIndex))
+                        {
+                            entityBehaviour.EntityType = EntityTypes.EnemyClass;
+                        }
+                        else
+                        {
+                            entityBehaviour.EntityType = EntityTypes.EnemyMonster;
+                        }
+                        entity.SetEnemyCareer(mobileEnemy, entityBehaviour.EntityType);
+                    }
                     else
                     {
                         entityBehaviour.EntityType = EntityTypes.None;
@@ -201,12 +216,22 @@ namespace DaggerfallWorkshop.Game
         {
             // Get mobile type based on entity type and career index
             MobileTypes mobileType;
-            if (entityType == EntityTypes.EnemyMonster)
-                mobileType = (MobileTypes)careerIndex;
-            else if (entityType == EntityTypes.EnemyClass)
-                mobileType = (MobileTypes)(careerIndex + 128);
+
+            // For classic enemies, careerIndex is equal to enemyId for monsters, or enemyId - 128 for class enemies (ex: Mage, enemyId=128, careerIndex=0)
+            // For custom enemies, we just always store the enemyId in careerIndex, even if class type
+            if (careerIndex < 256)
+            {                
+                if (entityType == EntityTypes.EnemyMonster)
+                    mobileType = (MobileTypes)careerIndex;
+                else if (entityType == EntityTypes.EnemyClass)
+                    mobileType = (MobileTypes)(careerIndex + 128);
+                else
+                    return;
+            }
             else
-                return;
+            {
+                mobileType = (MobileTypes)careerIndex;
+            }
 
             MobileReactions enemyReaction = (isHostile) ? MobileReactions.Hostile : MobileReactions.Passive;
             MobileGender enemyGender = gender;

@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:engine="UnityEngine.UIElements"
+    xsi:noNamespaceSchemaLocation="../../../../../../UIElementsSchema/UIElements.xsd"
+>
+    <engine:VisualElement class="row pt pl pr pb">
+        <engine:VisualElement class="col-4 center">
+            <engine:Button text="Generate Automap" name="generate"/>
+        </engine:VisualElement>
+    </engine:VisualElement>
+
+    <engine:VisualElement class="row pt pl pr center">
+        <engine:VisualElement class="automap-palette-cell blue" name="palette-12" tooltip="Guildhall"/>
+        <engine:VisualElement class="automap-palette-cell blue" name="palette-15" tooltip="Temple"/>
+        <engine:VisualElement class="automap-palette-cell orange" name="palette-1" tooltip="Alchemist"/>
+        <engine:VisualElement class="automap-palette-cell orange" name="palette-3" tooltip="Armorer"/>
+        <engine:VisualElement class="automap-palette-cell orange" name="palette-4" tooltip="Bank"/>
+        <engine:VisualElement class="automap-palette-cell orange" name="palette-6" tooltip="Book Seller"/>
+        <engine:VisualElement class="automap-palette-cell orange" name="palette-7" tooltip="Clothing Store"/>
+        <engine:VisualElement class="automap-palette-cell orange" name="palette-9" tooltip="Gem Store"/>
+        <engine:VisualElement class="automap-palette-cell orange" name="palette-10" tooltip="General Store"/>
+        <engine:VisualElement class="automap-palette-cell orange" name="palette-11" tooltip="Library"/>
+        <engine:VisualElement class="automap-palette-cell orange" name="palette-13" tooltip="Pawn Shop"/>
+        <engine:VisualElement class="automap-palette-cell orange" name="palette-14" tooltip="Weapon Smith"/>
+        <engine:VisualElement class="automap-palette-cell green" name="palette-16" tooltip="Tavern"/>
+        <engine:VisualElement class="automap-palette-cell black" name="palette-0" tooltip="Blank"/>
+    </engine:VisualElement>
+
+    <engine:VisualElement class="row pb pl pr center">
+        <engine:VisualElement class="automap-palette-cell tan" name="palette-2" tooltip="House For Sale"/>
+        <engine:VisualElement class="automap-palette-cell tan" name="palette-5" tooltip="Town 4"/>
+        <engine:VisualElement class="automap-palette-cell tan" name="palette-8" tooltip="Furniture Store"/>
+        <engine:VisualElement class="automap-palette-cell tan" name="palette-17" tooltip="Palace"/>
+        <engine:VisualElement class="automap-palette-cell tan" name="palette-18" tooltip="House 1"/>
+        <engine:VisualElement class="automap-palette-cell tan" name="palette-19" tooltip="House 2"/>
+        <engine:VisualElement class="automap-palette-cell tan" name="palette-20" tooltip="House 3"/>
+        <engine:VisualElement class="automap-palette-cell tan" name="palette-21" tooltip="House 4"/>
+        <engine:VisualElement class="automap-palette-cell tan" name="palette-22" tooltip="House 5 (Hedge)"/>
+        <engine:VisualElement class="automap-palette-cell tan" name="palette-23" tooltip="House 6"/>
+        <engine:VisualElement class="automap-palette-cell tan" name="palette-24" tooltip="Town 23"/>
+        <engine:VisualElement class="automap-palette-cell tan" name="palette-25" tooltip="Ship"/>
+        <engine:VisualElement class="automap-palette-cell gray" name="palette-117" tooltip="Special 1"/>
+        <engine:VisualElement class="automap-palette-cell gray" name="palette-224" tooltip="Special 2"/>
+        <engine:VisualElement class="automap-palette-cell gray" name="palette-250" tooltip="Special 3"/>
+        <engine:VisualElement class="automap-palette-cell gray" name="palette-251" tooltip="Special 4"/>
+    </engine:VisualElement>
+
+    <engine:VisualElement name="grid" class="center"/>
+
+</engine:UXML>

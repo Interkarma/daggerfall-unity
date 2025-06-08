@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -301,7 +301,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 // And offensive spells the player catches themselves with
                 // Will need to refine how this works as more effects and situations become available
                 ActiveSpellIcon item = new ActiveSpellIcon();
-                item.displayName = bundle.name;
+                item.displayName = bundle.name.TrimStart('!'); // Non-vendor spells start with !, don't show this on the UI
                 item.iconIndex = bundle.iconIndex;
                 item.icon = bundle.icon;
                 item.poolIndex = poolIndex++;

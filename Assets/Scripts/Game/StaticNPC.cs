@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -69,6 +69,14 @@ namespace DaggerfallWorkshop.Game
             get { return IsChildNPCData(Data); }
         }
 
+        /// <summary>
+        /// Sets the NPC name bank for name generation.
+        /// </summary>
+        public NameHelper.BankTypes NameBank
+        {
+            set { npcData.nameBank = value; }
+        }
+
         #endregion
 
         #region Structs & Enums
@@ -112,6 +120,12 @@ namespace DaggerfallWorkshop.Game
         #endregion
 
         #region Unity
+
+        private void Awake()
+        {
+            // Register game object as Static NPC
+            ActiveGameObjectDatabase.RegisterStaticNPC(gameObject);
+        }
 
         private void Start()
         {
@@ -165,7 +179,6 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
-
         /// Sets NPC data from RMB layout flat record. (exterior NPCs)
         /// Requires mapID and locationIndex to be passed in as layout may occur without player being in the location.
         /// </summary>
@@ -223,8 +236,16 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public void SetLayoutData(int x, int y, int z, Genders gender, int factionID = 0, int nameSeed = -1)
         {
+            SetLayoutData(GetPositionHash(x, y, z), gender, factionID, nameSeed);
+        }
+
+        /// <summary>
+        /// Sets NPC data directly.
+        /// </summary>
+        public void SetLayoutData(int hash, Genders gender, int factionID = 0, int nameSeed = -1)
+        {
             // Store common layout data
-            npcData.hash = GetPositionHash(x, y, z);
+            npcData.hash = hash;
             npcData.flags = (gender == Genders.Male) ? 0 : 32;
             npcData.factionID = factionID;
             npcData.nameSeed = (nameSeed == -1) ? npcData.hash : nameSeed;

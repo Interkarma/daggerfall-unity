@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements"
+>
+    <engine:VisualElement class="row pl pt">
+        <engine:Label text="Position: " class="col-1"/>
+        <engine:Label name="position" class="col-2"/>
+    </engine:VisualElement>
+    <engine:VisualElement class="row pl">
+        <engine:Label text="TextureArchive: " class="col-1"/>
+        <engine:Label name="archive" class="col-3"/>
+    </engine:VisualElement>
+    <engine:VisualElement class="row pl">
+        <engine:Label text="TextureRecord: " class="col-1"/>
+        <engine:Label name="record" class="col-3"/>
+    </engine:VisualElement>
+
+    <engine:VisualElement class="splitter" />
+
+    <engine:VisualElement class="row pl">
+        <engine:Label text="FactionID: " class="col-1"/>
+        <editor:IntegerField name="faction" class="col-1"/>
+    </engine:VisualElement>
+    <engine:VisualElement class="row pl">
+        <engine:Label text="Flags: " class="col-1"/>
+        <editor:IntegerField name="flags" class="col-1"/>
+    </engine:VisualElement>
+
+    <engine:VisualElement class="splitter" />
+
+    <engine:VisualElement class="row pl pr pb">
+        <engine:VisualElement class="col-4">
+            <editor:Vector3Field name="world-position" label="Position: " class="col-4"/>
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>

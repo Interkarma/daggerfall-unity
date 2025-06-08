@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -24,6 +24,7 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Banking;
 using DaggerfallWorkshop.Game.MagicAndEffects;
+using DaggerfallWorkshop.Game.Utility.ModSupport;
 
 namespace DaggerfallWorkshop
 {
@@ -98,6 +99,7 @@ namespace DaggerfallWorkshop
             public int quality;
             public DFLocation.BuildingTypes buildingType;
             public int lastLockpickAttempt;
+            public string customUserDisplayName;
         }
 
         public struct NearbyObject
@@ -119,6 +121,15 @@ namespace DaggerfallWorkshop
             Humanoid = 32,
             Animal = 64,
         }
+
+        /// <summary>
+        /// Data used when performing building name refresh.
+        /// </summary>
+        struct BuildingRenameOperation
+        {
+            public int buildingKey;
+            public string displayName;
+        };
 
         #endregion
 
@@ -153,10 +164,24 @@ namespace DaggerfallWorkshop
         /// </summary>
         public int CurrentRegionIndex
         {
-            get { if (currentPoliticIndex == 64)
-                    return 31; // High Rock sea coast
+            get {
+                // Determine region from current politic index
+                int result = 0;
+                if (currentPoliticIndex == 64)
+                    result = 31; // High Rock sea coast
                   else
-                    return currentPoliticIndex - 128; }
+                    result = currentPoliticIndex - 128;
+
+                // Patch known bad value to Wrothgarian Mountains
+                if (result == 105)
+                    result = 16;
+
+                // Clamp any out of range results to 0
+                if (result < 0 || result >= 62)
+                    result = 0;
+
+                return result;
+            }
         }
 
         /// <summary>
@@ -212,11 +237,26 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
-        /// Gets current region name based on world position.
+        /// Gets non-localized current region name based on world position.
+        /// IMPORTANT: This is used when matching regions for NPC knowledge in TalkManager and should not be localized.
         /// </summary>
         public string CurrentRegionName
         {
             get { return regionName; }
+        }
+
+        /// <summary>
+        /// Gets localized current region name based on world position.
+        /// This should only be used for display strings in UI.
+        /// </summary>
+        public string CurrentLocalizedRegionName
+        {
+            get { return TextManager.Instance.GetLocalizedRegionName(CurrentRegionIndex); }
+        }
+
+        public string CurrentLocalizedLocationName
+        {
+            get { return TextManager.Instance.GetLocalizedLocationName(currentLocation.MapTableData.MapId, currentLocation.Name); }
         }
 
         /// <summary>
@@ -431,7 +471,7 @@ namespace DaggerfallWorkshop
             // Find court in current region
             FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(
                 (int)FactionFile.FactionTypes.Courts,
-                (int)FactionFile.SocialGroups.Nobility,
+                -1,
                 (int)FactionFile.GuildGroups.Region,
                 CurrentRegionIndex);
 
@@ -493,15 +533,16 @@ namespace DaggerfallWorkshop
         /// </summary>
         /// <param name="flags">Flags to search for.</param>
         /// <param name="maxRange">Max range for search. Not matched to classic range at this time.</param>
+        /// <param name="activeInHierarchy">Flag to get active or inactive objects.</param>
         /// <returns>NearbyObject list. Can be null or empty.</returns>
-        public List<NearbyObject> GetNearbyObjects(NearbyObjectFlags flags, float maxRange = 14f)
+        public List<NearbyObject> GetNearbyObjects(NearbyObjectFlags flags, float maxRange = 14f, bool activeInHierarchy = true)
         {
             if (flags == NearbyObjectFlags.None)
                 return null;
 
             var query =
                 from no in nearbyObjects
-                where ((no.flags & flags) == flags) && no.distance < maxRange
+                where ((no.flags & flags) == flags) && no.distance < maxRange && no.gameObject != null && no.gameObject.activeInHierarchy == activeInHierarchy
                 select no;
 
             return query.ToList();
@@ -552,9 +593,9 @@ namespace DaggerfallWorkshop
             if (currentPoliticIndex >= 128)
                 regionName = dfUnity.ContentReader.MapFileReader.GetRegionName(currentPoliticIndex - 128);
             else if (currentPoliticIndex == 64)
-                regionName = "Ocean";
+                regionName = TextManager.Instance.GetLocalizedText("ocean");
             else
-                regionName = "Unknown";
+                regionName = TextManager.Instance.GetLocalizedText("unknownUpper");
 
             // Get region data
             currentRegion = dfUnity.ContentReader.MapFileReader.GetRegion(CurrentRegionIndex);
@@ -687,6 +728,12 @@ namespace DaggerfallWorkshop
             if (!dfUnity.IsReady)
                 return false;
 
+            // When running the game, wait for the mod manager to be initialized
+            // Updating the player location too early causes the region loading to read WorldData
+            // locations from disabled mods
+            if (ModManager.Instance != null && !ModManager.Instance.Initialized)
+                return false;
+
             return true;
         }
 
@@ -701,41 +748,31 @@ namespace DaggerfallWorkshop
         {
             nearbyObjects.Clear();
 
-            // Get entities
-            DaggerfallEntityBehaviour[] entities = FindObjectsOfType<DaggerfallEntityBehaviour>();
-            if (entities != null)
+            // Get enemy and civilian entities
+            foreach (DaggerfallEntityBehaviour entity in ActiveGameObjectDatabase.GetActiveEnemyBehaviours()
+                .Concat(ActiveGameObjectDatabase.GetActiveCivilianMobileBehaviours()))
             {
-                for (int i = 0; i < entities.Length; i++)
+                NearbyObject no = new NearbyObject()
                 {
-                    if (entities[i] == GameManager.Instance.PlayerEntityBehaviour)
-                        continue;
+                    gameObject = entity.gameObject,
+                    distance = Vector3.Distance(transform.position, entity.transform.position),
+                    flags = GetEntityFlags(entity)
+                };
 
-                    NearbyObject no = new NearbyObject()
-                    {
-                        gameObject = entities[i].gameObject,
-                        distance = Vector3.Distance(transform.position, entities[i].transform.position),
-                    };
-
-                    no.flags = GetEntityFlags(entities[i]);
-                    nearbyObjects.Add(no);
-                }
+                nearbyObjects.Add(no);
             }
 
-            // Get treasure - this assumes loot containers will never carry entity component
-            DaggerfallLoot[] lootContainers = FindObjectsOfType<DaggerfallLoot>();
-            if (lootContainers != null)
+            // Get treasure
+            foreach (DaggerfallLoot loot in ActiveGameObjectDatabase.GetActiveLoot())
             {
-                for (int i = 0; i < lootContainers.Length; i++)
+                NearbyObject no = new NearbyObject()
                 {
-                    NearbyObject no = new NearbyObject()
-                    {
-                        gameObject = lootContainers[i].gameObject,
-                        distance = Vector3.Distance(transform.position, lootContainers[i].transform.position),
-                    };
+                    gameObject = loot.gameObject,
+                    distance = Vector3.Distance(transform.position, loot.transform.position),
+                    flags = GetLootFlags(loot)
+                };
 
-                    no.flags = GetLootFlags(lootContainers[i]);
-                    nearbyObjects.Add(no);
-                }
+                nearbyObjects.Add(no);
             }
         }
 
@@ -1045,6 +1082,21 @@ namespace DaggerfallWorkshop
         }
 
         /// <summary>
+        /// Sets custom name field for discovered building in current location.
+        /// </summary>
+        /// <param name="buildingKey">Building key in current location.</param>
+        /// <param name="customName">Custom name of building. Set null or empty to remove custom name.</param>
+        public void SetDiscoveredBuildingCustomName(int buildingKey, string customName)
+        {
+            DiscoveredBuilding discoveredBuilding;
+            if (GetDiscoveredBuilding(buildingKey, out discoveredBuilding))
+            {
+                discoveredBuilding.customUserDisplayName = customName;
+                UpdateDiscoveredBuilding(discoveredBuilding);
+            }
+        }
+
+        /// <summary>
         /// Gets skill value of last lockpick attempt on this building in current location.
         /// </summary>
         /// <param name="buildingKey">Building key in current location.</param>
@@ -1071,6 +1123,68 @@ namespace DaggerfallWorkshop
 
             discoveredBuilding.lastLockpickAttempt = skillValue;
             UpdateDiscoveredBuilding(discoveredBuilding);
+        }
+
+        /// <summary>
+        /// Refresh any changed non-residence building names in current location.
+        /// Allows localized or otherwise changed building names to replace previously discovered building names.
+        /// Will change names on buildings with a random NPC name.
+        /// Does not affect player custom names or other properties of discovery data other than display name.
+        /// </summary>
+        public void RefreshBuildingNamesInCurrentLocation()
+        {
+            // Must have a location loaded
+            if (!CurrentLocation.Loaded)
+                return;
+
+            // Get building directory for location
+            BuildingDirectory buildingDirectory = GameManager.Instance.StreamingWorld.GetCurrentBuildingDirectory();
+            if (!buildingDirectory)
+                return;
+
+            // Get discovered location
+            int mapPixelID = MapsFile.GetMapPixelIDFromLongitudeLatitude((int)CurrentLocation.MapTableData.Longitude, CurrentLocation.MapTableData.Latitude);
+            DiscoveredLocation dl = discoveredLocations[mapPixelID];
+            if (dl.discoveredBuildings == null || dl.discoveredBuildings.Count == 0)
+                return;
+
+            // Enumerate changed building names
+            List<BuildingRenameOperation> ops = new List<BuildingRenameOperation>();            
+            foreach (DiscoveredBuilding db in dl.discoveredBuildings.Values)
+            {
+                // Get detailed building data from directory
+                BuildingSummary buildingSummary;
+                if (!buildingDirectory.GetBuildingSummary(db.buildingKey, out buildingSummary))
+                    continue;
+
+                // Ignore residences
+                if (RMBLayout.IsResidence(buildingSummary.BuildingType))
+                    continue;
+
+                // Expand building name
+                string displayName = BuildingNames.GetName(
+                    buildingSummary.NameSeed,
+                    buildingSummary.BuildingType,
+                    buildingSummary.FactionId,
+                    TextManager.Instance.GetLocalizedLocationName(buildingDirectory.LocationData.MapTableData.MapId, buildingDirectory.LocationData.Name),
+                    TextManager.Instance.GetLocalizedRegionName(buildingDirectory.LocationData.RegionIndex));
+
+                // Schedule name change
+                if (!string.Equals(displayName, db.displayName))
+                    ops.Add(new BuildingRenameOperation() { buildingKey = buildingSummary.buildingKey, displayName = displayName });
+            }
+
+            // Update building names
+            foreach (BuildingRenameOperation op in ops)
+            {
+                DiscoveredBuilding discoveredBuilding;
+                if (!GetDiscoveredBuilding(op.buildingKey, out discoveredBuilding))
+                    return;
+
+                Debug.LogFormat("Renaming '{0}' to '{1}'", discoveredBuilding.displayName, op.displayName);
+                discoveredBuilding.displayName = op.displayName;
+                UpdateDiscoveredBuilding(discoveredBuilding);
+            }
         }
 
         /// <summary>
@@ -1203,7 +1317,7 @@ namespace DaggerfallWorkshop
                     buildingSummary.BuildingType,
                     buildingSummary.FactionId,
                     buildingDirectory.LocationData.Name,
-                    buildingDirectory.LocationData.RegionName);
+                    TextManager.Instance.GetLocalizedRegionName(buildingDirectory.LocationData.RegionIndex));
             }
             buildingDiscoveryData.factionID = buildingSummary.FactionId;
             buildingDiscoveryData.quality = buildingSummary.Quality;

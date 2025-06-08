@@ -1,0 +1,156 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: Internal_Settings Shared Data
+  m_EditorClassIdentifier: 
+  m_TableCollectionName: Internal_Settings
+  m_TableCollectionNameGuidString: c6e2a78ddb1596d4b8bec7f8d98c0bf7
+  m_Entries:
+  - m_Id: 66057662464
+    m_Key: weaponSwingModes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5289358651392
+    m_Key: mouseLookSmoothingStrengths
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17418295963648
+    m_Key: configureAdvancedControls
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17583400546304
+    m_Key: continueUpper
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17783670173696
+    m_Key: mouseLookSmoothing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17828595363840
+    m_Key: mouseLookSensitivity
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17871150772224
+    m_Key: invertLookY
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17915681697792
+    m_Key: movementAcceleration
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17967456186368
+    m_Key: weaponSwingMode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18081830662144
+    m_Key: bowDrawback
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18131793211392
+    m_Key: toggleSneak
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18170804432896
+    m_Key: mouseWeaponAttackThreshold
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21209825144832
+    m_Key: Escape
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21235720777728
+    m_Key: AutoRun
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21258667814912
+    m_Key: ToggleConsole
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21297549012992
+    m_Key: PrintScreen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21352632807424
+    m_Key: QuickSave
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21395456651264
+    m_Key: QuickLoad
+    m_Metadata:
+      m_Items: []
+  - m_Id: 29671917350912
+    m_Key: close
+    m_Metadata:
+      m_Items: []
+  - m_Id: 30282243108864
+    m_Key: dungeonTextureModes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 31486910132224
+    m_Key: cameraRecoilStrengths
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32548303925248
+    m_Key: interactionModeIconModes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33651112275968
+    m_Key: iconsPositioningSchemes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 34405386547200
+    m_Key: helmAndShieldMaterialDisplay
+    m_Metadata:
+      m_Items: []
+  - m_Id: 37951859322880
+    m_Key: qualitySettings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 38352516018176
+    m_Key: filterModes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 39004105338880
+    m_Key: shadowResolutionModes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 39382901321728
+    m_Key: textureArrayLabel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 39463364849664
+    m_Key: unsupported
+    m_Metadata:
+      m_Items: []
+  - m_Id: 39495560327168
+    m_Key: enabled
+    m_Metadata:
+      m_Items: []
+  - m_Id: 39522110271488
+    m_Key: disabled
+    m_Metadata:
+      m_Items: []
+  - m_Id: 39941251264512
+    m_Key: textureArrayInfo
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    id: 0
+  references:
+    version: 1
+    00000000:
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables,
+        asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1681862210750

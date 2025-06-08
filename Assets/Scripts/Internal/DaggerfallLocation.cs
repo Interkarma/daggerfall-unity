@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -248,13 +248,25 @@ namespace DaggerfallWorkshop
             int natureArchive = GetNatureArchive();
 
             // Process all DaggerfallBillboard child components
-            DaggerfallBillboard[] billboardArray = GetComponentsInChildren<DaggerfallBillboard>();
+            Billboard[] billboardArray = GetComponentsInChildren<Billboard>();
             foreach (var db in billboardArray)
             {
                 if (db.Summary.FlatType == FlatTypes.Nature)
                 {
+                    // Billboard is already aligned to base
+                    // But we're potentially changing the archive
+                    // Because the summary size can change, we have to cancel
+                    // the "base" alignment and reapply it after
+                    Vector3 offset = Vector3.zero;
+                    offset.y = (db.Summary.Size.y / 2);
+                    db.transform.position -= offset;
+
                     // Apply recalculated nature archive
                     db.SetMaterial(natureArchive, db.Summary.Record);
+
+                    // Re-align to base
+                    offset.y = (db.Summary.Size.y / 2);
+                    db.transform.position += offset;
                 }
                 else
                 {
@@ -277,7 +289,7 @@ namespace DaggerfallWorkshop
         public void EnumerateStartMarkers()
         {
             // Process all DaggerfallBillboard child components
-            DaggerfallBillboard[] billboardArray = GetComponentsInChildren<DaggerfallBillboard>();
+            Billboard[] billboardArray = GetComponentsInChildren<Billboard>();
             startMarkers.Clear();
             foreach (var db in billboardArray)
             {

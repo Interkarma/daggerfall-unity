@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -38,15 +38,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const float maxZoom = 25.0f; // the minimum external automap camera height
         const float minZoom = 250.0f; // the maximum external automap camera height
         // button definitions
-        Button gridButton;
-        Button forwardButton;
-        Button backwardButton;
-        Button leftButton;
-        Button rightButton;
-        Button rotateLeftButton;
-        Button rotateRightButton;
-        Button upstairsButton;
-        Button downstairsButton;
+        protected Button gridButton;
+        protected Button forwardButton;
+        protected Button backwardButton;
+        protected Button leftButton;
+        protected Button rightButton;
+        protected Button rotateLeftButton;
+        protected Button rotateRightButton;
+        protected Button upstairsButton;
+        protected Button downstairsButton;
 
         // Handle toggle closing
         KeyCode automapBinding = KeyCode.None;
@@ -104,6 +104,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Panel panelRenderAutomap = null; // level geometry is rendered into this panel
         Rect oldPositionNativePanel;
         Vector2 oldMousePosition; // old mouse position used to determine offset of mouse movement since last time used for for drag and drop functionality
+        Rect? oldCustomScreenRect = null;
 
         Panel dummyPanelCompass = null; // used to determine correct compass position
 
@@ -170,6 +171,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public DaggerfallExteriorAutomapWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
         {
+            // Prevent duplicate close calls with base class's exitKey (Escape)
+            AllowCancel = false;
         }
 
         /// <summary>
@@ -259,7 +262,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 throw new Exception("DaggerfallExteriorAutomapWindow: Could not load native texture (AMAP00I0.IMG).");
 
             // Load caption line
-            Texture2D nativeTextureCaption = DaggerfallUI.GetTextureFromImg(nativeImgNameCaption, TextureFormat.ARGB32, false);
+            Texture2D nativeTextureCaption = DaggerfallUI.GetTextureFromImg(nativeImgNameCaption, TextureFormat.ARGB32, true);
             nativeTextureCaption.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
             if (!nativeTextureCaption)
                 throw new Exception("DaggerfallExteriorAutomapWindow: Could not load native texture (TOWN00I0.IMG).");
@@ -270,8 +273,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             panelCaption = DaggerfallUI.AddPanel(rectPanelCaption, NativePanel);
 
             SetupCaptionColors(nativeTextureCaption);
-
-            nativeTextureCaption.Apply(false, true);
 
             // set caption line in bottom part of exterior automap window background image texture
             panelCaption.BackgroundTexture = nativeTextureCaption;
@@ -581,11 +582,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
 
-            if (Input.GetKeyDown(KeyCode.Escape) ||
+            if (InputManager.Instance.GetBackButtonDown() ||
                 // Toggle window closed with same hotkey used to open it
                 InputManager.Instance.GetKeyDown(automapBinding))
                 isCloseWindowDeferred = true;
-            else if ((Input.GetKeyUp(KeyCode.Escape) ||
+            else if ((InputManager.Instance.GetBackButtonUp() ||
                 // Toggle window closed with same hotkey used to open it
                 InputManager.Instance.GetKeyUp(automapBinding)) && isCloseWindowDeferred)
             {
@@ -876,8 +877,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 exteriorAutomap.buildingNameplates[i].textLabel.ToolTipText = exteriorAutomap.buildingNameplates[i].name;
                 panelRenderAutomap.Components.Add(exteriorAutomap.buildingNameplates[i].textLabel);
 
+                // use long name or custom name for nameplate label
+                string displayName = !string.IsNullOrEmpty(exteriorAutomap.buildingNameplates[i].customName) ? exteriorAutomap.buildingNameplates[i].customName : exteriorAutomap.buildingNameplates[i].name;
+
                 exteriorAutomap.buildingNameplates[i].gameObject.name = String.Format("building name plate for [{0}]+", exteriorAutomap.buildingNameplates[i].name);
-                exteriorAutomap.buildingNameplates[i].textLabel.Text = exteriorAutomap.buildingNameplates[i].name; // use long name
+                exteriorAutomap.buildingNameplates[i].textLabel.Text = displayName;
                 exteriorAutomap.buildingNameplates[i].width = exteriorAutomap.buildingNameplates[i].textLabel.TextWidth;
                 exteriorAutomap.buildingNameplates[i].height = exteriorAutomap.buildingNameplates[i].textLabel.TextHeight;
                 exteriorAutomap.buildingNameplates[i].offset = Vector2.zero;
@@ -905,7 +909,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 exteriorAutomap.buildingNameplates[i].upperRightCorner = exteriorAutomap.buildingNameplates[i].textLabel.Position + new Vector2(exteriorAutomap.buildingNameplates[i].width, -exteriorAutomap.buildingNameplates[i].height * 0.5f);
                 exteriorAutomap.buildingNameplates[i].lowerLeftCorner = exteriorAutomap.buildingNameplates[i].textLabel.Position + new Vector2(0.0f, +exteriorAutomap.buildingNameplates[i].height * 0.5f);
                 exteriorAutomap.buildingNameplates[i].lowerRightCorner = exteriorAutomap.buildingNameplates[i].textLabel.Position + new Vector2(exteriorAutomap.buildingNameplates[i].width, +exteriorAutomap.buildingNameplates[i].height * 0.5f);
-                exteriorAutomap.buildingNameplates[i].textLabel.Update();
+                //exteriorAutomap.buildingNameplates[i].textLabel.Update();
             }
         }
 
@@ -940,10 +944,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ResizeGUIelementsOnDemand()
         {
-            if (oldPositionNativePanel != NativePanel.Rectangle)
+            if (oldPositionNativePanel != NativePanel.Rectangle || oldCustomScreenRect != DaggerfallUI.Instance.CustomScreenRect)
             {
                 // get panelRenderAutomap position and size from dummyPanelAutomap rectangle
-                panelRenderAutomap.Position = dummyPanelAutomap.Rectangle.position;
+                if (DaggerfallUI.Instance.CustomScreenRect == null)
+                    panelRenderAutomap.Position = dummyPanelAutomap.Rectangle.position;
+                else
+                    panelRenderAutomap.Position = dummyPanelAutomap.ScreenToLocal(dummyPanelAutomap.Rectangle.position);
                 //panelRenderAutomap.Size = new Vector2(dummyPanelAutomap.InteriorWidth, dummyPanelAutomap.InteriorHeight);
                 panelRenderAutomap.Size = new Vector2(dummyPanelAutomap.Rectangle.width, dummyPanelAutomap.Rectangle.height);
 
@@ -960,6 +967,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 compass.Scale = scale;
 
                 oldPositionNativePanel = NativePanel.Rectangle;
+                oldCustomScreenRect = DaggerfallUI.Instance.CustomScreenRect;
             }
         }
 

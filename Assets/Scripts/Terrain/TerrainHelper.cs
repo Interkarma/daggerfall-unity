@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -235,6 +235,7 @@ namespace DaggerfallWorkshop
         #region Terrain Jobs
 
         // Calculates average and maximum heights of terrain data
+        [Unity.Burst.BurstCompile]
         struct CalcAvgMaxHeightJob : IJob
         {
             [ReadOnly]
@@ -258,6 +259,7 @@ namespace DaggerfallWorkshop
         }
 
         // Flattens location terrain and blends with surrounding terrain
+        [Unity.Burst.BurstCompile]
         struct BlendLocationTerrainJob : IJob
         {
             public NativeArray<float> heightmapData;
@@ -329,6 +331,7 @@ namespace DaggerfallWorkshop
         }
 
         // Converts tileMap data to color array for use by shader
+        [Unity.Burst.BurstCompile]
         struct UpdateTileMapDataJob : IJobParallelFor
         {
             [ReadOnly]

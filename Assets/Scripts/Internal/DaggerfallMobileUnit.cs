@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -23,6 +23,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.Utility;
+using DaggerfallWorkshop.Game;
 
 namespace DaggerfallWorkshop
 {
@@ -43,9 +44,6 @@ namespace DaggerfallWorkshop
         const int numberOrientations = 8;
         const float anglePerOrientation = 360f / numberOrientations;
 
-        [SerializeField]
-        MobileUnitSummary summary = new MobileUnitSummary();
-
         Camera mainCamera = null;
         MeshFilter meshFilter = null;
         MeshRenderer meshRenderer = null;
@@ -61,11 +59,6 @@ namespace DaggerfallWorkshop
         bool freezeAnims = false;
         bool animReversed = false;
         int frameSpeedDivisor = 1;
-
-        public MobileUnitSummary Summary
-        {
-            get { return summary; }
-        }
 
         public override bool IsSetup
         {
@@ -127,26 +120,8 @@ namespace DaggerfallWorkshop
 
         public override bool SpecialTransformationCompleted
         {
-            get { return Summary.specialTransformationCompleted; }
+            get { return summary.specialTransformationCompleted; }
             protected set { summary.specialTransformationCompleted = value; }
-        }
-
-        [Serializable]
-        public struct MobileUnitSummary
-        {
-            public bool IsSetup;                                        // Flagged true when mobile settings are populated
-            public Rect[] AtlasRects;                                   // Array of rectangles for atlased materials
-            public RecordIndex[] AtlasIndices;                          // Indices into rect array for atlased materials, supports animations
-            public Vector2[] RecordSizes;                               // Size and scale of individual records
-            public int[] RecordFrames;                                  // Number of frames of individual records
-            public MobileEnemy Enemy;                                   // Mobile enemy settings
-            public MobileStates EnemyState;                             // Animation state
-            public MobileAnimation[] StateAnims;                        // Animation frames for this state
-            public MobileBillboardImportedTextures ImportedTextures;    // Textures imported from mods
-            public int AnimStateRecord;                                 // Record number of animation state
-            public int[] StateAnimFrames;                               // Sequence of frames to play for this animation. Used for attacks
-            public byte ClassicSpawnDistanceType;                       // 0 through 6 value read from spawn marker that determines distance at which enemy spawns/despawns in classic.
-            public bool specialTransformationCompleted;                 // Mobile has completed special transformation (e.g. Daedra Seducer)
         }
 
         void Start()
@@ -185,6 +160,12 @@ namespace DaggerfallWorkshop
                 // Orient enemy based on camera position
                 UpdateOrientation();
             }
+        }
+
+        protected void LogMobileError(string  message)
+        {
+            string enemyName = TextManager.Instance.GetLocalizedEnemyName(summary.Enemy.ID);
+            Debug.LogError($"Enemy '{enemyName}' (state={summary.EnemyState}): {message}");
         }
 
         protected override void ApplyEnemy(DaggerfallUnity dfUnity)
@@ -309,7 +290,7 @@ namespace DaggerfallWorkshop
             if (summary.StateAnims == null)
             {
                 // Log error message
-                DaggerfallUnity.LogMessage(string.Format("DaggerfalMobileUnit: Enemy does not have animation for {0} state. Defaulting to Idle state.", summary.EnemyState.ToString()), true);
+                LogMobileError($"Enemy does not have animation for {summary.EnemyState} state. Defaulting to Idle state.");
 
                 // Set back to idle (which every enemy has in one form or another)
                 summary.EnemyState = MobileStates.Idle;
@@ -357,7 +338,17 @@ namespace DaggerfallWorkshop
 
             // Change enemy to this orientation
             if (orientation != lastOrientation)
+            {
+                // Different orientations may not have the same amount of frames
+                // For example, archive 288 (Ancient Lich) has 4 frames in six orientations (front, back, front diagonals, sides), but 8 frames for the two back diagonals
+                // If you change orientation from a back diagonal during frame 4, 5, 6, or 7, you overflow the other anims, where only 0 to 3 are valid
+                if (lastOrientation >= 0)
+                {
+                    currentFrame = currentFrame * summary.StateAnims[orientation].NumFrames / summary.StateAnims[lastOrientation].NumFrames;
+                }
+
                 OrientEnemy(orientation);
+            }
         }
 
         /// <summary>
@@ -369,17 +360,32 @@ namespace DaggerfallWorkshop
             if (summary.StateAnims == null || summary.StateAnims.Length == 0)
                 return;
 
+            if (orientation < 0 || orientation >= summary.StateAnims.Length)
+            {
+                LogMobileError($"Orientation '{orientation}' was invalid for state anims (length = {summary.StateAnims.Length}))");
+                return;
+            }
+
+            if (currentFrame < 0)
+            {
+                LogMobileError($"Invalid frame '{currentFrame}'");
+                return;
+            }
+            
             // Get mesh filter
             if (meshFilter == null)
                 meshFilter = GetComponent<MeshFilter>();
-
-            // Try to fix if anim array is null
-            if (summary.StateAnims == null)
-                ApplyEnemyState();
             
             // Get enemy size and scale for this state
             int record = summary.StateAnims[orientation].Record;
             summary.AnimStateRecord = record;
+
+            if(record < 0 || record >= summary.RecordSizes.Length)
+            {
+                LogMobileError($"Invalid record '{record}' for state anim '{orientation}' (length = {summary.RecordSizes.Length})");
+                return;
+            }           
+
             Vector2 size = summary.RecordSizes[record];
 
             // Post-fix female texture scale for 475 while casting spells
@@ -413,17 +419,45 @@ namespace DaggerfallWorkshop
             // Scorpion animations need to be inverted
             if (summary.Enemy.ID == (int)MobileTypes.GiantScorpion)
                 flip = !flip;
-
+            
             // Update Record/Frame texture
             if (summary.ImportedTextures.HasImportedTextures)
             {
                 if (meshRenderer == null)
                     meshRenderer = GetComponent<MeshRenderer>();
 
+                // Check that record and frame are valid for albedo
+                if(record >= summary.ImportedTextures.Albedo.Length)
+                {
+                    LogMobileError($"Invalid record '{record}' for imported textures albedo (length = {summary.ImportedTextures.Albedo.Length})");
+                    return;
+                }
+
+                if(currentFrame >= summary.ImportedTextures.Albedo[record].Length)
+                {
+                    LogMobileError($"Invalid frame '{currentFrame}' for imported textures albedo record '{record}' (length = {summary.ImportedTextures.Albedo[record].Length})");
+                    return;
+                }
+
                 // Assign imported texture
                 meshRenderer.material.mainTexture = summary.ImportedTextures.Albedo[record][currentFrame];
                 if (summary.ImportedTextures.IsEmissive)
+                {
+                    // Check that record and frame are valid for emissives
+                    if (record >= summary.ImportedTextures.EmissionMaps.Length)
+                    {
+                        LogMobileError($"Invalid record '{record}' for imported textures emissives (length = {summary.ImportedTextures.EmissionMaps.Length})");
+                        return;
+                    }
+
+                    if (currentFrame >= summary.ImportedTextures.EmissionMaps[record].Length)
+                    {
+                        LogMobileError($"Invalid frame '{currentFrame}' for imported textures emissives record '{record}' (length = {summary.ImportedTextures.EmissionMaps[record].Length})");
+                        return;
+                    }
+
                     meshRenderer.material.SetTexture(Uniforms.EmissionMap, summary.ImportedTextures.EmissionMaps[record][currentFrame]);
+                }
 
                 // Update UVs on mesh
                 Vector2[] uvs = new Vector2[4];
@@ -445,8 +479,23 @@ namespace DaggerfallWorkshop
             }
             else
             {
+                // Check record and "rect index" for atlas
+                if (record >= summary.AtlasIndices.Length)
+                {
+                    LogMobileError($"Invalid record '{record}' for atlas indices (length = {summary.AtlasIndices.Length})");
+                    return;
+                }
+
+                int rectIndex = summary.AtlasIndices[record].startIndex + currentFrame;
+
+                if (rectIndex >= summary.AtlasRects.Length)
+                {
+                    LogMobileError($"Invalid rect index '{rectIndex}' (start={summary.AtlasIndices[record].startIndex}, current={currentFrame}) for atlas rects (length = {summary.AtlasRects.Length})");
+                    return;
+                }
+
                 // Daggerfall Atlas: Update UVs on mesh
-                Rect rect = summary.AtlasRects[summary.AtlasIndices[record].startIndex + currentFrame];
+                Rect rect = summary.AtlasRects[rectIndex];
                 Vector2[] uvs = new Vector2[4];
                 if (flip)
                 {
@@ -599,7 +648,11 @@ namespace DaggerfallWorkshop
         {
             // Open texture file
             string path = Path.Combine(dfUnity.Arena2Path, TextureFile.IndexToFileName(archive));
-            TextureFile textureFile = new TextureFile(path, FileUsage.UseMemory, true);
+            TextureFile textureFile = new TextureFile();
+
+            // Might be updated later through texture replacement
+            if (!textureFile.Load(path, FileUsage.UseMemory, true))
+                return;
 
             // Cache size and scale for each record
             summary.RecordSizes = new Vector2[textureFile.RecordCount];
@@ -653,10 +706,10 @@ namespace DaggerfallWorkshop
 
             // Indices
             int[] indices = new int[6]
-                {
-                    0, 1, 2,
-                    3, 2, 1,
-                };
+            {
+                0, 1, 2,
+                3, 2, 1,
+            };
 
             // Normals
             Vector3 normal = Vector3.Normalize(Vector3.up + Vector3.forward);
@@ -690,6 +743,37 @@ namespace DaggerfallWorkshop
                 0,
                 false,
                 true);
+
+            // Update cached record values in case of non-classic texture
+            if (summary.RecordSizes == null || summary.RecordSizes.Length == 0)
+            {
+                if (summary.ImportedTextures.Albedo != null && summary.ImportedTextures.Albedo.Length > 0)
+                {
+                    int recordCount = summary.ImportedTextures.Albedo.Length;
+
+                    // Cache size and scale for each record
+                    summary.RecordSizes = new Vector2[recordCount];
+                    summary.RecordFrames = new int[recordCount];
+                    for (int i = 0; i < recordCount; i++)
+                    {
+                        // Get size and scale of this texture
+                        Texture2D firstFrame = summary.ImportedTextures.Albedo[i][0];
+
+                        Vector2 size = new Vector2(firstFrame.width, firstFrame.height);
+
+                        // Set optional scale
+                        TextureReplacement.SetBillboardScale(archive, i, ref size);
+
+                        // Store final size and frame count
+                        summary.RecordSizes[i] = size * MeshReader.GlobalScale;
+                        summary.RecordFrames[i] = summary.ImportedTextures.Albedo[i].Length;
+                    }
+                }
+                else
+                {
+                    LogMobileError($"Texture archive {archive} has no valid records");
+                }
+            }
 
             // Set new enemy material
             GetComponent<MeshRenderer>().sharedMaterial = material;
@@ -769,12 +853,20 @@ namespace DaggerfallWorkshop
                     anims = (summary.Enemy.HasSeducerTransform2) ? (MobileAnimation[])EnemyBasics.SeducerTransform2Anims.Clone() : null;
                     break;
                 default:
+                    LogMobileError($"Invalid mobile state '{state}' in GetStateAnims");
                     return null;
             }
 
             // Assign number of frames per anim
             for (int i = 0; i < anims.Length; i++)
+            {
+                if (anims[i].Record < 0 || anims[i].Record >= summary.RecordFrames.Length)
+                {
+                    LogMobileError($"Invalid record '{anims[i].Record}' for available record frames (length = {summary.RecordFrames.Length})");
+                    return null;
+                }
                 anims[i].NumFrames = summary.RecordFrames[anims[i].Record];
+            }
 
             // If flying, set to faster flying animation speed
             if ((state == MobileStates.Move || state == MobileStates.Idle) && summary.Enemy.Behaviour == MobileBehaviour.Flying)

@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -69,6 +69,7 @@ namespace DaggerfallWorkshop.Game
         public Races Race
         {
             get { return (race); }
+            set { race = value; }
         }
         
         public DisplayRaces DisplayRace
@@ -79,21 +80,25 @@ namespace DaggerfallWorkshop.Game
         public Genders Gender
         {
             get { return (gender); }
+            set { gender = value; }
         }
 
         public string NameNPC
         {
             get { return (nameNPC); }
+            set { nameNPC = value; }
         }
 
         public int PersonOutfitVariant
         {
             get { return (personOutfitVariant); }
+            set { personOutfitVariant = value; }
         }
 
         public int PersonFaceRecordId
         {
             get { return (personFaceRecordId); }
+            set { personFaceRecordId = value; }
         }
 
         public bool PickpocketByPlayerAttempted
@@ -105,12 +110,12 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// True if this npc is a city watch guard.
         /// </summary>
-        public bool IsGuard { get; private set; }
+        public bool IsGuard { get; set; }
 
         /// <summary>
         /// Billboard or custom asset for npc.
         /// </summary>
-        public MobilePersonAsset Asset { get; private set; }
+        public MobilePersonAsset Asset { get; set; }
 
         public MobilePersonMotor Motor
         {
@@ -118,6 +123,14 @@ namespace DaggerfallWorkshop.Game
             set { motor = value; }
         }
 
+        #endregion
+
+        #region Unity
+        private void Awake()
+        {
+            // Register this object as a Civilian Mobile NPC object
+            ActiveGameObjectDatabase.RegisterCivilianMobile(gameObject);
+        }
         #endregion
 
         #region Public Methods
@@ -208,7 +221,6 @@ namespace DaggerfallWorkshop.Game
             this.personFaceRecordId = recordIndices[personOutfitVariant] + personFaceVariant;
 
             // set billboard to correct race, gender and outfit variant
-            Asset = GetComponentInChildren<MobilePersonAsset>();
             Asset.SetPerson(race, gender, personOutfitVariant, IsGuard, personFaceVariant, personFaceRecordId);
         }
 

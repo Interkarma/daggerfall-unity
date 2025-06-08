@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -25,26 +25,26 @@ namespace DaggerfallWorkshop.Game.UserInterface
     {
         const string IMGNAME    = "BANK00I0.IMG";
 
-        Panel mainPanel;
+        protected Panel mainPanel;
 
-        TextLabel accountAmount;
-        TextLabel inventoryAmount;
-        TextLabel loanAmountDue;
-        TextLabel loanDueBy;
+        protected TextLabel accountAmount;
+        protected TextLabel inventoryAmount;
+        protected TextLabel loanAmountDue;
+        protected TextLabel loanDueBy;
 
-        Button depoGoldButton;
-        Button drawGoldButton;
-        Button depoLOCButton;
-        Button drawLOCButton;
-        Button loanRepayButton;
-        Button loanBorrowButton;
-        Button buyHouseButton;
-        Button sellHouseButton;
-        Button buyShipButton;
-        Button sellShipButton;
-        Button exitButton;
+        protected Button depoGoldButton;
+        protected Button drawGoldButton;
+        protected Button depoLOCButton;
+        protected Button drawLOCButton;
+        protected Button loanRepayButton;
+        protected Button loanBorrowButton;
+        protected Button buyHouseButton;
+        protected Button sellHouseButton;
+        protected Button buyShipButton;
+        protected Button sellShipButton;
+        protected Button exitButton;
 
-        TextBox transactionInput;
+        protected TextBox transactionInput;
 
         PlayerEntity playerEntity;
         TransactionType transactionType = TransactionType.None;
@@ -88,7 +88,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             inventoryAmount.Position        = new Vector2(156, 24);
             inventoryAmount.Size            = new Vector2(64, 13);
             inventoryAmount.Name            = "inv_total_label";
-            inventoryAmount.MaxCharacters   = 11;
+            inventoryAmount.MaxCharacters   = 20;
             mainPanel.Components.Add(inventoryAmount);
 
             loanAmountDue               = new TextLabel();
@@ -534,7 +534,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 if (DaggerfallBankManager.GetAccountTotal(regionIndex) > 0 || DaggerfallBankManager.HasLoan(regionIndex))
                 {
                     TextFile.Formatting formatting = DaggerfallBankManager.HasDefaulted(regionIndex) ? TextFile.Formatting.TextHighlight : TextFile.Formatting.Text;
-                    messages.AddRange(GetLoansLine(ShortenName(MapsFile.RegionNames[regionIndex], 12), DaggerfallBankManager.GetAccountTotal(regionIndex).ToString(), DaggerfallBankManager.GetLoanedTotal(regionIndex).ToString(), DaggerfallBankManager.GetLoanDueDateString(regionIndex), formatting));
+                    messages.AddRange(GetLoansLine(ShortenName(TextManager.Instance.GetLocalizedRegionName(regionIndex), 12), DaggerfallBankManager.GetAccountTotal(regionIndex).ToString(), DaggerfallBankManager.GetLoanedTotal(regionIndex).ToString(), DaggerfallBankManager.GetLoanDueDateString(regionIndex), formatting));
                     found = true;
                 }
             }

@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -66,6 +66,7 @@ namespace DaggerfallConnect.FallExe
 
         // DFU extension fields
         public bool isNotRepairable;                // Defaults to false if not specified
+        public bool hasNoEncumbrance;               // Indicates an items weight doesn't count for encumbrance, defaults to false
     }
 
     /// <summary>

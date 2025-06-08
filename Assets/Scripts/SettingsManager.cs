@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -9,13 +9,12 @@
 // Notes:
 //
 
-//#define SEPARATE_DEV_PERSISTENT_PATH
-
 using UnityEngine;
 using System;
 using System.Globalization;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using DaggerfallWorkshop.Game;
 using IniParser;
 using IniParser.Model;
@@ -31,11 +30,51 @@ namespace DaggerfallWorkshop
     /// </summary>
     public class SettingsManager
     {
+        private static string GetFullPath(string basePath, string path)
+        {
+            if(string.IsNullOrEmpty(path) || Path.IsPathRooted(path))
+            {
+                return path;
+            }
+
+            return Path.GetFullPath(Path.Combine(basePath, path));
+        }
+
+        // Returns a relative path if embedded within the base path,
+        // returns the full path as is if outside the base path
+        private static string GetPortablePath(string basePath, string path)
+        {
+            if(string.IsNullOrEmpty(path))
+            {
+                return path;
+            }
+
+            char lastChar = basePath.Last();
+            if (lastChar != Path.DirectorySeparatorChar && lastChar != Path.AltDirectorySeparatorChar)
+            {
+                basePath += Path.DirectorySeparatorChar;
+            }
+
+            Uri baseUri = new Uri(basePath);
+            Uri relUri = baseUri.MakeRelativeUri(new Uri(path));
+
+            string relativePath = Uri.UnescapeDataString(relUri.ToString()).Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+            if (relativePath.StartsWith(".." + Path.DirectorySeparatorChar))
+            {
+                return path;
+            }
+
+            return relativePath;
+        }
+
         const string defaultsIniName = "defaults.ini";
         const string settingsIniName = "settings.ini";
+        const string settingsBakExt = ".bak";
+        const string settingsDistIniName = "settings-{0}.ini";
 
         const string sectionDaggerfall = "Daggerfall";
         const string sectionVideo = "Video";
+        const string sectionEffects = "Effects";
         const string sectionAudio = "Audio";
         const string sectionChildGuard = "ChildGuard";
         const string sectionGUI = "GUI";
@@ -50,28 +89,60 @@ namespace DaggerfallWorkshop
         IniData defaultIniData = null;
         IniData userIniData = null;
 
-        string persistentPath = null;
+        string distributionSuffix = null;
 
+        // Legacy way to get the persistent path. Better to just go through DaggerfallUnityApplication now
         public string PersistentDataPath
         {
             get
             {
-                if (string.IsNullOrEmpty(persistentPath))
-                {
-#if UNITY_EDITOR && SEPARATE_DEV_PERSISTENT_PATH
-                    persistentPath = String.Concat(Application.persistentDataPath, ".devenv");
-                    Directory.CreateDirectory(persistentPath);
-#else
-                    persistentPath = Application.persistentDataPath;
-#endif
-                }
-                return persistentPath;
+                return DaggerfallUnityApplication.PersistentDataPath;
             }
+        }
+
+        /// <summary>
+        /// Distribution suffix for alternate distributions of DFU.
+        /// Can be null or empty if no distribution suffix is loaded.
+        /// </summary>
+        public string DistributionSuffix
+        {
+            get { return distributionSuffix == null ? ReadDistributionSuffix() : distributionSuffix; }
         }
 
         public SettingsManager()
         {
             LoadSettings();
+        }
+
+        /// <summary>
+        /// Reads a distribution suffix name of up to 16 characters in length from Application.dataFile/dist.suf.
+        /// This suffix is appended to settings.ini and keybinds.txt to form a unique config for a distribution.
+        /// If no distribution suffix file is provided then none will be used.
+        /// </summary>
+        /// <returns>Distribution suffix name. Can be be an empty string.</returns>
+        string ReadDistributionSuffix()
+        {
+            distributionSuffix = string.Empty;
+
+            try
+            {
+                // Attempt to load distribution name file
+                string distributionFilePath = Path.Combine(Application.dataPath, "dist.suf");
+                if (File.Exists(distributionFilePath))
+                {
+                    distributionSuffix = File.ReadAllText(distributionFilePath);
+                    distributionSuffix.Trim();
+                    if (distributionSuffix.Length > 16)
+                        distributionSuffix = distributionSuffix.Substring(0, 16);
+                }
+            }
+            catch (Exception ex)
+            {
+                DaggerfallUnity.LogMessage(string.Format("Exception loading distribution suffix. {0}", ex.Message));
+                distributionSuffix = string.Empty;
+            }
+
+            return distributionSuffix;
         }
 
         #region Public Settings Properties
@@ -87,6 +158,7 @@ namespace DaggerfallWorkshop
         public int RetroRenderingMode { get; set; }
         public int PostProcessingInRetroMode { get; set; }
         public bool UseMipMapsInRetroMode { get; set; }
+        public int RetroModeAspectCorrection { get; set; }
         public int PalettizationLUTShift { get; set; }
         public bool VSync { get; set; }
         public int TargetFrameRate { get; set; }
@@ -99,8 +171,10 @@ namespace DaggerfallWorkshop
         public bool DungeonLightShadows { get; set; }
         public bool InteriorLightShadows { get; set; }
         public bool ExteriorLightShadows { get; set; }
+        public bool AmbientLitInteriors { get; set; }
         public bool MobileNPCShadows { get; set; }
         public bool GeneralBillboardShadows { get; set; }
+        public bool NatureBillboardShadows { get; set; }
         public float DungeonShadowDistance { get; set; }
         public float InteriorShadowDistance { get; set; }
         public float ExteriorShadowDistance { get; set; }
@@ -108,6 +182,44 @@ namespace DaggerfallWorkshop
         public int RandomDungeonTextures { get; set; }
         public int CursorWidth { get; set; }
         public int CursorHeight { get; set; }
+
+        // [Effects]
+        public int AntialiasingMethod { get; set; }
+        public bool AntialiasingFXAAFastMode { get; set; }
+        public int AntialiasingSMAAQuality { get; set; }
+        public float AntialiasingTAASharpness { get; set; }
+        public bool AmbientOcclusionEnable { get; set; }
+        public int AmbientOcclusionMethod { get; set; }
+        public float AmbientOcclusionIntensity { get; set; }
+        public float AmbientOcclusionThickness { get; set; }
+        public float AmbientOcclusionRadius { get; set; }
+        public int AmbientOcclusionQuality { get; set; }
+        public bool BloomEnable { get; set; }
+        public float BloomIntensity { get; set; }
+        public float BloomThreshold { get; set; }
+        public float BloomDiffusion { get; set; }
+        public bool BloomFastMode { get; set; }
+        public bool MotionBlurEnable { get; set; }
+        public int MotionBlurShutterAngle { get; set; }
+        public int MotionBlurSampleCount { get; set; }
+        public bool VignetteEnable { get; set; }
+        public float VignetteIntensity { get; set; }
+        public float VignetteSmoothness { get; set; }
+        public float VignetteRoundness { get; set; }
+        public bool VignetteRounded { get; set; }
+        public bool DepthOfFieldEnable { get; set; }
+        public float DepthOfFieldFocusDistance { get; set; }
+        public float DepthOfFieldAperture { get; set; }
+        public int DepthOfFieldFocalLength { get; set; }
+        public int DepthOfFieldMaxBlurSize { get; set; }
+        public bool DitherEnable { get; set; }
+        public bool ColorBoostEnable { get; set; }
+        public float ColorBoostRadius { get; set; }
+        public float ColorBoostIntensity { get; set; }
+        public float ColorBoostDungeonScale { get; set; }
+        public float ColorBoostExteriorScale { get; set; }
+        public float ColorBoostInteriorScale { get; set; }
+        public float ColorBoostDungeonFalloff { get; set; }
 
         // [Audio]
         public string SoundFont { get; set; }
@@ -124,7 +236,6 @@ namespace DaggerfallWorkshop
         public string InteractionModeIcon { get; set; }
         public bool SwapHealthAndFatigueColors { get; set; }
         public float DimAlphaStrength { get; set; }
-        public bool FreeScaling { get; set; }
         public bool EnableToolTips { get; set; }
         public float ToolTipDelayInSeconds { get; set; }
         public Color32 ToolTipBackgroundColor { get; set; }
@@ -155,6 +266,8 @@ namespace DaggerfallWorkshop
         public bool RunInBackground { get; set; }
         public bool EnableQuestDebugger { get; set; }
         public int QuestRumorWeight { get; set; }
+        public bool DisableEnemyDeathAlert { get; set; }
+        public bool HideLoginName { get; set; }
 
         // [Spells]
         public bool EnableSpellLighting { get; set; }
@@ -162,7 +275,7 @@ namespace DaggerfallWorkshop
 
         // [Controls]
         public bool InvertMouseVertical { get; set; }
-        public bool MouseLookSmoothing { get; set; }
+        public float MouseLookSmoothingFactor { get; set; }
         public float MouseLookSensitivity { get; set; }
         public float JoystickLookSensitivity { get; set; }
         public float JoystickCursorSensitivity { get; set; }
@@ -173,10 +286,10 @@ namespace DaggerfallWorkshop
         public bool HeadBobbing { get; set; }
         public int Handedness { get; set; }
         public float WeaponAttackThreshold { get; set; }
-        public float WeaponSensitivity { get; set; }
+        //public float WeaponSensitivity { get; set; }
         public bool MovementAcceleration { get; set; }
         public bool ToggleSneak { get; set; }
-        public bool ClickToAttack { get; set; }
+        public int WeaponSwingMode { get; set; }
         public int CameraRecoilStrength { get; set; }
         public float MusicVolume { get; set; }
         public float SoundVolume { get; set; }
@@ -195,6 +308,9 @@ namespace DaggerfallWorkshop
         public Color32 AutomapShopColor { get; set; }
         public Color32 AutomapTavernColor { get; set; }
         public Color32 AutomapHouseColor { get; set; }
+        public bool DungeonMicMapQoL { get; set; }
+        public Color32 DunMicMapInnerColor { get; set; }
+        public Color32 DunMicMapBorderColor { get; set; }
 
         // [Startup]
         public int StartCellX { get; set; }
@@ -230,6 +346,27 @@ namespace DaggerfallWorkshop
 
         #region Public Methods
 
+        public static float[] GetMouseLookSmoothingFactors()
+        {
+            return new float[] { 0.0f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f };
+        }
+
+        public static int GetMouseLookSmoothingStrength(float factor)
+        {
+            float[] factors = GetMouseLookSmoothingFactors();
+
+            for (int i = 0; i < factors.Length; ++i)
+                if (factors[i] == factor)
+                    return i;
+
+            return 0;
+        }
+
+        public static float GetMouseLookSmoothingFactor(int index)
+        {
+            return GetMouseLookSmoothingFactors()[index];
+        }
+
         /// <summary>
         /// Load settings from settings.ini to live properties.
         /// </summary>
@@ -243,11 +380,30 @@ namespace DaggerfallWorkshop
             MyDaggerfallUnitySavePath = GetString(sectionDaggerfall, "MyDaggerfallUnitySavePath");
             MyDaggerfallUnityScreenshotsPath = GetString(sectionDaggerfall, "MyDaggerfallUnityScreenshotsPath");
 
+            // In Portable Install mode, we save those paths as relative to the current directory
+            // This allows users to move the directory around without breaking the settings
+            if(DaggerfallUnityApplication.IsPortableInstall)
+            {
+                if(!string.IsNullOrEmpty(MyDaggerfallPath))
+                {
+                    MyDaggerfallPath = GetFullPath(AppDomain.CurrentDomain.BaseDirectory, MyDaggerfallPath);
+                }
+                if(!string.IsNullOrEmpty(MyDaggerfallUnitySavePath))
+                {
+                    MyDaggerfallUnitySavePath = GetFullPath(AppDomain.CurrentDomain.BaseDirectory, MyDaggerfallUnitySavePath);
+                }
+                if(!string.IsNullOrEmpty(MyDaggerfallUnityScreenshotsPath))
+                {
+                    MyDaggerfallUnityScreenshotsPath = GetFullPath(AppDomain.CurrentDomain.BaseDirectory, MyDaggerfallUnityScreenshotsPath);
+                }
+            }
+
             ResolutionWidth = GetInt(sectionVideo, "ResolutionWidth");
             ResolutionHeight = GetInt(sectionVideo, "ResolutionHeight");
             RetroRenderingMode = GetInt(sectionVideo, "RetroRenderingMode", 0, 2);
             PostProcessingInRetroMode = GetInt(sectionVideo, "PostProcessingInRetroMode");
             UseMipMapsInRetroMode = GetBool(sectionVideo, "UseMipMapsInRetroMode");
+            RetroModeAspectCorrection = GetInt(sectionVideo, "RetroModeAspectCorrection", 0, 2);
             PalettizationLUTShift = GetInt(sectionVideo, "PalettizationLUTShift");
             VSync = GetBool(sectionVideo, "VSync");
             TargetFrameRate = GetInt(sectionVideo, "TargetFrameRate", 0, 300);
@@ -261,13 +417,52 @@ namespace DaggerfallWorkshop
             DungeonLightShadows = GetBool(sectionVideo, "DungeonLightShadows");
             InteriorLightShadows = GetBool(sectionVideo, "InteriorLightShadows");
             ExteriorLightShadows = GetBool(sectionVideo, "ExteriorLightShadows");
+            AmbientLitInteriors = GetBool(sectionVideo, "AmbientLitInteriors");
             MobileNPCShadows = GetBool(sectionVideo, "MobileNPCShadows");
             GeneralBillboardShadows = GetBool(sectionVideo, "GeneralBillboardShadows");
+            NatureBillboardShadows = GetBool(sectionVideo, "NatureBillboardShadows");
             DungeonShadowDistance = GetFloat(sectionVideo, "DungeonShadowDistance", 0.1f, 50.0f);
             InteriorShadowDistance = GetFloat(sectionVideo, "InteriorShadowDistance", 0.1f, 50.0f);
             ExteriorShadowDistance = GetFloat(sectionVideo, "ExteriorShadowDistance", 0.1f, 150.0f);
             EnableTextureArrays = GetBool(sectionVideo, "EnableTextureArrays");
             RandomDungeonTextures = GetInt(sectionVideo, "RandomDungeonTextures", 0, 4);
+
+            AntialiasingMethod = GetInt(sectionEffects, "AntialiasingMethod", 0, 3);
+            AntialiasingFXAAFastMode = GetBool(sectionEffects, "AntialiasingFXAAFastMode");
+            AntialiasingSMAAQuality = GetInt(sectionEffects, "AntialiasingSMAAQuality", 0, 2);
+            AntialiasingTAASharpness = GetFloat(sectionEffects, "AntialiasingTAASharpness", 0.0f, 3.0f);
+            AmbientOcclusionEnable = GetBool(sectionEffects, "AmbientOcclusionEnable");
+            AmbientOcclusionMethod = GetInt(sectionEffects, "AmbientOcclusionMethod", 0, 1);
+            AmbientOcclusionIntensity = GetFloat(sectionEffects, "AmbientOcclusionIntensity", 0.0f, 4.0f);
+            AmbientOcclusionThickness = GetFloat(sectionEffects, "AmbientOcclusionThickness", 1.0f, 10.0f);
+            AmbientOcclusionRadius = GetFloat(sectionEffects, "AmbientOcclusionRadius", 0.0f, 2.0f);
+            AmbientOcclusionQuality = GetInt(sectionEffects, "AmbientOcclusionQuality", 0, 5);
+            BloomEnable = GetBool(sectionEffects, "BloomEnable");
+            BloomIntensity = GetFloat(sectionEffects, "BloomIntensity", 0, 50);
+            BloomThreshold = GetFloat(sectionEffects, "BloomThreshold", 0.1f, 10);
+            BloomDiffusion = GetFloat(sectionEffects, "BloomDiffusion", 1, 10);
+            BloomFastMode = GetBool(sectionEffects, "BloomFastMode");
+            MotionBlurEnable = GetBool(sectionEffects, "MotionBlurEnable");
+            MotionBlurShutterAngle = GetInt(sectionEffects, "MotionBlurShutterAngle", 0, 360);
+            MotionBlurSampleCount = GetInt(sectionEffects, "MotionBlurSampleCount", 4, 32);
+            VignetteEnable = GetBool(sectionEffects, "VignetteEnable");
+            VignetteIntensity = GetFloat(sectionEffects, "VignetteIntensity", 0.0f, 1.0f);
+            VignetteSmoothness = GetFloat(sectionEffects, "VignetteSmoothness", 0.0f, 1.0f);
+            VignetteRoundness = GetFloat(sectionEffects, "VignetteRoundness", 0.0f, 1.0f);
+            VignetteRounded = GetBool(sectionEffects, "VignetteRounded");
+            DepthOfFieldEnable = GetBool(sectionEffects, "DepthOfFieldEnable");
+            DepthOfFieldFocusDistance = GetFloat(sectionEffects, "DepthOfFieldFocusDistance", 0.1f, 100.0f);
+            DepthOfFieldAperture = GetFloat(sectionEffects, "DepthOfFieldAperture", 0.1f, 32.0f);
+            DepthOfFieldFocalLength = GetInt(sectionEffects, "DepthOfFieldFocalLength", 0, 300);
+            DepthOfFieldMaxBlurSize = GetInt(sectionEffects, "DepthOfFieldMaxBlurSize", 0, 3);
+            DitherEnable = GetBool(sectionEffects, "DitherEnable");
+            ColorBoostEnable = GetBool(sectionEffects, "ColorBoostEnable");
+            ColorBoostRadius = GetFloat(sectionEffects, "ColorBoostRadius", 0.1f, 50);
+            ColorBoostIntensity = GetFloat(sectionEffects, "ColorBoostIntensity", 0.0f, 1.0f);
+            ColorBoostDungeonScale = GetFloat(sectionEffects, "ColorBoostDungeonScale", 0.0f, 8.0f);
+            ColorBoostExteriorScale = GetFloat(sectionEffects, "ColorBoostExteriorScale", 0.0f, 8.0f);
+            ColorBoostInteriorScale = GetFloat(sectionEffects, "ColorBoostInteriorScale", 0.0f, 8.0f);
+            ColorBoostDungeonFalloff = GetFloat(sectionEffects, "ColorBoostDungeonFalloff", 0.0f, 8.0f);
 
             SoundFont = GetString(sectionAudio, "SoundFont");
             AlternateMusic = GetBool(sectionAudio, "AlternateMusic");
@@ -281,7 +476,6 @@ namespace DaggerfallWorkshop
             InteractionModeIcon = GetString(sectionGUI, "InteractionModeIcon");
             SwapHealthAndFatigueColors = GetBool(sectionGUI, "SwapHealthAndFatigueColors");
             DimAlphaStrength = GetFloat(sectionGUI, "DimAlphaStrength", 0, 1);
-            FreeScaling = GetBool(sectionGUI, "FreeScaling");
             EnableToolTips = GetBool(sectionGUI, "EnableToolTips");
             ToolTipDelayInSeconds = GetFloat(sectionGUI, "ToolTipDelayInSeconds", 0, 10);
             ToolTipBackgroundColor = GetColor(sectionGUI, "ToolTipBackgroundColor", DaggerfallUI.DaggerfallUnityDefaultToolTipBackgroundColor);
@@ -311,13 +505,15 @@ namespace DaggerfallWorkshop
             CanDropQuestItems = GetBool(sectionGUI, "CanDropQuestItems");
             EnableQuestDebugger = GetBool(sectionGUI, "EnableQuestDebugger");
             QuestRumorWeight = GetInt(sectionGUI, "QuestRumorWeight", 1, 100);
+            DisableEnemyDeathAlert = GetBool(sectionGUI, "DisableEnemyDeathAlert");
+            HideLoginName = GetBool(sectionGUI, "HideLoginName");
 
             EnableSpellLighting = GetBool(sectionSpells, "EnableSpellLighting");
             EnableSpellShadows = GetBool(sectionSpells, "EnableSpellShadows");
 
             InvertMouseVertical = GetBool(sectionControls, "InvertMouseVertical");
-            MouseLookSmoothing = GetBool(sectionControls, "MouseLookSmoothing");
-            MouseLookSensitivity = GetFloat(sectionControls, "MouseLookSensitivity", 0.1f, 8.0f);
+            MouseLookSmoothingFactor = GetFloat(sectionControls, "MouseLookSmoothingFactor", 0.0f, 0.9f);
+            MouseLookSensitivity = GetFloat(sectionControls, "MouseLookSensitivity", 0.1f, 16.0f);
             JoystickLookSensitivity = GetFloat(sectionControls, "JoystickLookSensitivity", 0.1f, 4.0f);
             JoystickCursorSensitivity = GetFloat(sectionControls, "JoystickCursorSensitivity", 0.1f, 5.0f);
             JoystickMovementThreshold = GetFloat(sectionControls, "JoystickMovementThreshold", 0.0f, 1.0f);
@@ -328,8 +524,8 @@ namespace DaggerfallWorkshop
             HeadBobbing = GetBool(sectionControls, "HeadBobbing");
             Handedness = GetInt(sectionControls, "Handedness", 0, 3);
             WeaponAttackThreshold = GetFloat(sectionControls, "WeaponAttackThreshold", 0.001f, 1.0f);
-            WeaponSensitivity = GetFloat(sectionControls, "WeaponSensitivity", 0.1f, 10.0f);
-            ClickToAttack = GetBool(sectionControls, "ClickToAttack");
+            //WeaponSensitivity = GetFloat(sectionControls, "WeaponSensitivity", 0.1f, 10.0f);
+            WeaponSwingMode = GetInt(sectionControls, "WeaponSwingMode", 0, 2);
             CameraRecoilStrength = GetInt(sectionControls, "CameraRecoilStrength", 0, 4);
             SoundVolume = GetFloat(sectionControls, "SoundVolume", 0f, 1.0f);
             MusicVolume = GetFloat(sectionControls, "MusicVolume", 0f, 1.0f);
@@ -347,6 +543,9 @@ namespace DaggerfallWorkshop
             AutomapShopColor = GetColor(sectionMap, "AutomapShopColor", DaggerfallUI.DaggerfallDefaultShopAutomapColor);
             AutomapTavernColor = GetColor(sectionMap, "AutomapTavernColor", DaggerfallUI.DaggerfallDefaultTavernAutomapColor);
             AutomapHouseColor = GetColor(sectionMap, "AutomapHouseColor", DaggerfallUI.DaggerfallDefaultHouseAutomapColor);
+            DungeonMicMapQoL = GetBool(sectionMap, "DungeonMicMapQoL");
+            DunMicMapInnerColor = GetColor(sectionMap, "DunMicMapInnerColor", DaggerfallUI.DaggerfallDefaultMicMapInnerQoLColor);
+            DunMicMapBorderColor = GetColor(sectionMap, "DunMicMapBorderColor", DaggerfallUI.DaggerfallDefaultMicMapBorderQoLColor);
 
             StartCellX = GetInt(sectionStartup, "StartCellX", 2, 997);
             StartCellY = GetInt(sectionStartup, "StartCellY", 2, 497);
@@ -382,15 +581,26 @@ namespace DaggerfallWorkshop
         public void SaveSettings()
         {
             // Write property cache to ini data
-            SetString(sectionDaggerfall, "MyDaggerfallPath", MyDaggerfallPath);
-            SetString(sectionDaggerfall, "MyDaggerfallUnitySavePath", MyDaggerfallUnitySavePath);
-            SetString(sectionDaggerfall, "MyDaggerfallUnityScreenshotsPath", MyDaggerfallUnityScreenshotsPath);
+            if (DaggerfallUnityApplication.IsPortableInstall)
+            {
+                // Save relative paths
+                SetString(sectionDaggerfall, "MyDaggerfallPath", GetPortablePath(AppDomain.CurrentDomain.BaseDirectory, MyDaggerfallPath));
+                SetString(sectionDaggerfall, "MyDaggerfallUnitySavePath", GetPortablePath(AppDomain.CurrentDomain.BaseDirectory, MyDaggerfallUnitySavePath));
+                SetString(sectionDaggerfall, "MyDaggerfallUnityScreenshotsPath", GetPortablePath(AppDomain.CurrentDomain.BaseDirectory,MyDaggerfallUnityScreenshotsPath));
+            }
+            else
+            {
+                SetString(sectionDaggerfall, "MyDaggerfallPath", MyDaggerfallPath);
+                SetString(sectionDaggerfall, "MyDaggerfallUnitySavePath", MyDaggerfallUnitySavePath);
+                SetString(sectionDaggerfall, "MyDaggerfallUnityScreenshotsPath", MyDaggerfallUnityScreenshotsPath);
+            }
 
             SetInt(sectionVideo, "ResolutionWidth", ResolutionWidth);
             SetInt(sectionVideo, "ResolutionHeight", ResolutionHeight);
             SetInt(sectionVideo, "RetroRenderingMode", RetroRenderingMode);
             SetInt(sectionVideo, "PostProcessingInRetroMode", PostProcessingInRetroMode);
             SetBool(sectionVideo, "UseMipMapsInRetroMode", UseMipMapsInRetroMode);
+            SetInt(sectionVideo, "RetroModeAspectCorrection", RetroModeAspectCorrection);
             SetInt(sectionVideo, "PalettizationLUTShift", PalettizationLUTShift);
             SetBool(sectionVideo, "VSync", VSync);
             SetInt(sectionVideo, "TargetFrameRate", TargetFrameRate);
@@ -404,13 +614,52 @@ namespace DaggerfallWorkshop
             SetBool(sectionVideo, "DungeonLightShadows", DungeonLightShadows);
             SetBool(sectionVideo, "InteriorLightShadows", InteriorLightShadows);
             SetBool(sectionVideo, "ExteriorLightShadows", ExteriorLightShadows);
+            SetBool(sectionVideo, "AmbientLitInteriors", AmbientLitInteriors);
             SetBool(sectionVideo, "MobileNPCShadows", MobileNPCShadows);
             SetBool(sectionVideo, "GeneralBillboardShadows", GeneralBillboardShadows);
+            SetBool(sectionVideo, "NatureBillboardShadows", NatureBillboardShadows);
             SetFloat(sectionVideo, "DungeonShadowDistance", DungeonShadowDistance);
             SetFloat(sectionVideo, "InteriorShadowDistance", InteriorShadowDistance);
             SetFloat(sectionVideo, "ExteriorShadowDistance", ExteriorShadowDistance);
             SetBool(sectionVideo, "EnableTextureArrays", EnableTextureArrays);
             SetInt(sectionVideo, "RandomDungeonTextures", RandomDungeonTextures);
+
+            SetInt(sectionEffects, "AntialiasingMethod", AntialiasingMethod);
+            SetBool(sectionEffects, "AntialiasingFXAAFastMode", AntialiasingFXAAFastMode);
+            SetInt(sectionEffects, "AntialiasingSMAAQuality", AntialiasingSMAAQuality);
+            SetFloat(sectionEffects, "AntialiasingTAASharpness", AntialiasingTAASharpness);
+            SetBool(sectionEffects, "AmbientOcclusionEnable", AmbientOcclusionEnable);
+            SetInt(sectionEffects, "AmbientOcclusionMethod", AmbientOcclusionMethod);
+            SetFloat(sectionEffects, "AmbientOcclusionIntensity", AmbientOcclusionIntensity);
+            SetFloat(sectionEffects, "AmbientOcclusionThickness", AmbientOcclusionThickness);
+            SetFloat(sectionEffects, "AmbientOcclusionRadius", AmbientOcclusionRadius);
+            SetInt(sectionEffects, "AmbientOcclusionQuality", AmbientOcclusionQuality);
+            SetBool(sectionEffects, "BloomEnable", BloomEnable);
+            SetFloat(sectionEffects, "BloomIntensity", BloomIntensity);
+            SetFloat(sectionEffects, "BloomThreshold", BloomThreshold);
+            SetFloat(sectionEffects, "BloomDiffusion", BloomDiffusion);
+            SetBool(sectionEffects, "BloomFastMode", BloomFastMode);
+            SetBool(sectionEffects, "MotionBlurEnable", MotionBlurEnable);
+            SetInt(sectionEffects, "MotionBlurShutterAngle", MotionBlurShutterAngle);
+            SetInt(sectionEffects, "MotionBlurSampleCount", MotionBlurSampleCount);
+            SetBool(sectionEffects, "VignetteEnable", VignetteEnable);
+            SetFloat(sectionEffects, "VignetteIntensity", VignetteIntensity);
+            SetFloat(sectionEffects, "VignetteSmoothness", VignetteSmoothness);
+            SetFloat(sectionEffects, "VignetteRoundness", VignetteRoundness);
+            SetBool(sectionEffects, "VignetteRounded", VignetteRounded);
+            SetBool(sectionEffects, "DepthOfFieldEnable", DepthOfFieldEnable);
+            SetFloat(sectionEffects, "DepthOfFieldFocusDistance", DepthOfFieldFocusDistance);
+            SetFloat(sectionEffects, "DepthOfFieldAperture", DepthOfFieldAperture);
+            SetInt(sectionEffects, "DepthOfFieldFocalLength", DepthOfFieldFocalLength);
+            SetInt(sectionEffects, "DepthOfFieldMaxBlurSize", DepthOfFieldMaxBlurSize);
+            SetBool(sectionEffects, "DitherEnable", DitherEnable);
+            SetBool(sectionEffects, "ColorBoostEnable", ColorBoostEnable);
+            SetFloat(sectionEffects, "ColorBoostRadius", ColorBoostRadius);
+            SetFloat(sectionEffects, "ColorBoostIntensity", ColorBoostIntensity);
+            SetFloat(sectionEffects, "ColorBoostDungeonScale", ColorBoostDungeonScale);
+            SetFloat(sectionEffects, "ColorBoostExteriorScale", ColorBoostExteriorScale);
+            SetFloat(sectionEffects, "ColorBoostInteriorScale", ColorBoostInteriorScale);
+            SetFloat(sectionEffects, "ColorBoostDungeonFalloff", ColorBoostDungeonFalloff);
 
             SetString(sectionAudio, "SoundFont", SoundFont);
             SetBool(sectionAudio, "AlternateMusic", AlternateMusic);
@@ -424,7 +673,6 @@ namespace DaggerfallWorkshop
             SetString(sectionGUI, "InteractionModeIcon", InteractionModeIcon);
             SetBool(sectionGUI, "SwapHealthAndFatigueColors", SwapHealthAndFatigueColors);
             SetFloat(sectionGUI, "DimAlphaStrength", DimAlphaStrength);
-            SetBool(sectionGUI, "FreeScaling", FreeScaling);
             SetBool(sectionGUI, "EnableToolTips", EnableToolTips);
             SetFloat(sectionGUI, "ToolTipDelayInSeconds", ToolTipDelayInSeconds);
             SetColor(sectionGUI, "ToolTipBackgroundColor", ToolTipBackgroundColor);
@@ -434,7 +682,6 @@ namespace DaggerfallWorkshop
             SetBool(sectionGUI, "EnableModernConversationStyleInTalkWindow", EnableModernConversationStyleInTalkWindow);
             SetString(sectionGUI, "IconsPositioningScheme", IconsPositioningScheme);
             SetInt(sectionGUI, "HelmAndShieldMaterialDisplay", HelmAndShieldMaterialDisplay);
-            SetInt(sectionGUI, "AutomapNumberOfDungeons", AutomapNumberOfDungeons);
             SetInt(sectionGUI, "ShopQualityPresentation", ShopQualityPresentation);
             SetInt(sectionGUI, "ShopQualityHUDDelay", ShopQualityHUDDelay);
             SetBool(sectionGUI, "ShowQuestJournalClocksAsCountdown", ShowQuestJournalClocksAsCountdown);
@@ -455,12 +702,14 @@ namespace DaggerfallWorkshop
             SetBool(sectionGUI, "CanDropQuestItems", CanDropQuestItems);
             SetBool(sectionGUI, "EnableQuestDebugger", EnableQuestDebugger);
             SetInt(sectionGUI, "QuestRumorWeight", QuestRumorWeight);
+            SetBool(sectionGUI, "DisableEnemyDeathAlert", DisableEnemyDeathAlert);
+            SetBool(sectionGUI, "HideLoginName", HideLoginName);
 
             SetBool(sectionSpells, "EnableSpellLighting", EnableSpellLighting);
             SetBool(sectionSpells, "EnableSpellShadows", EnableSpellShadows);
 
             SetBool(sectionControls, "InvertMouseVertical", InvertMouseVertical);
-            SetBool(sectionControls, "MouseLookSmoothing", MouseLookSmoothing);
+            SetFloat(sectionControls, "MouseLookSmoothingFactor", MouseLookSmoothingFactor);
             SetFloat(sectionControls, "MouseLookSensitivity", MouseLookSensitivity);
             SetFloat(sectionControls, "JoystickLookSensitivity", JoystickLookSensitivity);
             SetFloat(sectionControls, "JoystickCursorSensitivity", JoystickCursorSensitivity);
@@ -472,8 +721,8 @@ namespace DaggerfallWorkshop
             SetBool(sectionControls, "HeadBobbing", HeadBobbing);
             SetInt(sectionControls, "Handedness", Handedness);
             SetFloat(sectionControls, "WeaponAttackThreshold", WeaponAttackThreshold);
-            SetFloat(sectionControls, "WeaponSensitivity", WeaponSensitivity);
-            SetBool(sectionControls, "ClickToAttack", ClickToAttack);
+            //SetFloat(sectionControls, "WeaponSensitivity", WeaponSensitivity);
+            SetInt(sectionControls, "WeaponSwingMode", WeaponSwingMode);
             SetInt(sectionControls, "CameraRecoilStrength", CameraRecoilStrength);
             SetFloat(sectionControls, "SoundVolume", SoundVolume);
             SetFloat(sectionControls, "MusicVolume", MusicVolume);
@@ -481,10 +730,14 @@ namespace DaggerfallWorkshop
             SetBool(sectionControls, "AllowMagicRepairs", AllowMagicRepairs);
             SetBool(sectionControls, "BowDrawback", BowDrawback);
 
+            SetInt(sectionMap, "AutomapNumberOfDungeons", AutomapNumberOfDungeons);
             SetColor(sectionMap, "AutomapTempleColor", AutomapTempleColor);
             SetColor(sectionMap, "AutomapShopColor", AutomapShopColor);
             SetColor(sectionMap, "AutomapTavernColor", AutomapTavernColor);
             SetColor(sectionMap, "AutomapHouseColor", AutomapHouseColor);
+            SetBool(sectionMap, "DungeonMicMapQoL", DungeonMicMapQoL);
+            SetColor(sectionMap, "DunMicMapInnerColor", DunMicMapInnerColor);
+            SetColor(sectionMap, "DunMicMapBorderColor", DunMicMapBorderColor);
 
             SetInt(sectionStartup, "StartCellX", StartCellX);
             SetInt(sectionStartup, "StartCellY", StartCellY);
@@ -521,9 +774,35 @@ namespace DaggerfallWorkshop
 
         #region Private Methods
 
+        string SettingsName(bool isBackup = false)
+        {
+            string name;
+            if (string.IsNullOrEmpty(DistributionSuffix))
+                name = settingsIniName;
+            else
+                name = string.Format(settingsDistIniName, DistributionSuffix);
+
+            if (isBackup)
+                name = Path.ChangeExtension(name, settingsBakExt);
+
+            return name;
+        }
+
+        void CreateDefaultSettingsFile(string userIniPath)
+        {
+            // Load defaults.ini
+            TextAsset asset = Resources.Load<TextAsset>(defaultsIniName);
+
+            // Create file
+            File.WriteAllBytes(userIniPath, asset.bytes);
+
+            Debug.LogFormat("Creating new '{0}' at path '{1}'", SettingsName(), userIniPath);
+        }
+
         void ReadSettingsFile()
         {
             // Load defaults.ini
+            // This is required for fallback sync if everything else goes wrong
             TextAsset asset = Resources.Load<TextAsset>(defaultsIniName);
             MemoryStream stream = new MemoryStream(asset.bytes);
             StreamReader reader = new StreamReader(stream);
@@ -531,42 +810,56 @@ namespace DaggerfallWorkshop
             reader.Close();
 
             // Must have settings.ini in persistent data path
-            string message;
-            string userIniPath = Path.Combine(PersistentDataPath, settingsIniName);
+            string userIniPath = Path.Combine(PersistentDataPath, SettingsName());
             if (!File.Exists(userIniPath))
+                CreateDefaultSettingsFile(userIniPath);
+
+            // Load settings.ini and try to handle exception
+            // Failing to load settings at this stage might cause game to freeze at startup
+            // First try backup from last good startup then fallback to defaults
+            try
             {
-                // Create file
-                message = string.Format("Creating new '{0}' at path '{1}'", settingsIniName, userIniPath);
-                File.WriteAllBytes(userIniPath, asset.bytes);
-                DaggerfallUnity.LogMessage(message);
+                userIniData = iniParser.ReadFile(userIniPath);
+            }
+            catch (Exception)
+            {
+                Debug.Log("Error parsing settings.ini. Trying backup file.");
+                string userIniBakPath = Path.Combine(PersistentDataPath, SettingsName(true));
+                try
+                {
+                    userIniData = iniParser.ReadFile(userIniBakPath);
+                }
+                catch(Exception)
+                {
+                    Debug.Log("Error parsing settings backup. Restoring defaults.");
+                    CreateDefaultSettingsFile(userIniPath);
+                    userIniData = iniParser.ReadFile(userIniPath);
+                }
             }
 
             // Log ini path in use
-            message = string.Format("Using '{0}' at path '{1}'", settingsIniName, userIniPath);
-            DaggerfallUnity.LogMessage(message);
+            Debug.LogFormat("Using '{0}' at path '{1}'", SettingsName(), userIniPath);
 
-            // Load settings.ini or set as read-only
-            userIniData = iniParser.ReadFile(userIniPath);
+            // Create a backup after successfully parsing ini data
+            WriteSettingsFile(true);
 
             // Ensure user ini data in sync with default ini data
             SyncIniData();
         }
 
-        void WriteSettingsFile()
+        void WriteSettingsFile(bool isBackup = false)
         {
+            string name = SettingsName(isBackup);
             if (iniParser != null)
             {
                 try
                 {
-                    string path = Path.Combine(PersistentDataPath, settingsIniName);
-                    if (File.Exists(path))
-                    {
-                        iniParser.WriteFile(path, userIniData);
-                    }
+                    string path = Path.Combine(PersistentDataPath, name);
+                    iniParser.WriteFile(path, userIniData);
                 }
                 catch
                 {
-                    DaggerfallUnity.LogMessage("Failed to write settings.ini.");
+                    Debug.LogFormat("Failed to write {0}", name);
                 }
             }
         }

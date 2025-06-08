@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -77,7 +77,19 @@ namespace DaggerfallWorkshop.Game.Banking
 
     public static class DaggerfallBankManager
     {
-        public const float goldUnitWeightInKg = 0.0025f;
+        private static float cachedGoldPieceWeightInKg = -1.0f;
+        // Returns the weight of a single gold piece based on the item template
+        public static float goldPieceWeightInKg
+        {
+            get
+            {
+                if (cachedGoldPieceWeightInKg == -1.0f)
+                    cachedGoldPieceWeightInKg = DaggerfallUnity.Instance.ItemHelper.GetItemTemplate(ItemGroups.Currency, 0).baseWeight;
+                return cachedGoldPieceWeightInKg;
+            }
+        }
+
+        [Obsolete("Replace with 'goldPieceWeightInKg'")] public const float goldUnitWeightInKg = 0.0025f;
         private const float deedSellMult = 0.85f;
         private const float housePriceMult = 1280f;
         private const uint loanRepayMinutes = DaggerfallDateTime.DaysPerYear * DaggerfallDateTime.MinutesPerDay;
@@ -355,7 +367,7 @@ namespace DaggerfallWorkshop.Game.Banking
 
             // Check weight limit
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
-            if (playerEntity.CarriedWeight + (amount * goldUnitWeightInKg) > playerEntity.MaxEncumbrance)
+            if (playerEntity.CarriedWeight + (amount * goldPieceWeightInKg) > playerEntity.MaxEncumbrance)
                 return TransactionResult.TOO_HEAVY;
 
             BankAccounts[regionIndex].accountGold -= amount;
@@ -432,7 +444,7 @@ namespace DaggerfallWorkshop.Game.Banking
 
             // Add note to journal
             playerEntity.Notebook.AddNote(
-                TextManager.Instance.GetLocalizedText("houseDeed").Replace("%town", location.Name).Replace("%region", MapsFile.RegionNames[regionIndex]));
+                TextManager.Instance.GetLocalizedText("houseDeed").Replace("%town", location.Name).Replace("%region", TextManager.Instance.GetLocalizedRegionName(regionIndex)));
         }
 
         public static TransactionResult SellHouse(int regionIndex)

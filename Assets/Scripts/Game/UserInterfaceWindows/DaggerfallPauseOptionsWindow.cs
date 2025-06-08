@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -36,6 +36,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected Panel detailBar;
         protected DaggerfallHUD hud;
         protected TextLabel versionTextLabel;
+        protected PauseOptionsDropdown dropdown;
 
         protected readonly Color versionTextColor = new Color(0.75f, 0.75f, 0.75f, 1);
         protected readonly Color versionShadowColor = new Color(0.15f, 0.15f, 0.15f, 1);
@@ -51,6 +52,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public DaggerfallPauseOptionsWindow(IUserInterfaceManager uiManager, IUserInterfaceWindow previousWindow = null)
             : base(uiManager, previousWindow)
         {
+            // Prevent duplicate close calls with base class's exitKey (Escape)
+            AllowCancel = false;
         }
 
         #endregion
@@ -74,6 +77,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             optionsPanel.BackgroundColor = Color.black;
             optionsPanel.BackgroundTexture = nativeTexture;
             NativePanel.Components.Add(optionsPanel);
+
+            dropdown = new PauseOptionsDropdown(uiManager);
+            ParentPanel.Components.Add(dropdown);
 
             // Exit game
             Button exitButton = DaggerfallUI.AddButton(new Rect(101, 4, 45, 16), optionsPanel);
@@ -172,11 +178,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Scale version text based on native panel scaling
             versionTextLabel.TextScale = NativePanel.LocalScale.x * 0.75f;
+            dropdown.Scale = NativePanel.LocalScale;
 
             if (DaggerfallUI.Instance.HotkeySequenceProcessed == HotkeySequence.HotkeySequenceProcessStatus.NotFound)
             {
                 // Toggle window closed with same hotkey used to open it
-                if (InputManager.Instance.GetKeyUp(toggleClosedBinding))
+                if (InputManager.Instance.GetKeyUp(toggleClosedBinding) || InputManager.Instance.GetBackButtonUp())
                     CloseWindow();
             }
         }
@@ -198,6 +205,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public override void OnPop()
         {
             base.OnPop();
+
+            dropdown.SetDropdownExpand(false);
 
             if (saveSettings)
                 DaggerfallUnity.Settings.SaveSettings();
@@ -226,7 +235,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 position.x = 0;
             // resize panel to where user clicked
             soundBar.Size = new Vector2(position.x, 3.5f);
-            DaggerfallUnity.Settings.SoundVolume = (position.x / barMaxLength);
+            DaggerfallUnity.Settings.SoundVolume = (float)Math.Round((position.x / barMaxLength), 2);
             if (!saveSettings)
                 saveSettings = true;
         }
@@ -240,7 +249,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 position.x = 0;
             // resize panel to where user clicked
             musicBar.Size = new Vector2(position.x, 3.5f);
-            DaggerfallUnity.Settings.MusicVolume = (position.x / barMaxLength);
+            DaggerfallUnity.Settings.MusicVolume = (float)Math.Round((position.x / barMaxLength), 2);
             if (!saveSettings)
                 saveSettings = true;
         }

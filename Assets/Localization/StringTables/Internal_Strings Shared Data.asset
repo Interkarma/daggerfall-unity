@@ -3255,6 +3255,14 @@ MonoBehaviour:
     m_Key: nord
     m_Metadata:
       m_Items: []
+  - m_Id: 813
+    m_Key: settingsNotApplied
+    m_Metadata:
+      m_Items: []
+  - m_Id: 814
+    m_Key: doneButton
+    m_Metadata:
+      m_Items: []
   - m_Id: 29516644352
     m_Key: temple
     m_Metadata:
@@ -3269,6 +3277,698 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 89174439800094720
     m_Key: youNeverAwaken
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139512620797673472
+    m_Key: modSettings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139512661704720384
+    m_Key: gameEffectsSettings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139539947254464512
+    m_Key: antialiasing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139539989004566528
+    m_Key: ambientOcclusion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139540048576266240
+    m_Key: bloom
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139540070931906560
+    m_Key: motionBlur
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139540118281404416
+    m_Key: vignette
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139540168873099264
+    m_Key: depthOfField
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139568836047552512
+    m_Key: antialiasingTip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139890483510132736
+    m_Key: enable
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139890710237429760
+    m_Key: fxaa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139890732182028288
+    m_Key: smaa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139890774120873984
+    m_Key: taa
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139890887878787072
+    m_Key: none
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139891519062818816
+    m_Key: method
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139891615737331712
+    m_Key: fxaaFastMode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139891777205452800
+    m_Key: low
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139891795018661888
+    m_Key: medium
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139891818804559872
+    m_Key: high
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139891956226736128
+    m_Key: smaaQuality
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139891991572135936
+    m_Key: taaSharpness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139920121422692352
+    m_Key: disabled
+    m_Metadata:
+      m_Items: []
+  - m_Id: 139937463741464576
+    m_Key: setPageDefaults
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140047128634605568
+    m_Key: ambientOcclusionTip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140247721135325184
+    m_Key: scalableAmbientObscurance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140247780572807168
+    m_Key: multiScaleVolumetricObscurance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140248694163521536
+    m_Key: scalableAmbient
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140248777965715456
+    m_Key: multiScaleVolumetric
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140250765390528512
+    m_Key: intensity
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140251827304415232
+    m_Key: lowest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140251894765600768
+    m_Key: ultra
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140252674658680832
+    m_Key: radius
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140252700298461184
+    m_Key: quality
+    m_Metadata:
+      m_Items: []
+  - m_Id: 140260082650988544
+    m_Key: thickness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 143983971784736768
+    m_Key: bloomTip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 143984810309992448
+    m_Key: threshold
+    m_Metadata:
+      m_Items: []
+  - m_Id: 143985154641379328
+    m_Key: diffusion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 143985842813419520
+    m_Key: bloomFastMode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 145710830377517056
+    m_Key: motionBlurTip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 145711252039286784
+    m_Key: shutterAngle
+    m_Metadata:
+      m_Items: []
+  - m_Id: 145711321710870528
+    m_Key: sampleCount
+    m_Metadata:
+      m_Items: []
+  - m_Id: 145743292109438976
+    m_Key: vignetteTip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 145743678983651328
+    m_Key: smoothness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 145749012594835456
+    m_Key: roundness
+    m_Metadata:
+      m_Items: []
+  - m_Id: 145749042349228032
+    m_Key: rounded
+    m_Metadata:
+      m_Items: []
+  - m_Id: 146429451995201536
+    m_Key: depthOfFieldTip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 146429565677617152
+    m_Key: focusDistance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 146430048924352512
+    m_Key: aperture
+    m_Metadata:
+      m_Items: []
+  - m_Id: 146430097972543488
+    m_Key: focalLength
+    m_Metadata:
+      m_Items: []
+  - m_Id: 146430149025611776
+    m_Key: maxBlurSize
+    m_Metadata:
+      m_Items: []
+  - m_Id: 146430471823441920
+    m_Key: small
+    m_Metadata:
+      m_Items: []
+  - m_Id: 146430498352414720
+    m_Key: large
+    m_Metadata:
+      m_Items: []
+  - m_Id: 146430568518926336
+    m_Key: veryLarge
+    m_Metadata:
+      m_Items: []
+  - m_Id: 146440148502200320
+    m_Key: ditherTip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 146441159413350400
+    m_Key: dither
+    m_Metadata:
+      m_Items: []
+  - m_Id: 149035488581533696
+    m_Key: colorBoost
+    m_Metadata:
+      m_Items: []
+  - m_Id: 149035515697709056
+    m_Key: colorBoostTip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 149306996474265600
+    m_Key: dungeonScale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 149307017856827392
+    m_Key: interiorScale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 149307053571325952
+    m_Key: exteriorScale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 149691213657948160
+    m_Key: dungeonFalloff
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151165478580273152
+    m_Key: retroMode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151165508007510016
+    m_Key: retroModeTip
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151176764189851648
+    m_Key: mode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151176803574366208
+    m_Key: retroModeOff
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151176822322905088
+    m_Key: retroMode320x200
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151176851188105216
+    m_Key: retroMode640x400
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151241473442201600
+    m_Key: off
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151241511664893952
+    m_Key: posterizationFull
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151241573350522880
+    m_Key: posterizationMinusSky
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151241624562974720
+    m_Key: palettizationFull
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151241696348487680
+    m_Key: palettizationMinusSky
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151241760991100928
+    m_Key: postProcess
+    m_Metadata:
+      m_Items: []
+  - m_Id: 151842471546208256
+    m_Key: retroModeAspectCorrection
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152696194707243008
+    m_Key: FourThree
+    m_Metadata:
+      m_Items: []
+  - m_Id: 152696235748507648
+    m_Key: SixteenTen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 213117009860509696
+    m_Key: notEnoughSpellpointsLeft
+    m_Metadata:
+      m_Items: []
+  - m_Id: 213117165859258368
+    m_Key: totalIdentified
+    m_Metadata:
+      m_Items: []
+  - m_Id: 231219528834760704
+    m_Key: dispelMagicSuccess
+    m_Metadata:
+      m_Items: []
+  - m_Id: 231219571734102016
+    m_Key: dispelMagicFailed
+    m_Metadata:
+      m_Items: []
+  - m_Id: 231237822383931392
+    m_Key: smallerDungeonsChanged
+    m_Metadata:
+      m_Items: []
+  - m_Id: 263503556027629568
+    m_Key: youNote
+    m_Metadata:
+      m_Items: []
+  - m_Id: 264997637513822208
+    m_Key: customName
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285674837707603968
+    m_Key: StoresA
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285674968234344448
+    m_Key: GeneralStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675018800873472
+    m_Key: WeaponStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675106491187200
+    m_Key: ArmorStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675156646674432
+    m_Key: BookStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675205288017920
+    m_Key: LibraryStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675243338743808
+    m_Key: ClothingStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675323382841344
+    m_Key: AlchemyStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675361865580544
+    m_Key: GemStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675433093251072
+    m_Key: PawnStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675465657827328
+    m_Key: FurnitureStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675519206506496
+    m_Key: LivestockStoresB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675582083317760
+    m_Key: TavernsA
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285675625704079360
+    m_Key: TavernsB
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285678855704035328
+    m_Key: houseForSale
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285679031546036224
+    m_Key: theBankOf
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285679698457149440
+    m_Key: daggerfall
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285679716257775616
+    m_Key: wayrest
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285679764228030464
+    m_Key: sentinel
+    m_Metadata:
+      m_Items: []
+  - m_Id: 285680166927351808
+    m_Key: palace
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286284881981620224
+    m_Key: regionNames
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286315014360678400
+    m_Key: ocean
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286315235807346688
+    m_Key: unknownUpper
+    m_Metadata:
+      m_Items: []
+  - m_Id: 286316113792614400
+    m_Key: switchToRegion
+    m_Metadata:
+      m_Items: []
+  - m_Id: 287414938670219264
+    m_Key: locationInRegionProvince
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318179644662083584
+    m_Key: dayNames
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318180613974126592
+    m_Key: monthNames
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318180665765392384
+    m_Key: birthSignNames
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318180720735940608
+    m_Key: seasonNames
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318183911657566208
+    m_Key: longDateTimeFormatString
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318184342387421184
+    m_Key: dateTimeFormatString
+    m_Metadata:
+      m_Items: []
+  - m_Id: 318184563599208448
+    m_Key: dateFormatString
+    m_Metadata:
+      m_Items: []
+  - m_Id: 338866630561361920
+    m_Key: ingredientFormatString
+    m_Metadata:
+      m_Items: []
+  - m_Id: 338866679752159232
+    m_Key: longWeaponNameFormatString
+    m_Metadata:
+      m_Items: []
+  - m_Id: 338879523965104128
+    m_Key: longArmorNameFormatString
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340024905667440640
+    m_Key: strRatings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340024972407205888
+    m_Key: intRatings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340025019786063872
+    m_Key: wilRatings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340025063192915968
+    m_Key: agiRatings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340025139755741184
+    m_Key: endRatings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340025171456290816
+    m_Key: perRatings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340025210190688256
+    m_Key: spdRatings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 340025245175377920
+    m_Key: lucRatings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854425099628544
+    m_Key: Mage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854452123529216
+    m_Key: Spellsword
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854481798230016
+    m_Key: Battlemage
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854503575056384
+    m_Key: Sorcerer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854514425720832
+    m_Key: Healer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854533220397056
+    m_Key: Nightblade
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854552321257472
+    m_Key: Bard
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854572416167936
+    m_Key: Burglar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854590254542848
+    m_Key: Rogue
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854607426023424
+    m_Key: Acrobat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854627416076288
+    m_Key: Thief
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854647510986752
+    m_Key: Assassin
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854667815612416
+    m_Key: Monk
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854684865458176
+    m_Key: Archer
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854702443786240
+    m_Key: Ranger
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854719892090880
+    m_Key: Barbarian
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854736480563200
+    m_Key: Warrior
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854751684915200
+    m_Key: Knight
+    m_Metadata:
+      m_Items: []
+  - m_Id: 366854768738955264
+    m_Key: Custom
+    m_Metadata:
+      m_Items: []
+  - m_Id: 367490637908930560
+    m_Key: darkBrotherhoodRanks
+    m_Metadata:
+      m_Items: []
+  - m_Id: 367490718334709760
+    m_Key: fightersRanks
+    m_Metadata:
+      m_Items: []
+  - m_Id: 367490889273569280
+    m_Key: knightlyOrderRanks
+    m_Metadata:
+      m_Items: []
+  - m_Id: 367490959960174592
+    m_Key: magesRanks
+    m_Metadata:
+      m_Items: []
+  - m_Id: 367490995796307968
+    m_Key: templeRanks
+    m_Metadata:
+      m_Items: []
+  - m_Id: 367491041929457664
+    m_Key: thievesRanks
+    m_Metadata:
+      m_Items: []
+  - m_Id: 367491802209972224
+    m_Key: darkSister
+    m_Metadata:
+      m_Items: []
+  - m_Id: 367492497524912128
+    m_Key: nonMember
+    m_Metadata:
+      m_Items: []
+  - m_Id: 367501174470340608
+    m_Key: knightSister
+    m_Metadata:
+      m_Items: []
+  - m_Id: 367509890754146304
+    m_Key: matriarch
+    m_Metadata:
+      m_Items: []
+  - m_Id: 367509947737960448
+    m_Key: sister
+    m_Metadata:
+      m_Items: []
+  - m_Id: 384511549959041024
+    m_Key: daedricSkill
+    m_Metadata:
+      m_Items: []
+  - m_Id: 384511601481871360
+    m_Key: orcishSkill
+    m_Metadata:
+      m_Items: []
+  - m_Id: 384529964098646016
+    m_Key: midDateTimeFormatString
+    m_Metadata:
+      m_Items: []
+  - m_Id: 387100728270254080
+    m_Key: hthDamageFormatString
+    m_Metadata:
+      m_Items: []
+  - m_Id: 387103528328884224
+    m_Key: affiliationFormatString
+    m_Metadata:
+      m_Items: []
+  - m_Id: 401505019353362432
+    m_Key: answers_5404
+    m_Metadata:
+      m_Items: []
+  - m_Id: 401505141491494912
+    m_Key: answers_5406
+    m_Metadata:
+      m_Items: []
+  - m_Id: 401505212006133760
+    m_Key: answers_5423
+    m_Metadata:
+      m_Items: []
+  - m_Id: 401505274576760832
+    m_Key: answers_5424
+    m_Metadata:
+      m_Items: []
+  - m_Id: 401505331053064192
+    m_Key: answers_5464
+    m_Metadata:
+      m_Items: []
+  - m_Id: 402963733335764992
+    m_Key: random
+    m_Metadata:
+      m_Items: []
+  - m_Id: 403094982939373568
+    m_Key: nordSurnameImmutableSuffix
+    m_Metadata:
+      m_Items: []
+  - m_Id: 403338205247041536
+    m_Key: confirmDefaultControls
+    m_Metadata:
+      m_Items: []
+  - m_Id: 410605082671312896
+    m_Key: saveLoadPromptFormat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 445752459137302528
+    m_Key: potionRecipeWeight
+    m_Metadata:
+      m_Items: []
+  - m_Id: 508799883300020224
+    m_Key: pronounHer2
+    m_Metadata:
+      m_Items: []
+  - m_Id: 508800047171477504
+    m_Key: pronounHis2
     m_Metadata:
       m_Items: []
   m_Metadata:

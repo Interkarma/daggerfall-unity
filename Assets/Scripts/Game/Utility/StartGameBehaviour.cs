@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -10,6 +10,7 @@
 //
 
 using UnityEngine;
+using UnityEngine.Rendering.PostProcessing;
 using System;
 using System.Collections.Generic;
 using DaggerfallConnect;
@@ -54,6 +55,8 @@ namespace DaggerfallWorkshop.Game.Utility
         GameObject player;
         PlayerEnterExit playerEnterExit;
         StartMethods lastStartMethod;
+        PostProcessLayer postProcessLayer;
+        PostProcessVolume postProcessVolume;
 
         #endregion
 
@@ -205,13 +208,15 @@ namespace DaggerfallWorkshop.Game.Utility
                 {
                     mouseLook.invertMouseY = DaggerfallUnity.Settings.InvertMouseVertical;
                     // Set mouse look smoothing
-                    mouseLook.enableSmoothing = DaggerfallUnity.Settings.MouseLookSmoothing;
+                    mouseLook.Smoothing = DaggerfallUnity.Settings.MouseLookSmoothingFactor;
                     // Set mouse look sensitivity
                     mouseLook.sensitivityScale = DaggerfallUnity.Settings.MouseLookSensitivity;
 
                     mouseLook.joystickSensitivityScale = DaggerfallUnity.Settings.JoystickLookSensitivity;
                 }
             }
+
+            DeployCoreGameEffectSettings(CoreGameEffectSettingsGroups.Everything);
 
             InputManager.Instance.JoystickCursorSensitivity = DaggerfallUnity.Settings.JoystickCursorSensitivity;
 
@@ -847,6 +852,180 @@ namespace DaggerfallWorkshop.Game.Utility
                     continue;
                 }
                 playerEntity.AddSpell(bundle);
+            }
+        }
+
+        public void DeployCoreGameEffectSettings(CoreGameEffectSettingsGroups groups)
+        {
+            // Get layer
+            if (!postProcessLayer)
+            {
+                postProcessLayer = GameManager.Instance.MainCamera.GetComponent<PostProcessLayer>();
+                if (!postProcessLayer)
+                {
+                    Debug.LogError("Could not locate PostProcessLayer on MainCamera");
+                    return;
+                }
+            }
+
+            // Get volume
+            if (!postProcessVolume)
+            {
+                postProcessVolume = GameManager.Instance.PostProcessVolume;
+                if (!postProcessVolume)
+                {
+                    Debug.LogError("Could not locate PostProcessVolume in scene");
+                    return;
+                }
+            }
+
+            // Antialiasing
+            if (groups.HasFlag(CoreGameEffectSettingsGroups.Antialiasing))
+            {
+                switch ((AntiAliasingMethods)DaggerfallUnity.Settings.AntialiasingMethod)
+                {
+                    case AntiAliasingMethods.None:
+                        postProcessLayer.antialiasingMode = PostProcessLayer.Antialiasing.None;
+                        break;
+                    case AntiAliasingMethods.FXAA:
+                        postProcessLayer.antialiasingMode = PostProcessLayer.Antialiasing.FastApproximateAntialiasing;
+                        postProcessLayer.fastApproximateAntialiasing.fastMode = DaggerfallUnity.Settings.AntialiasingFXAAFastMode;
+                        break;
+                    case AntiAliasingMethods.SMAA:
+                        postProcessLayer.antialiasingMode = PostProcessLayer.Antialiasing.SubpixelMorphologicalAntialiasing;
+                        postProcessLayer.subpixelMorphologicalAntialiasing.quality = (SubpixelMorphologicalAntialiasing.Quality)DaggerfallUnity.Settings.AntialiasingSMAAQuality;
+                        break;
+                    case AntiAliasingMethods.TAA:
+                        postProcessLayer.antialiasingMode = PostProcessLayer.Antialiasing.TemporalAntialiasing;
+                        postProcessLayer.temporalAntialiasing.sharpness = DaggerfallUnity.Settings.AntialiasingTAASharpness;
+                        break;
+                }
+            }
+
+            // Ambient Occlusion
+            if (groups.HasFlag(CoreGameEffectSettingsGroups.AmbientOcclusion))
+            {
+                AmbientOcclusion ambientOcclusionSettings;
+                if (postProcessVolume.profile.TryGetSettings<AmbientOcclusion>(out ambientOcclusionSettings))
+                {
+                    ambientOcclusionSettings.enabled.value = DaggerfallUnity.Settings.AmbientOcclusionEnable;
+                    ambientOcclusionSettings.mode.overrideState = true;
+                    ambientOcclusionSettings.mode.value = (AmbientOcclusionMode)DaggerfallUnity.Settings.AmbientOcclusionMethod;
+                    ambientOcclusionSettings.intensity.overrideState = true;
+                    ambientOcclusionSettings.intensity.value = DaggerfallUnity.Settings.AmbientOcclusionIntensity;
+                    ambientOcclusionSettings.radius.overrideState = true;
+                    ambientOcclusionSettings.radius.value = DaggerfallUnity.Settings.AmbientOcclusionRadius;
+                    ambientOcclusionSettings.quality.overrideState = true;
+                    ambientOcclusionSettings.quality.value = (AmbientOcclusionQuality)DaggerfallUnity.Settings.AmbientOcclusionQuality;
+                    ambientOcclusionSettings.thicknessModifier.overrideState = true;
+                    ambientOcclusionSettings.thicknessModifier.value = DaggerfallUnity.Settings.AmbientOcclusionThickness;
+                }
+            }
+
+            // Bloom
+            if (groups.HasFlag(CoreGameEffectSettingsGroups.Bloom))
+            {
+                Bloom bloomSettings;
+                if (postProcessVolume.profile.TryGetSettings<Bloom>(out bloomSettings))
+                {
+                    bloomSettings.enabled.value = DaggerfallUnity.Settings.BloomEnable;
+                    bloomSettings.intensity.overrideState = true;
+                    bloomSettings.intensity.value = DaggerfallUnity.Settings.BloomIntensity;
+                    bloomSettings.threshold.overrideState = true;
+                    bloomSettings.threshold.value = DaggerfallUnity.Settings.BloomThreshold;
+                    bloomSettings.diffusion.overrideState = true;
+                    bloomSettings.diffusion.value = DaggerfallUnity.Settings.BloomDiffusion;
+                    bloomSettings.fastMode.overrideState = true;
+                    bloomSettings.fastMode.value = DaggerfallUnity.Settings.BloomFastMode;
+                }
+            }
+
+            // Motion Blur
+            if (groups.HasFlag(CoreGameEffectSettingsGroups.MotionBlur))
+            {
+                MotionBlur motionBlurSettings;
+                if (postProcessVolume.profile.TryGetSettings<MotionBlur>(out motionBlurSettings))
+                {
+                    motionBlurSettings.enabled.value = DaggerfallUnity.Settings.MotionBlurEnable;
+                    motionBlurSettings.shutterAngle.overrideState = true;
+                    motionBlurSettings.shutterAngle.value = DaggerfallUnity.Settings.MotionBlurShutterAngle;
+                    motionBlurSettings.sampleCount.overrideState = true;
+                    motionBlurSettings.sampleCount.value = DaggerfallUnity.Settings.MotionBlurSampleCount;
+                }
+            }
+
+            // Vignette
+            if (groups.HasFlag(CoreGameEffectSettingsGroups.Vignette))
+            {
+                Vignette vignetteSettings;
+                if (postProcessVolume.profile.TryGetSettings<Vignette>(out vignetteSettings))
+                {
+                    vignetteSettings.enabled.value = DaggerfallUnity.Settings.VignetteEnable;
+                    vignetteSettings.intensity.overrideState = true;
+                    vignetteSettings.intensity.value = DaggerfallUnity.Settings.VignetteIntensity;
+                    vignetteSettings.smoothness.overrideState = true;
+                    vignetteSettings.smoothness.value = DaggerfallUnity.Settings.VignetteSmoothness;
+                    vignetteSettings.roundness.overrideState = true;
+                    vignetteSettings.roundness.value = DaggerfallUnity.Settings.VignetteRoundness;
+                    vignetteSettings.rounded.overrideState = true;
+                    vignetteSettings.rounded.value = DaggerfallUnity.Settings.VignetteRounded;
+                }    
+            }
+
+            // Depth of Field
+            if (groups.HasFlag(CoreGameEffectSettingsGroups.DepthOfField))
+            {
+                DepthOfField depthOfFieldSettings;
+                if (postProcessVolume.profile.TryGetSettings<DepthOfField>(out depthOfFieldSettings))
+                {
+                    depthOfFieldSettings.enabled.value = DaggerfallUnity.Settings.DepthOfFieldEnable;
+                    depthOfFieldSettings.focusDistance.overrideState = true;
+                    depthOfFieldSettings.focusDistance.value = DaggerfallUnity.Settings.DepthOfFieldFocusDistance;
+                    depthOfFieldSettings.aperture.overrideState = true;
+                    depthOfFieldSettings.aperture.value = DaggerfallUnity.Settings.DepthOfFieldAperture;
+                    depthOfFieldSettings.focalLength.overrideState = true;
+                    depthOfFieldSettings.focalLength.value = DaggerfallUnity.Settings.DepthOfFieldFocalLength;
+                    depthOfFieldSettings.kernelSize.overrideState = true;
+                    depthOfFieldSettings.kernelSize.value = (KernelSize)DaggerfallUnity.Settings.DepthOfFieldMaxBlurSize;
+                }
+            }
+
+            // Dither
+            if (groups.HasFlag(CoreGameEffectSettingsGroups.Dither))
+            {
+                const string ditherKeyword = "_PPV2_DITHER_ON";
+                if (DaggerfallUnity.Settings.DitherEnable)
+                    Shader.EnableKeyword(ditherKeyword);
+                else
+                    Shader.DisableKeyword(ditherKeyword);
+            }
+
+            // ColorBoost
+            if (groups.HasFlag(CoreGameEffectSettingsGroups.ColorBoost))
+            {
+                ColorBoost colorBoostSettings;
+                if (postProcessVolume.profile.TryGetSettings<ColorBoost>(out colorBoostSettings))
+                {
+                    colorBoostSettings.enabled.value = DaggerfallUnity.Settings.ColorBoostEnable;
+                    colorBoostSettings.radius.overrideState = true;
+                    colorBoostSettings.radius.value = DaggerfallUnity.Settings.ColorBoostRadius;
+                    colorBoostSettings.globalIntensity.overrideState = true;
+                    colorBoostSettings.globalIntensity.value = DaggerfallUnity.Settings.ColorBoostIntensity;
+                    colorBoostSettings.dungeonScale.overrideState = true;
+                    colorBoostSettings.dungeonScale.value = DaggerfallUnity.Settings.ColorBoostDungeonScale;
+                    colorBoostSettings.interiorScale.overrideState = true;
+                    colorBoostSettings.interiorScale.value = DaggerfallUnity.Settings.ColorBoostInteriorScale;
+                    colorBoostSettings.exteriorScale.overrideState = true;
+                    colorBoostSettings.exteriorScale.value = DaggerfallUnity.Settings.ColorBoostExteriorScale;
+                    colorBoostSettings.dungeonFalloff.overrideState = true;
+                    colorBoostSettings.dungeonFalloff.value = DaggerfallUnity.Settings.ColorBoostDungeonFalloff;
+                }
+            }
+
+            // Retro Mode
+            if (groups.HasFlag(CoreGameEffectSettingsGroups.RetroMode))
+            {
+                GameManager.Instance.RetroRenderer.UpdateSettings();
             }
         }
 

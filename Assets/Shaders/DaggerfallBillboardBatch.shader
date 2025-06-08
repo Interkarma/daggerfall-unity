@@ -1,4 +1,4 @@
-// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Unity
 // Copyright:       Copyright (C) 2009-2016 Gavin Clayton
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Web Site:        http://www.dfworkshop.net
@@ -25,7 +25,7 @@ Shader "Daggerfall/BillboardBatch" {
 		
 		CGPROGRAM
 		#pragma target 3.0
-		#pragma surface surf Standard alphatest:_Cutoff vertex:vert addshadow
+		#pragma surface surf Lambert alphatest:_Cutoff vertex:vert addshadow
 
 		half4 _Color;
 		sampler2D _MainTex;
@@ -55,7 +55,7 @@ Shader "Daggerfall/BillboardBatch" {
 			v.vertex.xyz += _UpVector * (v.tangent.w - 0.5) * v.tangent.y;
 		}
 
-		void surf (Input IN, inout SurfaceOutputStandard o)
+		void surf (Input IN, inout SurfaceOutput o)
 		{
 			half4 albedo = tex2D(_MainTex, IN.uv_MainTex) * _Color;
 			half3 emission = tex2D(_EmissionMap, IN.uv_EmissionMap).rgb * _EmissionColor;
@@ -63,9 +63,8 @@ Shader "Daggerfall/BillboardBatch" {
 			o.Alpha = albedo.a;
 			o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
 			o.Emission = emission;
-			o.Metallic = 0;
 		}
 		ENDCG
 	} 
-	FallBack "Standard"
+	FallBack "Transparent/VertexLit"
 }

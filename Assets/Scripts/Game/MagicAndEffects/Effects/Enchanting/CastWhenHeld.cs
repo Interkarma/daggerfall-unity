@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -24,8 +24,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
     /// </summary>
     public class CastWhenHeld : BaseEntityEffect
     {
-        const int normalMagicItemDegradeRate = 4;
-        const int restingMagicItemDegradeRate = 60;
+        protected const int normalMagicItemDegradeRate = 4;
+        protected const int restingMagicItemDegradeRate = 60;
 
         public static readonly string EffectKey = EnchantmentTypes.CastWhenHeld.ToString();
 
@@ -64,7 +64,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                     ClassicType = EnchantmentTypes.CastWhenHeld,
                     ClassicParam = id,
                     PrimaryDisplayName = GroupName,
-                    SecondaryDisplayName = spellRecord.spellName,
+                    SecondaryDisplayName = TextManager.Instance.GetLocalizedSpellName(id),
                     EnchantCost = classicSpellCosts[i],
                 };
 
@@ -128,7 +128,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             return null;
         }
 
-        void ApplyDurabilityLoss(DaggerfallUnityItem item, DaggerfallEntityBehaviour entity)
+        protected virtual void ApplyDurabilityLoss(DaggerfallUnityItem item, DaggerfallEntityBehaviour entity)
         {
             if (!GameManager.Instance.EntityEffectBroker.SyntheticTimeIncrease)
             {
@@ -141,7 +141,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             }
         }
 
-        void InstantiateSpellBundle(EnchantmentParam param, DaggerfallEntityBehaviour sourceEntity, DaggerfallUnityItem sourceItem, EntityEffectManager casterManager, bool recast = false)
+        protected virtual void InstantiateSpellBundle(EnchantmentParam param, DaggerfallEntityBehaviour sourceEntity, DaggerfallUnityItem sourceItem, EntityEffectManager casterManager, bool recast = false)
         {
             if (!string.IsNullOrEmpty(param.CustomParam))
             {

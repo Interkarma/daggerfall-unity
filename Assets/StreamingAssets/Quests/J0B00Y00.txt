@@ -11,8 +11,8 @@ DisplayName: The Bounty
 QRC:
 
 QuestorOffer:  [1000]
-<ce>                If you are available for employment, I
-<ce>                 may a job for you. It's a messy little
+<ce>               If you are available for employment, I may
+<ce>                 have a job for you. It's a messy little
 <ce>                  affair, involving punishing a thief.
 <ce>               It will mean a _reward_ gold piece reward.
 <ce>                 Sounds like something you'd be at all

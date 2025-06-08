@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -55,18 +55,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         const float cameraBackwardDistance = 20.0f; // initial camera distance "backwards" in 3D mode
 
         // button definitions
-        Button gridButton;
-        Button forwardButton;
-        Button backwardButton;
-        Button leftButton;
-        Button rightButton;
-        Button rotateLeftButton;
-        Button rotateRightButton;
-        Button upstairsButton;
-        Button downstairsButton;
+        protected Button gridButton;
+        protected Button forwardButton;
+        protected Button backwardButton;
+        protected Button leftButton;
+        protected Button rightButton;
+        protected Button rotateLeftButton;
+        protected Button rotateRightButton;
+        protected Button upstairsButton;
+        protected Button downstairsButton;
 
         // hover text label in status bar
-        TextLabel labelHoverText;
+        protected TextLabel labelHoverText;
 
         // Handle toggle closing
         KeyCode automapBinding = KeyCode.None;
@@ -129,6 +129,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Panel panelRenderOverlay = null; // used for overlays rendering (micro-map)
         Rect oldPositionNativePanel;
         Vector2 oldMousePosition; // old mouse position used to determine offset of mouse movement since last time used for for drag and drop functionality
+        Rect? oldCustomScreenRect = null;
 
         Panel dummyPanelCompass = null; // used to determine correct compass position
 
@@ -199,6 +200,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         public DaggerfallAutomapWindow(IUserInterfaceManager uiManager)
             : base(uiManager)
         {
+            // Prevent duplicate close calls with base class's exitKey (Escape)
+            AllowCancel = false;
         }
 
         /// <summary>
@@ -697,11 +700,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             HotkeySequence.KeyModifiers keyModifiers = HotkeySequence.GetKeyboardKeyModifiers();
 
-            if (Input.GetKeyDown(KeyCode.Escape) ||
+            if (InputManager.Instance.GetBackButtonDown() ||
                 // Toggle window closed with same hotkey used to open it
                 InputManager.Instance.GetKeyDown(automapBinding))
                 isCloseWindowDeferred = true;
-            else if ((Input.GetKeyUp(KeyCode.Escape) ||
+            else if ((InputManager.Instance.GetBackButtonUp() ||
                 // Toggle window closed with same hotkey used to open it
                 InputManager.Instance.GetKeyUp(automapBinding)) && isCloseWindowDeferred)
             {
@@ -897,19 +900,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
                 Vector2 bias = mousePosition - oldMousePosition;
 
-                switch (automapViewMode)
+                if (bias != Vector2.zero)
                 {
-                    case AutomapViewMode.View2D:
-                    default:
-                        ActionRotateCamera(+dragRotateSpeedInTopView * bias.x);
-                        break;
-                    case AutomapViewMode.View3D:
-                        ActionRotate(dragRotateSpeedInView3D * bias.x);
-                        ActionrotateCameraOnCameraYZplaneAroundObject(-dragRotateCameraOnCameraYZplaneAroundObjectSpeedInView3D * bias.y);
-                        break;
+                    switch (automapViewMode)
+                    {
+                        case AutomapViewMode.View2D:
+                        default:
+                            ActionRotateCamera(+dragRotateSpeedInTopView * bias.x, false);
+                            break;
+                        case AutomapViewMode.View3D:
+                            ActionRotate(dragRotateSpeedInView3D * bias.x, false);
+                            ActionrotateCameraOnCameraYZplaneAroundObject(-dragRotateCameraOnCameraYZplaneAroundObjectSpeedInView3D * bias.y, false);
+                            break;
+                    }
+                    UpdateAutomapView();
                 }
-
-                UpdateAutomapView();
                 oldMousePosition = mousePosition;
             }
 
@@ -1073,15 +1078,21 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ResizeGUIelementsOnDemand()
         {
-            if (oldPositionNativePanel != NativePanel.Rectangle)
+            if (oldPositionNativePanel != NativePanel.Rectangle || oldCustomScreenRect != DaggerfallUI.Instance.CustomScreenRect)
             {
                 // get panelRenderAutomap position and size from dummyPanelAutomap rectangle
-                panelRenderAutomap.Position = dummyPanelAutomap.Rectangle.position;
+                if (DaggerfallUI.Instance.CustomScreenRect == null)
+                    panelRenderAutomap.Position = dummyPanelAutomap.Rectangle.position;
+                else
+                    panelRenderAutomap.Position = dummyPanelAutomap.ScreenToLocal(dummyPanelAutomap.Rectangle.position);
                 //panelRenderAutomap.Size = new Vector2(dummyPanelAutomap.InteriorWidth, dummyPanelAutomap.InteriorHeight);
                 panelRenderAutomap.Size = new Vector2(dummyPanelAutomap.Rectangle.width, dummyPanelAutomap.Rectangle.height);
 
                 // get panelRenderOverlay position and size from dummyPanelOverlay rectangle
-                panelRenderOverlay.Position = dummyPanelOverlay.Rectangle.position;
+                if (DaggerfallUI.Instance.CustomScreenRect == null)
+                    panelRenderOverlay.Position = dummyPanelOverlay.Rectangle.position;
+                else
+                    panelRenderAutomap.Position = dummyPanelAutomap.ScreenToLocal(dummyPanelAutomap.Rectangle.position);
                 panelRenderOverlay.Size = new Vector2(dummyPanelOverlay.Rectangle.width, dummyPanelOverlay.Rectangle.height);
 
                 //Debug.Log(String.Format("dummy panel size: {0}, {1}; {2}, {3}; {4}, {5}; {6}, {7}\n", NativePanel.InteriorWidth, NativePanel.InteriorHeight, ParentPanel.InteriorWidth, ParentPanel.InteriorHeight, dummyPanelAutomap.InteriorWidth, dummyPanelAutomap.InteriorHeight, parentPanel.InteriorWidth, parentPanel.InteriorHeight));
@@ -1097,6 +1108,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 compass.Scale = scale;
 
                 oldPositionNativePanel = NativePanel.Rectangle;
+                oldCustomScreenRect = DaggerfallUI.Instance.CustomScreenRect;
             }
         }
 
@@ -1484,7 +1496,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// <summary>
         /// action for rotating camera around rotation axis about a certain rotationAmount
         /// </summary>
-        private void ActionRotate(float rotationAmount)
+        private void ActionRotate(float rotationAmount, bool updateView = true)
         {
             Vector3 rotationPivotAxisPosition;
             switch (automapViewMode)
@@ -1500,13 +1512,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     break;
             }
             cameraAutomap.transform.RotateAround(rotationPivotAxisPosition, -Vector3.up, -rotationAmount * Time.unscaledDeltaTime);
-            UpdateAutomapView();
+            if (updateView)
+                UpdateAutomapView();
         }
 
         /// <summary>
         /// action for rotating camera on camera YZ-plane around object about a certain rotationAmount
         /// </summary>
-        private void ActionrotateCameraOnCameraYZplaneAroundObject(float rotationAmount)
+        private void ActionrotateCameraOnCameraYZplaneAroundObject(float rotationAmount, bool updateView = true)
         {
             if (automapViewMode == AutomapViewMode.View3D)
             {
@@ -1519,7 +1532,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     float rotateBack = Vector3.SignedAngle(transformedUp, Vector3.ProjectOnPlane(transformedUp, Vector3.up), cameraAutomap.transform.right);
                     cameraAutomap.transform.RotateAround(rotationPoint, cameraAutomap.transform.right, rotateBack);
                 }
-                UpdateAutomapView(); 
+                if (updateView)
+                    UpdateAutomapView(); 
             }
         }
 
@@ -1527,7 +1541,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// action for changing camera rotation around y axis
         /// </summary>
         /// <param name="rotationSpeed"> amount used for rotation </param>
-        private void ActionRotateCamera(float rotationAmount)
+        private void ActionRotateCamera(float rotationAmount, bool updateView = true)
         {
             //cameraAutomap.transform.Rotate(0.0f, rotationAmount * Time.unscaledDeltaTime, 0.0f, Space.World);
             Vector3 vecRotationCenter = cameraAutomap.transform.position;
@@ -1547,7 +1561,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             //        break;
             //}
 
-            UpdateAutomapView();
+            if (updateView)
+                UpdateAutomapView();
         }
 
         /// <summary>

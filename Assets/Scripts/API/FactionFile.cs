@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -593,6 +593,12 @@ namespace DaggerfallConnect.Arena2
             Witches = 22,
             Vampires = 23,
             Orsinium = 24,
+            GGroup25 = 25,
+            GGroup26 = 26,
+            GGroup27 = 27,
+            GGroup28 = 28,
+            GGroup29 = 29,
+            GGroup30 = 30,
         }
 
         /// <summary>
@@ -819,6 +825,9 @@ namespace DaggerfallConnect.Arena2
 
         /// <summary>
         /// Gets faction data from faction ID.
+        /// This method returns static faction data from FACTION.TXT file.
+        /// Does not represent current state of faction simulation and is not localized.
+        /// Use PlayerEntity.FactionData.GetFactionData() for faction data used during gameplay.
         /// </summary>
         /// <param name="factionID">Faction ID.</param>
         /// <param name="factionDataOut">Receives faction data.</param>
@@ -837,6 +846,8 @@ namespace DaggerfallConnect.Arena2
 
         /// <summary>
         /// Gets faction ID from name. Experimental.
+        /// Do not use for gameplay purposes.
+        /// Use only for development and testing with unmodified FACTION.TXT.
         /// </summary>
         /// <param name="name">Name of faction to get ID of.</param>
         /// <returns>Faction ID if name found, otherwise -1.</returns>

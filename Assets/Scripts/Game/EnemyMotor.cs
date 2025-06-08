@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -14,6 +14,7 @@ using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
+using System.Linq;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -47,7 +48,6 @@ namespace DaggerfallWorkshop.Game
         bool retreating;                            // Is retreating
         bool backingUp;                             // Is backing up
         bool fallDetected;                          // Detected a fall in front of us, so don't move there
-        bool obstacleDetected;
         bool foundUpwardSlope;
         bool foundDoor;
         Vector3 lastPosition;                       // Used to track whether we have moved or not
@@ -68,10 +68,7 @@ namespace DaggerfallWorkshop.Game
         int searchMult;
         int ignoreMaskForShooting;
         int ignoreMaskForObstacles;
-        bool canAct;
-        bool falls;
         bool flyerFalls;
-        float lastGroundedY;                        // Used for fall damage
         float originalHeight;
 
         EnemySenses senses;
@@ -83,7 +80,6 @@ namespace DaggerfallWorkshop.Game
         DaggerfallEntityBehaviour entityBehaviour;
         EnemyBlood entityBlood;
         EntityEffectManager entityEffectManager;
-        EntityEffectBundle selectedSpell;
         EnemyAttack attack;
         EnemyEntity entity;
         #endregion
@@ -96,6 +92,23 @@ namespace DaggerfallWorkshop.Game
         public Vector3 KnockbackDirection { get; set; } // Direction to travel while being knocked back
         public bool Bashing { get; private set; }   // Is this enemy bashing a door
         public int GiveUpTimer { get; set; }        // Timer for enemy giving up pursuit of target
+        public bool ObstacleDetected { get; private set; }
+        public EntityEffectBundle SelectedSpell { get; set; }
+        public bool CanAct { get; set; }
+        public float LastGroundedY { get; set; }    // Used for fall damage
+        public bool Falls { get; private set; }
+
+        //============Delegates to allow mods to extend motor behaviour.
+        //==When setting a new handler, it may be desired to store the original and call it before/after your own logic.
+        public delegate void TakeActionCallback();
+        public TakeActionCallback TakeActionHandler { get; set; }
+
+        public delegate bool CanCastRangedSpellCallback();
+        public CanCastRangedSpellCallback CanCastRangedSpellHandler { get; set; }
+
+        public delegate bool CanCastTouchSpellCallback();
+        public CanCastTouchSpellCallback CanCastTouchSpellHandler { get; set; }
+
         #endregion
 
         #region Unity Methods
@@ -116,7 +129,12 @@ namespace DaggerfallWorkshop.Game
             attack = GetComponent<EnemyAttack>();
 
             // Only need to check for ability to shoot bow once.
-            hasBowAttack = mobile.Enemy.HasRangedAttack1 && mobile.Enemy.ID > 129 && mobile.Enemy.ID != 132;
+            // A mobile has a bow attack if:
+            //   - it has RangedAttack1 and does not cast magic (ex: Mage, Healer, ...), or 
+            //   - it has both RangedAttack1 and RangedAttack2 (ex: Nightblade)
+            // If a mobile only has RangedAttack1 and casts magic, then its ranged attack is only shooting spells, not shooting a bow
+            hasBowAttack =
+                (mobile.Enemy.HasRangedAttack1 && (!mobile.Enemy.CastsMagic || mobile.Enemy.HasRangedAttack2));
 
             // Add things AI should ignore when checking for a clear path to shoot.
             ignoreMaskForShooting = ~(1 << LayerMask.NameToLayer("SpellMissiles") | 1 << LayerMask.NameToLayer("Ignore Raycast"));
@@ -124,10 +142,14 @@ namespace DaggerfallWorkshop.Game
             // Also ignore arrows and "Ignore Raycast" layer for obstacles
             ignoreMaskForObstacles = ~(1 << LayerMask.NameToLayer("SpellMissiles") | 1 << LayerMask.NameToLayer("Ignore Raycast"));
 
-            lastGroundedY = transform.position.y;
+            LastGroundedY = transform.position.y;
 
             // Get original height, before any height adjustments
             originalHeight = controller.height;
+
+            TakeActionHandler = TakeAction;
+            CanCastRangedSpellHandler = CanCastRangedSpell;
+            CanCastTouchSpellHandler = CanCastTouchSpell;
         }
 
         void FixedUpdate()
@@ -136,9 +158,9 @@ namespace DaggerfallWorkshop.Game
                 return;
 
             flies = CanFly();
-            canAct = true;
+            CanAct = true;
             flyerFalls = false;
-            falls = false;
+            Falls = false;
 
             HandleParalysis();
             KnockbackMovement();
@@ -146,8 +168,8 @@ namespace DaggerfallWorkshop.Game
             HandleNoAction();
             HandleBashing();
             UpdateTimers();
-            if (canAct)
-                TakeAction();
+            if (CanAct)
+                TakeActionHandler();
             ApplyFallDamage();
             UpdateToIdleOrMoveAnim();
             OpenDoors();
@@ -186,7 +208,7 @@ namespace DaggerfallWorkshop.Game
                 if (entityBehaviour.Entity.Team == MobileTeams.PlayerAlly)
                 {
                     int id = (entityBehaviour.Entity as EnemyEntity).MobileEnemy.ID;
-                    entityBehaviour.Entity.Team = EnemyBasics.Enemies[id].Team;
+                    entityBehaviour.Entity.Team = EnemyBasics.Enemies.First(x => x.ID == id).Team;
                 }
             }
         }
@@ -205,6 +227,16 @@ namespace DaggerfallWorkshop.Game
 
             return transform.position;
         }
+
+        /// <summary>
+        /// Call this when floating origin ticks on Y to ensure enemy doesn't die from large "grounded" difference
+        /// </summary>
+        /// <param name="y">Amount to increment to fallstart</param>
+        public void AdjustLastGrounded(float y)
+        {
+            LastGroundedY += y;
+        }
+
         #endregion
 
         #region Private Methods
@@ -221,7 +253,7 @@ namespace DaggerfallWorkshop.Game
             if (entityBehaviour.Entity.IsParalyzed)
             {
                 mobile.FreezeAnims = true;
-                canAct = false;
+                CanAct = false;
                 flyerFalls = true;
             }
             mobile.FreezeAnims = false;
@@ -282,7 +314,7 @@ namespace DaggerfallWorkshop.Game
                     EvaluateMoveInForAttack();
                 }
 
-                canAct = false;
+                CanAct = false;
                 flyerFalls = true;
             }
         }
@@ -293,22 +325,29 @@ namespace DaggerfallWorkshop.Game
         void ApplyGravity()
         {
             // Apply gravity
-            if (!flies && !swims && !IsLevitating && !controller.isGrounded)
+            if (entity.IsSlowFalling && !flies && !swims && !controller.isGrounded && !IsLevitating)
+            {
+                Vector3 velocity = controller.velocity * 0.97f; //gradually slow x/z movement
+                velocity.y = -1; //slow downward fall
+                Vector3 move = velocity * Time.deltaTime;
+                controller.Move(move);
+            }
+            else if (!flies && !swims && !IsLevitating && !controller.isGrounded)
             {
                 controller.SimpleMove(Vector3.zero);
-                falls = true;
+                Falls = true;
 
                 // Only cancel movement if actually falling. Sometimes mobiles can get stuck where they are !isGrounded but SimpleMove(Vector3.zero) doesn't help.
                 // Allowing them to continue and attempt a Move() frees them, but we don't want to allow that if we can avoid it so they aren't moving
                 // while falling, which can also accelerate the fall due to anti-bounce downward movement in Move().
                 if (lastPosition != transform.position)
-                    canAct = false;
+                    CanAct = false;
             }
 
-            if (flyerFalls && flies && !IsLevitating)
+            if (flyerFalls && flies && !IsLevitating && !entity.IsSlowFalling)
             {
                 controller.SimpleMove(Vector3.zero);
-                falls = true;
+                Falls = true;
             }
         }
 
@@ -322,7 +361,7 @@ namespace DaggerfallWorkshop.Game
                 SetChangeStateTimer();
                 searchMult = 0;
 
-                canAct = false;
+                CanAct = false;
             }
         }
 
@@ -340,7 +379,7 @@ namespace DaggerfallWorkshop.Game
                     attack.ResetMeleeTimer();
                 }
 
-                canAct = false;
+                CanAct = false;
             }
         }
 
@@ -356,7 +395,7 @@ namespace DaggerfallWorkshop.Game
                 avoidObstaclesTimer -= Time.deltaTime;
 
             // Set avoidObstaclesTimer to 0 if got close enough to detourDestination. Only bother checking if possible to move.
-            if (avoidObstaclesTimer > 0 && canAct)
+            if (avoidObstaclesTimer > 0 && CanAct)
             {
                 Vector3 detourDestination2D = detourDestination;
                 detourDestination2D.y = transform.position.y;
@@ -482,6 +521,7 @@ namespace DaggerfallWorkshop.Game
                 pursuing = false;
                 retreating = false;
             }
+
         }
 
         /// <summary>
@@ -530,7 +570,7 @@ namespace DaggerfallWorkshop.Game
         bool DoRangedAttack(Vector3 direction, float moveSpeed, float distance, bool isPlayingOneShot)
         {
             bool inRange = senses.DistanceToTarget > EnemyAttack.minRangedDistance && senses.DistanceToTarget < EnemyAttack.maxRangedDistance;
-            if (inRange && senses.TargetInSight && senses.DetectedTarget && (CanShootBow() || CanCastRangedSpell()))
+            if (inRange && senses.TargetInSight && senses.DetectedTarget && (CanShootBow() || CanCastRangedSpellHandler()))
             {
                 if (DaggerfallUnity.Settings.EnhancedCombatAI && senses.TargetIsWithinYawAngle(22.5f, destination) && strafeTimer <= 0)
                 {
@@ -558,7 +598,7 @@ namespace DaggerfallWorkshop.Game
                             }
                         }
                         // Random chance to shoot spell
-                        else if (Random.value < 1/40f && entityEffectManager.SetReadySpell(selectedSpell))
+                        else if (Random.value < 1/40f && entityEffectManager.SetReadySpell(SelectedSpell))
                         {
                             mobile.ChangeEnemyState(MobileStates.Spell);
                         }
@@ -580,7 +620,7 @@ namespace DaggerfallWorkshop.Game
         {
             if (senses.TargetInSight && senses.DetectedTarget && attack.MeleeTimer == 0
                 && senses.DistanceToTarget <= attack.MeleeDistance + senses.TargetRateOfApproach
-                && CanCastTouchSpell() && entityEffectManager.SetReadySpell(selectedSpell))
+                && CanCastTouchSpellHandler() && entityEffectManager.SetReadySpell(SelectedSpell))
             {
                 if (mobile.EnemyState != MobileStates.Spell)
                     mobile.ChangeEnemyState(MobileStates.Spell);
@@ -591,6 +631,7 @@ namespace DaggerfallWorkshop.Game
 
             return false;
         }
+
 
         /// <summary>
         /// Decide whether to strafe, and get direction to strafe to.
@@ -631,7 +672,7 @@ namespace DaggerfallWorkshop.Game
             ObstacleCheck(sphereCastDir2d);
             FallCheck(sphereCastDir2d);
 
-            if (obstacleDetected || fallDetected)
+            if (ObstacleDetected || fallDetected)
                 return false;
 
             RaycastHit hit;
@@ -654,12 +695,15 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Returns true if can shoot projectile at target.
         /// </summary>
-        bool HasClearPathToShootProjectile(float speed, float radius)
+        public bool HasClearPathToShootProjectile(float speed, float originDistance, float radius)
         {
             // Check that there is a clear path to shoot projectile
             Vector3 sphereCastDir = senses.PredictNextTargetPos(speed);
             if (sphereCastDir == EnemySenses.ResetPlayerPos)
                 return false;
+
+            float sphereCastDist = (sphereCastDir - transform.position).magnitude;
+            sphereCastDir = (sphereCastDir - transform.position).normalized;
 
             // No point blank shooting special handling here, makes enemies favor other attack types (melee, touch spells,...)
 
@@ -670,18 +714,17 @@ namespace DaggerfallWorkshop.Game
                 // Exclude enemy collider from CheckSphere test
                 myCollider.enabled = false;
             }
-            bool isSpaceInsufficient = Physics.CheckSphere(transform.position, radius, ignoreMaskForShooting);
+
+            Vector3 shootOrigin = transform.position + sphereCastDir * originDistance;
+            bool isSpaceInsufficient = Physics.CheckSphere(shootOrigin, radius, ignoreMaskForShooting);
             if (myCollider)
                 myCollider.enabled = myColliderWasEnabled;
 
             if (isSpaceInsufficient)
                 return false;
 
-            float sphereCastDist = (sphereCastDir - transform.position).magnitude;
-            sphereCastDir = (sphereCastDir - transform.position).normalized;
-
             RaycastHit hit;
-            if (Physics.SphereCast(transform.position, radius, sphereCastDir, out hit, sphereCastDist, ignoreMaskForShooting))
+            if (Physics.SphereCast(shootOrigin, radius, sphereCastDir, out hit, sphereCastDist, ignoreMaskForShooting))
             {
                 DaggerfallEntityBehaviour hitTarget = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
 
@@ -707,7 +750,7 @@ namespace DaggerfallWorkshop.Game
 
             // Check that there is a clear path to shoot an arrow
             // All arrows are currently 35 speed.
-            return HasClearPathToShootProjectile(35f, 0.15f);
+            return HasClearPathToShootProjectile(35f, 0f, 0.15f);
         }
 
         /// <summary>
@@ -735,14 +778,14 @@ namespace DaggerfallWorkshop.Game
                 return false;
 
             EffectBundleSettings selectedSpellSettings = rangeSpells[Random.Range(0, count)];
-            selectedSpell = new EntityEffectBundle(selectedSpellSettings, entityBehaviour);
+            SelectedSpell = new EntityEffectBundle(selectedSpellSettings, entityBehaviour);
 
-            if (EffectsAlreadyOnTarget(selectedSpell))
+            if (EffectsAlreadyOnTarget(SelectedSpell))
                 return false;
 
             // Check that there is a clear path to shoot a spell
             // All range spells are currently 25 speed and 0.45f radius
-            return HasClearPathToShootProjectile(25f, 0.45f);
+            return HasClearPathToShootProjectile(25f, DaggerfallMissile.ArmLength, 0.45f);
         }
 
         /// <summary>
@@ -783,9 +826,9 @@ namespace DaggerfallWorkshop.Game
                 return false;
 
             EffectBundleSettings selectedSpellSettings = rangeSpells[Random.Range(0, count)];
-            selectedSpell = new EntityEffectBundle(selectedSpellSettings, entityBehaviour);
+            SelectedSpell = new EntityEffectBundle(selectedSpellSettings, entityBehaviour);
 
-            if (EffectsAlreadyOnTarget(selectedSpell))
+            if (EffectsAlreadyOnTarget(SelectedSpell))
                 return false;
 
             return true;
@@ -804,7 +847,7 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Checks whether the target already is affected by all of the effects of the given spell.
         /// </summary>
-        bool EffectsAlreadyOnTarget(EntityEffectBundle spell)
+        public bool EffectsAlreadyOnTarget(EntityEffectBundle spell)
         {
             if (senses.Target)
             {
@@ -938,7 +981,7 @@ namespace DaggerfallWorkshop.Game
             ObstacleCheck(direction2d);
             FallCheck(direction2d);
 
-            if (fallDetected || obstacleDetected)
+            if (fallDetected || ObstacleDetected)
             {
                 if (!strafe && !backAway)
                     FindDetour(direction2d);
@@ -975,13 +1018,13 @@ namespace DaggerfallWorkshop.Game
                 testMove = (direction2d + upOrDown).normalized;
 
                 ObstacleCheck(testMove);
-                if (obstacleDetected)
+                if (ObstacleDetected)
                 {
                     upOrDown.y *= -1;
                     testMove = (direction2d + upOrDown).normalized;
                     ObstacleCheck(testMove);
                 }
-                if (!obstacleDetected)
+                if (!ObstacleDetected)
                     foundUpDown = true;
             }
 
@@ -1007,7 +1050,7 @@ namespace DaggerfallWorkshop.Game
                     ObstacleCheck(testMove);
                     FallCheck(testMove);
 
-                    if (!obstacleDetected && !fallDetected)
+                    if (!ObstacleDetected && !fallDetected)
                     {
                         // First direction was clear, use that way
                         if (angle == 45)
@@ -1026,7 +1069,7 @@ namespace DaggerfallWorkshop.Game
                         ObstacleCheck(testMove);
                         FallCheck(testMove);
 
-                        if (!obstacleDetected && !fallDetected)
+                        if (!ObstacleDetected && !fallDetected)
                         {
                             if (angle == 45)
                             {
@@ -1084,7 +1127,7 @@ namespace DaggerfallWorkshop.Game
                         break;
                     }
                 }
-                while (obstacleDetected || fallDetected);
+                while (ObstacleDetected || fallDetected);
             }
 
             detourDestination = transform.position + testMove * 2;
@@ -1096,7 +1139,7 @@ namespace DaggerfallWorkshop.Game
 
         void ObstacleCheck(Vector3 direction)
         {
-            obstacleDetected = false;
+            ObstacleDetected = false;
             // Rationale: follow walls at 45° incidence; is that optimal? At least it seems very good
             float checkDistance = controller.radius / Mathf.Sqrt(2f);
             foundUpwardSlope = false;
@@ -1111,7 +1154,7 @@ namespace DaggerfallWorkshop.Game
             if (Physics.CapsuleCast(p1, p2, controller.radius / 2, direction, out hit, checkDistance, ignoreMaskForObstacles))
             {
                 // Debug.DrawRay(transform.position, direction, Color.red, 2.0f);
-                obstacleDetected = true;
+                ObstacleDetected = true;
                 DaggerfallEntityBehaviour entityBehaviour2 = hit.transform.GetComponent<DaggerfallEntityBehaviour>();
                 DaggerfallActionDoor door = hit.transform.GetComponent<DaggerfallActionDoor>();
                 DaggerfallLoot loot = hit.transform.GetComponent<DaggerfallLoot>();
@@ -1119,11 +1162,11 @@ namespace DaggerfallWorkshop.Game
                 if (entityBehaviour2)
                 {
                     if (entityBehaviour2 == senses.Target)
-                        obstacleDetected = false;
+                        ObstacleDetected = false;
                 }
                 else if (door)
                 {
-                    obstacleDetected = false;
+                    ObstacleDetected = false;
                     foundDoor = true;
                     if (senses.TargetIsWithinYawAngle(22.5f, door.transform.position))
                     {
@@ -1133,7 +1176,7 @@ namespace DaggerfallWorkshop.Game
                 }
                 else if (loot)
                 {
-                    obstacleDetected = false;
+                    ObstacleDetected = false;
                 }
                 else if (!swims && !flies && !IsLevitating)
                 {
@@ -1147,7 +1190,7 @@ namespace DaggerfallWorkshop.Game
 
                     if (!Physics.CapsuleCast(p1, p2, controller.radius / 2, direction, checkDistance))
                     {
-                        obstacleDetected = false;
+                        ObstacleDetected = false;
                         foundUpwardSlope = true;
                     }
                 }
@@ -1160,7 +1203,7 @@ namespace DaggerfallWorkshop.Game
 
         void FallCheck(Vector3 direction)
         {
-            if (flies || IsLevitating || swims || obstacleDetected || foundUpwardSlope || foundDoor)
+            if (flies || IsLevitating || swims || ObstacleDetected || foundUpwardSlope || foundDoor)
             {
                 fallDetected = false;
                 return;
@@ -1347,9 +1390,9 @@ namespace DaggerfallWorkshop.Game
             if (controller.isGrounded)
             {
                 // did enemy just land?
-                if (falls)
+                if (Falls)
                 {
-                    float fallDistance = lastGroundedY - transform.position.y;
+                    float fallDistance = LastGroundedY - transform.position.y;
                     if (fallDistance > fallingDamageThreshold)
                     {
                         int damage = (int)(HPPerMetre * (fallDistance - fallingDamageThreshold));
@@ -1367,9 +1410,14 @@ namespace DaggerfallWorkshop.Game
                     }
                 }
 
-                lastGroundedY = transform.position.y;
+                LastGroundedY = transform.position.y;
             }
+            // For flying enemies, "lastGroundedY" is really "lastAltitudeControlY"
+            else if ((flies && !flyerFalls) || IsLevitating || entity.IsSlowFalling)
+                LastGroundedY = transform.position.y;
+
         }
+
 
         /// <summary>
         /// Open doors that are in the way.

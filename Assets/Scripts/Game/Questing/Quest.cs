@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -18,6 +18,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using FullSerializer;
+using DaggerfallWorkshop.Localization;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -70,6 +71,8 @@ namespace DaggerfallWorkshop.Game.Questing
         List<QuestResource> pendingClickRearms = new List<QuestResource>();
 
         int ticksToEnd = 0;
+
+        List<int> oneTimeDisplayedMessages = new List<int>();
 
         #endregion
 
@@ -478,8 +481,7 @@ namespace DaggerfallWorkshop.Game.Questing
             // Dynamically relink individual NPC and associated QuestResourceBehaviour (if any) in current scene
             if (person.IsIndividualNPC)
             {
-                QuestResourceBehaviour[] behaviours = GameObject.FindObjectsOfType<QuestResourceBehaviour>();
-                foreach (var questResourceBehaviour in behaviours)
+                foreach (QuestResourceBehaviour questResourceBehaviour in ActiveGameObjectDatabase.GetActiveStaticNPCQuestResourceBehaviours())
                 {
                     // Get StaticNPC if present
                     StaticNPC npc = questResourceBehaviour.GetComponent<StaticNPC>();
@@ -663,10 +665,23 @@ namespace DaggerfallWorkshop.Game.Questing
 
         public Message GetMessage(int messageID)
         {
+            // Get default message resource
+            Message result = null;
             if (messages.ContainsKey(messageID))
-                return messages[messageID];
+                result = messages[messageID];
             else
                 return null;
+
+            // Attempt to get localized text for message
+            string localizedString;
+            string key = string.Format("{0}.{1}", QuestName, messageID.ToString());
+            if (TextManager.Instance.TryGetLocalizedText(TextCollections.TextQuests, key, out localizedString))
+            {
+                string[] lines = localizedString.Split('\n');
+                result.ReplaceMessage(messageID, lines);
+            }
+
+            return result;
         }
 
         public Task GetTask(Symbol symbol)
@@ -755,8 +770,9 @@ namespace DaggerfallWorkshop.Game.Questing
         /// </summary>
         /// <param name="id">ID of message,</param>
         /// <param name="immediate">Break quest execution at point of popup to display it immediately.</param>
+        /// <param name="oncePerQuest">Only allow message ID to be presented once for this quest. Caller must opt-in for this restriction to apply.</param>
         /// <returns>MessageBox. Will be top of display stack for chunked messages. Always null after using immediate flag.</returns>
-        public DaggerfallMessageBox ShowMessagePopup(int id, bool immediate = false)
+        public DaggerfallMessageBox ShowMessagePopup(int id, bool immediate = false, bool oncePerQuest = false)
         {
             const int chunkSize = 22;
 
@@ -768,6 +784,10 @@ namespace DaggerfallWorkshop.Game.Questing
             // Get all message tokens
             TextFile.Token[] tokens = message.GetTextTokens();
             if (tokens == null || tokens.Length == 0)
+                return null;
+
+            // Do not display this message if already presented
+            if (oncePerQuest && oneTimeDisplayedMessages.Contains(id))
                 return null;
 
             // Split token lines into chunks for display
@@ -808,6 +828,10 @@ namespace DaggerfallWorkshop.Game.Questing
                 messageBox.ParentPanel.BackgroundColor = Color.clear;
                 pendingMessageBoxStack.Push(messageBox);
             }
+
+            // If set to only show message once per quest then add this message to displayed list
+            if (oncePerQuest)
+                oneTimeDisplayedMessages.Add(id);
 
             // Show messages immediately if requested
             if (immediate)
@@ -892,6 +916,7 @@ namespace DaggerfallWorkshop.Game.Questing
             public QuestResource.ResourceSaveData_v1[] resources;
             public Dictionary<string, QuestorData> questors;
             public Task.TaskSaveData_v1[] tasks;
+            public int[] oneTimeDisplayedMessages;
         }
 
         public QuestSaveData_v1 GetSaveData()
@@ -909,6 +934,7 @@ namespace DaggerfallWorkshop.Game.Questing
             data.questTombstoneTime = questTombstoneTime;
             data.smallerDungeonsState = smallerDungeonsState;
             data.compiledByVersion = compiledByVersion;
+            data.oneTimeDisplayedMessages = oneTimeDisplayedMessages.ToArray();
 
             // Save active log messages
             List<LogEntry> activeLogMessagesSaveDataList = new List<LogEntry>();
@@ -980,6 +1006,9 @@ namespace DaggerfallWorkshop.Game.Questing
                 messages.Add(message.ID, message);
             }
 
+            // Restore localized messages
+            QuestMachine.Instance.RestoreLocalizedQuestMessages(questName);
+
             // Restore resources
             resources.Clear();
             foreach(QuestResource.ResourceSaveData_v1 resourceData in data.resources)
@@ -1008,6 +1037,11 @@ namespace DaggerfallWorkshop.Game.Questing
                 task.RestoreSaveData(taskData);
                 tasks.Add(task.Symbol.Name, task);
             }
+
+            // Restore one-time message list
+            oneTimeDisplayedMessages.Clear();
+            if (data.oneTimeDisplayedMessages != null)
+                oneTimeDisplayedMessages = new List<int>(data.oneTimeDisplayedMessages);
         }
 
         public void ReassignLegacyQuestMarkers()

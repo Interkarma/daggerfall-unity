@@ -1,4 +1,4 @@
-// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Unity
 // Copyright:       Copyright (C) 2009-2020 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -183,12 +183,22 @@ namespace DaggerfallWorkshop
             // Assign textures (propagate material settings from tileMaterial to terrainMaterial)
             terrainMaterialData.Material.SetTexture(TileTexArrUniforms.TileTexArr, tileMaterial.GetTexture(TileTexArrUniforms.TileTexArr));
             terrainMaterialData.Material.SetTexture(TileTexArrUniforms.TileNormalMapTexArr, tileMaterial.GetTexture(TileTexArrUniforms.TileNormalMapTexArr));
-            if (tileMaterial.IsKeywordEnabled(KeyWords.NormalMap))
-                terrainMaterialData.Material.EnableKeyword(KeyWords.NormalMap);
-            else
-                terrainMaterialData.Material.DisableKeyword(KeyWords.NormalMap);
+            terrainMaterialData.Material.SetTexture(TileTexArrUniforms.TileParallaxMapTexArr, tileMaterial.GetTexture(TileTexArrUniforms.TileParallaxMapTexArr));
             terrainMaterialData.Material.SetTexture(TileTexArrUniforms.TileMetallicGlossMapTexArr, tileMaterial.GetTexture(TileTexArrUniforms.TileMetallicGlossMapTexArr));
             terrainMaterialData.Material.SetTexture(TileTexArrUniforms.TilemapTex, terrainMaterialData.TileMapTexture);
+
+            // Assign keywords (propagate material keywords from tileMaterial to terrainMaterial)
+            AssignKeyWord(KeyWords.NormalMap, tileMaterial, terrainMaterialData.Material);
+            AssignKeyWord(KeyWords.HeightMap, tileMaterial, terrainMaterialData.Material);
+            AssignKeyWord(KeyWords.MetallicGlossMap, tileMaterial, terrainMaterialData.Material);
+        }
+
+        void AssignKeyWord(string keyword, Material src, Material dst)
+        {
+            if (src.IsKeywordEnabled(keyword))
+                dst.EnableKeyword(keyword);
+            else
+                dst.DisableKeyword(keyword);
         }
     }
 }

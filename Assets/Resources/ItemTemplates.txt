@@ -1877,7 +1877,8 @@
         "worldTextureArchive": 0,
         "worldTextureRecord": 0,
         "playerTextureArchive": 213,
-        "playerTextureRecord": 1
+        "playerTextureRecord": 1,
+        "hasNoEncumbrance": true
     },
     {
         "index": 94,
@@ -1897,7 +1898,8 @@
         "worldTextureArchive": 0,
         "worldTextureRecord": 0,
         "playerTextureArchive": 201,
-        "playerTextureRecord": 0
+        "playerTextureRecord": 0,
+        "hasNoEncumbrance": true
     },
     {
         "index": 95,
@@ -1917,7 +1919,8 @@
         "worldTextureArchive": 0,
         "worldTextureRecord": 0,
         "playerTextureArchive": 213,
-        "playerTextureRecord": 1
+        "playerTextureRecord": 1,
+        "hasNoEncumbrance": true
     },
     {
         "index": 96,
@@ -1937,7 +1940,8 @@
         "worldTextureArchive": 0,
         "worldTextureRecord": 0,
         "playerTextureArchive": 213,
-        "playerTextureRecord": 1
+        "playerTextureRecord": 1,
+        "hasNoEncumbrance": true
     },
     {
         "index": 97,
@@ -1957,7 +1961,8 @@
         "worldTextureArchive": 0,
         "worldTextureRecord": 0,
         "playerTextureArchive": 213,
-        "playerTextureRecord": 1
+        "playerTextureRecord": 1,
+        "hasNoEncumbrance": true
     },
     {
         "index": 98,
@@ -1977,7 +1982,8 @@
         "worldTextureArchive": 0,
         "worldTextureRecord": 0,
         "playerTextureArchive": 213,
-        "playerTextureRecord": 1
+        "playerTextureRecord": 1,
+        "hasNoEncumbrance": true
     },
     {
         "index": 99,
@@ -2638,7 +2644,8 @@
         "worldTextureRecord": 16,
         "playerTextureArchive": 0,
         "playerTextureRecord": 0,
-        "isNotRepairable": true
+        "isNotRepairable": true,
+        "hasNoEncumbrance": true
     },
     {
         "index": 132,
@@ -5762,6 +5769,7 @@
         "worldTextureArchive": 209,
         "worldTextureRecord": 8,
         "playerTextureArchive": 0,
-        "playerTextureRecord": 0
+        "playerTextureRecord": 0,
+        "hasNoEncumbrance": true
     }
 ]

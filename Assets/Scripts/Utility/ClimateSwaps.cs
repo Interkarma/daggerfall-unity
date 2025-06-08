@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -244,7 +244,10 @@ namespace DaggerfallWorkshop.Utility
             if (archive == 36 && record == 2 ||
                 archive == 151 && record == 3 ||
                 archive == 154 && record == 3 ||
-                archive == 351 && record == 3)
+                archive == 351 && record == 3 ||
+                archive == 171 && record == 2 ||
+                archive == 172 && record == 3 ||
+                archive == 173 && record == 3)
                 return true;
 
             // Normalise archive index

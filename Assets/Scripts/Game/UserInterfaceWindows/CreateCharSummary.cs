@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -40,11 +40,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         FacePicker facePicker = new FacePicker();
         CharacterDocument characterDocument;
 
+        IMECompositionMode prevIME;
+
         public CharacterDocument CharacterDocument
         {
             get { return characterDocument; }
             set { SetCharacterSheet(value); }
         }
+
+        public DaggerfallSkills StartingSkills => skillsRollout.StartingSkills;
+        public DaggerfallSkills WorkingSkills => skillsRollout.WorkingSkills;
+        public DaggerfallStats StartingStats => statsRollout.StartingStats;
+        public DaggerfallStats WorkingStats => statsRollout.WorkingStats;
+        public Tuple<int, int, int> BonusSkillPoints => new Tuple<int, int, int>(skillsRollout.PrimarySkillBonusPoints, skillsRollout.MajorSkillBonusPoints, skillsRollout.MinorSkillBonusPoints);
+        public int FaceIndex => facePicker.FaceIndex;
 
         public CreateCharSummary(IUserInterfaceManager uiManager)
             : base(uiManager)
@@ -86,6 +95,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             // Add "OK" button
             Button okButton = DaggerfallUI.AddButton(new Rect(263, 172, 39, 22), NativePanel);
             okButton.OnMouseClick += OkButton_OnMouseClick;
+        }
+
+        public override void OnPush()
+        {
+            base.OnPush();
+
+            // Enable IME composition during input
+            prevIME = Input.imeCompositionMode;
+            Input.imeCompositionMode = IMECompositionMode.On;
+        }
+
+        public override void OnPop()
+        {
+            base.OnPop();
+
+            // Restore previous IME composition mode
+            Input.imeCompositionMode = prevIME;
         }
 
         #region Private Methods

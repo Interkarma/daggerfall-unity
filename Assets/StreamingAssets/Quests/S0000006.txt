@@ -119,7 +119,7 @@ Message:  1022
 <ce>                             ripped open.
 
 Message:  1023
-<ce>                      Leave this place litte %ra.
+<ce>                      Leave this place little %ra.
 <ce>                      We have come to claim Lord
 <ce>                    Castellian. You have done your
 <ce>                    part by delivering his funeral

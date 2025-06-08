@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -60,8 +60,8 @@ namespace DaggerfallWorkshop
         {
             const float divisor = 1.0f / 128.0f;
 
-            // Must be ready and have a valid input index
-            if (!ReadyCheck() || !soundFile.IsValidIndex(soundIndex))
+            // Must be ready
+            if (!ReadyCheck())
                 return null;
 
             // Look for clip in cache
@@ -78,6 +78,10 @@ namespace DaggerfallWorkshop
             }
             else
             {
+                // Must have a valid index
+                if (!soundFile.IsValidIndex(soundIndex))
+                    return null;
+
                 // Get sound data
                 DFSound dfSound;
                 if (!soundFile.GetSound(soundIndex, out dfSound))

@@ -1,10 +1,10 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    Hazelnut
+// Contributors:    Hazelnut, Kirk.O, Numidium
 // 
 // Notes:
 //
@@ -22,6 +22,7 @@ using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.Formulas;
+using DaggerfallWorkshop.Game.Items;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -33,11 +34,28 @@ namespace DaggerfallWorkshop.Game
     [RequireComponent(typeof(DaggerfallAudioSource))]
     public class FPSWeapon : MonoBehaviour
     {
+        class WeaponAtlas
+        {
+            public string FileName { get; set; }
+            public MetalTypes MetalType { get; set; }
+            public Texture2D AtlasTexture { get; set; }
+            public Rect[] WeaponRects { get; set; }
+            public RecordIndex[] WeaponIndices { get; set; }
+        }
+
+        class CustomWeaponAnimation
+        {
+            public string FileName { get; set; }
+            public MetalTypes MetalType { get; set; }
+            public Dictionary<int, Texture2D> Textures { get; set; }
+        }
+
         public bool ShowWeapon = true;
         public bool FlipHorizontal = false;
         public WeaponTypes WeaponType = WeaponTypes.None;
         public MetalTypes MetalType = MetalTypes.None;
         public ItemHands WeaponHands = ItemHands.None;
+        public DaggerfallUnityItem SpecificWeapon = null;
         public float Reach = 2.5f;
         public float AttackSpeedScale = 1.0f;
         public float Cooldown = 0.0f;
@@ -55,9 +73,9 @@ namespace DaggerfallWorkshop.Game
 
         DaggerfallUnity dfUnity;
         CifRciFile cifFile;
-        Texture2D weaponAtlas;
-        Rect[] weaponRects;
-        RecordIndex[] weaponIndices;
+        WeaponAtlas weaponAtlas;
+        readonly WeaponAtlas[] weaponAtlasCache = new WeaponAtlas[2];
+        readonly CustomWeaponAnimation[] customWeaponAnimationCache = new CustomWeaponAnimation[2];
         Rect weaponPosition;
         float weaponScaleX;
         float weaponScaleY;
@@ -70,9 +88,13 @@ namespace DaggerfallWorkshop.Game
         float animTickTime;
         Rect curAnimRect;
         float weaponOffsetHeight;
+        Rect screenRect;
 
-        readonly Dictionary<int, Texture2D> customTextures = new Dictionary<int, Texture2D>();
+        Dictionary<int, Texture2D> customTextures = new Dictionary<int, Texture2D>();
         Texture2D curCustomTexture;
+
+        // Allows a mod to specify if DFU should use custom HUD animations for weapons
+        public static bool moddedWeaponHUDAnimsEnabled = false;
 
         float lastScreenWidth, lastScreenHeight;
         bool lastLargeHUDSetting, lastLargeHUDDockSetting;
@@ -82,6 +104,12 @@ namespace DaggerfallWorkshop.Game
         #region Properties
 
         public WeaponStates WeaponState { get { return weaponState; } }
+
+        public Color Tint { get; set; } = Color.white;
+
+        public Vector2 Position { get; set; } = Vector2.zero;   //Moves the sprite in screen distance
+        public Vector2 Scale { get; set; } = Vector2.one;
+        public Vector2 Offset { get; set; } = Vector2.zero;     //Moves the sprite relative to its own dimensions ("Offset.x = 0.5f" will move "sprite.width * 0.5f"). Applied after Scale.
 
         #endregion
 
@@ -96,6 +124,11 @@ namespace DaggerfallWorkshop.Game
         {
             bool updateWeapon = false;
             GUI.depth = 1;
+
+            if (DaggerfallUI.Instance.CustomScreenRect != null)
+                screenRect = DaggerfallUI.Instance.CustomScreenRect.Value;
+            else
+                screenRect = new Rect(0, 0, Screen.width, Screen.height);
 
             // Must be ready and not loading the game
             if (!ReadyCheck() || WeaponType == WeaponTypes.None || GameManager.IsGamePaused || SaveLoadManager.Instance.LoadInProgress)
@@ -122,15 +155,15 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Update weapon when resolution or large HUD state changes
-            if (Screen.width != lastScreenWidth ||
-                Screen.height != lastScreenHeight ||
+            if (screenRect.width != lastScreenWidth ||
+                screenRect.height != lastScreenHeight ||
                 DaggerfallUnity.Settings.LargeHUD != lastLargeHUDSetting ||
                 DaggerfallUnity.Settings.LargeHUDDocked != lastLargeHUDDockSetting ||
                 GameManager.Instance.WeaponManager.Sheathed != lastSheathed ||
                 weaponOffsetHeight != lastWeaponOffsetHeight)
             {
-                lastScreenWidth = Screen.width;
-                lastScreenHeight = Screen.height;
+                lastScreenWidth = screenRect.width;
+                lastScreenHeight = screenRect.height;
                 lastLargeHUDSetting = DaggerfallUnity.Settings.LargeHUD;
                 lastLargeHUDDockSetting = DaggerfallUnity.Settings.LargeHUDDocked;
                 lastSheathed = GameManager.Instance.WeaponManager.Sheathed;
@@ -145,8 +178,43 @@ namespace DaggerfallWorkshop.Game
             if (Event.current.type.Equals(EventType.Repaint) && ShowWeapon)
             {
                 // Draw weapon texture behind other HUD elements
-                GUI.DrawTextureWithTexCoords(weaponPosition, curCustomTexture ? curCustomTexture : weaponAtlas, curAnimRect);
+                Texture2D tex = curCustomTexture ? curCustomTexture : weaponAtlas.AtlasTexture;
+                DaggerfallUI.DrawTextureWithTexCoords(GetWeaponRect(), tex, curAnimRect, true, Tint);
             }
+        }
+
+        private void LateUpdate()
+        {
+            if (Position != Vector2.zero)
+                Position = Vector2.zero;
+            if (Scale != Vector2.one)
+                Scale = Vector2.one;
+            if (Offset != Vector2.zero)
+                Offset = Vector2.zero;
+        }
+
+        //Combines the base WeaponPosition Rect with Position, Scale and Offset
+        public Rect GetWeaponRect()
+        {
+            if (Position != Vector2.zero || Scale != Vector2.one || Offset != Vector2.zero)
+            {
+                Rect weaponPositionOffset = weaponPosition;
+
+                //Adds the Position to the Rect's position
+                weaponPositionOffset.x += Position.x;      
+                weaponPositionOffset.y += Position.y;
+
+                weaponPositionOffset.width *= Scale.x;
+                weaponPositionOffset.height *= Scale.y;
+
+                //Adds the Offset to the Rect's position
+                weaponPositionOffset.x += weaponPositionOffset.width * Offset.x;
+                weaponPositionOffset.y += weaponPositionOffset.height * Offset.y;
+
+                return weaponPositionOffset;
+
+            } else
+                return weaponPosition;
         }
 
         public void OnAttackDirection(WeaponManager.MouseDirections direction)
@@ -257,6 +325,16 @@ namespace DaggerfallWorkshop.Game
             }
         }
 
+        public void TryCacheReadiedWeaponAtlas(MetalTypes metalType, WeaponTypes weaponType, bool isRightHand)
+        {
+            var fileName = WeaponBasics.GetWeaponFilename(weaponType);
+            if (GetCachedWeaponAtlas(fileName, metalType) == null)
+            {
+                CacheWeaponAtlas(GetWeaponTextureAtlas(fileName, metalType, 2, 2, out var animation, true), isRightHand);
+                CacheCustomWeaponAnimation(animation, isRightHand);
+            }
+        }
+
         #region Private Methods
 
         private bool IsPlayingOneShot()
@@ -268,7 +346,7 @@ namespace DaggerfallWorkshop.Game
         {
             // Do nothing if weapon not ready
             if (weaponAtlas == null || weaponAnims == null ||
-                weaponRects == null || weaponIndices == null)
+                weaponAtlas.WeaponRects == null || weaponAtlas.WeaponIndices == null)
             {
                 return;
             }
@@ -306,23 +384,23 @@ namespace DaggerfallWorkshop.Game
                     }
                     else
                     {
-                        Rect rect = weaponRects[weaponIndices[weaponAnimRecordIndex].startIndex + currentFrame];
+                        Rect rect = weaponAtlas.WeaponRects[weaponAtlas.WeaponIndices[weaponAnimRecordIndex].startIndex + currentFrame];
                         curAnimRect = new Rect(rect.xMax, rect.yMin, -rect.width, rect.height);
                     }
                 }
                 else
                 {
-                    curAnimRect = isImported ? new Rect(0, 0, 1, 1) : weaponRects[weaponIndices[weaponAnimRecordIndex].startIndex + currentFrame];
+                    curAnimRect = isImported ? new Rect(0, 0, 1, 1) : weaponAtlas.WeaponRects[weaponAtlas.WeaponIndices[weaponAnimRecordIndex].startIndex + currentFrame];
                 }
                 WeaponAnimation anim = weaponAnims[(int)weaponState];
 
                 // Get weapon dimensions
-                int width = weaponIndices[weaponAnimRecordIndex].width;
-                int height = weaponIndices[weaponAnimRecordIndex].height;
+                int width = weaponAtlas.WeaponIndices[weaponAnimRecordIndex].width;
+                int height = weaponAtlas.WeaponIndices[weaponAnimRecordIndex].height;
 
                 // Get weapon scale
-                weaponScaleX = (float)Screen.width / (float)nativeScreenWidth;
-                weaponScaleY = (float)Screen.height / (float)nativeScreenHeight;
+                weaponScaleX = (float)screenRect.width / (float)nativeScreenWidth;
+                weaponScaleY = (float)screenRect.height / (float)nativeScreenHeight;
 
                 // Adjust scale to be slightly larger when not using point filtering
                 // This reduces the effect of filter shrink at edge of display
@@ -361,8 +439,8 @@ namespace DaggerfallWorkshop.Game
         private void AlignLeft(WeaponAnimation anim, int width, int height)
         {
             weaponPosition = new Rect(
-                Screen.width * anim.Offset,
-                Screen.height - height * weaponScaleY - weaponOffsetHeight,
+                screenRect.x + screenRect.width * anim.Offset,
+                screenRect.y + screenRect.height - height * weaponScaleY - weaponOffsetHeight,
                 width * weaponScaleX,
                 height * weaponScaleY);
         }
@@ -370,8 +448,8 @@ namespace DaggerfallWorkshop.Game
         private void AlignCenter(WeaponAnimation anim, int width, int height)
         {
             weaponPosition = new Rect(
-                Screen.width / 2f - (width * weaponScaleX) / 2f,
-                Screen.height - height * weaponScaleY - weaponOffsetHeight,
+                screenRect.x + screenRect.width / 2f - (width * weaponScaleX) / 2f,
+                screenRect.y + screenRect.height - height * weaponScaleY - weaponOffsetHeight,
                 width * weaponScaleX,
                 height * weaponScaleY);
         }
@@ -386,8 +464,8 @@ namespace DaggerfallWorkshop.Game
             }
 
             weaponPosition = new Rect(
-                Screen.width * (1f - anim.Offset) - width * weaponScaleX,
-                Screen.height - height * weaponScaleY - weaponOffsetHeight,
+                screenRect.x + screenRect.width * (1f - anim.Offset) - width * weaponScaleX,
+                screenRect.y + screenRect.height - height * weaponScaleY - weaponOffsetHeight,
                 width * weaponScaleX,
                 height * weaponScaleY);
         }
@@ -485,8 +563,12 @@ namespace DaggerfallWorkshop.Game
             // Load the weapon texture atlas
             // Texture is dilated into a transparent coloured border to remove dark edges when filtered
             // Important to use returned UV rects when drawing to get right dimensions
-            weaponAtlas = GetWeaponTextureAtlas(filename, MetalType, out weaponRects, out weaponIndices, 2, 2, true);
-            weaponAtlas.filterMode = dfUnity.MaterialReader.MainFilterMode;
+            weaponAtlas = GetWeaponTextureAtlas(filename, MetalType, 2, 2, out var customAnimation, true);
+            if (customAnimation != null)
+                customTextures = customAnimation.Textures;
+            else
+                customTextures = new Dictionary<int, Texture2D>();
+            weaponAtlas.AtlasTexture.filterMode = dfUnity.MaterialReader.MainFilterMode;
 
             // Get weapon anims
             weaponAnims = (WeaponAnimation[])WeaponBasics.GetWeaponAnims(WeaponType).Clone();
@@ -501,15 +583,28 @@ namespace DaggerfallWorkshop.Game
 
         #region Texture Loading
 
-        private Texture2D GetWeaponTextureAtlas(
+        private WeaponAtlas GetWeaponTextureAtlas(
             string filename,
             MetalTypes metalType,
-            out Rect[] rectsOut,
-            out RecordIndex[] indicesOut,
             int padding,
             int border,
+            out CustomWeaponAnimation customWeaponAnimation,
             bool dilate = false)
         {
+            // Check caches
+            var cachedAtlas = GetCachedWeaponAtlas(filename, metalType);
+            var cachedAnimation = GetCachedCustomWeaponAnimation(filename, metalType);
+            customWeaponAnimation = null;
+            var modTextures = new Dictionary<int, Texture2D>();
+            if (cachedAnimation != null)
+                modTextures = cachedAnimation.Textures;
+            // Nothing to load if both vanilla atlas and custom texture are currently cached.
+            if (cachedAtlas != null && cachedAnimation != null)
+            {
+                customWeaponAnimation = new CustomWeaponAnimation() { FileName = filename, MetalType = metalType, Textures = modTextures };
+                return cachedAtlas;
+            }
+
             // Load texture file
             cifFile.Load(Path.Combine(dfUnity.Arena2Path, filename), FileUsage.UseMemory, true);
 
@@ -517,7 +612,6 @@ namespace DaggerfallWorkshop.Game
             Rect rect;
             List<Texture2D> textures = new List<Texture2D>();
             List<RecordIndex> indices = new List<RecordIndex>();
-            customTextures.Clear();
             for (int record = 0; record < cifFile.RecordCount; record++)
             {
                 int frames = cifFile.GetFrameCount(record);
@@ -530,28 +624,48 @@ namespace DaggerfallWorkshop.Game
                     height = size.Height,
                 };
                 indices.Add(ri);
+                if (cachedAtlas == null) // Load atlas if not already cached.
+                {
+                    for (int frame = 0; frame < frames; frame++)
+                        textures.Add(GetWeaponTexture2D(filename, record, frame, metalType, out rect, border, dilate));
+                }
+
+                if (cachedAnimation != null) // No need to load frames if cached.
+                    continue;
                 for (int frame = 0; frame < frames; frame++)
                 {
-                    textures.Add(GetWeaponTexture2D(filename, record, frame, metalType, out rect, border, dilate));
+                    string moddedFileName = filename;
+                    if (moddedWeaponHUDAnimsEnabled && SpecificWeapon != null)
+                    {
+                        moddedFileName = WeaponBasics.GetModdedWeaponFilename(SpecificWeapon);
+
+                        if (string.IsNullOrEmpty(moddedFileName))
+                            moddedFileName = WeaponBasics.GetWeaponFilename(WeaponType); // Possibly make support for custom weapon types for the HUD in the future.
+                    }
 
                     Texture2D tex;
-                    if (TextureReplacement.TryImportCifRci(filename, record, frame, metalType, true, out tex))
+                    if (TextureReplacement.TryImportCifRci(moddedFileName, record, frame, metalType, true, out tex))
                     {
                         tex.filterMode = dfUnity.MaterialReader.MainFilterMode;
                         tex.wrapMode = TextureWrapMode.Mirror;
-                        customTextures.Add(MaterialReader.MakeTextureKey(0, (byte)record, (byte)frame), tex);
+                        modTextures.Add(MaterialReader.MakeTextureKey(0, (byte)record, (byte)frame), tex);
                     }
                 }
             }
 
+            if (cachedAnimation == null && modTextures.Count > 0)
+                customWeaponAnimation = new CustomWeaponAnimation() { FileName = filename, MetalType = metalType, Textures = modTextures };
+            if (cachedAtlas != null)
+                return cachedAtlas;
+
             // Pack textures into atlas
-            Texture2D atlas = new Texture2D(2048, 2048, TextureFormat.ARGB32, false);
-            rectsOut = atlas.PackTextures(textures.ToArray(), padding, 2048);
-            indicesOut = indices.ToArray();
+            Texture2D atlasTexture = new Texture2D(2048, 2048, TextureFormat.ARGB32, false);
+            Rect[] rectsOut = atlasTexture.PackTextures(textures.ToArray(), padding, 2048);
+            RecordIndex[] indicesOut = indices.ToArray();
 
             // Shrink UV rect to compensate for internal border
-            float ru = 1f / atlas.width;
-            float rv = 1f / atlas.height;
+            float ru = 1f / atlasTexture.width;
+            float rv = 1f / atlasTexture.height;
             for (int i = 0; i < rectsOut.Length; i++)
             {
                 Rect rct = rectsOut[i];
@@ -562,7 +676,14 @@ namespace DaggerfallWorkshop.Game
                 rectsOut[i] = rct;
             }
 
-            return atlas;
+            return new WeaponAtlas()
+            {
+                FileName = filename,
+                MetalType = metalType,
+                AtlasTexture = atlasTexture,
+                WeaponRects = rectsOut,
+                WeaponIndices = indicesOut
+            };
         }
 
         private Texture2D GetWeaponTexture2D(
@@ -601,6 +722,38 @@ namespace DaggerfallWorkshop.Game
             rectOut = new Rect(border * ru, border * rv, (sz.Width - border * 2) * ru, (sz.Height - border * 2) * rv);
 
             return texture;
+        }
+
+        private WeaponAtlas GetCachedWeaponAtlas(string fileName, MetalTypes metalType)
+        {
+            foreach (var atlas in weaponAtlasCache)
+            {
+                if (atlas != null && atlas.FileName == fileName && atlas.MetalType == metalType)
+                    return atlas;
+            }
+
+            return null;
+        }
+
+        private void CacheWeaponAtlas(WeaponAtlas weaponAtlas, bool isRightHand)
+        {
+            weaponAtlasCache[isRightHand ? 0 : 1] = weaponAtlas;
+        }
+
+        private CustomWeaponAnimation GetCachedCustomWeaponAnimation(string fileName, MetalTypes metalType)
+        {
+            foreach (var animation in customWeaponAnimationCache)
+            {
+                if (animation != null && animation.FileName == fileName && animation.MetalType == metalType)
+                    return animation;
+            }
+
+            return null;
+        }
+
+        private void CacheCustomWeaponAnimation(CustomWeaponAnimation animation, bool isRightHand)
+        {
+            customWeaponAnimationCache[isRightHand ? 0 : 1] = animation;
         }
 
         #endregion

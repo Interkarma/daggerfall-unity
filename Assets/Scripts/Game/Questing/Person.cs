@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Entity;
@@ -19,6 +20,7 @@ using DaggerfallWorkshop.Game.Utility;
 using DaggerfallConnect.Arena2;
 using FullSerializer;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
+using DaggerfallWorkshop.Game.Guilds;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -290,9 +292,12 @@ namespace DaggerfallWorkshop.Game.Questing
             // Store this person in quest as last Person encountered
             // This will be used for subsequent pronoun macros, etc.
             ParentQuest.LastResourceReferenced = this;
-            Place homePlace = GetHomePlace();
-            if (homePlace != null)
-                ParentQuest.LastPlaceReferenced = homePlace;
+
+            Place dialogPlace = GetDialogPlace();
+            if (dialogPlace != null)
+            {
+                ParentQuest.LastPlaceReferenced = dialogPlace;
+            }
 
             textOut = string.Empty;
             bool result = true;
@@ -302,16 +307,16 @@ namespace DaggerfallWorkshop.Game.Questing
                     textOut = displayName;
                     break;
 
-                case MacroTypes.NameMacro2:             // Home building name
-                    textOut = GetHomeBuildingName();
+                case MacroTypes.NameMacro2:             // building name
+                    textOut = (dialogPlace != null ? dialogPlace.SiteDetails.buildingName : BLANK);
                     break;
 
-                case MacroTypes.NameMacro3:             // Home town name
-                    textOut = GetHomePlaceLocationName();
+                case MacroTypes.NameMacro3:             // town name
+                    textOut = (dialogPlace != null ? TextManager.Instance.GetLocalizedLocationName(dialogPlace.SiteDetails.mapId, dialogPlace.SiteDetails.locationName) : BLANK);
                     break;
 
-                case MacroTypes.NameMacro4:             // Home region name
-                    textOut = GetHomePlaceRegionName();
+                case MacroTypes.NameMacro4:             // region name
+                    textOut = (dialogPlace != null ? TextManager.Instance.GetLocalizedRegionName(dialogPlace.SiteDetails.regionIndex) : BLANK);
                     break;
 
                 case MacroTypes.DetailsMacro:           // Details macro
@@ -368,7 +373,7 @@ namespace DaggerfallWorkshop.Game.Questing
             // Get flat caption for this ID, e.g. "young lady in green", or fallback to race
             FlatsFile.FlatData flatCFG;
             if (DaggerfallUnity.Instance.ContentReader.FlatsFileReader.GetFlatData(flatID, out flatCFG))
-                return flatCFG.caption;
+                return TextManager.Instance.GetLocalizedText(flatID.ToString(), TextCollections.TextFlats);
             else
                 return RaceTemplate.GetRaceDictionary()[(int)race].Name;
         }
@@ -378,10 +383,11 @@ namespace DaggerfallWorkshop.Game.Questing
             base.Tick(caller);
 
             // Auto-assign NPC to home Place if available and player enters
+            // (but only if not already placed, e.g. by PlaceNpc action)
             // This only happens for very specific NPC types
             // Equivalent to calling "place anNPC at aPlace" from script
             // Will not be called again as assignment is permanent for duration of quest
-            if (homePlaceSymbol != null && !assignedToHome)
+            if (lastAssignedPlaceSymbol == null && homePlaceSymbol != null && !assignedToHome)
             {
                 Place home = ParentQuest.GetPlace(homePlaceSymbol);
                 if (home == null)
@@ -419,6 +425,20 @@ namespace DaggerfallWorkshop.Game.Questing
             assignedToHome = true;
 
             return true;
+        }
+
+        /// <summary>
+        /// Gets best Place resource for use in dialog.
+        /// </summary>
+        /// <returns>Assigned Place resource or Home Place resource if not assigned.</returns>
+        public Place GetDialogPlace()
+        {
+            if (lastAssignedPlaceSymbol != null)
+            {
+                return ParentQuest.GetPlace(lastAssignedPlaceSymbol);
+            }
+
+            return GetHomePlace();
         }
 
         /// <summary>
@@ -627,9 +647,25 @@ namespace DaggerfallWorkshop.Game.Questing
                 }
             }
 
-            // For other NPCs use the given scope if any, else generate it at random
+            // If this is an individual NPC who is not at home, don't place for now
+            // as this has to be done by the "place _person_ at" command
+            if (IsIndividualNPC)
+                return;
+
+            // For other NPCs use the given scope if any 
             if (string.IsNullOrEmpty(scopeString))
-                scopeString = UnityEngine.Random.Range(0.0f, 1.0f) < 0.5f ? "local" : "remote";
+            {
+                // Else generate it at random only if there are local buildings
+                if (GameManager.Instance.PlayerGPS.HasCurrentLocation &&
+                    GameManager.Instance.PlayerGPS.CurrentLocation.Exterior.BuildingCount > 0)
+                {
+                    scopeString = UnityEngine.Random.Range(0.0f, 1.0f) < 0.5f ? "local" : "remote";
+                }
+                else
+                {
+                    scopeString = "remote";
+                }
+            }
 
             // Adjust building type based on faction hints
             string buildingTypeString = houseString;
@@ -945,9 +981,10 @@ namespace DaggerfallWorkshop.Game.Questing
                     return GetRandomFactionOfType(factionType);
 
                 // Type 10 Knightly_Guard does not exist in FACTION.TXT but IS used in some quests
-                // Redirecting this to "Generic Knightly Order" #844 to ensure NPC is created
+                // Redirecting this to a random knightly order to ensure NPC is created and faction is properly resolved
                 case FactionFile.FactionTypes.KnightlyGuard:
-                    return 844;
+                    var knightlyOrderIds = (int[])Enum.GetValues(typeof(KnightlyOrder.Orders));
+                    return knightlyOrderIds[UnityEngine.Random.Range(0, knightlyOrderIds.Length)];
 
                 // Type 11 Magic_User does not exist in FACTION.TXT and is not used in any quests
                 // Redirecting this to "Mages Guild" #40 to ensure NPC is created
@@ -1049,6 +1086,10 @@ namespace DaggerfallWorkshop.Game.Questing
         {
             // Find all factions of type
             FactionFile.FactionData[] factions = GameManager.Instance.PlayerEntity.FactionData.FindFactions(factionType);
+
+            // Strip "Generic Temple" from random Temple pool
+            if (factionType == (int)FactionFile.FactionTypes.Temple)
+                factions = factions.Where(val => val.id != 450).ToArray();
 
             // Should always find at least one
             if (factions == null || factions.Length == 0)

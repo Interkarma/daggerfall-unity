@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -31,16 +31,16 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         #region UI Controls
 
-        Panel mainPanel = new Panel();
+        protected Panel mainPanel = new Panel();
 
-        ListBox priceListBox;
-        Button priceListUpButton;
-        Button priceListDownButton;
-        VerticalScrollBar priceListScrollBar;
+        protected ListBox priceListBox;
+        protected Button priceListUpButton;
+        protected Button priceListDownButton;
+        protected VerticalScrollBar priceListScrollBar;
 
-        Panel displayPanel;
-        Button buyButton;
-        Button exitButton;
+        protected Panel displayPanel;
+        protected Button buyButton;
+        protected Button exitButton;
 
         #endregion
 

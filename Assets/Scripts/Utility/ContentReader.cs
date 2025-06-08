@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -38,7 +38,8 @@ namespace DaggerfallWorkshop.Utility
 
         public struct MapSummary
         {
-            public int ID;
+            public int ID;                  // mapTable.MapId & 0x000fffff for dict key and matching with ExteriorData.MapId
+            public int MapID;               // Full mapTable.MapId for matching with localization key
             public int RegionIndex;
             public int MapIndex;
             public DFRegion.LocationTypes LocationType;
@@ -332,6 +333,7 @@ namespace DaggerfallWorkshop.Utility
                         // Get map summary
                         DFRegion.RegionMapTable mapTable = dfRegion.MapTable[location];
                         summary.ID = mapTable.MapId & 0x000fffff;
+                        summary.MapID = mapTable.MapId;
                         summary.RegionIndex = region;
                         summary.MapIndex = location;
                         summary.LocationType = mapTable.LocationType;

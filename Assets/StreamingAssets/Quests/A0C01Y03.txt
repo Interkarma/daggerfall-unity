@@ -79,6 +79,7 @@ QuestLogEntry:  [1010]
  answer to a riddle. The only clue
  I have is that %g once worked with
  _spouse_ in ___spouse_.
+ I have three months to report my success.
 
 Message:  1011
 <ce>               The _flowers_ were not really necessary.

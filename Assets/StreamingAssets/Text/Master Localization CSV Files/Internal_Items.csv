@@ -1,0 +1,289 @@
+﻿Key,Value
+0,Ruby
+1,Emerald
+2,Sapphire
+3,Diamond
+4,Jade
+5,Turquoise
+6,Malachite
+7,Amber
+8,Twigs
+9,Green Leaves
+10,Red Flowers
+11,Yellow Flowers
+12,Root Tendrils
+13,Root Bulb
+14,Pine Branch
+15,Green Berries
+16,Red Berries
+17,Yellow Berries
+18,Clover
+19,Red Rose
+20,Yellow Rose
+21,Black Rose
+22,White Rose
+23,Red Poppy
+24,Black Poppy
+25,Golden Poppy
+26,White Poppy
+27,Ginkgo Leaves
+28,Bamboo
+29,Palm
+30,Aloe
+31,Fig
+32,Cactus
+33,Werewolf's Blood
+34,Wereboar's Tusk
+35,Fairy Dragon's Scales
+36,Nymph Hair
+37,Unicorn Horn
+38,Wraith Essence
+39,Ectoplasm
+40,Ghoul's Tongue
+41,Spider's Venom
+42,Troll's Blood
+43,Snake Venom
+44,Gorgon Snake
+45,Lich Dust
+46,Dragon's Scales
+47,Giant Scorpion Stinger
+48,Small Scorpion Stinger
+49,Mummy Wrappings
+50,Giant's Blood
+51,Basilisk's Eye
+52,Gryphon's Feather
+53,Daedra's Heart
+54,Saint's Hair
+55,Holy Relic
+56,Big Tooth
+57,Medium Tooth
+58,Small Tooth
+59,Pure Water
+60,Rain Water
+61,Orc's Blood
+62,Elixir Vitae
+63,Nectar
+64,Ichor
+65,Mercury
+66,Tin
+67,Brass
+68,Lodestone
+69,Sulphur
+70,Lead
+71,Iron
+72,Copper
+73,Silver
+74,Gold
+75,Platinum
+76,Ivory
+77,Pearl
+78,Indulcet
+79,Sursum
+80,Quaesto Vil
+81,Aegrotat
+82,Glass Jar
+83,Glass Bottle
+84,Decanter
+85,Clay Jar
+86,Small Sack
+87,Large Sack
+88,Quiver
+89,Backpack
+90,Small Chest
+91,Wine Rack
+92,Large Chest
+93,Small Cart
+94,Horse
+95,Rowboat
+96,Large Boat
+97,Small Ship
+98,Large Galley
+99,Deed to Townhouse
+100,Deed to House
+101,Deed to Manor
+102,Cuirass
+103,Gauntlets
+104,Greaves
+105,Left Pauldron
+106,Right Pauldron
+107,Helm
+108,Boots
+109,Buckler
+110,Round Shield
+111,Kite Shield
+112,Tower Shield
+113,Dagger
+114,Tanto
+115,Staff
+116,Shortsword
+117,Wakazashi
+118,Broadsword
+119,Saber
+120,Longsword
+121,Katana
+122,Claymore
+123,Dai-katana
+124,Mace
+125,Flail
+126,Warhammer
+127,Battle Axe
+128,War Axe
+129,Short Bow
+130,Long Bow
+131,Arrow
+132,Spellbook
+133,Amulet
+134,Bracer
+135,Ring
+136,Bracelet
+137,Mark
+138,Torc
+139,Cloth Amulet
+140,Wand
+141,Straps
+142,Armbands
+143,Kimono
+144,Fancy Armbands
+145,Sash
+146,Eodoric
+147,Shoes
+148,Tall Boots
+149,Boots
+150,Sandals
+151,Casual Pants
+152,Breeches
+153,Short Skirt
+154,Casual Cloak
+155,Formal Cloak
+156,Khajiit Suit
+157,Dwynnen Surcoat
+158,Short Tunic
+159,Formal Tunic
+160,Toga
+161,Reversible Tunic
+162,Loincloth
+163,Plain Robes
+164,Priest Robes
+165,Short Shirt
+166,Short Shirt
+167,Long Shirt
+168,Long Shirt
+169,Short Shirt
+170,Short Shirt
+171,Long Shirt
+172,Long Shirt
+173,Open Tunic
+174,Wrap
+175,Long Skirt
+176,Anticlere Surcoat
+177,Challenger Straps
+178,Short Shirt
+179,Long Shirt
+180,Vest
+181,Champion Straps
+182,Brassiere
+183,Formal Brassiere
+184,Peasant Blouse
+185,Eodoric
+186,Shoes
+187,Tall Boots
+188,Boots
+189,Sandals
+190,Casual Pants
+191,Casual Cloak
+192,Formal Cloak
+193,Khajiit Suit
+194,Formal Eodoric
+195,Evening Gown
+196,Day Gown
+197,Casual Dress
+198,Strapless Dress
+199,Loincloth
+200,Plain Robes
+201,Priestess Robes
+202,Short Shirt
+203,Short Shirt
+204,Long Shirt
+205,Long Shirt
+206,Short Shirt
+207,Short Shirt
+208,Long Shirt
+209,Long Shirt
+210,Open Tunic
+211,Wrap
+212,Long Skirt
+213,Tights
+214,Short Shirt
+215,Long Shirt
+216,Vest
+217,Plain Single Bed
+218,Fancy Single Bed
+219,Plain Double Bed
+220,Fancy Double Bed
+221,Large Oak Table
+222,Large Cherry Table
+223,Large Mahogany Table
+224,Large Teak Table
+225,Small Oak Table
+226,Small Cherry Table
+227,Small Mahogany Table
+228,Small Teak Table
+229,Oak Chair
+230,Cherry Chair
+231,Mahogany Chair
+232,Teak Chair
+233,Curtains
+234,Fancy Curtains
+235,Large Pillow
+236,Small Pillow
+237,Small Plain Rug
+238,Large Plain Rug
+239,Small Fine Rug
+240,Large Fine Rug
+241,Large Tapestry
+242,Medium Tapestry
+243,Small Tapestry
+244,Large Skins
+245,Small Skins
+246,Candelabra
+247,Torch
+248,Lantern
+249,Bandage
+250,Shubbery
+251,Flowers
+252,Oil
+253,Candle
+254,Telescope
+255,Scales
+256,Globe
+257,Skeleton
+258,Prayer Beads
+259,Rare Symbol
+260,Common Symbol
+261,Bell
+262,Holy Water
+263,Talisman
+264,Religious Item
+265,Small Statue
+266,Large Statue
+267,Icon
+268,Scarab
+269,Holy Candle
+270,Holy Dagger
+271,Holy Tome
+272,Altar
+273,Font
+274,Soul Trap
+275,Letter of Credit
+276,Gold Pieces
+277,Book
+278,Potion Recipe
+279,Parchment
+280,Totem
+281,Dead Body
+282,Mantella
+283,Finger
+284,Painting
+285,House Deed
+286,Ship Deed
+287,Map

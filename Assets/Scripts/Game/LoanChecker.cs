@@ -42,7 +42,7 @@ namespace DaggerfallWorkshop.Game
                                 DaggerfallUI.AddHUDText(String.Format(TextManager.Instance.GetLocalizedText("loanReminder"),
                                     DaggerfallBankManager.GetLoanedTotal(regionIndex)), loanReminderHUDDelay);
                                 DaggerfallUI.AddHUDText(String.Format(TextManager.Instance.GetLocalizedText("loanReminder2"),
-                                    remainingMonths + 1, MapsFile.RegionNames[regionIndex]), loanReminderHUDDelay);
+                                    remainingMonths + 1, TextManager.Instance.GetLocalizedRegionName(regionIndex)), loanReminderHUDDelay);
                             }
                         }
                     }

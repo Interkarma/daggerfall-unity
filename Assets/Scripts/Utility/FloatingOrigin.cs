@@ -1,5 +1,5 @@
-﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -22,8 +22,6 @@ namespace DaggerfallWorkshop.Utility
 {
     /// <summary>
     /// Moves world back to origin so central player terrain is at 0,0,0.
-    /// Currently only works on X-Z plane.
-    /// Need to review floating Y with serialization/deserialization process.
     /// </summary>
     public class FloatingOrigin : MonoBehaviour
     {
@@ -126,6 +124,11 @@ namespace DaggerfallWorkshop.Utility
 
                 // Offset streaming world
                 OffsetChildren(StreamingWorld.StreamingTarget.gameObject, offset);
+
+                // Offset loaded enemies
+                // Not that many in DFU, but it happens in mods
+                foreach (EnemyMotor enemy in ActiveGameObjectDatabase.GetActiveEnemyMotors())
+                    enemy.AdjustLastGrounded(offset.y);
 
                 // Raise event
                 RaiseOnPositionUpdateEvent(offset);

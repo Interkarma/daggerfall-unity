@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -770,5 +770,54 @@ namespace DaggerfallWorkshop
     {
         Internal,
         TextRSC,
+        TextFlats,
+        TextQuests,
+        TextLocations,
+        TextSettings,
+        TextSpells,
+        TextItems,
+        TextMagicItems,
+        Factions,
+    }
+
+    /// <summary>
+    /// Antialiasing methods supported by core.
+    /// </summary>
+    public enum AntiAliasingMethods
+    {
+        None = 0,   // No anti-aliasing
+        FXAA = 1,   // Fast approximate anti-aliasing (FXAA)
+        SMAA = 2,   // Subpixel morphilogical anti-aliasing (SMAA)
+        TAA = 3,    // Temporal anti-aliasing (TAA)
+    }
+
+    /// <summary>
+    /// Retro Mode supported aspect ratio corrections.
+    /// </summary>
+    public enum RetroModeAspects
+    {
+        Off = 0,                // No aspect correction in retro mode
+        FourThree = 1,          // 4:3 aspect correction in retro mode
+        SixteenTen = 2,         // 16:10 aspect correction in retro mode
+    }
+
+    /// <summary>
+    /// Core game effects settings groups for deploying some or all settings.
+    /// </summary>
+    [Flags]
+    public enum CoreGameEffectSettingsGroups
+    {
+        Nothing = 0,
+        Antialiasing = 1,
+        AmbientOcclusion = 2,
+        Bloom = 4,
+        MotionBlur = 8,
+        Vignette = 16,
+        DepthOfField = 32,
+        Dither = 64,
+        ColorBoost = 128,
+        RetroMode = 256,
+        Reserved512 = 512,
+        Everything = 0xffff,
     }
 }

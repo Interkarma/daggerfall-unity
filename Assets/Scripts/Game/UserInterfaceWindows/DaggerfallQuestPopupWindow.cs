@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -134,11 +134,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 sender.CloseWindow();
                 ShowQuestPopupMessage(offeredQuest, (int)QuestMachine.QuestMessages.AcceptQuest);
                 QuestMachine.Instance.StartQuest(offeredQuest);
-
-                // Assign QuestResourceBehaviour to questor NPC - this will be last NPC clicked
-                // This will ensure quests actions like "hide npc" will operate on questor at quest startup
-                if (QuestMachine.Instance.LastNPCClicked != null)
-                    QuestMachine.Instance.LastNPCClicked.AssignQuestResourceBehaviour();
             }
             else
             {

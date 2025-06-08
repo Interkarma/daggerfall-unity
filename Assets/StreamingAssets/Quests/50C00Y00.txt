@@ -135,6 +135,7 @@ Message:  1015
 QBN:
 Item _artifact_ artifact Spell_Breaker anyInfo 1013
 
+Person _questgiver_ face 112 named Peryite anyInfo 1012
 Person _qgfriend_ group Cleric female remote anyInfo 1011
 Person _dummyvamp_ face 1 factiontype Vampire_Clan remote
 

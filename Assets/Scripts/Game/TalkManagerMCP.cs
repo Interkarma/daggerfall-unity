@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -177,7 +177,20 @@ namespace DaggerfallWorkshop.Game
                     case Game.Entity.Genders.Male:
                         return TextManager.Instance.GetLocalizedText("pronounHis");
                     case Game.Entity.Genders.Female:
-                        return TextManager.Instance.GetLocalizedText("pronounHer");
+                        return TextManager.Instance.GetLocalizedText("pronounHer2");
+                }
+            }
+
+            // His/Hers
+            public override string Pronoun4()
+            {
+                switch (parent.potentialQuestorGender)
+                {
+                    default:
+                    case Game.Entity.Genders.Male:
+                        return TextManager.Instance.GetLocalizedText("pronounHis2");
+                    case Game.Entity.Genders.Female:
+                        return TextManager.Instance.GetLocalizedText("pronounHers");
                 }
             }
 

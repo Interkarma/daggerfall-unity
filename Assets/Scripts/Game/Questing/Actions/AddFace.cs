@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -59,6 +59,10 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         {
             base.Update(caller);
 
+            // Popup saying message
+            if (sayingID != 0)
+                ParentQuest.ShowMessagePopup(sayingID, true);
+
             // Add related Person or Foe resource
             if (personSymbol != null && !string.IsNullOrEmpty(personSymbol.Name))
             {
@@ -72,10 +76,6 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
                 if (foe != null)
                     DaggerfallUI.Instance.DaggerfallHUD.EscortingFaces.AddFace(foe);
             }
-
-            // Popup saying message
-            if (sayingID != 0)
-                ParentQuest.ShowMessagePopup(sayingID);
 
             SetComplete();
         }
@@ -108,7 +108,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             SaveData_v1 data = (SaveData_v1)dataIn;
             personSymbol = data.personSymbol;
             foeSymbol = data.foeSymbol;
-            data.sayingID = sayingID;
+            sayingID = data.sayingID;
         }
 
         #endregion

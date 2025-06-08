@@ -1,5 +1,5 @@
-﻿// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+﻿// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -136,8 +136,8 @@ namespace DaggerfallWorkshop.Game
             compassDstRect.width = compassBoxRect.width - (boxOutlineSize * 2) * scale;
             compassDstRect.height = compassTexture.height * scale;
 
-            GUI.DrawTextureWithTexCoords(compassDstRect, compassTexture, compassSrcRect, false);
-            GUI.DrawTexture(compassBoxRect, compassBoxTexture, ScaleMode.StretchToFill, true);
+            DaggerfallUI.DrawTextureWithTexCoords(compassDstRect, compassTexture, compassSrcRect, false);
+            DaggerfallUI.DrawTexture(compassBoxRect, compassBoxTexture, ScaleMode.StretchToFill, true);
         }
 
         #endregion

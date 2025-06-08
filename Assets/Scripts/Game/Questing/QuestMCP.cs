@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -57,7 +57,7 @@ namespace DaggerfallWorkshop.Game.Questing
             {
                 // Only used for knightly order quests, %kno macro. (removing 'The ' prefix from name for readability)
                 FactionFile.FactionData factionData;
-                if (DaggerfallUnity.Instance.ContentReader.FactionFileReader.GetFactionData(parent.FactionId, out factionData))
+                if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(parent.FactionId, out factionData))
                     return factionData.name.StartsWith("The ") ? factionData.name.Substring(4) : factionData.name;
                 else
                     return null;
@@ -110,7 +110,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 }
             }
 
-            // His/Hers
+            // His/Her
             public override string Pronoun3()
             {
                 if (parent.LastResourceReferenced == null)
@@ -122,7 +122,23 @@ namespace DaggerfallWorkshop.Game.Questing
                     case Game.Entity.Genders.Male:
                         return TextManager.Instance.GetLocalizedText("pronounHis");
                     case Game.Entity.Genders.Female:
-                        return TextManager.Instance.GetLocalizedText("pronounHer");
+                        return TextManager.Instance.GetLocalizedText("pronounHer2");
+                }
+            }
+
+            // His/Hers
+            public override string Pronoun4()
+            {
+                if (parent.LastResourceReferenced == null)
+                    return TextManager.Instance.GetLocalizedText("pronounHis");
+
+                switch (parent.LastResourceReferenced.Gender)
+                {
+                    default:
+                    case Game.Entity.Genders.Male:
+                        return TextManager.Instance.GetLocalizedText("pronounHis2");
+                    case Game.Entity.Genders.Female:
+                        return TextManager.Instance.GetLocalizedText("pronounHers");
                 }
             }
 
@@ -209,17 +225,16 @@ namespace DaggerfallWorkshop.Game.Questing
                     factionId = (int)GameManager.Instance.PlayerEnterExit.FactionID;
                 }
                 else
-                { 
+                {
                     factionId = GameManager.Instance.PlayerGPS.GetTempleOfCurrentRegion();
                 }
 
-                if (factionId == 0)
+                if (factionId == 0 || factionId == (int)FactionFile.FactionIDs.The_Fighters_Guild)
                 {
-                    // Classic returns "BLANK" if no temple is found, here we return a random deity name
-                    const int minGodID = 21;
-                    const int maxGodID = 35;
+                    // Classic returns "BLANK" if no temple is found, here we return a random deity name.
+                    // We do the same for Fighters Guild halls, which are are considered temples in some areas.
+                    var god = GetRandomDivine();
 
-                    FactionFile.FactionIDs god = (FactionFile.FactionIDs)UnityEngine.Random.Range(minGodID, maxGodID + 1);
                     return god.ToString();
                 }
 
@@ -257,6 +272,22 @@ namespace DaggerfallWorkshop.Game.Questing
                 }
 
                 return TextManager.Instance.GetLocalizedText("resolvingError");
+            }
+
+            private static FactionFile.FactionIDs GetRandomDivine()
+            {
+                switch (UnityEngine.Random.Range(0, 9))
+                {
+                    case 0: return FactionFile.FactionIDs.Arkay;
+                    case 1: return FactionFile.FactionIDs.Zen;
+                    case 2: return FactionFile.FactionIDs.Mara;
+                    case 3: return FactionFile.FactionIDs.Ebonarm;
+                    case 4: return FactionFile.FactionIDs.Akatosh;
+                    case 5: return FactionFile.FactionIDs.Julianos;
+                    case 6: return FactionFile.FactionIDs.Dibella;
+                    case 7: return FactionFile.FactionIDs.Stendarr;
+                    default: return FactionFile.FactionIDs.Kynareth;
+                }
             }
         }
     }

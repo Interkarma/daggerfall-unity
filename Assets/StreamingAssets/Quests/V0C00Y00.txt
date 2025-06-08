@@ -123,6 +123,7 @@ Message:  1030
 QBN:
 Item _artifact_ artifact Masque_of_Clavicus_Vile anyInfo 1014
 
+Person _questgiver_ face 112 named Clavicus_Vile anyInfo 1011
 Person _contact_ face 238 faction The_Cabal female remote anyInfo 1012
 
 Place _mondung_ remote dungeon

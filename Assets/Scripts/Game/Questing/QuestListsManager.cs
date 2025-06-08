@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -110,6 +110,22 @@ namespace DaggerfallWorkshop.Game.Questing
             foreach (string listFile in listFiles)
                 if (!RegisterQuestList(listFile))
                     Debug.LogErrorFormat("QuestList already registered. {0}", listFile);
+
+            if (ModManager.Instance == null)
+            {
+                return;
+            }
+
+            foreach (var mod in ModManager.Instance.GetAllModsWithContributes(x => x.QuestLists != null))
+            {
+                foreach (var questList in mod.ModInfo.Contributes.QuestLists)
+                {
+                    if (!RegisterQuestList(questList))
+                    {
+                        Debug.LogErrorFormat("QuestList {0} is already registered.", questList);
+                    }
+                }
+            }
         }
 
         #endregion
@@ -267,6 +283,12 @@ namespace DaggerfallWorkshop.Game.Questing
             string questFile = Path.Combine(QuestMachine.QuestSourceFolder, questFileName);
             if (File.Exists(questFile))
                 return LoadQuest(questName, QuestMachine.QuestSourceFolder, factionId);
+            
+            // Then check if we can override or load this quest from any mod.
+            if (ModManager.Instance.AnyModContainsQuest(questName))
+            {
+                return LoadQuest(questName, "", factionId);
+            }
 
             // Check each registered init quest & containing folder.
             foreach (QuestData questData in init)
@@ -342,6 +364,10 @@ namespace DaggerfallWorkshop.Game.Questing
 #if UNITY_EDITOR    // Reload every time when in editor
             LoadQuestLists();
 #endif
+            // Create one-time quest list if not already created
+            if (oneTimeQuestsAccepted == null)
+                oneTimeQuestsAccepted = new List<string>();
+
             List<QuestData> socialQuests;
             if (social.TryGetValue(socialGroup, out socialQuests))
             {
@@ -353,7 +379,7 @@ namespace DaggerfallWorkshop.Game.Questing
                          (quest.membership == 'M' && gender == Genders.Male) ||
                          (quest.membership == 'F' && gender == Genders.Female)))
                     {
-                        if (!quest.adult || DaggerfallUnity.Settings.PlayerNudity)
+                        if ((!quest.adult || DaggerfallUnity.Settings.PlayerNudity) && !(quest.oneTime && oneTimeQuestsAccepted.Contains(quest.name)))
                             pool.Add(quest);
                     }
                 }

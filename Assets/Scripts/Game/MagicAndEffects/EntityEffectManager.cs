@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -59,6 +59,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         bool castInProgress = false;
         bool readySpellDoesNotCostSpellPoints = false;
         int readySpellCastingCost;
+        int lastReadySpellCastingCost;
 
         DaggerfallEntityBehaviour entityBehaviour = null;
         EntityTypes entityType;
@@ -142,6 +143,9 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         {
             get { return GetPoisonBundles(); }
         }
+
+        //The original Daggerfall apparently did it this way (original bug?)
+        public bool UsePlayerCharacterSkillsForEnemyMagicCost { get; set; } = true;
 
         #endregion
 
@@ -308,15 +312,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public bool SetReadySpell(EntityEffectBundle spell, bool noSpellPointCost = false)
         {
             // Do nothing if silenced or cast already in progress
-            if ((SilenceCheck() && !noSpellPointCost) || castInProgress)
+            if ((!noSpellPointCost && SilenceCheck()) || castInProgress)
                 return false;
 
             // Spell must appear valid
             if (spell == null || spell.Settings.Version < minAcceptedSpellVersion)
                 return false;
 
+            //By default, enemy spell costs are calculated using player-character skill levels.
+            //Mods can alter this to use enemy skills instead.
+            DaggerfallEntity casterEntity = UsePlayerCharacterSkillsForEnemyMagicCost ? null : entityBehaviour.Entity;
+
             // Get spellpoint costs of this spell
-            (int _, int spellPointCost) = FormulaHelper.CalculateTotalEffectCosts(spell.Settings.Effects, spell.Settings.TargetType, null, spell.Settings.MinimumCastingCost);
+            (int _, int spellPointCost) = FormulaHelper.CalculateTotalEffectCosts(spell.Settings.Effects, spell.Settings.TargetType, casterEntity, spell.Settings.MinimumCastingCost);
             readySpellCastingCost = spellPointCost;
 
             // Allow casting spells of any cost if entity is player and godmode enabled
@@ -384,6 +392,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             lastSpell = null;
             readySpell = null;
             readySpellCastingCost = 0;
+            lastReadySpellCastingCost = 0;
             instantCast = false;
             castInProgress = false;
             readySpellDoesNotCostSpellPoints = false;
@@ -392,7 +401,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public void CastReadySpell()
         {
             // Do nothing if silenced
-            if (SilenceCheck())
+            if (!readySpellDoesNotCostSpellPoints && SilenceCheck())
                 return;
 
             // Must have a ready spell and a previous cast must not be in progress
@@ -467,6 +476,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             }
 
             // Instantiate all effects in this bundle
+            int totalAbsorbed = 0;
             for (int i = 0; i < sourceBundle.Settings.Effects.Length; i++)
             {
                 // Instantiate effect
@@ -499,8 +509,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     int absorbSpellPoints = FormulaHelper.CheckAndCalculateAbsorbedSpellPoints(effect, sourceBundle.Settings.TargetType, sourceBundle.CasterEntityBehaviour, entityBehaviour, absorbEffect);
                     if (absorbSpellPoints > 0)
                     {
-                        // Spell passed all checks and was absorbed - return cost output to target
-                        entityBehaviour.Entity.IncreaseMagicka(absorbSpellPoints);
+                        // Spell passed all checks and was absorbed - tally cost output to target
+                        totalAbsorbed += absorbSpellPoints;
 
                         // Output "Spell was absorbed."
                         DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("spellAbsorbed"));
@@ -583,6 +593,19 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
                 // At this point effect is ready and gets initial magic round
                 effect.MagicRound();
+            }
+
+            // Refund absorbed spellpoints
+            if (totalAbsorbed > 0)
+            {
+                // If this is a self-cast spell then cannot refund more spellpoints than cost
+                // Spell absorption is calculated per effect and sometimes possible to get back more than the casting cost
+                // Cap does not apply to spells cast by other entities or from zero-cost spells
+                if (sourceBundle.CasterEntityBehaviour == entityBehaviour && lastReadySpellCastingCost > 0 && totalAbsorbed > lastReadySpellCastingCost)
+                    totalAbsorbed = lastReadySpellCastingCost;
+
+                entityBehaviour.Entity.IncreaseMagicka(totalAbsorbed);
+                //Debug.LogFormat("Absorbed {0} total spellpoints", totalAbsorbed);
             }
 
             // Add bundles with at least one effect
@@ -1592,16 +1615,20 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Run all bundles
             activeMagicItemsInRound.Clear();
             uint currentTime = DaggerfallUnity.Instance.WorldTime.DaggerfallDateTime.ToClassicDaggerfallTime();
-            foreach (LiveEffectBundle bundle in instancedBundles)
+            var currentInstancedBundles = new List<LiveEffectBundle>(instancedBundles); // use a copy, as ending an effect can add new bundles (ex: wereworlf infection -> werewolf effect)
+            foreach (LiveEffectBundle bundle in currentInstancedBundles)
             {
                 // Run effects for this bundle
                 bool hasRemainingEffectRounds = false;
                 foreach (IEntityEffect effect in bundle.liveEffects)
                 {
                     // Update effects with remaining rounds, item effects are always ticked
+                    // All other effects with a duration will be ended at zero rounds remaining
                     hasRemainingEffectRounds = hasRemainingEffectRounds || effect.RoundsRemaining > 0;
                     if (effect.RoundsRemaining > 0 || bundle.fromEquippedItem != null)
                         effect.MagicRound();
+                    else if (effect.Properties.SupportDuration)
+                        effect.End();
                 }
 
                 if (bundle.fromEquippedItem != null && bundle.fromEquippedItem.IsEquipped)
@@ -1640,7 +1667,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             RemovePendingBundles();
         }
 
-        void RemoveBundle(LiveEffectBundle bundle)
+        public void RemoveBundle(LiveEffectBundle bundle)
         {
             foreach (IEntityEffect effect in bundle.liveEffects)
             {
@@ -1674,6 +1701,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             lastSpell = null;
             readySpell = null;
             readySpellDoesNotCostSpellPoints = false;
+            castInProgress = false;
         }
 
         public int GetCastSoundID(ElementTypes elementType)
@@ -1784,7 +1812,10 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Only supporting LoadID from enemies at this time
             if (caster.EntityType == EntityTypes.EnemyMonster || caster.EntityType == EntityTypes.EnemyClass)
             {
-                ISerializableGameObject serializableEnemy = caster.GetComponent<SerializableEnemy>() as ISerializableGameObject;
+                ISerializableGameObject serializableEnemy = caster.GetComponent<ISerializableGameObject>();
+                if (serializableEnemy == null)
+                    return 0;
+
                 return serializableEnemy.LoadID;
             }
             else
@@ -1961,6 +1992,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         private void PlayerSpellCasting_OnReleaseFrame()
         {
+            castInProgress = false;
+
             // Must have a ready spell
             if (readySpell == null)
                 return;
@@ -1990,12 +2023,18 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
             // Clear ready spell and reset casting - do not update last spell if casting from item
             RaiseOnCastReadySpell(readySpell);
-            if (!readySpellDoesNotCostSpellPoints)
+            if (readySpellDoesNotCostSpellPoints)
+            {
+                lastReadySpellCastingCost = 0;
+            }
+            else
+            {
                 lastSpell = readySpell;
+                lastReadySpellCastingCost = readySpellCastingCost;
+            }
             readySpell = null;
             readySpellCastingCost = 0;
             instantCast = false;
-            castInProgress = false;
             readySpellDoesNotCostSpellPoints = false;
         }
 

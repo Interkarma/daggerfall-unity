@@ -3,6 +3,7 @@
 -- QuestId: 503
 Messages: 72
 Quest: S0000503
+DisplayName: Former Student Part III
 -- Message panels
 QRC:
 
@@ -176,7 +177,7 @@ Place _itemdung_ remote dungeon
 Place _keydung_ remote dungeon
 Place _L.05_ remote dungeon
 
-Clock _S.00_ 62.12:00 97.05:20
+Clock _S.00_ 1.00:00
 Clock _S.02_ 30.00:00 0 flag 1 range 0 1
 Clock _S.10_ 00:00 0 flag 1 range 0 2
 Clock _S.11_ 00:01
@@ -209,6 +210,7 @@ _S.01_ task:
 	take _letter_ from pc 
 	log 1020 step 0 
 	place npc _rebel_ at _tavern_ 
+	restore _rebel_
 
 variable _S.02_
 _S.03_ task:

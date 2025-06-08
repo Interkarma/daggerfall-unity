@@ -90,7 +90,7 @@ e.	Monkey
 	18 +6
 
 5.	You were loaned and later allowed to keep ___.
-a.	100 gold pieces
+a.	200 gold pieces
 	GP +200
 b.	A book
 	IT 7 0 0

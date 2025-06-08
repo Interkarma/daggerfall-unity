@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -223,7 +223,7 @@ namespace DaggerfallConnect.Arena2
                 else if (token.formatting == TextFile.Formatting.JustifyLeft)
                 {
                     if (lastToken.formatting == TextFile.Formatting.JustifyLeft)
-                        backStory.Add("\n");
+                        backStory.Add(string.Empty);
                 }
                 lastToken = token;
             }

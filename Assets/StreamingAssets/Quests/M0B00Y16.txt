@@ -83,6 +83,9 @@ Message:  1030
 <ce>                    towards you.  Perhaps the giant
 <ce>               invited a few friends over for dinner...
 
+Message:  1031
+<ce>  You have slain the giant you came for.
+
 Message:  1040
 <ce>                    Thank %god you're here!  I was
 <ce>                     on my way to market yesterday
@@ -173,6 +176,7 @@ _S.02_ task:
 
 _S.03_ task:
 	killed 1 _giant_ 
+	say 1031
 
 _clickqgiver_ task:
 	clicked npc _questgiver_ 

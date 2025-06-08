@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -24,9 +24,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         Texture2D nativeTexture;
 
-        private Button loadGameButton;
-        private Button newGameButton;
-        private Button exitButton;
+        protected Button loadGameButton;
+        protected Button newGameButton;
+        protected Button exitButton;
 
         bool isLoadGameDeferred = false;
         bool isNewGameDeferred = false;
@@ -68,6 +68,20 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.Update();
             InputManager.Instance.CursorVisible = true;
+        }
+
+        float timer = 0;
+        bool oneTime = false;
+        public override void Draw()
+        {
+            base.Draw();
+
+            // 100ms is enough time to ensure window drawn and event raised before user can click
+            if (!oneTime && (timer += Time.realtimeSinceStartup) > 100)
+            {
+                RaiseOnStartFirstVisibleEvent();
+                oneTime = true;
+            }
         }
 
         void LoadGame()
@@ -151,5 +165,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             }
         }
 
+        public delegate void OnStartFirstVisibleEventHandler();
+        public static event OnStartFirstVisibleEventHandler OnStartFirstVisible;
+        void RaiseOnStartFirstVisibleEvent()
+        {
+            if (OnStartFirstVisible != null)
+                OnStartFirstVisible();
+        }
     }
 }

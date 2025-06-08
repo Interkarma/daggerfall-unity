@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -78,7 +78,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         /// Some time-based effects do not operate during these increases, e.g. the "item deteriorates" side-effect
         /// This flag is lowered at the end of each magic update.
         /// </summary>
-        public bool SyntheticTimeIncrease { get; private set; }
+        public bool SyntheticTimeIncrease { get; internal set; }
 
         /// <summary>
         /// The list of standard spells (aka circinate spells), taken from SPELLS.STD and potentially modified (or added to) by mods
@@ -126,6 +126,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // Below is an example of how to register a fully custom effect and spell bundle
             // This call should remain commented out except for testing and example purposes
             // Mods would do this kind of work after capturing OnRegisterCustomEffects event
+            // Historical note: The example effect MageLight is retained in spellmaker as this
+            //  has been part of the game during beta for so long and players are using it
             RegisterCustomEffectDemo();
 
             // Raise event for custom effects to register
@@ -150,51 +152,51 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             // No need to define settings not used by effect
             // For our custom spell, we're using same Duration settings as Light spell: 1 + 4 per level
             // Note these settings will also control final cost of spell to buy and cast
-            EffectSettings effectSettings = new EffectSettings()
-            {
-                DurationBase = 1,
-                DurationPlus = 4,
-                DurationPerLevel = 1,
-            };
+            //EffectSettings effectSettings = new EffectSettings()
+            //{
+            //    DurationBase = 1,
+            //    DurationPlus = 4,
+            //    DurationPerLevel = 1,
+            //};
 
             // Create an EffectEntry
             // This links the effect key with settings
             // Each effect entry in bundle needs its own settings - most spells only have a single effect
-            EffectEntry effectEntry = new EffectEntry()
-            {
-                Key = templateEffect.Properties.Key,
-                Settings = effectSettings,
-            };
+            //EffectEntry effectEntry = new EffectEntry()
+            //{
+            //    Key = templateEffect.Properties.Key,
+            //    Settings = effectSettings,
+            //};
 
             // Create a custom spell bundle
             // This is a portable version of the spell for other systems
             // For example, every spell in the player's spellbook is a bundle
             // Bundle target and elements settings should follow effect requirements
-            EffectBundleSettings mageLightInferoSpell = new EffectBundleSettings()
-            {
-                Version = CurrentSpellVersion,
-                BundleType = BundleTypes.Spell,
-                TargetType = TargetTypes.CasterOnly,
-                ElementType = ElementTypes.Magic,
-                Name = "Magelight Inferno",
-                IconIndex = 12,
-                Effects = new EffectEntry[] { effectEntry },
-            };
+            //EffectBundleSettings mageLightInferoSpell = new EffectBundleSettings()
+            //{
+            //    Version = CurrentSpellVersion,
+            //    BundleType = BundleTypes.Spell,
+            //    TargetType = TargetTypes.CasterOnly,
+            //    ElementType = ElementTypes.Magic,
+            //    Name = "Magelight Inferno",
+            //    IconIndex = 12,
+            //    Effects = new EffectEntry[] { effectEntry },
+            //};
 
             // Create a custom spell offer
             // This informs other systems if they can use this bundle
-            CustomSpellBundleOffer mageLightInferoOffer = new CustomSpellBundleOffer()
-            {
-                Key = "MageLightInferno-CustomOffer",                           // This key is for the offer itself and must be unique
-                Usage = CustomSpellBundleOfferUsage.SpellsForSale|              // Available in spells for sale
-                        CustomSpellBundleOfferUsage.CastWhenUsedEnchantment|    // Available for "cast on use" enchantments
-                        CustomSpellBundleOfferUsage.CastWhenHeldEnchantment,    // Available for "cast on held" enchantments
-                BundleSetttings = mageLightInferoSpell,                         // The spell bundle created earlier
-                EnchantmentCost = 250,                                          // Cost to use spell at item enchanter if enabled
-            };
+            //CustomSpellBundleOffer mageLightInferoOffer = new CustomSpellBundleOffer()
+            //{
+            //    Key = "MageLightInferno-CustomOffer",                           // This key is for the offer itself and must be unique
+            //    Usage = CustomSpellBundleOfferUsage.SpellsForSale|              // Available in spells for sale
+            //            CustomSpellBundleOfferUsage.CastWhenUsedEnchantment|    // Available for "cast on use" enchantments
+            //            CustomSpellBundleOfferUsage.CastWhenHeldEnchantment,    // Available for "cast on held" enchantments
+            //    BundleSetttings = mageLightInferoSpell,                         // The spell bundle created earlier
+            //    EnchantmentCost = 250,                                          // Cost to use spell at item enchanter if enabled
+            //};
 
             // Register the offer
-            RegisterCustomSpellBundleOffer(mageLightInferoOffer);
+            //RegisterCustomSpellBundleOffer(mageLightInferoOffer);
         }
 
         void Update()
@@ -711,6 +713,20 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             return false;
         }
 
+        /// <summary>
+        /// Lookup default spell name from standard spell dictionary.
+        /// This name is not localized. Result will be from SPELLS.STD or mods.
+        /// </summary>
+        /// <param name="id">ID of spell.</param>
+        /// <returns>Spell name if found, otherwise null.</returns>
+        public string GetStandardSpellName(int id)
+        {
+            if (standardSpells.ContainsKey(id))
+                return standardSpells[id].spellName;
+            else
+                return null;
+        }
+
         #endregion
 
         #region Private Methods
@@ -858,7 +874,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 BundleType = bundleType,
                 TargetType = ClassicTargetIndexToTargetType(spellRecordData.rangeType),
                 ElementType = ClassicElementIndexToElementType(spellRecordData.element),
-                Name = spellRecordData.spellName,
+                Name = TextManager.Instance.GetLocalizedSpellName(spellRecordData.index),
                 IconIndex = spellRecordData.icon,
                 Icon = new SpellIcon(),
                 StandardSpellIndex = spellRecordData.index, 
@@ -872,6 +888,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 // Skip unused effect slots
                 if (spellRecordData.effects[i].type == -1)
                     continue;
+
+                // Fix bad Free Action spell data from SPELLS.STD at runtime
+                // Spell index 10 effect 0 references Cure Paralyzation effect type=3/subType=2 instead of the intended Free Action effect
+                // Patch the type/subType values to match Free Action effect type=26/subType=-1
+                // Note player will need to re-equip enchanted items or wait for next reroll tick before correct effect is applied
+                if (spellRecordData.index == 10 && i == 0 && spellRecordData.effects[i].type == 3 && spellRecordData.effects[i].subType == 2)
+                {
+                    spellRecordData.effects[i].type = 26;
+                    spellRecordData.effects[i].subType = -1;
+                }
 
                 // Get entry from effect
                 EffectEntry entry;

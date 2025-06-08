@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -43,6 +43,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HUDQuestDebugger questDebugger = new HUDQuestDebugger();
         HUDActiveSpells activeSpells = new HUDActiveSpells();
         HUDLarge largeHUD = new HUDLarge();
+        Panel debugPanel = null;
         bool renderHUD = true;
         bool startupComplete = false;
 
@@ -112,6 +113,30 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             get { return activeSpells; }
         }
 
+        // Extra debug panel used by random systems. Only one active at a time
+        public Panel DebugPanel
+        {
+            get
+            {
+                return debugPanel;
+            }
+
+            set
+            {
+                if(debugPanel != null)
+                {
+                    ParentPanel.Components.Remove(debugPanel);
+                }
+
+                debugPanel = value;
+
+                if(debugPanel != null)
+                {
+                    ParentPanel.Components.Add(debugPanel);
+                }
+            }
+        }
+
         public DaggerfallHUD(IUserInterfaceManager uiManager)
             :base(uiManager)
         {
@@ -152,7 +177,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             NativePanel.Components.Add(midScreenTextLabel);
 
             placeMarker.Size = new Vector2(640, 400);
-            placeMarker.AutoSize = AutoSizeModes.ScaleToFit;
+            placeMarker.AutoSize = AutoSizeModes.ScaleFreely;
             ParentPanel.Components.Add(placeMarker);
 
             escortingFaces.Size = NativePanel.Size;
@@ -223,11 +248,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             breathBar.Scale = NativePanel.LocalScale;
             crosshair.CrosshairScale = CrosshairScale;
             interactionModeIcon.Scale = NativePanel.LocalScale;
+            arrowCountTextLabel.Scale = NativePanel.LocalScale;
 
             // Align compass to screen panel
             Rect screenRect = ParentPanel.Rectangle;
-            float compassX = screenRect.width - (compass.Size.x);
-            float compassY = screenRect.height - (compass.Size.y);
+            float compassX = screenRect.x + screenRect.width - (compass.Size.x);
+            float compassY = screenRect.y + screenRect.height - (compass.Size.y);
             compass.Position = new Vector2(compassX, compassY);
 
             // Update midscreen text timer and remove once complete
@@ -253,9 +279,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     // Arrow count label position is offset to left of compass and centred relative to compass height
                     // This is done every frame to handle adaptive resolutions
-                    Vector2 arrowLabelPos = compass.Position;
-                    arrowLabelPos.x -= arrowCountTextLabel.TextWidth;
-                    arrowLabelPos.y += compass.Size.y / 2 - arrowCountTextLabel.TextHeight / 2;
+                    Vector2 arrowLabelPos = new Vector2(screenRect.width, screenRect.height);
+                    arrowLabelPos.x -= compass.Size.x + arrowCountTextLabel.TextWidth + 8;
+                    arrowLabelPos.y -= compass.Size.y / 2 + arrowCountTextLabel.TextHeight / 2;
 
                     DaggerfallUnityItem arrows = GameManager.Instance.PlayerEntity.Items.GetItem(ItemGroups.Weapons, (int)Weapons.Arrow, allowQuestItem: false, priorityToConjured: true);
                     arrowCountTextLabel.Text = (arrows != null) ? arrows.stackCount.ToString() : "0";

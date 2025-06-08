@@ -57,7 +57,7 @@ N0B00Y16, MagesGuild, M, 0, 0, Passed
 N0B00Y17, MagesGuild, M, 0, 0, Passed
 N0B10Y01, MagesGuild, M, 1, 0, Passed
 N0B10Y03, MagesGuild, M, 1, 0, Passed
--N0B11Y18, MagesGuild, M, 1, 1, Passed. Sequel quests not yet tested
+N0B11Y18, MagesGuild, M, 1, 1, Passed
 N0B20Y02, MagesGuild, M, 2, 0, Passed
 N0B20Y05, MagesGuild, M, 2, 0, Passed
 N0B21Y14, MagesGuild, M, 2, 1, Passed
@@ -151,9 +151,9 @@ Q0C00Y06, Witches, N, 0, 0, Passed
 Q0C00Y07, Witches, N, 0, 0, Passed
 Q0C00Y08, Witches, N, 0, 0, Passed
 Q0C0XY02, Witches, N, 0, X, Passed
-Q0C10Y00, Witches, N, 10, 0, Passed
-Q0C20Y02, Witches, N, 20, 0, Passed
-Q0C4XY04, Witches, N, 40, X, Passed
+Q0C10Y00, Witches, N, 1, 0, Passed
+Q0C20Y02, Witches, N, 2, 0, Passed
+Q0C4XY04, Witches, N, 4, X, Passed
 
 -- Commoners
 A0C00Y00, Commoners, N, 0, 0, Passed
@@ -166,7 +166,7 @@ A0C00Y11, Commoners, M, 0, 0, Passed
 A0C00Y12, Commoners, M, 0, 0, Passed
 A0C00Y14, Commoners, N, 0, 0, Passed
 A0C00Y15, Commoners, N, 0, 0, Passed
--A0C00Y16, Commoners, M, 0, 0, FAILED. _hidingplace_ not marked on map when player asks about _missingperson_. Can be found from debug marker.
+A0C00Y16, Commoners, M, 0, 0, enabled for testing
 A0C00Y17, Commoners, M, 0, 0, Passed
 A0C01Y01, Commoners, N, 0, 1, Passed
 A0C01Y03, Commoners, M, 0, 1, Passed
@@ -184,7 +184,7 @@ K0C00Y02, Merchants, N, 0, 0, Passed
 K0C00Y03, Merchants, M, 0, 0, Passed
 K0C00Y04, Merchants, M, 0, 0, Passed
 K0C00Y05, Merchants, M, 0, 0, Passed
--K0C00Y06, Merchants, M, 0, 0, "A Mix-Up", tons of branching paths to test, NPCs wouldn't always show up in correct buildings
+-K0C00Y06, Merchants, M, 0, 0, disabled
 K0C00Y07, Merchants, M, 0, 0, Passed
 K0C00Y08, Merchants, M, 0, 0, Passed
 K0C00Y09, Merchants, M, 0, 0, Passed

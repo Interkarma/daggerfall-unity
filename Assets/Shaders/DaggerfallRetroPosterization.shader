@@ -24,8 +24,6 @@
 			
 			#include "UnityCG.cginc"
             
-          #define gamma 2.0
-
 			struct appdata
 			{
 				float4 vertex : POSITION;
@@ -62,7 +60,7 @@
 #endif
                 
               // Decrease color depth to 4 bits per component
-              return fixed4(pow(round(pow(color.rgb, 1/gamma) * 16.0) / 16.0, gamma), color.a);
+              return fixed4(GammaToLinearSpace(round(LinearToGammaSpace(color.rgb) * 15.0) / 15.0), color.a);
 			}
 			ENDCG
 		}

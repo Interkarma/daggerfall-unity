@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -206,47 +206,60 @@ namespace DaggerfallWorkshop.Utility
             if (DaggerfallUnity.Settings.RetroRenderingMode > 0 && !DaggerfallUnity.Settings.UseMipMapsInRetroMode)
                 mipMaps = false;
 
+            bool hasReferenceTexture;
+
             // Assign texture file
             TextureFile textureFile;
             if (settings.textureFile == null)
-                textureFile = new TextureFile(Path.Combine(Arena2Path, TextureFile.IndexToFileName(settings.archive)), FileUsage.UseMemory, true);
+            {
+                textureFile = new TextureFile();
+                hasReferenceTexture = textureFile.Load(Path.Combine(Arena2Path, TextureFile.IndexToFileName(settings.archive)), FileUsage.UseMemory, true);
+            }
             else
+            {
                 textureFile = settings.textureFile;
+                hasReferenceTexture = true;
+            }
 
             // Get starting DFBitmap
-            DFSize sz;
-            DFBitmap srcBitmap = textureFile.GetDFBitmap(settings.record, settings.frame);
+            DFSize sz = null;
+            DFBitmap srcBitmap = hasReferenceTexture ? textureFile.GetDFBitmap(settings.record, settings.frame) : null;
 
             // Get albedo Color32 array
-            Color32[] albedoColors;
-            if (isSpectral)
-            {
-                // Adjust source bitmap to set spectral grays
-                // 180 = transparency amount (~70% visible)
-                SetSpectral(ref srcBitmap);
-                albedoColors = textureFile.GetColor32(srcBitmap, settings.alphaIndex, settings.borderSize, out sz, spectralEyesPatched, 180);
+            Color32[] albedoColors = null;
+
+            if (hasReferenceTexture)
+            {                
+                if (isSpectral)
+                {
+                    // Adjust source bitmap to set spectral grays
+                    // 180 = transparency amount (~70% visible)
+                    SetSpectral(ref srcBitmap);
+                    albedoColors = textureFile.GetColor32(srcBitmap, settings.alphaIndex, settings.borderSize, out sz, spectralEyesPatched, 180);
+                }
+                else
+                {
+                    // Read direct from source bitmap
+                    albedoColors = textureFile.GetColor32(srcBitmap, settings.alphaIndex, settings.borderSize, out sz);
+                }
+
+                // Sharpen source image
+                if (settings.sharpen)
+                    albedoColors = ImageProcessing.Sharpen(ref albedoColors, sz.Width, sz.Height);
+
+                // Dilate edges
+                if (settings.borderSize > 0 && settings.dilate && !settings.copyToOppositeBorder)
+                    ImageProcessing.DilateColors(ref albedoColors, sz);
+
+                // Copy to opposite border
+                if (settings.borderSize > 0 && settings.copyToOppositeBorder)
+                    ImageProcessing.WrapBorder(ref albedoColors, sz, settings.borderSize);
             }
-            else
-            {
-                // Read direct from source bitmap
-                albedoColors = textureFile.GetColor32(srcBitmap, settings.alphaIndex, settings.borderSize, out sz);
-            }
-
-            // Sharpen source image
-            if (settings.sharpen)
-                albedoColors = ImageProcessing.Sharpen(ref albedoColors, sz.Width, sz.Height);
-
-            // Dilate edges
-            if (settings.borderSize > 0 && settings.dilate && !settings.copyToOppositeBorder)
-                ImageProcessing.DilateColors(ref albedoColors, sz);
-
-            // Copy to opposite border
-            if (settings.borderSize > 0 && settings.copyToOppositeBorder)
-                ImageProcessing.WrapBorder(ref albedoColors, sz, settings.borderSize);
 
             // Set albedo texture
             Texture2D albedoMap;
-            if (!TextureReplacement.TryImportTexture(settings.archive, settings.record, settings.frame, TextureMap.Albedo, textureImport, !settings.stayReadable, out albedoMap))
+            bool albedoImported = TextureReplacement.TryImportTexture(settings.archive, settings.record, settings.frame, TextureMap.Albedo, textureImport, !settings.stayReadable, out albedoMap);
+            if (!albedoImported && hasReferenceTexture)
             {
                 // Create albedo texture
                 albedoMap = new Texture2D(sz.Width, sz.Height, ParseTextureFormat(alphaTextureFormat), MipMaps);
@@ -263,7 +276,7 @@ namespace DaggerfallWorkshop.Utility
             // Set normal texture (always import normal if present on disk)
             Texture2D normalMap = null;
             bool normalMapImported = TextureReplacement.TryImportTexture(settings.archive, settings.record, settings.frame, TextureMap.Normal, textureImport, !settings.stayReadable, out normalMap);
-            if (!normalMapImported && settings.createNormalMap && textureFile.SolidType == TextureFile.SolidTypes.None)
+            if (!normalMapImported && settings.createNormalMap && hasReferenceTexture && textureFile.SolidType == TextureFile.SolidTypes.None)
             {
                 // Create normal texture - must be ARGB32
                 // Normal maps are bypassed for solid-colour textures
@@ -288,9 +301,12 @@ namespace DaggerfallWorkshop.Utility
                 if (settings.createEmissionMap || (settings.autoEmission && isEmissive) && !isWindow)
                 {
                     if (settings.archive != FireWallsArchive)
+                    {
                         // Just reuse albedo map for basic colour emission
                         emissionMap = albedoMap;
-                    else
+                        resultEmissive = true;
+                    }
+                    else if (hasReferenceTexture)
                     {
                         // Mantellan Crux fire walls - lessen stroboscopic effect
                         Color fireColor = new Color(0.706f, 0.271f, 0.086f); // Average of dim frame (0)
@@ -300,12 +316,12 @@ namespace DaggerfallWorkshop.Utility
                         emissionMap = new Texture2D(sz.Width, sz.Height, ParseTextureFormat(alphaTextureFormat), MipMaps);
                         emissionMap.SetPixels32(firewallEmissionColors);
                         emissionMap.Apply(true, !settings.stayReadable);
-                    }
-                    resultEmissive = true;
+                        resultEmissive = true;
+                    }                    
                 }
 
                 // Windows need special handling as only glass parts are emissive
-                if ((settings.createEmissionMap || settings.autoEmissionForWindows) && isWindow)
+                if ((settings.createEmissionMap || settings.autoEmissionForWindows) && isWindow && hasReferenceTexture)
                 {
                     // Create custom emission texture for glass area of windows
                     Color32[] emissionColors = textureFile.GetWindowColors32(srcBitmap);
@@ -316,7 +332,7 @@ namespace DaggerfallWorkshop.Utility
                 }
 
                 // Spectral need special handling as only eye parts are emissive
-                if ((settings.createEmissionMap || settings.autoEmission) && isSpectral)
+                if ((settings.createEmissionMap || settings.autoEmission) && isSpectral && hasReferenceTexture)
                 {
                     Color eyeEmission = Color.red;
                     Color bodyEmission = Color.black;// new Color(0.1f, 0.1f, 0.1f);
@@ -344,13 +360,27 @@ namespace DaggerfallWorkshop.Utility
             }
 
             // Shrink UV rect to compensate for internal border
-            float ru = 1f / sz.Width;
-            float rv = 1f / sz.Height;
-            results.singleRect = new Rect(
-                settings.borderSize * ru,
-                settings.borderSize * rv,
-                (sz.Width - settings.borderSize * 2) * ru,
-                (sz.Height - settings.borderSize * 2) * rv);
+            if (hasReferenceTexture)
+            {
+                float ru = 1f / sz.Width;
+                float rv = 1f / sz.Height;
+                results.singleRect = new Rect(
+                    settings.borderSize * ru,
+                    settings.borderSize * rv,
+                    (sz.Width - settings.borderSize * 2) * ru,
+                    (sz.Height - settings.borderSize * 2) * rv);
+            }
+            else
+            {
+                // Use the albedo's sizes as a fallback
+                float ru = 1f / albedoMap.width;
+                float rv = 1f / albedoMap.height;
+                results.singleRect = new Rect(
+                    settings.borderSize * ru,
+                    settings.borderSize * rv,
+                    (albedoMap.width - settings.borderSize * 2) * ru,
+                    (albedoMap.height - settings.borderSize * 2) * rv);
+            }
 
             // Store results
             results.albedoMap = albedoMap;
@@ -358,7 +388,7 @@ namespace DaggerfallWorkshop.Utility
             results.emissionMap = emissionMap;
             results.isWindow = isWindow;
             results.isEmissive = resultEmissive;
-            results.textureFile = textureFile;
+            results.textureFile = hasReferenceTexture ? textureFile : null;
 
             return results;
         }
@@ -719,222 +749,51 @@ namespace DaggerfallWorkshop.Utility
         }
 
         /// <summary>
-        /// Gets terrain albedo texture array containing each terrain tile in a seperate array slice.        
+        /// Gets terrain texture array containing each terrain tile texture in a seperate array slice.        
         /// </summary>
         /// <param name="archive">Archive index.</param>
-        /// <param name="stayReadable">Texture should stay readable.</param>
-        /// <returns>Texture2DArray or null</returns>
-        public Texture2DArray GetTerrainAlbedoTextureArray(
-            int archive,
-            bool stayReadable = false)
+        /// <param name="textureMap">The texture type.</param>
+        /// <returns>Texture2DArray or null.</returns>
+        public Texture2DArray GetTerrainTextureArray(int archive, TextureMap textureMap)
         {
             // Load texture file and check count matches terrain tiles
             TextureFile textureFile = new TextureFile(Path.Combine(Arena2Path, TextureFile.IndexToFileName(archive)), FileUsage.UseMemory, true);
             int numSlices = 0;
             if (textureFile.RecordCount == 56)
-            {
                 numSlices = textureFile.RecordCount;
-            }
             else
-            {
                 return null;
-            }
 
+            // Try to import whole texture array
             Texture2DArray textureArray;
-            if (!stayReadable && TextureReplacement.TryImportTextureArray(archive, numSlices, TextureMap.Albedo, null, out textureArray))
+            if (TextureReplacement.TryImportTextureArray(archive, numSlices, textureMap, null, out textureArray))
                 return textureArray;
 
-            Texture2D albedoMap;
-            if (TextureReplacement.TryImportTexture(archive, 0, 0, out albedoMap))
-            {
-                textureArray = new Texture2DArray(albedoMap.width, albedoMap.height, numSlices, TextureFormat.ARGB32, MipMaps);
-            }
+            // Only use Color32 fallback loader for albedo texture
+            if (textureMap != TextureMap.Albedo)
+                return null;
+
+            // Try to import first replacement texture for tile archive to determine width and height of replacement texture set (must be the same for all replacement textures for Texture2DArray)
+            Texture2D texture;
+            if (TextureReplacement.TryImportTexture(archive, 0, 0, out texture))
+                textureArray = new Texture2DArray(texture.width, texture.height, numSlices, TextureFormat.ARGB32, MipMaps, TextureReplacement.IsLinearTextureMap(textureMap));
             else
-            {
-                textureArray = new Texture2DArray(textureFile.GetWidth(0), textureFile.GetWidth(1), numSlices, TextureFormat.ARGB32, MipMaps);
-            }
+                textureArray = new Texture2DArray(textureFile.GetWidth(0), textureFile.GetHeight(0), numSlices, TextureFormat.ARGB32, MipMaps, TextureReplacement.IsLinearTextureMap(textureMap));
 
             // Rollout tiles into texture array
             for (int record = 0; record < textureFile.RecordCount; record++)
             {
-                Color32[] albedo;
-
-                if (TextureReplacement.TryImportTexture(archive, record, 0, out albedoMap))
-                {
-                    // Import custom texture
-                    albedo = albedoMap.GetPixels32();
-                }
+                DFSize sz;
+                Color32[] colors;
+                if (TextureReplacement.TryImportTexture(archive, record, 0, out texture))
+                    colors = texture.GetPixels32();                                 // Import custom texture
                 else
-                {
-                    // Create base image with gutter
-                    DFSize sz;
-                    albedo = textureFile.GetColor32(record, 0, -1, 0, out sz);
-                }
+                    colors = textureFile.GetColor32(record, 0, -1, 0, out sz);      // Create base image with gutter
 
                 // Insert into texture array
-                textureArray.SetPixels32(albedo, record, 0);
+                textureArray.SetPixels32(colors, record, 0);
             }
-            textureArray.Apply(true, !stayReadable);
-
-            // Change settings for these textures
-            textureArray.wrapMode = TextureWrapMode.Clamp;
-            textureArray.anisoLevel = 8;
-
-            return textureArray;
-        }
-
-
-        /// <summary>
-        /// Gets terrain normal map texture array containing each terrain tile in a seperate array slice.        
-        /// </summary>
-        /// <param name="archive">Archive index.</param>
-        /// <param name="stayReadable">Texture should stay readable.</param>
-        /// <param name="nonAlphaFormat">Non-alpha TextureFormat.</param>
-        /// <returns>Texture2DArray or null</returns>
-        public Texture2DArray GetTerrainNormalMapTextureArray(
-            int archive,
-            bool stayReadable = false,
-            SupportedAlphaTextureFormats alphaFormat = SupportedAlphaTextureFormats.ARGB32)
-        {
-            // Load texture file and check count matches terrain tiles
-            TextureFile textureFile = new TextureFile(Path.Combine(Arena2Path, TextureFile.IndexToFileName(archive)), FileUsage.UseMemory, true);
-            int numSlices = 0;
-            if (textureFile.RecordCount == 56)
-            {
-                numSlices = textureFile.RecordCount;
-            }
-            else
-            {
-                return null;
-            }
-
-            Texture2DArray textureArray;
-            if (!stayReadable && TextureReplacement.TryImportTextureArray(archive, numSlices, TextureMap.Normal, null, out textureArray))
-                return textureArray;
-
-            int width;
-            int height;
-
-            // try to import first replacement texture for tile archive to determine width and height of replacement texture set (must be the same for all replacement textures for Texture2DArray)
-            Texture2D normalMap;
-            if (TextureReplacement.TryImportTexture(archive, 0, 0, TextureMap.Normal, false, out normalMap))
-            {
-                width = normalMap.width;
-                height = normalMap.height;
-            }
-            else
-            {
-                return null;
-            }
-
-            textureArray = new Texture2DArray(width, height, numSlices, ParseTextureFormat(alphaFormat), MipMaps);
-
-            // Rollout tiles into texture array
-            for (int record = 0; record < textureFile.RecordCount; record++)
-            {
-                // Import custom texture(s)
-                if (!TextureReplacement.TryImportTexture(archive, record, 0, TextureMap.Normal, false, out normalMap))
-                {
-                    // if current texture does not exist
-                    Debug.LogErrorFormat("Terrain: imported archive {0} does not contain normal for record {1}.", archive, record);
-                    return null;
-                }
-
-                // enforce that all custom normal map textures have the same dimension (requirement of Texture2DArray)
-                if ((normalMap.width != width) || (normalMap.height != height))
-                {
-                    Debug.LogErrorFormat("Terrain: failed to inject normal maps for archive {0}, incorrect size at record {1}.", archive, record);
-                    return null;
-                }
-
-                // Insert into texture array
-                textureArray.SetPixels32(normalMap.GetPixels32(), record, 0);
-            }
-            textureArray.Apply(true, !stayReadable);
-
-            // Change settings for these textures
-            textureArray.wrapMode = TextureWrapMode.Clamp;
-            textureArray.anisoLevel = 8;
-
-            return textureArray;
-        }
-
-        /// <summary>
-        /// Gets terrain metallic gloss map texture array containing each terrain tile in a seperate array slice.        
-        /// </summary>
-        /// <param name="archive">Archive index.</param>
-        /// <param name="stayReadable">Texture should stay readable.</param>
-        /// <param name="nonAlphaFormat">Non-alpha TextureFormat.</param>
-        /// <returns>Texture2DArray or null</returns>
-        public Texture2DArray GetTerrainMetallicGlossMapTextureArray(
-            int archive,
-            bool stayReadable = false)
-        {
-            Color32 defaultMetallicGlossColor = new Color32(0, 0, 0, 255);
-            Color32[] defaultMetallicGlossMap;
-
-            // Load texture file and check count matches terrain tiles
-            TextureFile textureFile = new TextureFile(Path.Combine(Arena2Path, TextureFile.IndexToFileName(archive)), FileUsage.UseMemory, true);
-            int numSlices = 0;
-            if (textureFile.RecordCount == 56)
-            {
-                numSlices = textureFile.RecordCount;
-            }
-            else
-            {
-                return null;
-            }
-
-            Texture2DArray textureArray;
-            if (!stayReadable && TextureReplacement.TryImportTextureArray(archive, numSlices, TextureMap.MetallicGloss, defaultMetallicGlossColor, out textureArray))
-                return textureArray;
-
-            int width;
-            int height;
-
-            // try to import first replacement texture for tile archive to determine width and height of replacement texture set (must be the same for all replacement textures for Texture2DArray)
-            Texture2D metallicGlossMap;
-            if (TextureReplacement.TryImportTexture(archive, 0, 0, TextureMap.MetallicGloss, false, out metallicGlossMap))
-            {                
-                width = metallicGlossMap.width;
-                height = metallicGlossMap.height;                
-            }
-            else
-            {
-                // create default texture array (1x1 texture)
-                width = 1;
-                height = 1;
-            }
-
-            textureArray = new Texture2DArray(width, height, numSlices, TextureFormat.ARGB32, MipMaps);
-
-            defaultMetallicGlossMap = new Color32[width*height];
-            for (int i = 0; i < width * height; i++)
-            {
-                defaultMetallicGlossMap[i] = defaultMetallicGlossColor;
-            }        
-
-            // Rollout tiles into texture array
-            for (int record = 0; record < textureFile.RecordCount; record++)
-            {
-                // Import custom texture(s)
-                if (!TextureReplacement.TryImportTexture(archive, record, 0, TextureMap.MetallicGloss, false, out metallicGlossMap))
-                {
-                    metallicGlossMap = new Texture2D(width, height, TextureFormat.ARGB32, MipMaps);
-                    metallicGlossMap.SetPixels32(defaultMetallicGlossMap);
-                }
-
-                // enforce that all custom metallicgloss map textures have the same dimension (requirement of Texture2DArray)
-                if ((metallicGlossMap.width != width) || (metallicGlossMap.height != height))
-                {
-                    Debug.LogErrorFormat("Terrain: failed to inject metallicgloss maps for archive {0}, incorrect size at record {1}.", archive, record);
-                    return null;
-                }
-
-                // Insert into texture array
-                textureArray.SetPixels32(metallicGlossMap.GetPixels32(), record, 0);
-            }
-            textureArray.Apply(true, !stayReadable);
+            textureArray.Apply(true);
 
             // Change settings for these textures
             textureArray.wrapMode = TextureWrapMode.Clamp;

@@ -1,10 +1,10 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Hazelnut
-// Contributors:    
+// Contributors:
 
 using System.Collections.Generic;
 using DaggerfallConnect;
@@ -39,10 +39,6 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         #region Properties & Data
 
-        static string[] rankTitles = {
-                "Apprentice", "Journeyman", "Filcher", "Crook", "Robber", "Bandit", "Thief", "Ringleader", "Mastermind", "Master Thief"
-        };
-
         static List<DFCareer.Skills> guildSkills = new List<DFCareer.Skills>() {
                 DFCareer.Skills.Backstabbing,
                 DFCareer.Skills.Climbing,
@@ -67,7 +63,7 @@ namespace DaggerfallWorkshop.Game.Guilds
                 DFCareer.Skills.Swimming
             };
 
-        public override string[] RankTitles { get { return rankTitles; } }
+        public override string[] RankTitles { get { return TextManager.Instance.GetLocalizedTextList("thievesRanks"); } }
 
         public override List<DFCareer.Skills> GuildSkills { get { return guildSkills; } }
 
@@ -176,7 +172,7 @@ namespace DaggerfallWorkshop.Game.Guilds
             RevealGuildHallOnMap();
         }
 
-        override public void Leave() 
+        override public void Leave()
         {
             UnregisterEvents();
         }
@@ -282,7 +278,7 @@ namespace DaggerfallWorkshop.Game.Guilds
 
             public override string Dungeon()
             {
-                return parent.revealedDungeon.Name;
+                return TextManager.Instance.GetLocalizedLocationName(parent.revealedDungeon.MapTableData.MapId, parent.revealedDungeon.Name);
             }
         }
 

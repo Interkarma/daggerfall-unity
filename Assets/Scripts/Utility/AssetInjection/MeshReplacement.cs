@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -168,7 +168,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <summary>
         /// Ensures that the requested imported model is assigned to the given transform and is positioned correctly.
         /// If archive and record mismatch, the requested prefab is imported while currently loaded gameobject is destroyed.
-        /// This has a similar purpose to <see cref="DaggerfallBillboard.SetMaterial(int, int, int)"/>.
+        /// This has a similar purpose to <see cref="Billboard.SetMaterial(int, int, int)"/>.
         /// </summary>
         /// <param name="archive">Texture archive for original billboard.</param>
         /// <param name="record">Texture record for original billboard.</param>
@@ -353,8 +353,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         private static void AlignToBase(Transform transform, Vector3 position, int archive, int record, bool inDungeon)
         {
-            // Fix origin position for dungeon flats
-            if (inDungeon)
+            // Fix origin position for dungeon flats - ignore treasure flats or they get aligned twice
+            if (inDungeon && archive != TextureReader.FixedTreasureFlatsArchive)
             {
                 int height = ImageReader.GetImageData(TextureFile.IndexToFileName(archive), record, createTexture: false).height;
                 position.y -= height / 2 * MeshReader.GlobalScale;

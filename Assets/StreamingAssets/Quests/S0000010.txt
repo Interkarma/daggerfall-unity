@@ -87,13 +87,13 @@ QuestLogEntry:  [1010]
 <ce>               You interfere with the plans of The King
 <ce>                 of Worms. Fear for your mortal life!
                                      <--->
-<ce>                The King of Worms demands vengence. You
+<ce>                The King of Worms demands vengeance. You
 <ce>                stole what was rightfully his. Now you
 <ce>                  must join the kingdom of the dead.
                                      <--->
 <ce>                 Foolish flesh and blood. Do not defy
 <ce>                the Lord of the Dead. The King of Worms
-<ce>                        will have his vengence.
+<ce>                        will have his vengeance.
                                      <--->
 <ce>                  You should never have touched that
 <ce>                     _reward_. It is a gateway to

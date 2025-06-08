@@ -1,0 +1,425 @@
+﻿.row {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.row.center {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.row.right {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.flex-grow {
+    flex: 1 0 auto;
+}
+
+.shrink {
+    flex: 0 1 auto;
+}
+
+.col-1 {
+    flex: 0 0 25%;
+}
+
+.col-2 {
+    flex: 0 0 50%;
+}
+
+.col-3 {
+    flex: 0 0 75%;
+}
+
+.col-4 {
+    flex: 0 0 100%;
+}
+
+.pl {
+    padding-left: 10px;
+}
+
+.pr {
+    padding-right: 10px;
+}
+
+.pt {
+    padding-top: 5px;
+}
+
+.pb {
+    padding-bottom: 5px;
+}
+
+.ml {
+    margin-left: 10px;
+}
+
+.mr {
+    margin-right: 10px;
+}
+
+.mt {
+    margin-top: 5px;
+}
+
+.mb {
+    margin-bottom: 5px;
+}
+
+.splitter {
+    height: 1px;
+    margin: 10px;
+    border-color: darkgray;
+    border-bottom-width: 1px;
+}
+
+.hidden {
+    display: none;
+}
+
+.center {
+    -unity-text-align: middle-center;
+}
+
+.align-right {
+    -unity-text-align: middle-right;
+}
+
+.align-left {
+    -unity-text-align: middle-left;
+}
+
+.popup {
+    height: 200px;
+}
+
+.active {
+    background-color: lightgray;
+    color: black;
+}
+
+.height-500 {
+    height: 500px;
+}
+
+.height-450 {
+    height: 450px;
+}
+
+.height-400 {
+    height: 400px;
+}
+
+.height-325 {
+    height: 325px;
+}
+
+.height-300 {
+    height: 300px;
+}
+
+.rmb-ground-grid-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    height: 32px;
+}
+
+.rmb-ground-grid-row > * {
+    flex: 0 0 32px;
+}
+
+.rmb-terrain-grid {
+    width: 512px;
+    height: 512px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.rmb-palette-grid {
+    width: 252px;
+    height: 320px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.rmb-palette-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    height: 36px;
+}
+
+.rmb-palette-row > * {
+    flex: 1 1 36px;
+}
+
+.rmb-palette-grid > * {
+    flex: 1 1 36px;
+}
+
+.rmb-preview {
+    width: 256px;
+    height: 256px;
+    margin-bottom: 10px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.object-list-foldout Toggle {
+    margin-left: 0px;
+}
+
+.object-list-foldout Toggle:hover {
+    background-color: darkgray;
+}
+
+.object-list-foldout.selected Toggle {
+    background-color: darkgray;
+}
+
+.object-list-foldout Toggle:hover .unity-toggle__text {
+    color: black;
+}
+
+.object-list-foldout.selected Toggle .unity-toggle__text {
+    color: black;
+}
+
+.object-list-foldout Toggle:hover .unity-toggle__checkmark {
+    -unity-background-image-tint-color: black;
+}
+
+.object-list-button {
+    height: 20px;
+    -unity-text-align: middle-left;
+    border-width: 0;
+    background-color: initial;
+}
+
+.object-list-button:hover {
+    background-color: darkgray;
+    color: black;
+}
+
+.object-list-button.selected {
+    background-color: darkgray;
+    color: black;
+}
+
+.toggle-button {
+    background-color: #5D5D5D;
+
+    height: 20px;
+    margin-bottom: 1px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+
+    border-width: 1px;
+    border-color: #282828;
+    border-radius: 4px;
+}
+
+.toggle-button:checked {
+    background-color: #313131;
+}
+
+.toggle-button .unity-toggle__input {
+    justify-content: center;
+}
+
+.toggle-button:hover {
+    background-color: dimgray;
+}
+
+.toggle-button .unity-toggle__checkmark {
+    display: none;
+}
+
+.bold {
+    -unity-font-style: bold;
+}
+
+.h1 {
+    -unity-text-align: middle-center;
+    font-size: 20;
+}
+
+.h2 {
+    -unity-text-align: middle-center;
+    font-size: 18;
+}
+
+.h3 {
+    -unity-text-align: middle-center;
+    font-size: 16;
+}
+
+.automap-cell {
+    width: 5px;
+    height: 5px;
+}
+
+.automap-cell:hover {
+    border-width: 1px;
+    border-color: crimson;
+}
+
+.automap-palette-cell {
+    border-width: 1px;
+    border-color: black;
+    width: 20px;
+    height: 20px;
+}
+
+.automap-palette-cell:hover {
+    border-color: crimson;
+}
+
+.automap-palette-cell.selected {
+    border-width: 3px;
+    border-color: white;
+}
+
+.black {
+    background-color: black;
+}
+
+.gray {
+    background-color: dimgray;
+}
+
+
+.orange {
+    background-color: orangered;
+}
+
+.green {
+    background-color: darkgreen;
+}
+
+.blue {
+    background-color: dodgerblue;
+}
+
+.tan {
+    background-color: tan;
+}
+
+.magenta {
+    background-color: magenta;
+}
+
+.scenery-cell {
+    width: 128px;
+    height: 128px;
+    border-width: 1px;
+    border-color: black;
+}
+
+.scenery-cell.selected {
+    border-width: 3px;
+    border-color: white;
+}
+
+.tab {
+    background-color: #2A2A2A;
+    border-width: 0;
+    border-radius: 0;
+    margin: 0;
+}
+
+.tab:hover {
+    background-color: #313030;
+}
+
+.tab.selected {
+    background-color: #383838;
+    border-top-width: 3px;
+    border-top-color: dodgerblue;
+}
+
+.import-icon {
+    background-image: resource("Assets/Game/Addons/RmbBlockEditor/Editor/Assets/import.png");
+    width: 20px;
+    height: 20px;
+    margin: 5px;
+}
+
+.export-icon {
+    background-image: resource("Assets/Game/Addons/RmbBlockEditor/Editor/Assets/export.png");
+    width: 20px;
+    height: 20px;
+    margin: 5px;
+}
+
+.remove-icon {
+    background-image: resource("Assets/Game/Addons/RmbBlockEditor/Editor/Assets/remove.png");
+    width: 20px;
+    height: 20px;
+    margin: 5px;
+}
+
+.sync-icon {
+    background-image: resource("Assets/Game/Addons/RmbBlockEditor/Editor/Assets/sync.png");
+    width: 20px;
+    height: 20px;
+    margin: 5px;
+}
+
+.wde-icon {
+    background-image: resource("Assets/Game/Addons/RmbBlockEditor/Editor/Assets/wde.png");
+    width: 20px;
+    height: 20px;
+    margin: 5px;
+}
+
+.file-search-icon {
+    background-image: resource("Assets/Game/Addons/RmbBlockEditor/Editor/Assets/file-search.png");
+    width: 20px;
+    height: 20px;
+    margin: 5px;
+}
+
+.add-icon {
+    background-image: resource("Assets/Game/Addons/RmbBlockEditor/Editor/Assets/add.png");
+    width: 20px;
+    height: 20px;
+    margin: 5px;
+}
+
+.save-icon {
+    background-image: resource("Assets/Game/Addons/RmbBlockEditor/Editor/Assets/save.png");
+    width: 20px;
+    height: 20px;
+    margin: 5px;
+}
+
+.edit-icon {
+    background-image: resource("Assets/Game/Addons/RmbBlockEditor/Editor/Assets/edit.png");
+    width: 20px;
+    height: 20px;
+    margin: 5px;
+}
+
+.catalog-icon {
+    background-image: resource("Assets/Game/Addons/RmbBlockEditor/Editor/Assets/catalog.png");
+    width: 20px;
+    height: 20px;
+    margin: 5px;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.thumbnail{
+    width: 100px;
+    height: 100px;
+}

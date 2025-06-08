@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -34,6 +34,7 @@ namespace DaggerfallWorkshop.Utility
 
         public static System.Random random = new System.Random();
 
+        
         #region macro definitions and handler mappings
 
         static Dictionary<string, MacroHandler> macroHandlers = new Dictionary<string, MacroHandler>()
@@ -100,6 +101,7 @@ namespace DaggerfallWorkshop.Utility
             { "%g2", Pronoun2 },  // Him/Her etc...
             { "%g2self", Pronoun2self },// Himself/Herself etc...
             { "%g3", Pronoun3 },  // His/Her
+            { "%g4", Pronoun4 },  // His/Hers
             { "%gii", GoldCarried }, // Amount of gold in hand
             { "%gdd", GodDesc }, // God description i.e. God of Logic
             { "%god", God }, // God of current region or current temple
@@ -230,10 +232,17 @@ namespace DaggerfallWorkshop.Utility
         // DF Unity - new macros:
             { "%", Percent }, // Not really a macro, just print %
             { "%pg", PlayerPronoun },   // He/She (player)
-            { "%pg1", PlayerPronoun1 },  // His/Her (player)
+            { "%pg1", PlayerPronoun },  // He/She (player)
             { "%pg2", PlayerPronoun2 }, // Him/Her (player)
             { "%pg2self", PlayerPronoun2self },// Himself/Herself (player)
             { "%pg3", PlayerPronoun3 },  // His/Her (player)
+            { "%pg4", PlayerPronoun4 },  // His/Hers (player)
+            { "%G", PronounCap }, // He/She, first letter capitalized
+            { "%G1", PronounCap }, // He/She, first letter capitalized
+            { "%G2", Pronoun2Cap }, // Him/Her, first letter capitalized
+            { "%G2self", Pronoun2selfCap }, // Himself/Herself, first letter capitalized
+            { "%G3", Pronoun3Cap }, // His/Her, first letter capitalized
+            { "%G4", Pronoun4Cap }, // His/Hers, first letter capitalized
             { "%hrn", HomeRegion },  // Home region (of person)
             { "%pcl", PlayerLastname }, // Character's last name
             { "%day", DayNum }, // Current day of the month (ex: 1, 2, ..., 30)
@@ -389,12 +398,18 @@ namespace DaggerfallWorkshop.Utility
             }
         }
 
+        private static string CapFirst(string tempString)
+        {
+            // Capitalizes first letter of a string, e.g. for capitalized pronoun macros
+            return tempString.Substring(0, 1).ToUpper() + tempString.Substring(1);
+        }
+
         #endregion
 
         #region Macro Expansion Code
 
         // Any non-alpha characters that can be on the end of a macro symbol need adding here.
-        static readonly char[] MACRO_TERMINATORS = { ' ', '%', '.', ',', '\'', '?', '!', '/', '(', ')', '{', '}', '[', ']', '\"', ';', ':' };
+        static readonly char[] MACRO_TERMINATORS = { ' ', '%', '.', ',', '\'', '?', '!', '/', '(', ')', '{', '}', '[', ']', '\"', ';', ':', '|' };
 
         /// <summary>
         /// Expands any macros in the textfile tokens.
@@ -452,6 +467,11 @@ namespace DaggerfallWorkshop.Utility
 
                             // Iterate from macro end
                             currentPos = endPos;
+
+                            // "Eating" the | terminator (for postfixes purpose)
+                            // Example: '%di|ern' => 'southern'
+                            if (currentPos < tokenText.Length && tokenText[currentPos] == '|')
+                                currentPos++;                        
                         }
 
                         // Add the rest of the text
@@ -548,9 +568,9 @@ namespace DaggerfallWorkshop.Utility
         {   // %cn
             PlayerGPS gps = GameManager.Instance.PlayerGPS;
             if (gps.HasCurrentLocation)
-                return gps.CurrentLocation.Name;
+                return gps.CurrentLocalizedLocationName;
             else
-                return gps.CurrentRegion.Name;
+                return gps.CurrentLocalizedRegionName;
         }
 
         private static string CityName2(IMacroContextProvider mcp)
@@ -560,14 +580,14 @@ namespace DaggerfallWorkshop.Utility
             for (int i = 0; i < dfRegion.LocationCount; i++)
             {
                 if (GameManager.Instance.PlayerGPS.CurrentLocationIndex != i && dfRegion.MapTable[i].LocationType == DFRegion.LocationTypes.TownCity)
-                    return dfRegion.MapNames[i];
+                    return TextManager.Instance.GetLocalizedLocationName(dfRegion.MapTable[i].MapId, dfRegion.MapNames[i]);
             }
-            return "Daggerfall";
+            return TextManager.Instance.GetLocalizedText("daggerfall"); // Localizaed fallback in case of error
         }
 
         private static string CurrentRegion(IMacroContextProvider mcp)
         {   // %crn
-            return GameManager.Instance.PlayerGPS.CurrentRegion.Name;
+            return GameManager.Instance.PlayerGPS.CurrentLocalizedRegionName;
         }
 
         private static string CityType(IMacroContextProvider mcp)
@@ -838,18 +858,18 @@ namespace DaggerfallWorkshop.Utility
             DFLocation.BuildingData buildingData = buildingInterior.BuildingData;
             PlayerGPS gps = GameManager.Instance.PlayerGPS;
             DFLocation location = gps.CurrentLocation;
-            return BuildingNames.GetName(buildingData.NameSeed, buildingData.BuildingType, buildingData.FactionId, location.Name, location.RegionName);
+            return BuildingNames.GetName(
+                buildingData.NameSeed,
+                buildingData.BuildingType,
+                buildingData.FactionId,
+                TextManager.Instance.GetLocalizedLocationName(location.MapTableData.MapId, location.Name),
+                TextManager.Instance.GetLocalizedRegionName(location.RegionIndex));
         }
 
         private static string PlayerPronoun(IMacroContextProvider mcp)
         {   // %pg
             return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? TextManager.Instance.GetLocalizedText("pronounShe") : TextManager.Instance.GetLocalizedText("pronounHe");
         }
-        private static string PlayerPronoun1(IMacroContextProvider mcp)
-        {   // %pg1 (same as %pg3)
-            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? TextManager.Instance.GetLocalizedText("pronounHer") : TextManager.Instance.GetLocalizedText("pronounHis");
-        }
-
         private static string PlayerPronoun2(IMacroContextProvider mcp)
         {   // %pg2
             return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? TextManager.Instance.GetLocalizedText("pronounHer") : TextManager.Instance.GetLocalizedText("pronounHim");
@@ -860,7 +880,11 @@ namespace DaggerfallWorkshop.Utility
         }
         private static string PlayerPronoun3(IMacroContextProvider mcp)
         {   // %pg3
-            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? TextManager.Instance.GetLocalizedText("pronounHer") : TextManager.Instance.GetLocalizedText("pronounHis");
+            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? TextManager.Instance.GetLocalizedText("pronounHer2") : TextManager.Instance.GetLocalizedText("pronounHis");
+        }
+        private static string PlayerPronoun4(IMacroContextProvider mcp)
+        {   // %pg4
+            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? TextManager.Instance.GetLocalizedText("pronounHers") : TextManager.Instance.GetLocalizedText("pronounHis2");
         }
 
         private static string Honorific(IMacroContextProvider mcp)
@@ -1026,7 +1050,7 @@ namespace DaggerfallWorkshop.Utility
         {   // %reg
             if (idRegion != -1)
             {
-                return MapsFile.RegionNames[idRegion];
+                return TextManager.Instance.GetLocalizedRegionName(idRegion);
             }
             else
                 return CurrentRegion(mcp);
@@ -1308,7 +1332,37 @@ namespace DaggerfallWorkshop.Utility
             if (mcp == null) return null;
             return mcp.GetMacroDataSource().Pronoun3();
         }
-
+        public static string Pronoun4(IMacroContextProvider mcp)
+        {   // %g4
+            if (mcp == null) return null;
+            return mcp.GetMacroDataSource().Pronoun4();
+        }
+        public static string PronounCap(IMacroContextProvider mcp)
+        {   // %G & %G1
+            if (mcp == null) return null;
+            return CapFirst(mcp.GetMacroDataSource().Pronoun());
+        }
+        public static string Pronoun2Cap(IMacroContextProvider mcp)
+        {   // %G2
+            if (mcp == null) return null;
+            return CapFirst(mcp.GetMacroDataSource().Pronoun2());
+        }
+        public static string Pronoun2selfCap(IMacroContextProvider mcp)
+        {   // %G2self
+            if (mcp == null) return null;
+            return CapFirst(mcp.GetMacroDataSource().Pronoun2self());
+        }
+        public static string Pronoun3Cap(IMacroContextProvider mcp)
+        {   // %G3
+            if (mcp == null) return null;
+            return CapFirst(mcp.GetMacroDataSource().Pronoun3());
+        }
+        public static string Pronoun4Cap(IMacroContextProvider mcp)
+        {   // %G4
+            if (mcp == null) return null;
+            return CapFirst(mcp.GetMacroDataSource().Pronoun4());
+        }
+        
         public static string QuestDate(IMacroContextProvider mcp)
         {   // %qdt
             if (mcp == null) return null;

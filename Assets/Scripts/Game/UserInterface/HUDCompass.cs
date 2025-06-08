@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -152,8 +152,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             compassDstRect.width = compassBoxRect.width - (boxOutlineSize * 2) * Scale.x;
             compassDstRect.height = compassTextureHeight * Scale.y;
 
-            GUI.DrawTextureWithTexCoords(compassDstRect, compassTexture, compassSrcRect, false);
-            GUI.DrawTexture(compassBoxRect, compassBoxTexture, ScaleMode.StretchToFill, true);
+            DaggerfallUI.DrawTextureWithTexCoords(compassDstRect, compassTexture, compassSrcRect, false);
+            DaggerfallUI.DrawTexture(compassBoxRect, compassBoxTexture, ScaleMode.StretchToFill, true);
         }
 
         /// <summary>
@@ -205,6 +205,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                     continue;
                 }
 
+                if (detector.DetectedObjects == null || detector.DetectedObjects.Count == 0)
+                    continue;
+
                 foreach(PlayerGPS.NearbyObject no in detector.DetectedObjects)
                 {
                     if (no.gameObject != null)
@@ -245,7 +248,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             };
 
             // Draw marker
-            GUI.DrawTexture(markerRect, defaultTrackingIcon, ScaleMode.StretchToFill, true);
+            DaggerfallUI.DrawTexture(markerRect, defaultTrackingIcon, ScaleMode.StretchToFill, true);
         }
 
         float ChangeRange(float value, float oldMin, float oldMax, float newMin, float newMax)

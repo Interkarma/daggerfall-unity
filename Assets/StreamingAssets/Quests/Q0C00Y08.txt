@@ -121,7 +121,7 @@ Item _mitem_ magic_item
 Item _book_ book2
 
 Person _qgiver_ group Questor
-Person _daedra_ face 1 factiontype Daedra local
+Person _daedra_ face 1 factiontype Daedra remote
 Person _contact_ face 68 group Innkeeper male remote
 
 
@@ -130,8 +130,11 @@ Clock _queston_ 00:00 0 flag 17 range 1 2
 Foe _guard_ is Knight
 
 --	Quest start-up:
+	hide npc _daedra_
 	start timer _queston_ 
 	log 1010 step 0 
+-- hide NPC added to ensure this dummy character won't appear in the wild somewhere.
+-- this NPC is never used in the game world, only as a name drop.
 
 variable _queston_
 _S.01_ task:

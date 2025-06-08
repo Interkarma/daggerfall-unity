@@ -4,9 +4,24 @@
 ShaderVariantCollection:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: RequiredShaderVariants
   m_Shaders:
+  - first: {fileID: 69, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+      - keywords: DIRECTIONAL
+        passType: 0
+      - keywords: POINT
+        passType: 0
+  - first: {fileID: 74, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
   - first: {fileID: 19, guid: 0000000000000000f000000000000000, type: 0}
     second:
       variants:
@@ -30,20 +45,6 @@ ShaderVariantCollection:
         passType: 10
       - keywords: DYNAMICLIGHTMAP_OFF LIGHTMAP_OFF _ALPHATEST_ON _EMISSION
         passType: 10
-  - first: {fileID: 74, guid: 0000000000000000f000000000000000, type: 0}
-    second:
-      variants:
-      - keywords: 
-        passType: 0
-  - first: {fileID: 69, guid: 0000000000000000f000000000000000, type: 0}
-    second:
-      variants:
-      - keywords: 
-        passType: 0
-      - keywords: DIRECTIONAL
-        passType: 0
-      - keywords: POINT
-        passType: 0
   - first: {fileID: 7, guid: 0000000000000000f000000000000000, type: 0}
     second:
       variants: []
@@ -96,36 +97,54 @@ ShaderVariantCollection:
   - first: {fileID: 15106, guid: 0000000000000000f000000000000000, type: 0}
     second:
       variants: []
-  - first: {fileID: 4800000, guid: 3a75d81502a8b4b7fb733569265fee21, type: 3}
-    second:
-      variants: []
-  - first: {fileID: 4800000, guid: 5bff224b61060e0408662aba62db27b3, type: 3}
-    second:
-      variants: []
-  - first: {fileID: 4800000, guid: 6e33654e7c7c2a248ae1a18b7f4053b6, type: 3}
-    second:
-      variants: []
-  - first: {fileID: 4800000, guid: 7a713b7991f72154d9f5c6a8686cb591, type: 3}
-    second:
-      variants: []
-  - first: {fileID: 4800000, guid: 7b9172fb89843ab41a3168cc36c30284, type: 3}
-    second:
-      variants: []
-  - first: {fileID: 4800000, guid: 9e17799a9c6ba5d41bf2993505b5ba6a, type: 3}
-    second:
-      variants: []
-  - first: {fileID: 4800000, guid: 9e6df0875b8898444a3b513dc8afd6dd, type: 3}
-    second:
-      variants: []
-  - first: {fileID: 4800000, guid: b3b66e5aa3f45264cb796d5d0318b834, type: 3}
+  - first: {fileID: 4800000, guid: c3b8c2f21d1ea43498ec1f71a3055a89, type: 3}
     second:
       variants: []
   - first: {fileID: 4800000, guid: c00ec253908944d40b3d24bf64b4bb31, type: 3}
     second:
       variants: []
-  - first: {fileID: 4800000, guid: c3b8c2f21d1ea43498ec1f71a3055a89, type: 3}
+  - first: {fileID: 4800000, guid: 3a75d81502a8b4b7fb733569265fee21, type: 3}
     second:
       variants: []
   - first: {fileID: 4800000, guid: bf15c7c5b18dd46d6b388566c7308470, type: 3}
+    second:
+      variants: []
+  - first: {fileID: 4800000, guid: a5ff30e56bb71d24d9eee4b8af0b25ba, type: 3}
+    second:
+      variants: []
+  - first: {fileID: 4800000, guid: 452ba406f28df487a92bfee64cf0df38, type: 3}
+    second:
+      variants: []
+  - first: {fileID: 4800000, guid: 91530837b4a4d414c8aaf7899343ac5d, type: 3}
+    second:
+      variants: []
+  - first: {fileID: 4800000, guid: 9e6df0875b8898444a3b513dc8afd6dd, type: 3}
+    second:
+      variants: []
+  - first: {fileID: 4800000, guid: 342732c70e47440889e202f010447560, type: 3}
+    second:
+      variants: []
+  - first: {fileID: 4800000, guid: 7a713b7991f72154d9f5c6a8686cb591, type: 3}
+    second:
+      variants: []
+  - first: {fileID: 4800000, guid: b3b66e5aa3f45264cb796d5d0318b834, type: 3}
+    second:
+      variants: []
+  - first: {fileID: 4800000, guid: e996686a8ad15f2428c38844916bc506, type: 3}
+    second:
+      variants: []
+  - first: {fileID: 4800000, guid: 9e17799a9c6ba5d41bf2993505b5ba6a, type: 3}
+    second:
+      variants: []
+  - first: {fileID: 4800000, guid: 5bff224b61060e0408662aba62db27b3, type: 3}
+    second:
+      variants: []
+  - first: {fileID: 4800000, guid: 7b9172fb89843ab41a3168cc36c30284, type: 3}
+    second:
+      variants: []
+  - first: {fileID: 4800000, guid: 6fd072ecc59c7524091b38759148f9ce, type: 3}
+    second:
+      variants: []
+  - first: {fileID: 4800000, guid: 6e33654e7c7c2a248ae1a18b7f4053b6, type: 3}
     second:
       variants: []

@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -292,7 +292,7 @@ namespace DaggerfallWorkshop.Utility
                     int archive = AssetInjection.TextureReplacement.FileNameToArchive(filename);
                     if (createTexture && AssetInjection.TextureReplacement.TryImportTexture(archive, record, frame, out imageData.texture))
                         createTexture = false;
-                    if (createAllFrameTextures && frameCount > 1 && AssetInjection.TextureReplacement.TryImportTexture(archive, record, out imageData.animatedTextures))
+                    if (createAllFrameTextures && AssetInjection.TextureReplacement.TryImportTexture(archive, record, out imageData.animatedTextures))
                         createAllFrameTextures = false;
 
                     break;

@@ -1,11 +1,4 @@
--- Quest: C:\QUESTS\WORKING\K0C00Y03.Qbn.
--- StartsBy: NPC
--- Questee: anyone
--- Questor: merchant
--- Repute: 0
--- QuestId: 3
 -- Edited for Daggerfall Unity by Jay_H
-Messages: 18
 Quest: K0C00Y03
 DisplayName: Smuggling
 -- Message panels
@@ -199,8 +192,9 @@ Foe _guard_ is Knight
 	log 1010 step 0 
 	get item _item_ 
 	pick one of _whip_ _S.02_ 
-	legal repute -100 
+	legal repute -10
 	place npc _contact_ at _conhouse_ 
+--legal repute set to - and + 10 only. 100 for mere smuggling is ridiculous.
 
 variable _traveltime_
 _whip_ task:
@@ -234,7 +228,7 @@ _S.08_ task:
 _reward_ task:
 	toting _item_ and _contact_ clicked 
 	give pc _gold_ 
-	legal repute +100 
+	legal repute +10
 	end quest 
 
 _S.10_ task:
@@ -243,7 +237,7 @@ _S.10_ task:
 _S.11_ task:
 	when _S.10_ and _whip_ 
 	say 1014 
-	legal repute +100 
+	legal repute +10
 	end quest 
 
 _S.12_ task:

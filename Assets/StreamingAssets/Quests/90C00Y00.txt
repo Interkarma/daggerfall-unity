@@ -137,6 +137,7 @@ Message:  1020
 QBN:
 Item _artifact_ artifact Skull_of_Corruption anyInfo 1014
 
+Person _questgiver_ face 112 named Vaernima anyInfo 1013
 Person _qgfriend_ group Librarian anyInfo 1011 rumors 1012
 
 Place _mondung_ remote dungeon

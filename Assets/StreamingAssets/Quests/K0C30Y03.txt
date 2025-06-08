@@ -161,7 +161,7 @@ Message:  1017
 <ce>                     Ah, good to see you, %pcf. We
 <ce>                 are having a bit of excitement lately
 <ce>                with the robbery and all. Only certain
-<ce>                 accounts and deposits were targetted,
+<ce>                 accounts and deposits were targeted,
 <ce>                    so _guard_, our security agent,
 <ce>                 is looking into the holders of those
 <ce>                  accounts. Perhaps %g might be able

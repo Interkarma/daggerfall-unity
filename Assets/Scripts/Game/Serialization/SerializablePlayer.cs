@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -163,6 +163,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             data.playerEntity.previousVampireClan = entity.PreviousVampireClan;
             data.playerEntity.daedraSummonDay = entity.DaedraSummonDay;
             data.playerEntity.daedraSummonIndex = entity.DaedraSummonIndex;
+            data.playerEntity.anchorPosition = entity.AnchorPosition;
 
             data.playerEntity.regionData = entity.RegionData;
             data.playerEntity.rentedRooms = entity.RentedRooms.ToArray();
@@ -183,6 +184,10 @@ namespace DaggerfallWorkshop.Game.Serialization
             {
                 data.playerPosition.exteriorDoors = playerEnterExit.ExteriorDoors;
                 data.playerPosition.buildingDiscoveryData = playerEnterExit.BuildingDiscoveryData;
+            }
+            if (playerEnterExit.IsPlayerInsideDungeon)
+            {
+                data.playerPosition.playerTeleportedIntoDungeon = playerEnterExit.PlayerTeleportedIntoDungeon;
             }
             // Store guild memberships
             data.guildMemberships = GameManager.Instance.GuildManager.GetMembershipData();
@@ -326,6 +331,7 @@ namespace DaggerfallWorkshop.Game.Serialization
             entity.PreviousVampireClan = data.playerEntity.previousVampireClan;
             entity.DaedraSummonDay = data.playerEntity.daedraSummonDay;
             entity.DaedraSummonIndex = data.playerEntity.daedraSummonIndex;
+            entity.AnchorPosition = data.playerEntity.anchorPosition;
 
             entity.RentedRooms = (data.playerEntity.rentedRooms != null) ? data.playerEntity.rentedRooms.ToList() : new List<RoomRental_v1>();
 
@@ -393,6 +399,11 @@ namespace DaggerfallWorkshop.Game.Serialization
                 playerEnterExit.IsPlayerInsideResidence = data.playerPosition.insideResidence;
             }
 
+            if (data.playerPosition.insideDungeon)
+            {
+                playerEnterExit.PlayerTeleportedIntoDungeon = data.playerPosition.playerTeleportedIntoDungeon;
+            }
+
             // Lower player position flag if inside with no doors
             if (data.playerPosition.insideBuilding && !hasExteriorDoors)
             {
@@ -447,9 +458,22 @@ namespace DaggerfallWorkshop.Game.Serialization
                 transform.position = positionData.position;
             }
 
+            // If player saved with opposite smaller dungeon state then warp to start marker
+            bool smallerDungeons = (positionData.smallerDungeonsState == QuestSmallerDungeonsState.Enabled) ? true : false;
+            if (positionData.worldContext == WorldContext.Dungeon && smallerDungeons != DaggerfallUnity.Settings.SmallerDungeons)
+            {
+                // Exclude story dungeons as these never use smaller dungeons setting
+                // Avoids player being warped to exit if they toggle in the middle of a main quest dungeon crawl
+                bool isStoryDungeon = DaggerfallDungeon.IsMainStoryDungeon(playerEnterExit.Dungeon.Summary.ID);
+                if (!isStoryDungeon)
+                {
+                    transform.position = playerEnterExit.Dungeon.StartMarker.transform.position;
+                    DaggerfallUI.AddHUDText(TextManager.Instance.GetLocalizedText("smallerDungeonsChanged"));
+                }
+            }
+
             // Restore orientation and crouch state
-            playerMouseLook.Yaw = positionData.yaw;
-            playerMouseLook.Pitch = positionData.pitch;
+            playerMouseLook.SetFacing(positionData.yaw, positionData.pitch); // Gives PlayerMouseLook the opportunity to initialize data members for new smoothing code
             playerMotor.IsCrouching = positionData.isCrouching;
         }
 

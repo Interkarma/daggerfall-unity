@@ -186,10 +186,8 @@ Message:  1099
 QBN:
 Item _item_ book2
 Item _reward_ gold
-Item _clanfeather1_ harpy_feather anyInfo 1030
-Item clanfeather2 harpy_feather anyInfo 1031
-Item clanfeather3 harpy_feather anyInfo 1032
-Item clanfeather4 harpy_feather anyInfo 1032
+Item _clanfeather1_ harpy_feather
+-- feather "dialogue" was weird and out of place. Removed from quest since they contribute nothing
 Item _letter26_ letter used 1012
 Item _jewelry_ trinket
 

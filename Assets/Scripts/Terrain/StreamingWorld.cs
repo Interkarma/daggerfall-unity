@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -464,10 +464,17 @@ namespace DaggerfallWorkshop
             // Create loose object description
             LooseObjectDesc desc = new LooseObjectDesc();
             desc.gameObject = gameObject;
+
             if (mapPixelX == -1)
                 desc.mapPixelX = MapPixelX;
+            else
+                desc.mapPixelX = mapPixelX;
+
             if (mapPixelY == -1)
                 desc.mapPixelY = MapPixelY;
+            else
+                desc.mapPixelY = mapPixelY;
+
             desc.statefulObj = statefulObj;
             looseObjectsList.Add(desc);
 
@@ -1691,11 +1698,11 @@ namespace DaggerfallWorkshop
                 MapPixelY,
                 LocalPlayerGPS.WorldX,
                 LocalPlayerGPS.WorldZ,
-                LocalPlayerGPS.CurrentRegionName,
+                LocalPlayerGPS.CurrentLocalizedRegionName,
                 LocalPlayerGPS.ClimateSettings.ClimateType.ToString());
             if (LocalPlayerGPS.CurrentLocation.Loaded)
             {
-                final += string.Format(" {0} is nearby.", LocalPlayerGPS.CurrentLocation.Name);
+                final += string.Format(" {0} is nearby.", LocalPlayerGPS.CurrentLocalizedLocationName);
             }
 
             return final;

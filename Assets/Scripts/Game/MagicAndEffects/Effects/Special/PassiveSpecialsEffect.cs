@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -208,9 +208,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         void LightPoweredMagery()
         {
-            // Entity suffers darkness disadvantage at night or inside dungeons
-            // They will not receive penalty going in and out of well-lit buildings during the day
-            if (DaggerfallUnity.Instance.WorldTime.Now.IsNight || GameManager.Instance.PlayerEnterExit.WorldContext == WorldContext.Dungeon)
+            // Entity suffers darkness disadvantage at night or inside dungeons and buildings
+            if (DaggerfallUnity.Instance.WorldTime.Now.IsNight || GameManager.Instance.PlayerEnterExit.IsPlayerInside)
             {
                 // Disadvantage has two variants
                 switch (entityBehaviour.Entity.Career.LightPoweredMagery)

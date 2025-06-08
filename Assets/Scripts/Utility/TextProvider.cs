@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -126,6 +126,14 @@ namespace DaggerfallWorkshop.Utility
         int GetStatDescriptionTextID(DFCareer.Stats stat);
 
         /// <summary>
+        /// Gets the name associated with a custom enemy id (ie: not defined in MobileTypes).
+        /// Returns null if the enemy id is unknown.
+        /// </summary>
+        /// <param name="enemyId">Custom enemy id</param>
+        /// <returns>Name if the enemy id is known, null otherwise</returns>
+        string GetCustomEnemyName(int enemyId);
+
+        /// <summary>
         /// Attempts to read a localized string from a named table collection.
         /// </summary>
         /// <param name="collection">Name of table collection.</param>
@@ -139,6 +147,7 @@ namespace DaggerfallWorkshop.Utility
         /// </summary>
         /// <param name="enable">True to enable, false to disable.</param>
         void EnableLocalizedStringDebug(bool enable);
+
     }
 
     /// <summary>
@@ -294,10 +303,11 @@ namespace DaggerfallWorkshop.Utility
             StringTable table = null;
             var sd = LocalizationSettings.StringDatabase;
             var op = sd.GetTableAsync(collection);
+            op.WaitForCompletion();
             if (op.IsDone)
                 table = op.Result;
             else
-                op.Completed += (o) => table = o.Result;
+                Debug.LogErrorFormat("GetLocalizedString() failed on collection='{0}' id='{1}'", collection, id);
 
             if (table != null)
             {
@@ -410,7 +420,7 @@ namespace DaggerfallWorkshop.Utility
                 case DFCareer.Skills.Jumping:
                     return TextManager.Instance.GetLocalizedText("jumping");
                 case DFCareer.Skills.Orcish:
-                    return TextManager.Instance.GetLocalizedText("orcish");
+                    return TextManager.Instance.GetLocalizedTextWithReversion("orcishSkill", reversion: TextManager.Instance.GetLocalizedText("orcish"));
                 case DFCareer.Skills.Harpy:
                     return TextManager.Instance.GetLocalizedText("harpy");
                 case DFCareer.Skills.Giantish:
@@ -420,7 +430,7 @@ namespace DaggerfallWorkshop.Utility
                 case DFCareer.Skills.Nymph:
                     return TextManager.Instance.GetLocalizedText("nymph");
                 case DFCareer.Skills.Daedric:
-                    return TextManager.Instance.GetLocalizedText("daedric");
+                    return TextManager.Instance.GetLocalizedTextWithReversion("daedricSkill", reversion: TextManager.Instance.GetLocalizedText("daedric"));
                 case DFCareer.Skills.Spriggan:
                     return TextManager.Instance.GetLocalizedText("spriggan");
                 case DFCareer.Skills.Centaurian:
@@ -592,6 +602,12 @@ namespace DaggerfallWorkshop.Utility
                 default:
                     return -1;
             }
+        }
+
+        // This interface function is meant for mods, the default TextProvider implementation does not know any custom enemy
+        public string GetCustomEnemyName(int enemyId)
+        {
+            return null;
         }
 
         #region Protected Methods

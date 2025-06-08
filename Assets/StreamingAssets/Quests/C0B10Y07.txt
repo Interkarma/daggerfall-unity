@@ -122,11 +122,8 @@ Item _religitem_ religious
 Item _gold_ gold
 
 Person _qgiver_ group Questor
-Person _priest_ group Group_5.0 local
+Person _priest_ group Group_5.0 remote
 Person _enemy_ face 176 group Local_4.0 remote
-
-Place _goalplace_ remote house
---without goalplace, priest would always spawn in current city. this quest depends on remote locations.
 
 Clock _traveltime_ 00:00 0 flag 1 range 1 2
 
@@ -139,7 +136,6 @@ Foe _spellsword_ is Spellsword
 	start timer _traveltime_ 
 	log 1010 step 0 
 	get item _religitem_ 
-	place npc _priest_ at _goalplace_
 
 _traveltime_ task:
 	end quest 

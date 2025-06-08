@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -14,13 +14,8 @@ using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.UserInterface;
-using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game.Items;
-using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -31,9 +26,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
     {
         #region Fields
 
+        const string textTable = "GameSettings";
+
+        // These are key name for bindings - do not translate
         const string rightClickString = "Right-Click";
         const string middleClickString = "Middle-Click";
         const string leftClickString = "Left-Click";
+        const string backString = "Back";
 
         Color mainPanelBackgroundColor = new Color(0.0f, 0.0f, 0.0f, 1.0f);
         Color keybindButtonBackgroundColor = new Color(0.2f, 0.2f, 0.2f, 1.0f);
@@ -45,6 +44,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected Button leftClickKeybindButton = new Button();
         protected Button middleClickKeybindButton = new Button();
         protected Button rightClickKeybindButton = new Button();
+        protected Button backKeybindButton = new Button();
         protected Button movementHorizontalAxisKeybindButton = new Button();
         protected Button movementVerticalAxisKeybindButton = new Button();
         protected Button lookHorizontalAxisKeybindButton = new Button();
@@ -88,7 +88,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             base.Update();
 
-            if (!AllowCancel && !waitingForInput && Input.GetKeyDown(KeyCode.Escape))
+            if (!AllowCancel && !waitingForInput && InputManager.Instance.GetBackButtonDown())
             {
                 ShowMultipleAssignmentsMessage();
             }
@@ -125,45 +125,46 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             titleLabel = new TextLabel();
             titleLabel.ShadowPosition = Vector2.zero;
             titleLabel.Position = new Vector2(4, 4);
-            titleLabel.Text = "Configure Joystick Controls";
+            titleLabel.Text = GetText("configureJoystickControls");
             titleLabel.HorizontalAlignment = HorizontalAlignment.Center;
             mainPanel.Components.Add(titleLabel);
 
             // Continue button
-            continueButton.Label.Text = "CONTINUE";
+            continueButton.Label.Text = GetText("continue");
             continueButton.Size = new Vector2(80, 10);
             continueButton.HorizontalAlignment = HorizontalAlignment.Right;
             continueButton.VerticalAlignment = VerticalAlignment.Bottom;
             SetBackground(continueButton, continueButtonBackgroundColor, "joystickControlsContinueButtonBackgroundColor");
             mainPanel.Components.Add(continueButton);
 
-            enableControllerCheckbox = AddOption(20, 20, "Enable Controller", DaggerfallUnity.Settings.EnableController);
+            enableControllerCheckbox = AddOption(20, 20, GetText("enableController"), DaggerfallUnity.Settings.EnableController);
             enableControllerCheckbox.OnToggleState += EnableControllerCheckbox_OnToggleState;
 
             // keybind buttons
             SetupAxisKeybindButton(movementHorizontalAxisKeybindButton, InputManager.AxisActions.MovementHorizontal, 20, 40);
-            invertMovementHorizontalCheckbox =  AddOption(63, 60, "Invert", InputManager.Instance.GetAxisActionInversion(InputManager.AxisActions.MovementHorizontal));
+            invertMovementHorizontalCheckbox =  AddOption(63, 60, GetText("invert"), InputManager.Instance.GetAxisActionInversion(InputManager.AxisActions.MovementHorizontal));
             
             SetupAxisKeybindButton(movementVerticalAxisKeybindButton,   InputManager.AxisActions.MovementVertical, 20, 80);
-            invertMovementVerticalCheckbox =    AddOption(63, 100, "Invert", InputManager.Instance.GetAxisActionInversion(InputManager.AxisActions.MovementVertical));
+            invertMovementVerticalCheckbox =    AddOption(63, 100, GetText("invert"), InputManager.Instance.GetAxisActionInversion(InputManager.AxisActions.MovementVertical));
             
             SetupAxisKeybindButton(lookHorizontalAxisKeybindButton,     InputManager.AxisActions.CameraHorizontal, 115, 40);
-            invertLookHorizontalCheckbox =      AddOption(158, 60, "Invert", InputManager.Instance.GetAxisActionInversion(InputManager.AxisActions.CameraHorizontal));
+            invertLookHorizontalCheckbox =      AddOption(158, 60, GetText("invert"), InputManager.Instance.GetAxisActionInversion(InputManager.AxisActions.CameraHorizontal));
 
             SetupAxisKeybindButton(lookVerticalAxisKeybindButton,       InputManager.AxisActions.CameraVertical, 115, 80);
-            invertLookVerticalCheckbox =        AddOption(158, 100, "Invert", InputManager.Instance.GetAxisActionInversion(InputManager.AxisActions.CameraVertical));
+            invertLookVerticalCheckbox =        AddOption(158, 100, GetText("invert"), InputManager.Instance.GetAxisActionInversion(InputManager.AxisActions.CameraVertical));
 
-            SetupUIKeybindButton(leftClickKeybindButton, 0, 210, 40);
-            SetupUIKeybindButton(middleClickKeybindButton, 2, 210, 60);
-            SetupUIKeybindButton(rightClickKeybindButton, 1, 210, 80);
+            SetupUIKeybindButton(leftClickKeybindButton, leftClickString, 210, 40);
+            SetupUIKeybindButton(middleClickKeybindButton, middleClickString, 210, 60);
+            SetupUIKeybindButton(rightClickKeybindButton, rightClickString, 210, 80);
+            SetupUIKeybindButton(backKeybindButton, backString, 210, 100);
 
-            joystickCameraSensitivitySlider = CreateSlider("Look Sensitivity", 15, 120, 0.1f, 4.0f, DaggerfallUnity.Settings.JoystickLookSensitivity);
+            joystickCameraSensitivitySlider = CreateSlider(GetText("lookSensitivity"), 15, 120, 0.1f, 4.0f, DaggerfallUnity.Settings.JoystickLookSensitivity);
 
-            joystickUIMouseSensitivitySlider = CreateSlider("UI Mouse Sensitivity", 115, 120, 0.1f, 5.0f, DaggerfallUnity.Settings.JoystickCursorSensitivity);
+            joystickUIMouseSensitivitySlider = CreateSlider(GetText("uiMouseSensitivity"), 115, 120, 0.1f, 5.0f, DaggerfallUnity.Settings.JoystickCursorSensitivity);
 
-            joystickMovementThresholdSlider = CreateSlider("Maximum Movement Threshold", 215, 120, 0.0f, 1.0f, DaggerfallUnity.Settings.JoystickMovementThreshold);
+            joystickMovementThresholdSlider = CreateSlider(GetText("maximumMovementThreshold"), 215, 120, 0.0f, 1.0f, DaggerfallUnity.Settings.JoystickMovementThreshold);
 
-            joystickDeadzoneSlider = CreateSlider("Deadzone", 15, 140, 0.0f, 0.9f, DaggerfallUnity.Settings.JoystickDeadzone);
+            joystickDeadzoneSlider = CreateSlider(GetText("deadzone"), 15, 140, 0.0f, 0.9f, DaggerfallUnity.Settings.JoystickDeadzone);
 
             continueButton.OnMouseClick += ContinueButton_OnMouseClick;
         }
@@ -199,6 +200,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             UnsavedKeybindDict[leftClickString] = InputManager.Instance.GetKeyString(InputManager.Instance.GetJoystickUIBinding(InputManager.JoystickUIActions.LeftClick));
             UnsavedKeybindDict[middleClickString] = InputManager.Instance.GetKeyString(InputManager.Instance.GetJoystickUIBinding(InputManager.JoystickUIActions.MiddleClick));
             UnsavedKeybindDict[rightClickString] = InputManager.Instance.GetKeyString(InputManager.Instance.GetJoystickUIBinding(InputManager.JoystickUIActions.RightClick));
+            UnsavedKeybindDict[backString] = InputManager.Instance.GetKeyString(InputManager.Instance.GetJoystickUIBinding(InputManager.JoystickUIActions.Back));
 
             foreach (InputManager.AxisActions a in Enum.GetValues(typeof(InputManager.AxisActions)))
                 UnsavedKeybindDict[a.ToString()] = InputManager.Instance.GetAxisBinding(a);
@@ -245,7 +247,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         //for "reset defaults" overload
         private void SetupKeybindButton(Button button, string action)
         {
-            if (action == leftClickString || action == middleClickString || action == rightClickString)
+            if (action == leftClickString || action == middleClickString || action == rightClickString || action == backString)
             {
                 var code = InputManager.Instance.ParseKeyCodeString(UnsavedKeybindDict[action]);
                 button.Label.Text = ControlsConfigManager.Instance.GetButtonText(code);
@@ -260,24 +262,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             button.Label.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
         }
 
-        private void SetupUIKeybindButton(Button button, int mouseButton, int x, int y)
+        private void SetupUIKeybindButton(Button button, string text, int x, int y)
         {
-            string action = "";
-
-            switch (mouseButton)
-            {
-                case 0:
-                    action = leftClickString;
-                    break;
-                case 1:
-                    action = rightClickString;
-                    break;
-                case 2:
-                    action = middleClickString;
-                    break;
-            }
-
-            SetupKeybindButton(button, action, x, y);
+            SetupKeybindButton(button, text, x, y);
             button.OnMouseClick += UIKeybindButton_OnMouseClick;
         }
 
@@ -306,10 +293,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             label.VerticalAlignment = VerticalAlignment.Middle;
             label.ShadowPosition = Vector2.zero;
 
-            label.Text =    action ==  InputManager.AxisActions.MovementHorizontal.ToString() ? "Movement H."
-                            : action == InputManager.AxisActions.MovementVertical.ToString() ? "Movement V."
-                            : action == InputManager.AxisActions.CameraHorizontal.ToString() ? "Camera H."
-                            : action == InputManager.AxisActions.CameraVertical.ToString() ? "Camera V."
+            label.Text =    action ==  InputManager.AxisActions.MovementHorizontal.ToString() ? GetText("movementH")
+                            : action == InputManager.AxisActions.MovementVertical.ToString() ? GetText("movementV")
+                            : action == InputManager.AxisActions.CameraHorizontal.ToString() ? GetText("cameraH")
+                            : action == InputManager.AxisActions.CameraVertical.ToString() ? GetText("cameraV")
+                            : action == rightClickString ? GetText("rightClickString")
+                            : action ==  middleClickString ? GetText("middleClickString")
+                            : action == leftClickString ? GetText("leftClickString")
+                            : action == backString ? GetText("backString")
                             : action;
 
             label.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
@@ -390,6 +381,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             SetupKeybindButton(leftClickKeybindButton, leftClickString);
             SetupKeybindButton(middleClickKeybindButton, middleClickString);
             SetupKeybindButton(rightClickKeybindButton, rightClickString);
+            SetupKeybindButton(backKeybindButton, backString);
             SetupKeybindButton(movementHorizontalAxisKeybindButton, InputManager.AxisActions.MovementHorizontal.ToString());
             SetupKeybindButton(movementVerticalAxisKeybindButton, InputManager.AxisActions.MovementVertical.ToString());
             SetupKeybindButton(lookHorizontalAxisKeybindButton, InputManager.AxisActions.CameraHorizontal.ToString());
@@ -470,7 +462,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             foreach(var action in UnsavedKeybindDict.Keys)
             {
-                if (action == leftClickString || action == middleClickString || action == rightClickString)
+                if (action == leftClickString || action == middleClickString || action == rightClickString || action == backString)
                 {
                     KeyCode code = InputManager.Instance.ParseKeyCodeString(UnsavedKeybindDict[action]);
                     InputManager.JoystickUIActions uiAction = InputManager.JoystickUIActions.LeftClick;
@@ -479,6 +471,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                         uiAction = InputManager.JoystickUIActions.MiddleClick;
                     else if (action == rightClickString)
                         uiAction = InputManager.JoystickUIActions.RightClick;
+                    else if (action == backString)
+                        uiAction = InputManager.JoystickUIActions.Back;
 
                     KeyCode curCode = InputManager.Instance.GetJoystickUIBinding(uiAction);
 
@@ -560,8 +554,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             button.Label.Text = "";
             yield return new WaitForSecondsRealtime(0.05f);
 
-            while ((!isAxisAction && (code = InputManager.Instance.GetAnyKeyDownIgnoreAxisBinds()) == KeyCode.None)
-                || (isAxisAction && (code = InputManager.Instance.GetAnyKeyDown()) == KeyCode.None))
+            while ((!isAxisAction && (code = InputManager.Instance.GetAnyKeyDownIgnoreAxisBinds(true)) == KeyCode.None)
+                || (isAxisAction && (code = InputManager.Instance.GetAnyKeyDown(true)) == KeyCode.None))
             {
                 SetWaitingForInput(true);
                 yield return null;
@@ -605,6 +599,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     button.Label.Text = currentLabel;
                 }
             }
+        }
+
+        private static string GetText(string key)
+        {
+            return TextManager.Instance.GetText(textTable, key);
         }
 
         #endregion

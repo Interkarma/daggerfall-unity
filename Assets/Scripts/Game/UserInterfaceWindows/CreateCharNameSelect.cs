@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -33,6 +33,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         TextBox textBox = new TextBox();
         Button randomNameButton = new Button();
         Button okButton = new Button();
+
+        IMECompositionMode prevIME;
 
         public RaceTemplate RaceTemplate
         {
@@ -74,7 +76,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Random name button
             randomNameButton = DaggerfallUI.AddButton(new Rect(279, 3, 36, 10), NativePanel);
-            randomNameButton.Label.Text = "Random";
+            randomNameButton.Label.Text = TextManager.Instance.GetLocalizedText("random");
             randomNameButton.Label.ShadowColor = Color.black;
             randomNameButton.BackgroundColor = new Color(0.5f, 0.5f, 0.5f, 0.75f);
             randomNameButton.OnMouseClick += RandomNameButton_OnMouseClick;
@@ -93,6 +95,18 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             ShowRandomButton();
 
             base.OnPush();
+
+            // Enable IME composition during input
+            prevIME = Input.imeCompositionMode;
+            Input.imeCompositionMode = IMECompositionMode.On;
+        }
+
+        public override void OnPop()
+        {
+            base.OnPop();
+
+            // Restore previous IME composition mode
+            Input.imeCompositionMode = prevIME;
         }
 
         void ShowRandomButton()
@@ -104,9 +118,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 return;
             }
 
-            // Disable random name button only for Argonians because their race id
-            // would give them Imperial names from namegen
-            randomNameButton.Enabled = raceTemplate.ID != (int) Races.Argonian;
+            randomNameButton.Enabled = true;
 
             // Randomise DFRandom seed from System.Random
             // A bit of a hack but better than starting with a seed of 0 every time

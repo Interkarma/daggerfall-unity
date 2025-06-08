@@ -30,7 +30,7 @@ RefuseQuest:  [1001]
 
 AcceptQuest:  [1002]
 <ce>                  Good. Now, I am given to understand
-<ce>                  that the orcs' hideout in in the old
+<ce>                  that the orcs' hideout is in the old ruin,
 <ce>                      ___itemdung_. That's where,
 <ce>                  I suppose, they're keeping my _item_
 <ce>               as well. If you're not back in =1stparton_

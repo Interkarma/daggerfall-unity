@@ -1,0 +1,240 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Internal_Settings_en
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: c6e2a78ddb1596d4b8bec7f8d98c0bf7, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 66057662464
+    m_Localized: 'Vanilla
+
+      Click
+
+      Hold'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5289358651392
+    m_Localized: 'None
+
+      Lowest
+
+      Low
+
+      Medium
+
+      High
+
+      Highest'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17418295963648
+    m_Localized: Configure Advanced Controls
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17583400546304
+    m_Localized: CONTINUE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17783670173696
+    m_Localized: Mouse Look Smoothing
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17828595363840
+    m_Localized: Mouse Look Sensitivity
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17871150772224
+    m_Localized: Invert Look-Y
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17915681697792
+    m_Localized: Movement Acceleration
+    m_Metadata:
+      m_Items: []
+  - m_Id: 17967456186368
+    m_Localized: Weapon Swing Mode
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18081830662144
+    m_Localized: Bows - draw and release
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18131793211392
+    m_Localized: Toggle Sneak
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18170804432896
+    m_Localized: Mouse Weapon Attack Threshold
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21209825144832
+    m_Localized: Escape
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21235720777728
+    m_Localized: AutoRun
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21258667814912
+    m_Localized: Console
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21297549012992
+    m_Localized: Screenshot
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21352632807424
+    m_Localized: QuickSave
+    m_Metadata:
+      m_Items: []
+  - m_Id: 21395456651264
+    m_Localized: QuickLoad
+    m_Metadata:
+      m_Items: []
+  - m_Id: 29671917350912
+    m_Localized: Close
+    m_Metadata:
+      m_Items: []
+  - m_Id: 30282243108864
+    m_Localized: 'Classic
+
+      Climate
+
+      Climate Only
+
+      Random
+
+      Random
+      Only'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 31486910132224
+    m_Localized: 'Off
+
+      Low (25%)
+
+      Medium (50%)
+
+      High (75%)
+
+      V.
+      High(100%)'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32548303925248
+    m_Localized: 'None
+
+      Minimal
+
+      Large
+
+      Classic
+
+      Colour
+
+      Monochrome
+
+      Classic
+      Crosshair
+
+      Colour Crosshair'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 33651112275968
+    m_Localized: 'Classic
+
+      Medium
+
+      Small
+
+      Small Deck Left
+
+      Small
+      Deck Right
+
+      Small Vert Left
+
+      Small Vert Right
+
+      Small Horz
+      Bottom'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 34405386547200
+    m_Localized: 'Off
+
+      No Leather Chain
+
+      No Leather
+
+      On'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 37951859322880
+    m_Localized: 'Fastest
+
+      Fast
+
+      Simple
+
+      Good
+
+      Beautiful
+
+      Fantastic'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 38352516018176
+    m_Localized: 'Point
+
+      Bilinear
+
+      Trilinear'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 39004105338880
+    m_Localized: 'Low
+
+      Medium
+
+      High
+
+      Very High'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 39382901321728
+    m_Localized: 'Texture Arrays: '
+    m_Metadata:
+      m_Items: []
+  - m_Id: 39463364849664
+    m_Localized: Unsupported
+    m_Metadata:
+      m_Items: []
+  - m_Id: 39495560327168
+    m_Localized: Enabled
+    m_Metadata:
+      m_Items: []
+  - m_Id: 39522110271488
+    m_Localized: Disabled
+    m_Metadata:
+      m_Items: []
+  - m_Id: 39941251264512
+    m_Localized: Improved implementation of terrain textures, with better performance
+      and modding support
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 1

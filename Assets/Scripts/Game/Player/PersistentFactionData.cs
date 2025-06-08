@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -138,13 +138,21 @@ namespace DaggerfallWorkshop.Game.Player
         /// </summary>
         public void AddCustomFactions()
         {
+            bool relink = false;
             foreach (int id in FactionFile.CustomFactions.Keys)
             {
                 if (!factionDict.ContainsKey(id))
                 {
-                    factionDict.Add(id, FactionFile.CustomFactions[id]);
-                    factionNameToIDDict.Add(FactionFile.CustomFactions[id].name, id);
+                    FactionFile.FactionData factionData = FactionFile.CustomFactions[id];
+                    factionDict.Add(id, factionData);
+                    factionNameToIDDict.Add(factionData.name, id);
+                    if (factionData.parent > 0)
+                        relink = true;
                 }
+            }
+            // Relink faction children if any new custom factions with parents were added
+            if (relink) {
+                FactionFile.RelinkChildren(factionDict);
             }
         }
 
@@ -165,6 +173,7 @@ namespace DaggerfallWorkshop.Game.Player
             if (factionDict.ContainsKey(factionID))
             {
                 factionDataOut = factionDict[factionID];
+                factionDataOut.name = TextManager.Instance.GetLocalizedFactionName(factionID, factionDataOut.name);
                 return true;
             }
 
@@ -297,10 +306,11 @@ namespace DaggerfallWorkshop.Game.Player
         /// <returns>Faction name if name found, otherwise an empty string.</returns>
         public string GetFactionName(int id)
         {
+            string name = string.Empty;
             if (factionDict.ContainsKey(id))
-                return factionDict[id].name;
+                name = factionDict[id].name;
 
-            return string.Empty;
+            return TextManager.Instance.GetLocalizedFactionName(id, name);
         }
 
         /// <summary>
@@ -390,6 +400,15 @@ namespace DaggerfallWorkshop.Game.Player
                 }
                 else
                 {
+                    // Change ally and enemy faction reputations first (for guild faction or social questgiver npc)
+                    int[] allies = { factionData.ally1, factionData.ally2, factionData.ally3 };
+                    int[] enemies = { factionData.enemy1, factionData.enemy2, factionData.enemy3 };
+                    for (int i = 0; i < 3; ++i)
+                    {
+                        ChangeReputation(allies[i], amount / 2);
+                        ChangeReputation(enemies[i], -amount / 2);
+                    }
+
                     // If a knightly order faction, propagate rep for the generic order only
                     // (this is what classic does - assume due to all affiliated nobles being aloof from such matters..)
                     if (factionData.ggroup == (int)FactionFile.GuildGroups.KnightlyOrder)
@@ -400,20 +419,11 @@ namespace DaggerfallWorkshop.Game.Player
                     }
                     else
                     {
-                        // Change ally and enemy faction reputations first (for guild faction or social questgiver npc)
-                        int[] allies = { factionData.ally1, factionData.ally2, factionData.ally3 };
-                        int[] enemies = { factionData.enemy1, factionData.enemy2, factionData.enemy3 };
-                        for (int i = 0; i < 3; ++i)
-                        {
-                            ChangeReputation(allies[i], amount / 2);
-                            ChangeReputation(enemies[i], -amount / 2);
-                        }
-
                         // Navigate up to the root faction (treat Dark Brotherhood faction as a root faction)
                         while (factionDict.ContainsKey(factionData.parent) && factionData.id != (int)FactionFile.FactionIDs.The_Dark_Brotherhood)
                             factionData = factionDict[factionData.parent];
 
-                        // Propagate reputation changes for all children of the root, or just the sindle faction
+                        // Propagate reputation changes for all children of the root, or just the single faction
                         if (factionData.children != null)
                             PropagateReputationChange(factionData, factionID, amount);
                         else
@@ -502,6 +512,27 @@ namespace DaggerfallWorkshop.Game.Player
             {
                 FactionFile.FactionData factionData = factionDict[factionID];
                 factionData.power = Mathf.Clamp(factionData.power + amount, minPower, maxPower);
+                factionDict[factionID] = factionData;
+                return true;
+            }
+
+            return false;
+        }
+
+        #endregion
+
+        #region Ruler type
+
+        /// <summary>
+        /// Set ruler value. Allows changes of rulers to have appropriate title.
+        /// See MacroHelper.GetRulerTitle() for value mapping.
+        /// </summary>
+        public bool SetRulerType(int factionID, int ruler)
+        {
+            if (factionDict.ContainsKey(factionID))
+            {
+                FactionFile.FactionData factionData = factionDict[factionID];
+                factionData.ruler = ruler;
                 factionDict[factionID] = factionData;
                 return true;
             }

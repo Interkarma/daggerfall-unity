@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using UnityEngine;
 using UnityEngine.Rendering;
 using DaggerfallConnect;
@@ -93,6 +94,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         static readonly string cifRciPath = Path.Combine(texturesPath, "CifRci");
 
         static readonly Type customBlendModeType = typeof(MaterialReader.CustomBlendMode);
+        static readonly int ihdrIdentifier = ToInt(Encoding.UTF8.GetBytes("IHDR"), 0);
 
         #endregion
 
@@ -155,7 +157,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         }
 
         /// <summary>
-        /// Seek animated texture from modding locations with all frames.
+        /// Seek animated texture from modding locations with all frames. Gives CPU-accessible textures - use other overload if only GPU textures are needed
         /// </summary>
         /// <param name="archive">Texture archive.</param>
         /// <param name="record">Record index.</param>
@@ -163,11 +165,24 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if texture imported.</returns>
         public static bool TryImportTexture(int archive, int record, out Texture2D[] texFrames)
         {
-            return TryImportTexture(texturesPath, frame => GetName(archive, record, frame), out texFrames);
+            return TryImportTexture(texturesPath, frame => GetName(archive, record, frame), false, out texFrames);
         }
 
         /// <summary>
-        /// Seek texture from modding locations.
+        /// Seek animated texture from modding locations with all frames
+        /// </summary>
+        /// <param name="archive">Texture archive.</param>
+        /// <param name="record">Record index.</param>
+        /// <param name="readOnly">Release copy on system memory after uploading to gpu.</param>
+        /// <param name="texFrames">Imported texture frames.</param>
+        /// <returns>True if texture imported.</returns>
+        public static bool TryImportTexture(int archive, int record, bool readOnly, out Texture2D[] texFrames)
+        {
+            return TryImportTexture(texturesPath, frame => GetName(archive, record, frame), readOnly, out texFrames);
+        }
+
+        /// <summary>
+        /// Seek texture from modding locations. Gives CPU-accessible textures - use other overload if only GPU textures are needed
         /// </summary>
         /// <param name="archive">Texture archive.</param>
         /// <param name="record">Record index.</param>
@@ -176,7 +191,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if texture imported.</returns>
         public static bool TryImportTexture(int archive, int record, int frame, out Texture2D tex)
         {
-            return TryImportTexture(texturesPath, GetName(archive, record, frame), false, out tex);
+            return TryImportTexture(texturesPath, GetName(archive, record, frame), false, null, out tex);
         }
 
         /// <summary>
@@ -191,7 +206,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if texture imported.</returns>
         public static bool TryImportTexture(int archive, int record, int frame, TextureMap textureMap, bool readOnly, out Texture2D tex)
         {
-            return TryImportTexture(texturesPath, GetName(archive, record, frame, textureMap), readOnly, out tex);
+            return TryImportTexture(texturesPath, GetName(archive, record, frame, textureMap), readOnly, textureMap, out tex);
         }
 
         /// <summary>
@@ -208,12 +223,12 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         public static bool TryImportTexture(int archive, int record, int frame, TextureMap textureMap, TextureImport textureImport, bool readOnly, out Texture2D tex)
         {
             tex = null;
-            return (textureImport == TextureImport.AllLocations && TryImportTexture(texturesPath, GetName(archive, record, frame, textureMap), readOnly, out tex))
+            return (textureImport == TextureImport.AllLocations && TryImportTexture(texturesPath, GetName(archive, record, frame, textureMap), readOnly, textureMap, out tex))
                 || (textureImport == TextureImport.LooseFiles && TryImportTextureFromLooseFiles(archive, record, frame, textureMap, readOnly, out tex));
         }
 
         /// <summary>
-        /// Seek texture from modding locations with a specific dye.
+        /// Seek texture from modding locations with a specific dye. Gives CPU-accessible textures - use other overload if only GPU textures are needed
         /// </summary>
         /// <param name="archive">Texture archive.</param>
         /// <param name="record">Record index.</param>
@@ -224,7 +239,23 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if texture imported.</returns>
         public static bool TryImportTexture(int archive, int record, int frame, DyeColors dye, TextureMap textureMap, out Texture2D tex)
         {
-            return TryImportTexture(texturesPath, GetName(archive, record, frame, textureMap, dye), false, out tex);
+            return TryImportTexture(texturesPath, GetName(archive, record, frame, textureMap, dye), false, null, out tex);
+        }
+
+        /// <summary>
+        /// Seek texture from modding locations with a specific dye. Gives CPU-accessible textures - use other overload if only GPU textures are needed
+        /// </summary>
+        /// <param name="archive">Texture archive.</param>
+        /// <param name="record">Record index.</param>
+        /// <param name="frame">Animation frame index</param>
+        /// <param name="dye">Dye colour for armour, weapons, and clothing.</param>
+        /// <param name="textureMap">Texture type.</param>
+        /// <param name="readOnly">Release copy on system memory after uploading to gpu.</param>
+        /// <param name="tex">Imported texture.</param>
+        /// <returns>True if texture imported.</returns>
+        public static bool TryImportTexture(int archive, int record, int frame, DyeColors dye, TextureMap textureMap, bool readOnly, out Texture2D tex)
+        {
+            return TryImportTexture(texturesPath, GetName(archive, record, frame, textureMap, dye), readOnly, null, out tex);
         }
 
         /// <summary>
@@ -236,7 +267,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if texture imported.</returns>
         public static bool TryImportTexture(string name, bool readOnly, out Texture2D tex)
         {
-            return TryImportTexture(texturesPath, name, readOnly, out tex);
+            return TryImportTexture(texturesPath, name, readOnly, null, out tex);
         }
 
         /// <summary>
@@ -248,7 +279,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if image imported.</returns>
         public static bool TryImportImage(string name, bool readOnly, out Texture2D tex)
         {
-            return TryImportTexture(imgPath, name, readOnly, out tex);
+            return TryImportTexture(imgPath, name, readOnly, null, out tex);
         }
 
         /// <summary>
@@ -262,7 +293,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if CifRci imported.</returns>
         public static bool TryImportCifRci(string name, int record, int frame, bool readOnly, out Texture2D tex)
         {
-            return TryImportTexture(cifRciPath, GetNameCifRci(name, record, frame), readOnly, out tex);
+            return TryImportTexture(cifRciPath, GetNameCifRci(name, record, frame), readOnly, null, out tex);
         }
 
         /// <summary>
@@ -277,7 +308,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if CifRci imported.</returns>
         public static bool TryImportCifRci(string name, int record, int frame, MetalTypes metalType, bool readOnly, out Texture2D tex)
         {
-            return TryImportTexture(cifRciPath, GetNameCifRci(name, record, frame, metalType), readOnly, out tex);
+            return TryImportTexture(cifRciPath, GetNameCifRci(name, record, frame, metalType), readOnly, null, out tex);
         }
 
         /// <summary>
@@ -335,7 +366,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             if (DaggerfallUnity.Settings.AssetInjection)
             {
                 string path = Path.Combine(texturesPath, GetName(archive, record, frame, textureMap));
-                return TryImportTextureFromDisk(path, true, textureMap == TextureMap.Normal, readOnly, out tex);
+                return TryImportTextureFromDisk(path, true, IsLinearTextureMap(textureMap), readOnly, out tex);
             }
 
             tex = null;
@@ -347,13 +378,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         /// <param name="relPath">Relative path to file from <see cref="TexturesPath"/>.</param>
         /// <param name="mipMaps">Enable mipmaps?</param>
-        /// <param name="encodeAsNormalMap">Convert from RGB to DTXnm.</param>
+        /// <param name="isLinear">This is a linear texture such as a normal map.</param>
         /// <param name="tex">Imported texture.</param>
         /// <returns>True if texture exists and has been imported.</returns>
         [Obsolete("Use overload that accepts readOnly flag.")]
-        public static bool TryImportTextureFromLooseFiles(string relPath, bool mipMaps, bool encodeAsNormalMap, out Texture2D tex)
+        public static bool TryImportTextureFromLooseFiles(string relPath, bool mipMaps, bool isLinear, out Texture2D tex)
         {
-            return TryImportTextureFromLooseFiles(Path.Combine(texturesPath, relPath), mipMaps, encodeAsNormalMap, false, out tex);
+            return TryImportTextureFromLooseFiles(Path.Combine(texturesPath, relPath), mipMaps, isLinear, false, out tex);
         }
 
         /// <summary>
@@ -361,13 +392,13 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// </summary>
         /// <param name="path">Path to texture file, full or relative to <see cref="TexturesPath"/>.</param>
         /// <param name="mipMaps">Enable mipmaps?</param>
-        /// <param name="encodeAsNormalMap">Convert from RGB to DTXnm.</param>
+        /// <param name="isLinear">This is a linear texture such as a normal map.</param>
         /// <param name="readOnly">Release copy on system memory after uploading to gpu.</param>
         /// <param name="tex">Imported texture.</param>
         /// <returns>True if texture exists and has been imported.</returns>
-        public static bool TryImportTextureFromLooseFiles(string path, bool mipMaps, bool encodeAsNormalMap, bool readOnly, out Texture2D tex)
+        public static bool TryImportTextureFromLooseFiles(string path, bool mipMaps, bool isLinear, bool readOnly, out Texture2D tex)
         {
-            return TryImportTextureFromDisk(Path.IsPathRooted(path) ? path : Path.Combine(texturesPath, path), mipMaps, encodeAsNormalMap, readOnly, out tex);
+            return TryImportTextureFromDisk(Path.IsPathRooted(path) ? path : Path.Combine(texturesPath, path), mipMaps, isLinear, readOnly, out tex);
         }
 
         /// <summary>
@@ -376,19 +407,29 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="directory">Full path to texture file.</param>
         /// <param name="fileName">Name of texture file.</param>
         /// <param name="mipMaps">Enable mipmaps?</param>
-        /// <param name="encodeAsNormalMap">Convert from RGB to DTXnm.</param>
+        /// <param name="isLinear">This is a linear texture such as a normal map.</param>
         /// <param name="tex">Imported texture.</param>
         /// <param name="readOnly">Release copy on system memory after uploading to gpu.</param>
         /// <returns>True if texture exists and has been imported.</returns>
         [Obsolete("Use TryImportTextureFromLooseFiles()")]
-        public static bool TryImportTextureFromDisk(string path, bool mipMaps, bool encodeAsNormalMap, out Texture2D tex, bool readOnly = true)
+        public static bool TryImportTextureFromDisk(string path, bool mipMaps, bool isLinear, out Texture2D tex, bool readOnly = true)
         {
-            return TryImportTextureFromLooseFiles(path, mipMaps, encodeAsNormalMap, readOnly, out tex);
+            return TryImportTextureFromLooseFiles(path, mipMaps, isLinear, readOnly, out tex);
         }
 
         #endregion
 
         #region Textures Injection
+
+        /// <summary>
+        /// Determine if texture map is of a linear type.
+        /// </summary>
+        /// <param name="textureMap">Texture map type.</param>
+        /// <returns>True if this texture should be loaded as linear.</returns>
+        public static bool IsLinearTextureMap(TextureMap textureMap)
+        {
+            return textureMap == TextureMap.Normal || textureMap == TextureMap.Height || textureMap == TextureMap.MetallicGloss;
+        }
 
         /// <summary>
         /// Import additional custom components of material.
@@ -406,6 +447,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 metallicGloss.filterMode = MainFilterMode;
                 material.EnableKeyword(KeyWords.MetallicGlossMap);
                 material.SetTexture(Uniforms.MetallicGlossMap, metallicGloss);
+                material.SetFloat(Uniforms.Smoothness, 0.35f);
             }
 
             // Height Map
@@ -448,7 +490,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// Always creates an emission map for textures marked as emissive by TextureReader, import emission maps for others only if available.
         /// </remarks>
         /// <returns>A material or null.</returns>
-        public static Material GetStaticBillboardMaterial(GameObject go, int archive, int record, ref DaggerfallBillboard.BillboardSummary summary, out Vector2 scale)
+        public static Material GetStaticBillboardMaterial(GameObject go, int archive, int record, ref BillboardSummary summary, out Vector2 scale)
         {
             scale = Vector2.one;
 
@@ -529,7 +571,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 return null;
 
             Texture2D tex, emission;
-            if (importedTextures.HasImportedTextures = LoadFromCacheOrImport(archive, 0, 0, true, true, out tex, out emission))
+            if (importedTextures.HasImportedTextures = LoadFromCacheOrImport(archive, 0, 0, allowEmissionMap: true, readOnly: true, out tex, out emission))
             {
                 string renderMode = null;
 
@@ -547,32 +589,63 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 // Enable emission
                 ToggleEmission(material, importedTextures.IsEmissive |= emission != null);
 
-                // Load texture file to get record and frame count
+                // If the archive has a Arena2 texture file, use it to get record and frame count
                 string fileName = TextureFile.IndexToFileName(archive);
-                var textureFile = new TextureFile(Path.Combine(DaggerfallUnity.Instance.Arena2Path, fileName), FileUsage.UseMemory, true);
-
-                // Import all textures in this archive
-                importedTextures.Albedo = new Texture2D[textureFile.RecordCount][];
-                importedTextures.EmissionMaps = importedTextures.IsEmissive ? new Texture2D[textureFile.RecordCount][] : null;
-                for (int record = 0; record < textureFile.RecordCount; record++)
+                var textureFile = new TextureFile();
+                if (textureFile.Load(Path.Combine(DaggerfallUnity.Instance.Arena2Path, fileName), FileUsage.UseMemory, readOnly: true))
                 {
-                    int frames = textureFile.GetFrameCount(record);
-                    var frameTextures = new Texture2D[frames];
-                    var frameEmissionMaps = importedTextures.IsEmissive ? new Texture2D[frames] : null;
-
-                    for (int frame = 0; frame < frames; frame++)
+                    // Import all textures in this archive
+                    importedTextures.Albedo = new Texture2D[textureFile.RecordCount][];
+                    importedTextures.EmissionMaps = importedTextures.IsEmissive ? new Texture2D[textureFile.RecordCount][] : null;
+                    for (int record = 0; record < textureFile.RecordCount; record++)
                     {
-                        if (record != 0 || frame != 0)
-                            LoadFromCacheOrImport(archive, record, frame, importedTextures.IsEmissive, true, out tex, out emission);
+                        int frames = textureFile.GetFrameCount(record);
+                        var frameTextures = new Texture2D[frames];
+                        var frameEmissionMaps = importedTextures.IsEmissive ? new Texture2D[frames] : null;
 
-                        frameTextures[frame] = tex ?? ImageReader.GetTexture(fileName, record, frame, true);
-                        if (frameEmissionMaps != null)
-                            frameEmissionMaps[frame] = emission ?? frameTextures[frame];
+                        for (int frame = 0; frame < frames; frame++)
+                        {
+                            if (record != 0 || frame != 0)
+                                LoadFromCacheOrImport(archive, record, frame, importedTextures.IsEmissive, true, out tex, out emission);
+
+                            frameTextures[frame] = tex ?? ImageReader.GetTexture(fileName, record, frame, true);
+                            if (frameEmissionMaps != null)
+                                frameEmissionMaps[frame] = emission ?? frameTextures[frame];
+                        }
+
+                        importedTextures.Albedo[record] = frameTextures;
+                        if (importedTextures.EmissionMaps != null)
+                            importedTextures.EmissionMaps[record] = frameEmissionMaps;
+                    }
+                }
+                // Otherwise, check what files are available in the injected assets
+                else
+                {
+                    List<Texture2D[]> allAlbedo = new List<Texture2D[]>();
+                    List<Texture2D[]> allEmission = importedTextures.IsEmissive ? new List<Texture2D[]>() : null;
+
+                    int record = 0;
+                    while (TryImportTexture(archive, record, readOnly: true, out Texture2D[] currentAlbedo))
+                    {
+                        allAlbedo.Add(currentAlbedo);
+
+                        if (importedTextures.IsEmissive)
+                        {
+                            if (TryImportTexture(texturesPath, frame => GetName(archive, record, frame, TextureMap.Emission), readOnly: true, out Texture2D[] currentEmissive))
+                            {
+                                allEmission.Add(currentEmissive);
+                            }
+                            else
+                            {
+                                allEmission.Add(currentAlbedo);
+                            }
+                        }
+
+                        ++record;
                     }
 
-                    importedTextures.Albedo[record] = frameTextures;
-                    if (importedTextures.EmissionMaps != null)
-                        importedTextures.EmissionMaps[record] = frameEmissionMaps;
+                    importedTextures.Albedo = allAlbedo.ToArray();
+                    importedTextures.EmissionMaps = importedTextures.IsEmissive ? allEmission.ToArray() : null;
                 }
 
                 // Update UV map
@@ -901,18 +974,20 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="path">Path on disk (loose files only).</param>
         /// <param name="name">Name of texture.</param>
         /// <param name="readOnly">Release copy on system memory after uploading to gpu.</param>
+        /// <param name="textureMap">The texture type. Can pass null if type not known.</param>
         /// <param name="tex">Imported texture.</param>
         /// <remarks>
         /// The <paramref name="readOnly"/> flag is only respected by loose files. It is up to mod authors
         /// to ensure that textures from asset bundles have `Read/Write Enabled` flag set when required.
         /// </remarks>
         /// <returns>True if texture imported.</returns>
-        private static bool TryImportTexture(string path, string name, bool readOnly, out Texture2D tex)
+        private static bool TryImportTexture(string path, string name, bool readOnly, TextureMap? textureMap, out Texture2D tex)
         {
+            bool isLinear = textureMap != null && IsLinearTextureMap(textureMap.Value);
             if (DaggerfallUnity.Settings.AssetInjection)
             {
                 // Seek from loose files
-                if (TryImportTextureFromDisk(Path.Combine(path, name), false, false, readOnly, out tex))
+                if (TryImportTextureFromDisk(Path.Combine(path, name), false, isLinear, readOnly, out tex))
                     return true;
 
                 // Seek from mods
@@ -936,15 +1011,15 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="getName">Get name of frame.</param>
         /// <param name="texFrames">Imported texture frames.</param>
         /// <returns>True if texture imported.</returns>
-        private static bool TryImportTexture(string path, Func<int, string> getName, out Texture2D[] texFrames)
+        private static bool TryImportTexture(string path, Func<int, string> getName, bool readOnly, out Texture2D[] texFrames)
         {
             int frame = 0;
             Texture2D tex;
-            if (TryImportTexture(path, getName(frame), false, out tex))
+            if (TryImportTexture(path, getName(frame), readOnly, null, out tex))
             {
                 var textures = new List<Texture2D>();
                 do textures.Add(tex);
-                while (TryImportTexture(path, getName(++frame), false, out tex));
+                while (TryImportTexture(path, getName(++frame), readOnly, null, out tex));
                 texFrames = textures.ToArray();
                 return true;
             }
@@ -959,34 +1034,26 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="directory">Full path to texture file.</param>
         /// <param name="fileName">Name of texture file.</param>
         /// <param name="mipMaps">Enable mipmaps?</param>
-        /// <param name="encodeAsNormalMap">Convert from RGB to DTXnm.</param>
+        /// <param name="isLinear">This is a linear texture such as a normal map.</param>
         /// <param name="readOnly">Release copy on system memory after uploading to gpu.</param>
         /// <param name="tex">Imported texture.</param>
         /// <returns>True if texture exists and has been imported.</returns>
-        private static bool TryImportTextureFromDisk(string path, bool mipMaps, bool encodeAsNormalMap, bool readOnly, out Texture2D tex)
+        private static bool TryImportTextureFromDisk(string path, bool mipMaps, bool isLinear, bool readOnly, out Texture2D tex)
         {
+            const int retroThreshold = 256; // Imported textures with a width or height below this threshold will never be compressed to preserve retro appearance
+
             if (!path.EndsWith(extension))
                 path += extension;
 
             if (File.Exists(path))
             {
-                // Load texture file
-                tex = new Texture2D(4, 4, TextureFormat, mipMaps);
-                if (!tex.LoadImage(File.ReadAllBytes(path), readOnly && !encodeAsNormalMap))
-                    Debug.LogErrorFormat("Failed to import texture data at {0}", path);
+                byte[] bytes = File.ReadAllBytes(path);
+                Vector2Int resolution = FindPngResolution(bytes) ?? throw new Exception($"Failed to find PNG resolution for {path}");
+                TextureFormat textureFormat = resolution.x < retroThreshold || resolution.y < retroThreshold ? TextureFormat.ARGB32 : TextureFormat;
 
-                if (encodeAsNormalMap)
-                {
-                    // RGBA to DXTnm
-                    Color32[] colours = tex.GetPixels32();
-                    for (int i = 0; i < colours.Length; i++)
-                    {
-                        colours[i].a = colours[i].r;
-                        colours[i].r = colours[i].b = colours[i].g;
-                    }
-                    tex.SetPixels32(colours);
-                    tex.Apply(true, readOnly);
-                }
+                tex = new Texture2D(4, 4, textureFormat, mipMaps, isLinear);
+                if (!tex.LoadImage(bytes, readOnly))
+                    Debug.LogError($"Failed to import texture data at {path}");
 
 #if DEBUG_TEXTURE_FORMAT
                 Debug.LogFormat("{0}: format: {1}, mipmaps: {2}, mipmaps count: {3}", Path.GetFileName(path), tex.format, mipMaps, tex.mipmapCount);
@@ -1041,7 +1108,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
                     if (!fallback)
                     {
-                        fallback = new Texture2D(textureArray.width, textureArray.height, textureArray.format, mipMaps);
+                        fallback = new Texture2D(textureArray.width, textureArray.height, textureArray.format, mipMaps, IsLinearTextureMap(textureMap));
+                        fallback.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
                         Color32[] colors = new Color32[fallback.width * fallback.height];
                         for (int i = 0; i < colors.Length; i++)
                             colors[i] = fallbackColor.Value;
@@ -1057,7 +1125,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     if (fallbackColor.HasValue && tex.format != TextureFormat.RGBA32 && tex.format != TextureFormat.ARGB32)
                         return false;
 
-                    textureArray = new Texture2DArray(tex.width, tex.height, depth, tex.format, mipMaps = tex.mipmapCount > 1);
+                    textureArray = new Texture2DArray(tex.width, tex.height, depth, tex.format, mipMaps = tex.mipmapCount > 1, IsLinearTextureMap(textureMap));
+                    textureArray.filterMode = (FilterMode)DaggerfallUnity.Settings.MainFilterMode;
                 }
 
                 if (tex.width == textureArray.width && tex.height == textureArray.height && tex.format == textureArray.format)
@@ -1175,9 +1244,17 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
 
         private static Material MakeBillboardMaterial(string renderMode = null)
         {
-            return MaterialReader.CreateStandardMaterial(renderMode != null && Enum.IsDefined(customBlendModeType, renderMode) ?
+            // Parse blendMode from string or use Cutout if no custom blendMode specified
+            MaterialReader.CustomBlendMode blendMode =
+                renderMode != null && Enum.IsDefined(customBlendModeType, renderMode) ?
                 (MaterialReader.CustomBlendMode)Enum.Parse(customBlendModeType, renderMode) :
-                MaterialReader.CustomBlendMode.Cutout);
+                MaterialReader.CustomBlendMode.Cutout;
+
+            // Use Daggerfall/Billboard material for standard cutout billboards or create a Standard material if using any other custom blendMode
+            if (blendMode == MaterialReader.CustomBlendMode.Cutout)
+                return MaterialReader.CreateBillboardMaterial();
+            else
+                return MaterialReader.CreateStandardMaterial(blendMode);
         }
 
         private static bool MakeName(ImageData imageData, DyeColors dyeColor, out string directory, out string name)
@@ -1206,6 +1283,41 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     name = null;
                     return false;
             }
+        }
+
+        /// <summary>
+        /// Finds the resolution of a png image from its byte array content.
+        /// </summary>
+        /// <param name="bytes">Content of png file.</param>
+        /// <returns>Vector where x is the width and y is the height.</returns>
+        private static Vector2Int? FindPngResolution(byte[] bytes)
+        {
+            // Specifications: http://www.libpng.org/pub/png/spec/iso/index-object.html#11IHDR
+            // The IHDR chunk shall be the first chunk in the PNG datastream. It contains:
+            // Width	4 bytes
+            // Height	4 bytes
+
+            const int widthOffset = 1 * 4;
+            const int heightOffset = 2 * 4;
+
+            for (int i = 0; i <= bytes.Length - 12; i += 4)
+            {
+                if (ToInt(bytes, i) == ihdrIdentifier)
+                    return new Vector2Int(ToInt(bytes, i + widthOffset), ToInt(bytes, i + heightOffset));
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Converts four bytes to int (big endian).
+        /// </summary>
+        /// <param name="bytes">Array of bytes.</param>
+        /// <param name="startIndex">Start index in the array.</param>
+        /// <returns>Int value.</returns>
+        private static int ToInt(byte[] bytes, int startIndex)
+        {
+            return (bytes[startIndex] << 24) | (bytes[startIndex + 1] << 16) | (bytes[startIndex + 2] << 8) | bytes[startIndex + 3];
         }
 
         #endregion

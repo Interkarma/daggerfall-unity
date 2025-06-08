@@ -1,0 +1,258 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: Internal_MagicItems_en
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: dcef666101ad36e41a53996c93807302, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 1600329871360
+    m_Localized: The Masque of Clavicus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842880
+    m_Localized: The Mehrunes Razor
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842881
+    m_Localized: The Mace of Molag Bal
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842882
+    m_Localized: The Hircine Ring
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842883
+    m_Localized: The Sanguine Rose
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842884
+    m_Localized: Oghma Infinium
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842885
+    m_Localized: The Wabbajack
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842886
+    m_Localized: The Ring of Namira
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842887
+    m_Localized: The Skull of Corruption
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842888
+    m_Localized: Azura's Star
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842889
+    m_Localized: Silent %it
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842890
+    m_Localized: '%it of the Wise'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842891
+    m_Localized: '%it of Wildfire'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842892
+    m_Localized: '%it of Force Bolts'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842893
+    m_Localized: Shining %it
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842894
+    m_Localized: '%it of the Sealed Door'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842895
+    m_Localized: '%it of Undeniable Access'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842896
+    m_Localized: '%it of Venom Antidote'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842897
+    m_Localized: '%it of Life Stealing'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842898
+    m_Localized: '%it of Wizard''s Fire'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842899
+    m_Localized: Leaping %it
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842900
+    m_Localized: '%it of Water-walking'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842901
+    m_Localized: '%it of Magicka'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842902
+    m_Localized: Never Tiring %it
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842903
+    m_Localized: '%it of Featherweight'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842904
+    m_Localized: '%it, the Protector'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842905
+    m_Localized: '%it of Shocking'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842906
+    m_Localized: Cursing %it
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842907
+    m_Localized: '%it of Far Silence'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842908
+    m_Localized: '%it of Venom Spitting'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842909
+    m_Localized: Blazing %it of Fireballs
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842910
+    m_Localized: Frosty %it of Ice Storms
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842911
+    m_Localized: '%it of Lightning'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842912
+    m_Localized: Deadman's %it
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842913
+    m_Localized: Healing %it
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842914
+    m_Localized: '%it of the Orc Lord'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842915
+    m_Localized: Unrestrainable %it
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842916
+    m_Localized: '%it of Iron Will'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842917
+    m_Localized: '%it of Nimbleness'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842918
+    m_Localized: Torgo's %it
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842919
+    m_Localized: '%it of Fortitude'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842920
+    m_Localized: '%it of Friendship'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842921
+    m_Localized: '%it of Good Luck'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842922
+    m_Localized: '%it of Oblivion'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842923
+    m_Localized: '%it of Toxic Clouds'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842924
+    m_Localized: '%it of Paralysis'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842925
+    m_Localized: Volendrung
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842926
+    m_Localized: Warlock's Ring
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842927
+    m_Localized: Auriel's Bow
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842928
+    m_Localized: Necromancer's Amulet
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842929
+    m_Localized: Chrysamere
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842930
+    m_Localized: Lord's Mail
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842931
+    m_Localized: Staff of Magnus
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842932
+    m_Localized: Ring of Khajiit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842933
+    m_Localized: Ebony Mail
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842934
+    m_Localized: Auriel's Shield
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842935
+    m_Localized: Spell Breaker
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842936
+    m_Localized: Skeleton's Key
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1600350842937
+    m_Localized: Ebony Blade
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 1

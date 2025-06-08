@@ -139,8 +139,9 @@ Message:  1041
 --        _qgfriend_ occurs 8 times.
 
 QBN:
-Item _artifact_ artifact Ebony_Blade anyInfo 1013
+Item _artifact_ artifact Ebony_Blade anyInfo 1014
 
+Person _questgiver_ face 112 named Mephala remote anyInfo 1013
 Person _qgfriend_ group Librarian remote anyInfo 1011
 Person _enemy_ face 1 factiontype Knightly_Guard remote
 

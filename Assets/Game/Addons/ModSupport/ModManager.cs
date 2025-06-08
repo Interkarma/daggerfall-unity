@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -63,6 +63,11 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         [Tooltip("Loads mods from Assets/Game/Mods in debug mode, without creating an AssetBundle.")]
         public bool LoadVirtualMods = true;
 #endif
+
+        // Returns whether the ModManager has been through Init
+        // Before Initialized is true, disabled mods are not filtered out
+        // Systems that run on launch should ensure this is true before touching systems involving mods
+        public bool Initialized { get { return alreadyStartedInit; } }
 
         #endregion
 
@@ -128,10 +133,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         {
             if (string.IsNullOrEmpty(ModDirectory))
                 ModDirectory = Path.Combine(Application.streamingAssetsPath, "Mods");
-        }
 
-        void Start()
-        {
             SetupSingleton();
 
             if (Instance == this)
@@ -521,6 +523,17 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             }
             return lines;
         }
+        
+        /// <summary>
+        /// Goes through all mods and checks if any of them contain a quest with a given name.
+        /// </summary>
+        /// <param name="questName">Name of the quest</param>
+        public bool AnyModContainsQuest(string questName)
+        {
+            return GetAllModsWithContributes(x => x.LooseQuestsList != null)
+                .Any(mod => mod.ModInfo.Contributes.LooseQuestsList
+                    .Any(looseQuest => looseQuest == questName));
+        }
 
         #endregion
 
@@ -754,7 +767,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// </summary>
         /// <param name="source">The content of source files.</param>
         /// <returns>The compiled assembly or null.</returns>
-        public static Assembly CompileFromSourceAssets(string[] source)
+        public static Assembly CompileFromSourceAssets(string[] source, string modName = "(no mod name)")
         {
             if (source == null || source.Length < 1)
             {
@@ -771,7 +784,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             }
             catch (Exception ex)
             {
-                Debug.LogError(ex.Message);
+                Debug.LogError($"[{modName}] {ex.Message}");
                 return null;
             }
         }
@@ -937,33 +950,72 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// Seeks asset contributes for the target mod, reading the folder name of each asset.
         /// </summary>
         /// <param name="modInfo">Manifest data for a mod, which will be filled with retrieved contributes.</param>
+        /// <param name="automaticallyRegisterQuestLists">Optional parameter that triggers Quest Lists declaration</param>
         /// <remarks>
         /// Assets are imported from loose files according to folder name,
         /// for example all textures inside `SpellIcons` are considered icon atlases.
         /// This method replicates the same behaviour for mods, doing all the hard work at build time.
         /// Results are stored to json manifest file for performant queries at runtime.
         /// </remarks>
-        public static void SeekModContributes(ModInfo modInfo)
+        public static void SeekModContributes(ModInfo modInfo, bool automaticallyRegisterQuestLists = false)
         {
+            // Reset contributions before rebuilding it
+            modInfo.Contributes = null;
+
             List<string> spellIcons = null;
             List<string> booksMapping = null;
+            List<string> questLists = null;
+            List<string> looseQuestsList = null;
 
-            foreach (string file in modInfo.Files)
+            foreach (var file in modInfo.Files)
             {
-                string directory = Path.GetDirectoryName(file);
+                var directory = Path.GetDirectoryName(file);
 
-                if (directory.EndsWith("SpellIcons"))
+                if (!string.IsNullOrEmpty(directory) && directory.EndsWith("SpellIcons"))
+                {
                     AddNameToList(ref spellIcons, file);
-                else if (directory.EndsWith("Books/Mapping"))
-                    AddNameToList(ref booksMapping, file);
+                    continue;
+                }
+
+                if (!string.IsNullOrEmpty(directory) && directory.EndsWith("Mapping"))
+                {
+                    var parentDirectory = Path.GetDirectoryName(directory);
+                    if (!string.IsNullOrEmpty(parentDirectory) && parentDirectory.EndsWith("Books"))
+                    {
+                        AddNameToList(ref booksMapping, file);
+                        continue;
+                    }
+                }
+
+                if (automaticallyRegisterQuestLists)
+                {
+                    var name = Path.GetFileNameWithoutExtension(file);
+                    if (string.IsNullOrEmpty(name) || !name.StartsWith("QuestList-"))
+                    {
+                        continue;
+                    }
+
+                    AddNameToList(ref questLists, name.Substring(10));
+
+                    var questListPath = Path.GetDirectoryName(file);
+
+                    foreach (var looseQuest in modInfo.Files.Where(f => Path.GetDirectoryName(f) == questListPath && f != file))
+                    {
+                        AddNameToList(ref looseQuestsList, looseQuest);
+                    }
+                }
             }
 
-            if (spellIcons != null || booksMapping != null)
+            if (spellIcons == null && booksMapping == null && questLists == null && looseQuestsList == null)
+                return;
+
+            modInfo.Contributes = new ModContributes
             {
-                var contributes = modInfo.Contributes ?? (modInfo.Contributes = new ModContributes());
-                contributes.SpellIcons = spellIcons != null ? spellIcons.ToArray() : null;
-                contributes.BooksMapping = booksMapping != null ? booksMapping.ToArray() : null;
-            }
+                SpellIcons = spellIcons?.ToArray(),
+                BooksMapping = booksMapping?.ToArray(),
+                QuestLists = questLists?.ToArray(),
+                LooseQuestsList = looseQuestsList?.ToArray()
+            };
         }
 
         private static void AddNameToList(ref List<string> names, string path)
@@ -1048,6 +1100,15 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                             continue;
 
                         errorMessages.Add(string.Format(GetText("dependencyIsMissing"), dependency.Name));
+                        continue;
+                    }
+
+                    if (!target.Enabled)
+                    {
+                        if (dependency.IsOptional)
+                            continue;
+
+                        errorMessages.Add(string.Format(GetText("dependencyNotEnabled"), dependency.Name));
                         continue;
                     }
 

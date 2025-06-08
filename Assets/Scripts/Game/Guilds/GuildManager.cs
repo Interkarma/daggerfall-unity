@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -169,7 +169,20 @@ namespace DaggerfallWorkshop.Game.Guilds
             Type guildType;
             if (customGuilds.TryGetValue(guildGroup, out guildType))
             {
-                return (IGuild)Activator.CreateInstance(guildType);
+                switch (guildGroup)
+                {
+                    case FactionFile.GuildGroups.HolyOrder:
+                        return (IGuild)Activator.CreateInstance(guildType, new object[] { Temple.GetDivine(variant) });
+
+                    case FactionFile.GuildGroups.KnightlyOrder:
+                        return (IGuild)Activator.CreateInstance(guildType, new object[] { KnightlyOrder.GetOrder(variant) });
+
+                    default:
+                        if (guildType.GetConstructor(new Type[] { typeof(int) }) != null)
+                            return (IGuild)Activator.CreateInstance(guildType, new object[] { variant });
+                        else
+                            return (IGuild)Activator.CreateInstance(guildType);
+                }
             }
             else
             {
@@ -255,6 +268,9 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public FactionFile.GuildGroups GetGuildGroup(int factionId)
         {
+            if (factionId == 510)   // Shops are marked as FG in faction data, hardcode to none to prevent them acting as FG guildhalls.
+                return FactionFile.GuildGroups.None;
+
             PersistentFactionData persistentFactionData = GameManager.Instance.PlayerEntity.FactionData;
             FactionFile.GuildGroups guildGroup = FactionFile.GuildGroups.None;
             FactionFile.FactionData factionData;
@@ -263,7 +279,8 @@ namespace DaggerfallWorkshop.Game.Guilds
                 guildGroup = (FactionFile.GuildGroups)factionData.ggroup;
 
                 // Handle temples nested under deity
-                if (factionData.children != null && (guildGroup == FactionFile.GuildGroups.None && factionData.children.Count > 0))
+                if (factionData.type == (int)FactionFile.FactionTypes.God
+                    && factionData.children != null && (guildGroup == FactionFile.GuildGroups.None && factionData.children.Count > 0))
                 {
                     FactionFile.FactionData firstChild;
                     if (persistentFactionData.GetFactionData(factionData.children[0], out firstChild))

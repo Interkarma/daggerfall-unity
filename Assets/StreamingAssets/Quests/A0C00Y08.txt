@@ -179,7 +179,8 @@ _S.07_ task:
 	killed 1 _rogue_ 
 	killed 1 _spellsword_ 
 	change repute with _darkb_ by -20 
-	legal repute -75 
+	legal repute -20
+--nerfed legal repute, not fair for normal gameplay
 
 _S.08_ task:
 	clicked npc _questgiver_ 

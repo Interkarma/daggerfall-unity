@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -42,8 +42,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected List<Message> questMessages;
         protected int messageCount = 0;
-        protected int findPlaceRegion;
-        protected string findPlaceName;
+        protected Place findPlace;
 
         KeyCode toggleClosedBinding1;
         KeyCode toggleClosedBinding2;
@@ -55,12 +54,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected TextLabel titleLabel;
         protected MultiFormatTextLabel questLogLabel;
 
-        Panel mainPanel;
+        protected Panel mainPanel;
 
-        Button dialogButton;
-        Button upArrowButton;
-        Button downArrowButton;
-        Button exitButton;
+        protected Button dialogButton;
+        protected Button upArrowButton;
+        protected Button downArrowButton;
+        protected Button exitButton;
 
         protected bool isCloseWindowDeferred = false;
 
@@ -80,6 +79,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         public DaggerfallQuestJournalWindow(IUserInterfaceManager uiManager) : base(uiManager)
         {
+            // Prevent duplicate close calls with base class's exitKey (Escape)
+            AllowCancel = false;
         }
 
         #endregion
@@ -211,7 +212,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (DaggerfallUI.Instance.HotkeySequenceProcessed == HotkeySequence.HotkeySequenceProcessStatus.NotFound)
             {
                 // Toggle window closed with same hotkey used to open it
-                if (InputManager.Instance.GetKeyUp(toggleClosedBinding1) || InputManager.Instance.GetKeyUp(toggleClosedBinding2))
+                if (InputManager.Instance.GetKeyUp(toggleClosedBinding1)
+                    || InputManager.Instance.GetKeyUp(toggleClosedBinding2)
+                    || InputManager.Instance.GetBackButtonUp())
                     CloseWindow();
             }
 
@@ -350,11 +353,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected virtual void FindPlace_OnButtonClick(DaggerfallMessageBox sender, DaggerfallMessageBox.MessageBoxButtons messageBoxButton)
         {
             sender.CloseWindow();
-            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
+            if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes && findPlace != null)
             {
-                Debug.Log("Find " + findPlaceName + findPlaceRegion);
+                Debug.LogFormat("Finding location {0} in region {1}", findPlace.SiteDetails.locationName, findPlace.SiteDetails.regionName);
                 this.CloseWindow();
-                DaggerfallUI.Instance.DfTravelMapWindow.GotoLocation(findPlaceName, findPlaceRegion);
+                DaggerfallUI.Instance.DfTravelMapWindow.GotoPlace(findPlace);
                 DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenTravelMapWindow);
             }
         }
@@ -446,11 +449,17 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 !string.IsNullOrEmpty(place.SiteDetails.locationName) &&
                 place.SiteDetails.locationName != GameManager.Instance.PlayerGPS.CurrentLocation.Name)
             {
-                findPlaceName = place.SiteDetails.locationName;
-                if (DaggerfallUI.Instance.DfTravelMapWindow.CanFindPlace(place.SiteDetails.regionName, findPlaceName))
+                string findPlaceName = place.SiteDetails.locationName;
+                if (DaggerfallUI.Instance.DfTravelMapWindow.CanFindPlace(place.SiteDetails.regionName, findPlaceName)) // Check using canonical name
                 {
-                    findPlaceRegion = DaggerfallUnity.Instance.ContentReader.MapFileReader.GetRegionIndex(place.SiteDetails.regionName);
-                    string entryStr = string.Format("{0} in {1} province", findPlaceName, place.SiteDetails.regionName);
+                    // Workaround for quests compiled before DFU 0.15.0 or later
+                    int regionIndex = MapsFile.PatchRegionIndex(place.SiteDetails.regionIndex, place.SiteDetails.regionName);
+
+                    findPlace = place;
+                    string entryStr = string.Format( // Display using localized name
+                        TextManager.Instance.GetLocalizedText("locationInRegionProvince"),
+                        TextManager.Instance.GetLocalizedLocationName(place.SiteDetails.mapId, findPlaceName),
+                        TextManager.Instance.GetLocalizedRegionName(regionIndex));
                     DaggerfallMessageBox dialogBox = CreateDialogBox(entryStr, "confirmFind");
                     dialogBox.OnButtonClick += FindPlace_OnButtonClick;
                     DaggerfallUI.UIManager.PushWindow(dialogBox);

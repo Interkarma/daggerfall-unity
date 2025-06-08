@@ -75,12 +75,6 @@ RumorsPostfailure:  [1006]
 _prophet_'s gone on to preach %g3 evangelium to the heathen folk of Tamriel.
 <--->
 _prophet_'s left the Bay, but %g3 work is not yet complete.
-<--->
-_prophet_ may be the greatest leader to come out of __tavern_.
-<--->
-_prophet_ spends %g3 time in %g3 room in _prophouse_, writing.
-<--->
-_prophet_ hasn't ever gotten on well with __qgiver_.
 
 RumorsPostsuccess:  [1007]
 That _prophet_ was a charlatan who found some fools in __tavern_.
@@ -301,7 +295,7 @@ Message:  1025
 
 Message:  1026
 <ce>                     You pick up a scrap of flesh,
-<ce>               carefully, even ritually ritualistically
+<ce>               carefully, even ritualistically
 <ce>                      stripped from a =priest_'s
 <ce>                    hand. This was once a finger of
 <ce>                               _priest_.
@@ -411,7 +405,13 @@ Message:  1037
  I found a finger which I presume was once attached
  to _priest_. It was curiously,
  even ceremoniously severed.
- 
+
+Message:  1038
+_prophet_ may be the greatest leader to come out of __tavern_.
+<--->
+_prophet_ spends %g3 time in %g3 room in _prophouse_, writing.
+<--->
+_prophet_ hasn't ever gotten on well with __qgiver_. 
 
 
 -- Symbols used in the QRC file:
@@ -466,8 +466,8 @@ Item _reward_ gem
 Person _qgiver_ group Questor
 Person _contact_ face 105 group Local_3.0
 Person _priest_ face 49 group Group_5.0
-Person _prophet_ face 1 group Local_4.0 anyInfo 1009
---changed anyInfo QuestorPostFailure to 1009
+Person _prophet_ face 1 group Local_4.0 anyInfo 1038
+--changed anyInfo QuestorPostFailure to 1005
 Person _replace_ face 3 factiontype Temple female anyInfo 1023
 Person _lover_ face 104 group Group_7.0 remote anyInfo 1017
 

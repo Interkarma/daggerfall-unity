@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -126,10 +126,10 @@ namespace DaggerfallWorkshop.Game.Utility
             this.scale = scale;
 
             // Create scaled render texture
-            target = new RenderTexture((int)(paperDollWidth * scale), (int)(paperDollHeight * scale), 0);
+            target = new RenderTexture((int)(paperDollWidth * scale), (int)(paperDollHeight * scale), 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Linear);
 
             // Create output texture
-            paperDollTexture = new Texture2D(target.width, target.height, TextureFormat.ARGB32, false);
+            paperDollTexture = new Texture2D(target.width, target.height, TextureFormat.ARGB32, false, true);
             paperDollTexture.filterMode = DaggerfallUI.Instance.GlobalFilterMode;
         }
 
@@ -415,7 +415,8 @@ namespace DaggerfallWorkshop.Game.Utility
             foreach (var item in orderedItems)
             {
                 if (item.ItemGroup == ItemGroups.MensClothing || item.ItemGroup == ItemGroups.WomensClothing ||
-                    item.ItemGroup == ItemGroups.Armor || item.ItemGroup == ItemGroups.Weapons)
+                    item.ItemGroup == ItemGroups.Armor || item.ItemGroup == ItemGroups.Weapons || 
+					(item.ItemGroup == ItemGroups.Jewellery && IsEquippedToBody(item)))
                 {
                     BlitItem(item);
                 }
@@ -427,6 +428,12 @@ namespace DaggerfallWorkshop.Game.Utility
         {
             ImageData source = DaggerfallUnity.Instance.ItemHelper.GetItemImage(item, true, true);
             DrawTexture(source, item);
+        }
+
+        // Equip slots > 11 are considered equipped to body
+        bool IsEquippedToBody(DaggerfallUnityItem item)
+        {
+            return ((int)item.EquipSlot > 11);
         }
 
         #endregion

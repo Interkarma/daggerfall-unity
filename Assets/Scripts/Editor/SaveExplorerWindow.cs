@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -273,7 +273,7 @@ namespace DaggerfallWorkshop
                         string regionText = "None";
                         if (region > 0)
                         {
-                            regionText = dfUnity.ContentReader.MapFileReader.GetRegionName(region);
+                            regionText = dfUnity.ContentReader.MapFileReader.GetRegionName(region); // Using non-localized name in save explorer editor
                         }
                         EditorGUILayout.LabelField(string.Format("Region: {0}", regionText));
 
@@ -506,16 +506,20 @@ namespace DaggerfallWorkshop
                 // Prevent duplicate names so save games aren't automatically removed from the Save Select GUI
                 for (int i = 0; i < saveNames.Length; i++)
                 {
+                    var nextName = saveNames[i];
+                    if (nextName == null) continue;
                     int duplicateCount = 0;
                     for (int j = i + 1; j < saveNames.Length; j++)
                     {
-                        if (saveNames[j].text == saveNames[i].text)
+                        var otherName = saveNames[j];
+                        if (otherName == null) continue;
+                        if (otherName.text == nextName.text)
                         {
                             bool unique = false;
                             while (!unique)
                             {
                                 unique = true;
-                                string replaceText = saveNames[j].text + "(" + ++duplicateCount + ")";
+                                string replaceText = $"{otherName.text}({++duplicateCount})";
                                 for (int k = 0; k < saveNames.Length; k++)
                                 {
                                     if (saveNames[k].text == replaceText)
@@ -526,7 +530,7 @@ namespace DaggerfallWorkshop
                                 }
 
                                 if (unique)
-                                    saveNames[j].text = replaceText;
+                                    otherName.text = replaceText;
                             }
                         }
                     }

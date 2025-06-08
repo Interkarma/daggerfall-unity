@@ -118,7 +118,7 @@ QBN:
 Person _qgiver_ group Questor
 Person _cleric_ face 105 factiontype Temple
 
-Place _mondung_ remote dungeon
+Place _mondung_ remote dungeon4
 
 Clock _queston_ 00:00 0 flag 17 range 0 2
 

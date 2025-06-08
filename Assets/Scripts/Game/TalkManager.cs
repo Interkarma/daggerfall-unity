@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -205,7 +205,15 @@ namespace DaggerfallWorkshop.Game
         bool sameTalkTargetAsBefore = false; // used to indicate same dialog partner / talk target as in conversation before
         bool alreadyRejectedOnce = false; // used to display a random rejection text first time when talking to an npc that dislikes pc, trying to talk a 2nd time (for same npc) pc gets msg "you get no response"
 
-        bool consoleCommandFlag_npcsKnowEverything = false; // used for console commands "npc_knowsEverything" and "npc_knowsUsual"
+        [Flags]
+        private enum NPCBehaviors : byte
+        {
+            Default = 0,
+            KnowEverything = 1,
+            AlwaysFriendly = 2
+        }
+
+        NPCBehaviors consoleCommand_NPCBehaviorOverride = NPCBehaviors.Default; // used for console commands "npc_knowsEverything" and "npc_knowsUsual"
 
         public enum KeySubjectType
         {
@@ -267,7 +275,7 @@ namespace DaggerfallWorkshop.Game
         List<BuildingInfo> listBuildings = null;
 
         short[] FactionsAndBuildings = { 0x1A, 0x15, 0x1D, 0x1B, 0x23, 0x18, 0x21, 0x16, 0x19E, 0x170, 0x19D, 0x198, 0x19A, 0x19B, 0x199, 0x19F, 0x1A0,
-                                          0x1A1, 0x28, 0x29, 0x0F, 0x0A, 0x0D, 0x2, 0x0, 0x3, 0x5, 0x6, 0x8 };
+                                          0x1A1, 0x28, 0x29, 0x0F, 0x0A, 0x0D, 0x2, 0x0, 0x3, 0x5, 0x6, 0x8, 0xC };
 
         public string LocationOfRegionalBuilding;
 
@@ -466,10 +474,14 @@ namespace DaggerfallWorkshop.Game
             get { return listTopicThing; }
         }
 
-        public bool ConsoleCommandFlag_npcsKnowEverything
+        public bool NPCsKnowEverything()
         {
-            get { return consoleCommandFlag_npcsKnowEverything; }
-            set { consoleCommandFlag_npcsKnowEverything = value; }
+            return (consoleCommand_NPCBehaviorOverride & NPCBehaviors.KnowEverything) != 0;
+        }
+
+        public bool NPCsAlwaysFriendly()
+        {
+            return (consoleCommand_NPCBehaviorOverride & NPCBehaviors.AlwaysFriendly) != 0;
         }
 
         public string NPCGreetingText
@@ -558,7 +570,7 @@ namespace DaggerfallWorkshop.Game
             if (!CheckNPCcanKnowAboutTellMeAboutTopic(listItem))
                 return NPCKnowledgeAboutItem.DoesNotKnowAboutItem;
 
-            if (CheckNPCisInSameBuildingAsTopic(listItem) || npcData.isSpyMaster || consoleCommandFlag_npcsKnowEverything)
+            if (CheckNPCisInSameBuildingAsTopic(listItem) || npcData.isSpyMaster || NPCsKnowEverything())
                 return NPCKnowledgeAboutItem.KnowsAboutItem;
 
             // Fixed from classic: an NPC belonging to an organization obviously knows about it
@@ -594,6 +606,11 @@ namespace DaggerfallWorkshop.Game
 
         int GetReactionToPlayer_0_1_2(QuestionType qt, FactionFile.SocialGroups npcSocialGroup)
         {
+            if (NPCsAlwaysFriendly())
+            {
+                return 2;
+            }
+
             int socialGroup = (int)npcSocialGroup;
             if (socialGroup >= 5)
                 socialGroup = 1; // Merchants
@@ -1349,7 +1366,7 @@ namespace DaggerfallWorkshop.Game
         public string GetNewsOrRumors()
         {
             const int outOfNewsRecordIndex = 1457;
-            if (npcData.numAnswersGivenTellMeAboutOrRumors < maxNumAnswersNpcGivesTellMeAboutOrRumors || npcData.isSpyMaster || consoleCommandFlag_npcsKnowEverything)
+            if (npcData.numAnswersGivenTellMeAboutOrRumors < maxNumAnswersNpcGivesTellMeAboutOrRumors || npcData.isSpyMaster || NPCsKnowEverything())
             {
                 string news = TextManager.Instance.GetLocalizedText("resolvingError");
                 List<RumorMillEntry> validRumors = GetValidRumors();
@@ -1489,12 +1506,12 @@ namespace DaggerfallWorkshop.Game
                     PlayerGPS.DiscoveredBuilding discoveredBuilding;
                     if (GameManager.Instance.PlayerGPS.GetAnyBuilding(GameManager.Instance.PlayerEnterExit.ExteriorDoors[0].buildingKey, out discoveredBuilding))
                     {
-                        return String.Format(TextManager.Instance.GetLocalizedText("AnswerTextWhereAmI"), discoveredBuilding.displayName, GameManager.Instance.PlayerGPS.CurrentLocation.Name);
+                        return String.Format(TextManager.Instance.GetLocalizedText("AnswerTextWhereAmI"), discoveredBuilding.displayName, GameManager.Instance.PlayerGPS.CurrentLocalizedLocationName);
                     }
                     // Fallback if no discovery info was found
                     BuildingInfo currentBuilding = listBuildings.Find(x => x.buildingKey == GameManager.Instance.PlayerEnterExit.ExteriorDoors[0].buildingKey);
 
-                    return string.Format(TextManager.Instance.GetLocalizedText("AnswerTextWhereAmI"), currentBuilding.name, GameManager.Instance.PlayerGPS.CurrentLocation.Name);
+                    return string.Format(TextManager.Instance.GetLocalizedText("AnswerTextWhereAmI"), currentBuilding.name, GameManager.Instance.PlayerGPS.CurrentLocalizedLocationName);
                 }
 
                 if (GameManager.Instance.IsPlayerInsideCastle || GameManager.Instance.IsPlayerInsideDungeon) // In dungeon
@@ -1505,7 +1522,7 @@ namespace DaggerfallWorkshop.Game
             }
             else
             {
-                return string.Format(TextManager.Instance.GetLocalizedText("AnswerTextWhereAmI"), GameManager.Instance.PlayerGPS.CurrentLocation.Name, GameManager.Instance.PlayerGPS.CurrentRegionName);
+                return string.Format(TextManager.Instance.GetLocalizedText("AnswerTextWhereAmI"), GameManager.Instance.PlayerGPS.CurrentLocalizedLocationName, GameManager.Instance.PlayerGPS.CurrentLocalizedRegionName);
             }
             return TextManager.Instance.GetLocalizedText("resolvingError");
         }
@@ -1741,7 +1758,7 @@ namespace DaggerfallWorkshop.Game
             if (dictQuestInfo.ContainsKey(listItem.questID) && dictQuestInfo[listItem.questID].resourceInfo.ContainsKey(listItem.key))
             {
                 List<TextFile.Token[]> answers;
-                if (npcData.isSpyMaster) // Spymaster only gives "true" answers (anyinfo messages) also for %hnt2 (note: intended that consoleCommandFlag_npcsKnowEverything does not apply here)
+                if (npcData.isSpyMaster) // Spymaster only gives "true" answers (anyinfo messages) also for %hnt2 (note: intended that NPCsKnowEverything() does not apply here)
                     answers = dictQuestInfo[listItem.questID].resourceInfo[listItem.key].anyInfoAnswers;
                 else // Everybody else gives rumors here for %hnt2
                     answers = dictQuestInfo[listItem.questID].resourceInfo[listItem.key].rumorsAnswers;
@@ -1802,7 +1819,7 @@ namespace DaggerfallWorkshop.Game
             if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.NotSet)
                 listItem.npcKnowledgeAboutItem = GetNPCKnowledgeAboutItem(listItem);
 
-            if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem)
+            if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem && !NPCsKnowEverything())
             {
                 // Messages if NPC doesn't know answer to give directions
                 return ExpandRandomTextRecord(answersToDirections[3 * (int)npcData.socialGroup + reactionToPlayer_0_1_2]);
@@ -1837,12 +1854,12 @@ namespace DaggerfallWorkshop.Game
         public bool GetRegionalLocationCityName(ListItem listItem)
         {
             byte[] lookUpIndexes = { 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x19, 0x1A, 0x1B, 0x1D, 0x1E, 0x1F, 0x20,
-                                     0x21, 0x22, 0x23, 0x24, 0x27, 0x00, 0x0B, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x0A };
+                                     0x21, 0x22, 0x23, 0x24, 0x27, 0x00, 0x0B, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x0A, 0x0C };
 
             DFLocation location = new DFLocation();
             if (GetLocationWithRegionalBuilding(lookUpIndexes[listItem.index], FactionsAndBuildings[listItem.index], ref location))
             {
-                LocationOfRegionalBuilding = location.Name;
+                LocationOfRegionalBuilding = TextManager.Instance.GetLocalizedLocationName(location.MapTableData.MapId, location.Name);
                 return true;
             }
 
@@ -1906,6 +1923,8 @@ namespace DaggerfallWorkshop.Game
                     return storeFlags >> 7;
                 case 0xB: // Library
                     return guildFlags & 1;
+                case 0xC: // Pawn Shop
+                    return (byte) (guildFlags << 1) >> 7;
                 case 0xD: // Temples
                     switch (faction)
                     {
@@ -2008,7 +2027,7 @@ namespace DaggerfallWorkshop.Game
 
             if (listItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem ||
                 (npcData.numAnswersGivenTellMeAboutOrRumors >= maxNumAnswersNpcGivesTellMeAboutOrRumors &&
-                !CheckNPCisInSameBuildingAsTopic(listItem) && !npcData.isSpyMaster && !consoleCommandFlag_npcsKnowEverything))
+                !CheckNPCisInSameBuildingAsTopic(listItem) && !npcData.isSpyMaster && !NPCsKnowEverything()))
             {
                 // Messages if NPC doesn't know answer to non-directions question
                 return ExpandRandomTextRecord(answersToNonDirections[3 * (int)npcData.socialGroup + reactionToPlayer_0_1_2]);
@@ -2740,7 +2759,12 @@ namespace DaggerfallWorkshop.Game
                         {
                             BuildingInfo item;
                             item.buildingType = buildingSummary.BuildingType;
-                            item.name = BuildingNames.GetName(buildingSummary.NameSeed, buildingSummary.BuildingType, buildingSummary.FactionId, location.Name, location.RegionName);
+                            item.name = BuildingNames.GetName(
+                                buildingSummary.NameSeed,
+                                buildingSummary.BuildingType,
+                                buildingSummary.FactionId,
+                                TextManager.Instance.GetLocalizedLocationName(location.MapTableData.MapId, location.Name),
+                                TextManager.Instance.GetLocalizedRegionName(location.RegionIndex));
                             item.buildingKey = buildingSummary.buildingKey;
                             // Compute building position in map coordinate system
                             float xPosBuilding = blockLayout[index].rect.xpos + (int)(buildingSummary.Position.x / (BlocksFile.RMBDimension * MeshReader.GlobalScale) * ExteriorAutomap.blockSizeWidth) - GameManager.Instance.ExteriorAutomap.LocationWidth * ExteriorAutomap.blockSizeWidth * 0.5f;
@@ -2804,7 +2828,12 @@ namespace DaggerfallWorkshop.Game
                                         {
                                             npc = npcData2,
                                             socialGroup = socialGroup,
-                                            buildingName = BuildingNames.GetName(buildingSummary.NameSeed, buildingSummary.BuildingType, buildingSummary.FactionId, location.Name, location.RegionName)
+                                            buildingName = BuildingNames.GetName(
+                                                buildingSummary.NameSeed,
+                                                buildingSummary.BuildingType,
+                                                buildingSummary.FactionId,
+                                                TextManager.Instance.GetLocalizedLocationName(location.MapTableData.MapId, location.Name),
+                                                TextManager.Instance.GetLocalizedRegionName(location.RegionIndex))
                                         };
 
                                         if (!RMBLayout.IsNamedBuilding(buildingSummary.BuildingType))
@@ -2956,7 +2985,8 @@ namespace DaggerfallWorkshop.Game
             {
                 QuestResource questResource = quest.GetResource(item.key);
                 Person person = (Person)questResource;
-                if (person.HomeRegionName != GameManager.Instance.PlayerGPS.CurrentRegionName)
+                if (person.HomeRegionIndex != -1 &&
+                    person.HomeRegionName != GameManager.Instance.PlayerGPS.CurrentRegionName)
                     return false;
             }
 
@@ -2987,18 +3017,27 @@ namespace DaggerfallWorkshop.Game
             // If not looking for a local building, then player must be looking for a quest person or a quest location
             Quest quest = GameManager.Instance.QuestMachine.GetQuest(item.questID);
             QuestResource questResource = quest.GetResource(item.key);
-            Person person = (Person)questResource;
-            Symbol assignedPlaceSymbol = person.GetAssignedPlaceSymbol();
-            Place place;
+            Person person = null;
+            Symbol assignedPlaceSymbol = null;
+            Place place = null;
 
+            if (questResource is Person)
+            {
+                person = (Person)questResource;
+                assignedPlaceSymbol = person.GetAssignedPlaceSymbol();
+            }
             if (assignedPlaceSymbol != null)
             {
                 place = quest.GetPlace(assignedPlaceSymbol);  // Gets actual place resource
             }
-            else
+            else if (person != null)
             {
                 place = person.GetHomePlace(); // get home place if no assigned place was found
             }
+
+            // Some individuals such as The Underking have no assigned place
+            if (place == null)
+                return false;
 
             if (place.SiteDetails.regionName != GameManager.Instance.PlayerGPS.CurrentRegionName)
                 return false;
@@ -3296,7 +3335,7 @@ namespace DaggerfallWorkshop.Game
             int playerRegion = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
             byte[] KnightlyOrderRegions = { 0x05, 0x11, 0x12, 0x14, 0x15, 0x16, 0x17, 0x2B, 0x33, 0x37 };
 
-            for (int i = 0; i < 28; ++i)
+            for (int i = 0; i < FactionsAndBuildings.Length; ++i)
             {
                 if (i >= 8 && i <= 17) // Is a knightly order
                 {
@@ -3497,7 +3536,7 @@ namespace DaggerfallWorkshop.Game
             return TokensToString(tokens);
         }
 
-        private string TokensToString(TextFile.Token[] tokens, bool addSpaceAtTokenEnd = true)
+        public static string TokensToString(TextFile.Token[] tokens, bool addSpaceAtTokenEnd = true)
         {
             // Create return string from expanded tokens
             string separatorString = " ";
@@ -3579,6 +3618,8 @@ namespace DaggerfallWorkshop.Game
                 {
                     ConsoleCommandsDatabase.RegisterCommand(TalkNpcsKnowEverything.name, TalkNpcsKnowEverything.description, TalkNpcsKnowEverything.usage, TalkNpcsKnowEverything.Execute);
                     ConsoleCommandsDatabase.RegisterCommand(TalkNpcsKnowUsual.name, TalkNpcsKnowUsual.description, TalkNpcsKnowUsual.usage, TalkNpcsKnowUsual.Execute);
+                    ConsoleCommandsDatabase.RegisterCommand(TalkNpcBehaviorOverride.name, TalkNpcBehaviorOverride.description, TalkNpcBehaviorOverride.usage, TalkNpcBehaviorOverride.Execute);
+                    ConsoleCommandsDatabase.RegisterCommand(TalkPrint.name, TalkPrint.description, TalkPrint.usage, TalkPrint.Execute);
                 }
                 catch (System.Exception ex)
                 {
@@ -3595,7 +3636,7 @@ namespace DaggerfallWorkshop.Game
 
                 public static string Execute(params string[] args)
                 {
-                    GameManager.Instance.TalkManager.ConsoleCommandFlag_npcsKnowEverything = true;
+                    GameManager.Instance.TalkManager.consoleCommand_NPCBehaviorOverride |= NPCBehaviors.KnowEverything;
                     return "NPCS know everything now";
                 }
             }
@@ -3609,8 +3650,61 @@ namespace DaggerfallWorkshop.Game
 
                 public static string Execute(params string[] args)
                 {
-                    GameManager.Instance.TalkManager.ConsoleCommandFlag_npcsKnowEverything = false;
+                    GameManager.Instance.TalkManager.consoleCommand_NPCBehaviorOverride &= ~(NPCBehaviors.KnowEverything);
                     return "NPCS know the usual stuff now";
+                }
+            }
+
+            private static class TalkNpcBehaviorOverride
+            {
+                public static readonly string name = "talk_npcBehavior";
+                public static readonly string description = "Overrides NPC behavior: 0 = default, 1 = know everything, 2 = always friendly, 3 = know everything AND always friendly";
+                public static readonly string usage = "talk_npcBehavior [mode]";
+
+                public static string Execute(params string[] args)
+                {
+                    if (args != null && args.Length == 1)
+                    {
+                        byte newMode = 0;
+                        if (byte.TryParse(args[0], out newMode))
+                        {
+                            GameManager.Instance.TalkManager.consoleCommand_NPCBehaviorOverride = (NPCBehaviors)newMode;
+                        }
+                    }
+
+                    return String.Format("NPC behaviors: " + GameManager.Instance.TalkManager.consoleCommand_NPCBehaviorOverride.ToString());
+                }
+            }
+
+            private static class TalkPrint
+            {
+                public static readonly string name = "talk_print";
+                public static readonly string description = "Output talk text from the RSC string database. ID must be a talk-related string. Record is selected at random.";
+                public static readonly string usage = "talk_print {id}";
+
+                public static string Execute(params string[] args)
+                {
+                    if (args == null || args.Length < 1)
+                        return usage;
+
+                    int id;
+                    if (!int.TryParse(args[0], out id))
+                        return usage;
+
+                    string output = "Nothing found.";
+                    try
+                    {
+                        TextFile.Token[] tokens = DaggerfallUnity.Instance.TextProvider.GetRandomTokens(id);
+                        MacroHelper.ExpandMacros(ref tokens, GameManager.Instance.TalkManager);
+                        output = TokensToString(tokens);
+                    }
+                    catch (Exception ex)
+                    {
+                        output = string.Format("Command failed. ID {0} is not a talk string.", id);
+                        Debug.LogFormat("talk_print exception: {0}", ex.Message);
+                    }
+
+                    return output;
                 }
             }
         }

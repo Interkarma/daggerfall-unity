@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -63,6 +63,7 @@ namespace DaggerfallWorkshop.Game
         float handScaleY;
         float offsetWidth;
         float offsetHeight;
+        Rect screenRect;
 
         #endregion
 
@@ -84,6 +85,11 @@ namespace DaggerfallWorkshop.Game
 
         void OnGUI()
         {
+            if (DaggerfallUI.Instance.CustomScreenRect != null)
+                screenRect = DaggerfallUI.Instance.CustomScreenRect.Value;
+            else
+                screenRect = new Rect(0, 0, Screen.width, Screen.height);
+
             // Offset spellcasting animation by large HUD height when both large HUD and undocked weapon offset enabled
             // Animation is forced to offset when using docked HUD else it would appear underneath HUD
             // This helps user avoid such misconfiguration or it might be interpreted as a bug
@@ -112,8 +118,8 @@ namespace DaggerfallWorkshop.Game
                 int frameIndex = frameIndices[currentFrame];
 
                 // Draw spell cast texture behind other HUD elements
-                GUI.DrawTextureWithTexCoords(leftHandPosition, currentAnims[frameIndex].Texture, leftHandAnimRect);
-                GUI.DrawTextureWithTexCoords(rightHandPosition, currentAnims[frameIndex].Texture, rightHandAnimRect);
+                DaggerfallUI.DrawTextureWithTexCoords(leftHandPosition, currentAnims[frameIndex].Texture, leftHandAnimRect);
+                DaggerfallUI.DrawTextureWithTexCoords(rightHandPosition, currentAnims[frameIndex].Texture, rightHandAnimRect);
             }
         }
 
@@ -215,8 +221,8 @@ namespace DaggerfallWorkshop.Game
             int height = currentAnims[frameIndex].Size.Height;
 
             // Get hand scale
-            handScaleX = (float)Screen.width / (float)nativeScreenWidth;
-            handScaleY = (float)Screen.height / (float)nativeScreenHeight;
+            handScaleX = (float)screenRect.width / (float)nativeScreenWidth;
+            handScaleY = (float)screenRect.height / (float)nativeScreenHeight;
 
             // Adjust scale to be slightly larger when not using point filtering
             // This reduces the effect of filter shrink at edge of display
@@ -249,8 +255,8 @@ namespace DaggerfallWorkshop.Game
         private void AlignLeftHand(int width, int height)
         {
             leftHandPosition = new Rect(
-                Screen.width * offsetWidth,
-                Screen.height - height * handScaleY - offsetHeight,
+                screenRect.x + screenRect.width * offsetWidth,
+                screenRect.y + screenRect.height - height * handScaleY - offsetHeight,
                 width * handScaleX,
                 height * handScaleY);
         }
@@ -258,8 +264,8 @@ namespace DaggerfallWorkshop.Game
         private void AlignRightHand(int width, int height)
         {
             rightHandPosition = new Rect(
-                Screen.width * (1f - offsetWidth) - width * handScaleX,
-                Screen.height - height * handScaleY - offsetHeight,
+                screenRect.x + screenRect.width * (1f - offsetWidth) - width * handScaleX,
+                screenRect.y + screenRect.height - height * handScaleY - offsetHeight,
                 width * handScaleX,
                 height * handScaleY);
         }

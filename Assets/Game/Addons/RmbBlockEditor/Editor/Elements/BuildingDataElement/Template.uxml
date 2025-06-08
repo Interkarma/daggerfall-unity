@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements"
+>
+    <engine:VisualElement class="pb mb">
+
+        <engine:VisualElement class="row mr pb">
+            <editor:IntegerField label="FactionId: " name="faction-id" class="col-4"/>
+        </engine:VisualElement>
+
+        <engine:VisualElement class="row mr pb">
+            <editor:EnumField label="Building Type: " name="building-type" class="col-4"/>
+        </engine:VisualElement>
+
+        <engine:VisualElement class="row pb">
+            <engine:SliderInt
+                name="quality"
+                label="Quality:"
+                high-value="20"
+                class="flex-grow"
+            />
+            <editor:IntegerField
+                name="quality-input"
+                readonly="true"
+                class="flex-grow mr"
+            />
+        </engine:VisualElement>
+
+        <engine:VisualElement class="splitter"/>
+
+        <engine:VisualElement class="row pt mr ml">
+            <engine:Box class="flex-grow">
+                <engine:VisualElement name="exterior-thumbnail"/>
+            </engine:Box>
+            <engine:Box class="flex-grow">
+                <engine:VisualElement name="interior-thumbnail"/>
+            </engine:Box>
+        </engine:VisualElement>
+
+        <engine:VisualElement class="splitter"/>
+
+        <engine:VisualElement class="pt pb ml mr">
+            <engine:VisualElement class="center mb">
+                <engine:Label text="Choose a new building:" class="col-4"/>
+            </engine:VisualElement>
+            <engine:VisualElement class="row mt center">
+                <engine:Button name="replace-from-catalog-button" text="Import From Catalog" class="col-1"/>
+                <engine:Button name="replace-from-file-button" text="Import From File" class="col-1"/>
+                <engine:Button name="import-from-WDE" text="Import From WDE" class="col-1"/>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement name="replace-from-file-container" class="pt hidden">
+            <engine:VisualElement class="splitter"/>
+            <engine:Label text="Import Building Data From File" class="h3 center"/>
+            <engine:VisualElement class="row pt pb">
+                <engine:Toggle name="import-props-from-file" text="Properties" value="true" class="flex-grow mr"/>
+                <engine:Toggle name="import-exterior-from-file" text="Exterior" value="true" class="flex-grow mr"/>
+                <engine:Toggle name="import-interior-from-file" text="Interior" value="true" class="flex-grow mr"/>
+            </engine:VisualElement>
+
+            <engine:VisualElement class="row pt">
+                <engine:Button name="import-from-file" text="Import" class="flex-grow mr"/>
+                <engine:Button name="cancel-replace-from-file" text="Cancel" class="flex-grow ml"/>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+        <engine:VisualElement name="replace-from-catalog-container" class="pt hidden">
+            <engine:VisualElement class="splitter"/>
+            <engine:Label text="Import Building Data From Catalog" class="h3 center"/>
+
+            <engine:VisualElement name="object-picker-container" class="mb mt"/>
+
+            <engine:VisualElement class="row ml mr mt pt pb">
+                <engine:Toggle name="import-props-from-catalog" text="Properties" value="true" class="flex-grow mr"/>
+                <engine:Toggle name="import-exterior-from-catalog" text="Exterior" value="true" class="flex-grow mr"/>
+                <engine:Toggle name="import-interior-from-catalog" text="Interior" value="true" class="flex-grow mr"/>
+            </engine:VisualElement>
+
+            <engine:VisualElement class="row ml mr pt">
+                <engine:Button name="import-from-catalog" text="Import" class="flex-grow mr"/>
+                <engine:Button name="cancel-replace-from-catalog" text="Cancel" class="flex-grow ml"/>
+            </engine:VisualElement>
+        </engine:VisualElement>
+
+    </engine:VisualElement>
+</engine:UXML>

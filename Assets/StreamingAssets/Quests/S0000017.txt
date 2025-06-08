@@ -141,6 +141,10 @@ _S.04_ task:
 	when _S.03_ and _2letter_ 
 	prompt QuestorOffer yes yes no _no_ 
 
+_clearclick_ task:
+	when _S.03_ and not _2letter_ 
+	clear _S.03_ _clearclick_ 
+
 _S.05_ task:
 	say 1015 
 

@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -310,6 +310,7 @@ namespace DaggerfallWorkshop.Game
                 {
                     button.Label.Text = KeyCode.None.ToString();
                     SetUnsavedBinding(action, button.Label.Text);
+
                     checkDuplicates();
                 }
                 s.CloseWindow();
@@ -548,6 +549,9 @@ namespace DaggerfallWorkshop.Game
                 KeyCode curCode = InputManager.Instance.GetBinding(action, primary);
                 if (curCode != code)
                 {
+                    if (primary && code == KeyCode.None)
+                        InputManager.Instance.AddRemovedPrimaryAction(action);
+
                     InputManager.Instance.SetBinding(code, action, primary);
                     Debug.LogFormat("({0}) Bound Action {1} with Code {2} ({3})", primary ? "Primary" : "Secondary", action, code.ToString(), (int)code);
                 }

@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -13,6 +13,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
 using DaggerfallWorkshop.Game.Banking;
 using DaggerfallWorkshop.Game.Items;
+using System.Collections.Generic;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -37,6 +38,8 @@ namespace DaggerfallWorkshop.Game
         public bool DrawHorse = true;
 
         public const float ScaleFactorX = 0.8f;    // Adjusts horizontal aspect ratio to match classic
+
+        Rect screenRect;
 
         #endregion
 
@@ -63,6 +66,11 @@ namespace DaggerfallWorkshop.Game
         public ImageData RidingTexture { get { return ridingTexture; } }
         public int FrameIndex { get { return frameIndex; } }
 
+        public Color Tint { get; set; } = Color.white;
+
+        public void AddHorseItemIndex(int index) { horseItemIndexes.Add(index); }
+        List<int> horseItemIndexes = new List<int>() { (int)Transportation.Horse };
+
         #endregion
 
         #region Public Methods
@@ -78,7 +86,6 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// True when player owns a cart
         /// </summary>
-        /// <returns></returns>
         public bool HasCart()
         {
             ItemCollection inventory = GameManager.Instance.PlayerEntity.Items;
@@ -89,12 +96,15 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// True when player owns a horse
         /// </summary>
-        /// <returns></returns>
         public bool HasHorse()
         {
             ItemCollection inventory = GameManager.Instance.PlayerEntity.Items;
 
-            return inventory.Contains(ItemGroups.Transportation, (int)Transportation.Horse);
+            foreach (int horseItemIndex in horseItemIndexes)
+                if (inventory.Contains(ItemGroups.Transportation, horseItemIndex))
+                    return true;
+
+            return false;
         }
 
         /// <summary>
@@ -277,6 +287,11 @@ namespace DaggerfallWorkshop.Game
 
         void OnGUI()
         {
+            if (DaggerfallUI.Instance.CustomScreenRect != null)
+                screenRect = DaggerfallUI.Instance.CustomScreenRect.Value;
+            else
+                screenRect = new Rect(0, 0, Screen.width, Screen.height);
+
             if (Event.current.type.Equals(EventType.Repaint) && !GameManager.IsGamePaused && DrawHorse)
             {
                 if ((mode == TransportModes.Horse || mode == TransportModes.Cart) && ridingTexture.texture != null)
@@ -284,7 +299,7 @@ namespace DaggerfallWorkshop.Game
                     // Draw horse texture behind other HUD elements & weapons.
                     GUI.depth = 2;
                     // Get horse texture scaling factor. (base on height to avoid aspect ratio issues like fat horses)
-                    float horseScaleY = (float)Screen.height / (float)nativeScreenHeight;
+                    float horseScaleY = (float)screenRect.height / (float)nativeScreenHeight;
                     float horseScaleX = horseScaleY * ScaleFactorX;
 
                     // Allow horse to be offset when large HUD enabled
@@ -299,11 +314,11 @@ namespace DaggerfallWorkshop.Game
 
                     // Calculate position for horse texture and draw it.
                     Rect pos = new Rect(
-                                    Screen.width / 2f - (ridingTexture.width * horseScaleX) / 2f,
-                                    Screen.height - (ridingTexture.height * horseScaleY) - horseOffsetHeight,
+                                    screenRect.x + screenRect.width / 2f - (ridingTexture.width * horseScaleX) / 2f,
+                                    screenRect.y + screenRect.height - (ridingTexture.height * horseScaleY) - horseOffsetHeight,
                                     ridingTexture.width * horseScaleX,
                                     ridingTexture.height * horseScaleY);
-                    GUI.DrawTexture(pos, ridingTexture.texture);
+                    DaggerfallUI.DrawTexture(pos, ridingTexture.texture, ScaleMode.StretchToFill, true, Tint);
                 }
             }
         }

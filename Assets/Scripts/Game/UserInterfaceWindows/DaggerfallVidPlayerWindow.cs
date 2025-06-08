@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -73,6 +73,13 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             PlayOnStart = playOnStart;
         }
 
+        public DaggerfallVidPlayerWindow(IUserInterfaceManager uiManager, string playOnStart, bool endOnAnyKey)
+            : base(uiManager)
+        {
+            PlayOnStart = playOnStart;
+            EndOnAnyKey = endOnAnyKey;
+        }
+
         protected override void Setup()
         {
             if (useCustomVideo = VideoReplacement.TryImportMovie(PlayOnStart, out customVideo))
@@ -115,7 +122,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (useCustomVideo)
             {
                 if (endOnAnyKey && InputManager.Instance.AnyKeyDownIgnoreAxisBinds ||
-                    Input.GetKeyDown(KeyCode.Escape) ||
+                    InputManager.Instance.GetBackButtonDown() ||
                     !customVideo.IsPlaying)
                 {
                     customVideo.Stop();
@@ -131,7 +138,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             else
             {
                 if (endOnAnyKey && InputManager.Instance.AnyKeyDownIgnoreAxisBinds ||
-                    Input.GetKeyDown(KeyCode.Escape) ||
+                    InputManager.Instance.GetBackButtonDown() ||
                     video.VidFile.EndOfFile && video.Playing)
                 {
                     video.Playing = false;

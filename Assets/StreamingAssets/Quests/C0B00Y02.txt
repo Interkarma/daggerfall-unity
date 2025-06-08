@@ -348,6 +348,7 @@ _exorcise_ task:
 	hide npc _child_ 
 	say 1015 
 	place foe _daedra_ at _house_ 
+	clear _talkguardian_
 
 -until _exorcise_ performed:
 -	clear _clickpriest_ _qgclicked_ 

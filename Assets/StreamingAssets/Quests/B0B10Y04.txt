@@ -134,7 +134,7 @@ QBN:
 
 Person _qgiver_ group Questor
 
-Place _mondung_ remote dungeon
+Place _mondung_ remote dungeon1
 Place tavern local tavern
 
 Clock _2mondung_ 00:00 0 flag 17 range 0 2

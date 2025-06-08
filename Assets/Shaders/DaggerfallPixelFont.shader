@@ -4,6 +4,7 @@ Shader "Daggerfall/PixelFont"
     {
         _MainTex ("Texture", any) = "" {}
         _ScissorRect("Scissor Rectangle", Vector) = (0,1,0,1)   // x=left, y=right, z=bottom, w=top - fullscreen is (0,1,0,1)
+		_Color("Color", Color) = (1.0, 1.0, 1.0, 1.0)
     }
 
 	SubShader {
@@ -21,6 +22,7 @@ Shader "Daggerfall/PixelFont"
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
+            #pragma multi_compile_local __ _MacOSX
 
 			#include "UnityCG.cginc"
 
@@ -40,6 +42,7 @@ Shader "Daggerfall/PixelFont"
 			sampler2D _MainTex;
             uniform float4 _MainTex_ST;
             float4 _ScissorRect;
+			float4 _Color;
 			
 			v2f vert (appdata_t v)
 			{
@@ -59,7 +62,11 @@ Shader "Daggerfall/PixelFont"
 
                 float alpha = tex2D(_MainTex, i.texcoord).a;
 
-                return float4(i.color.rgb, alpha);
+                #ifdef _MacOSX
+                    return float4(_Color.rgb, alpha);
+                #else
+                    return float4(i.color.rgb, alpha);
+                #endif
 			}
 			ENDCG 
 		}

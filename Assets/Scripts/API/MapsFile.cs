@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -17,6 +17,7 @@ using DaggerfallConnect.Utility;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game;
 using DaggerfallWorkshop.Game.Questing;
+using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
 #endregion
 
@@ -321,6 +322,19 @@ namespace DaggerfallConnect.Arena2
         #region Static Public Methods
 
         /// <summary>
+        /// Gets NameHelper.BankType in given region.
+        /// In practice this will always be Redguard/Breton.
+        /// Supporting other name banks for possible diversity later.
+        /// </summary>
+        public static NameHelper.BankTypes GetNameBankOfRegion(int regionIndex)
+        {
+            if (regionIndex > -1)
+                return (NameHelper.BankTypes)RegionRaces[regionIndex];
+
+            return NameHelper.BankTypes.Breton;
+        }
+
+        /// <summary>
         /// Converts longitude and latitude to map pixel coordinates.
         /// The world is 1000x500 map pixels.
         /// </summary>
@@ -523,6 +537,35 @@ namespace DaggerfallConnect.Arena2
             settings.NatureSet = (DFLocation.ClimateTextureSet)settings.NatureArchive;
 
             return settings;
+        }
+
+        /// <summary>
+        /// Workaround for older saves prior to 0.15.0 to get correct region index for journal goto clicks.
+        /// This is not an issue for quests compiled by 0.15.0 or later as regionIndex is correctly stored.
+        /// Using this workaround so older saves can still use journal goto.
+        /// </summary>
+        /// <param name="regionIndex">Expected region index.</param>
+        /// <param name="canonicalRegionName">Canonical (not localized) region name.</param>
+        /// <returns>Patched region index if possible.</returns>
+        public static int PatchRegionIndex(int regionIndex, string canonicalRegionName)
+        {
+            // Older saves do not store regionIndex in SiteDetails
+            // This leads to all journal goto clicks initiated from older save data to search Alik'r Desert (regionIndex 0 / unitialised)
+            // While this only affects goto from log feature, users are going to see this as a bug
+            // Implement a workaround for legacy saves by comparing stored vs indexed canonical names for inequality
+            // If not equal then rescan for correct index
+            // Only need to do this when regionIndex is 0 / unitialised
+            // If player actually searching Alik'r then canonical names will match
+            if (regionIndex == 0 &&
+                string.Compare(canonicalRegionName, RegionNames[regionIndex]) != 0)
+            {
+                // Try to correct region index and fallback to 0 if not found
+                regionIndex = Array.IndexOf(RegionNames, canonicalRegionName);
+                if (regionIndex == -1)
+                    regionIndex = 0;
+            }
+
+            return regionIndex;
         }
 
         #endregion
@@ -959,6 +1002,8 @@ namespace DaggerfallConnect.Arena2
             try
             {
                 // Store parent region name
+                // IMPORTANT: This RegionName is used in many places as a string key and must always be the non-localized version as found in MAPS.BSA.
+                //            Anywhere using this for display to player should use TextProvider.GetLocalizedRegionName() instead.
                 dfLocation.RegionName = RegionNames[region];
 
                 // Read MapPItem for this location
@@ -1019,7 +1064,19 @@ namespace DaggerfallConnect.Arena2
             for (int i = 0; i < regions[region].DFRegion.LocationCount; i++)
             {
                 // Read map name data
-                regions[region].DFRegion.MapNames[i] = FileProxy.ReadCStringSkip(reader, 0, 32);
+                string mapName = FileProxy.ReadCStringSkip(reader, 0, 32);
+
+                // ReadCStringSkip reads to null terminator not stride length
+                // Some map names are exactly 32 bytes and do not have a null terminator
+                // Limit map name to 32 characters to prevent overflow to next name record
+                // There are only two locations with names of exactly 32 bytes in MAPS.BSA:
+                //  - "The Unfortunate Porcupine Hostel" in Bhoraine
+                //  - "The Feather and Barbarian Tavern" in Kambria
+                if (mapName.Length > 32)
+                    mapName = mapName.Substring(0, 32);
+
+                // Store map name in region structure
+                regions[region].DFRegion.MapNames[i] = mapName;
 
                 // Add to dictionary
                 if (!regions[region].DFRegion.MapNameLookup.ContainsKey(regions[region].DFRegion.MapNames[i]))

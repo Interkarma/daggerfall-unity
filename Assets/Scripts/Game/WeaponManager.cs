@@ -1,10 +1,10 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    Numidium, Hazelnut
+// Contributors:    Numidium, Hazelnut, Kirk.O
 //
 // Notes:
 //
@@ -55,7 +55,7 @@ namespace DaggerfallWorkshop.Game
         public float ChanceToBeParried = 0.1f;      // Example: Chance for player hit to be parried
         public DaggerfallMissile ArrowMissilePrefab;
 
-        float weaponSensitivity = 1.0f;             // Sensitivity of weapon swings to mouse movements
+        //float weaponSensitivity = 1.0f;             // Sensitivity of weapon swings to mouse movements
         private Gesture _gesture;
         private int _longestDim;                    // Longest screen dimension, used to compare gestures for attack
 
@@ -193,7 +193,7 @@ namespace DaggerfallWorkshop.Game
 
         void Start()
         {
-            weaponSensitivity = DaggerfallUnity.Settings.WeaponSensitivity;
+            //weaponSensitivity = DaggerfallUnity.Settings.WeaponSensitivity;
             mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
             player = transform.gameObject;
             playerLayerMask = ~(1 << LayerMask.NameToLayer("Player"));
@@ -299,7 +299,7 @@ namespace DaggerfallWorkshop.Game
             // Handle beginning a new attack
             if (!isAttacking)
             {
-                if (!DaggerfallUnity.Settings.ClickToAttack || bowEquipped)
+                if (DaggerfallUnity.Settings.WeaponSwingMode == 0 || bowEquipped)
                 {
                     // Reset tracking if user not holding down 'SwingWeapon' button and no attack in progress
                     if (!InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon))
@@ -311,8 +311,11 @@ namespace DaggerfallWorkshop.Game
                 }
                 else
                 {
-                    // Player must click to attack
-                    if (InputManager.Instance.ActionStarted(InputManager.Actions.SwingWeapon))
+                    // Player must click to attack...
+                    if (InputManager.Instance.ActionStarted(InputManager.Actions.SwingWeapon)
+                        // ...or hold to attack.
+                        || (DaggerfallUnity.Settings.WeaponSwingMode == 2
+                            && InputManager.Instance.HasAction(InputManager.Actions.SwingWeapon)))
                     {
                         isClickAttack = true;
                     }
@@ -464,7 +467,7 @@ namespace DaggerfallWorkshop.Game
                 return true;
             }
 
-            // Check if player hit a static exterior door
+            // Check if player hit a static door
             if (GameManager.Instance.PlayerActivate.AttemptExteriorDoorBash(hit))
             {
                 return true;
@@ -546,7 +549,8 @@ namespace DaggerfallWorkshop.Game
                     // Add arrow to target's inventory
                     if (arrowHit && !arrowSummoned)
                     {
-                        DaggerfallUnityItem arrow = ItemBuilder.CreateItem(ItemGroups.Weapons, (int)Weapons.Arrow);
+                        DaggerfallUnityItem arrow = ItemBuilder.CreateWeapon(Weapons.Arrow, WeaponMaterialTypes.None);
+                        arrow.stackCount = 1;
                         enemyEntity.Items.AddItem(arrow);
                     }
 
@@ -648,15 +652,23 @@ namespace DaggerfallWorkshop.Game
                 usingRightHand = true;
                 holdingShield = true;
                 leftHandItem = null;
+                if (currentLeftHandWeapon == null || !currentLeftHandWeapon.IsShield)
+                    UpdateLeftHandGfxCache(null); // Cache melee graphics in case shield is unequipped later.
             }
 
             // Right-hand item changed
             if (!DaggerfallUnityItem.CompareItems(currentRightHandWeapon, rightHandItem))
+            {
                 currentRightHandWeapon = rightHandItem;
+                UpdateRightHandGfxCache(rightHandItem);
+            }
 
             // Left-hand item changed
             if (!DaggerfallUnityItem.CompareItems(currentLeftHandWeapon, leftHandItem))
+            {
                 currentLeftHandWeapon = leftHandItem;
+                UpdateLeftHandGfxCache(leftHandItem);
+            }
 
             if (EquipCountdownRightHand > 0)
             {
@@ -747,6 +759,7 @@ namespace DaggerfallWorkshop.Game
             target.MetalType = MetalTypes.None;
             target.DrawWeaponSound = SoundClips.None;
             target.SwingWeaponSound = SoundClips.SwingHighPitch;
+            target.SpecificWeapon = null;
         }
 
         void SetWeapon(FPSWeapon target, DaggerfallUnityItem weapon)
@@ -759,6 +772,7 @@ namespace DaggerfallWorkshop.Game
             target.WeaponType = DaggerfallUnity.Instance.ItemHelper.ConvertItemToAPIWeaponType(weapon);
             target.MetalType = DaggerfallUnity.Instance.ItemHelper.ConvertItemMaterialToAPIMetalType(weapon);
             target.WeaponHands = ItemEquipTable.GetItemHands(weapon);
+            target.SpecificWeapon = weapon;
             target.DrawWeaponSound = weapon.GetEquipSound();
             target.SwingWeaponSound = weapon.GetSwingSound();
         }
@@ -770,7 +784,7 @@ namespace DaggerfallWorkshop.Game
         MouseDirections TrackMouseAttack()
         {
             // Track action for idle plus all eight mouse directions
-            var sum = _gesture.Add(InputManager.Instance.MouseX, InputManager.Instance.MouseY) * weaponSensitivity;
+            var sum = _gesture.Add(InputManager.Instance.MouseX, InputManager.Instance.MouseY);
 
             if (InputManager.Instance.UsingController)
             {
@@ -898,6 +912,33 @@ namespace DaggerfallWorkshop.Game
                     hitEnemy = WeaponDamage(strikingWeapon, false, false, hit.transform, hit.point, mainCamera.transform.forward);
                 }
             }
+        }
+
+        private void UpdateRightHandGfxCache(DaggerfallUnityItem rightHandItem)
+        {
+            ScreenWeapon.SpecificWeapon = currentRightHandWeapon;
+            if (rightHandItem != null)
+            {
+                ScreenWeapon.TryCacheReadiedWeaponAtlas(DaggerfallUnity.Instance.ItemHelper.ConvertItemMaterialToAPIMetalType(rightHandItem),
+                                                        DaggerfallUnity.Instance.ItemHelper.ConvertItemToAPIWeaponType(rightHandItem), true);
+                if (rightHandItem.GetItemHands() == ItemHands.Both)
+                {
+                    ScreenWeapon.SpecificWeapon = currentLeftHandWeapon;
+                    ScreenWeapon.TryCacheReadiedWeaponAtlas(MetalTypes.None, WeaponTypes.Melee, false); // Left hand becomes melee if 2H.
+                }
+            }
+            else
+                ScreenWeapon.TryCacheReadiedWeaponAtlas(MetalTypes.None, WeaponTypes.Melee, true);
+        }
+
+        private void UpdateLeftHandGfxCache(DaggerfallUnityItem leftHandItem)
+        {
+            ScreenWeapon.SpecificWeapon = currentLeftHandWeapon;
+            if (leftHandItem != null)
+                ScreenWeapon.TryCacheReadiedWeaponAtlas(DaggerfallUnity.Instance.ItemHelper.ConvertItemMaterialToAPIMetalType(leftHandItem),
+                                                        DaggerfallUnity.Instance.ItemHelper.ConvertItemToAPIWeaponType(leftHandItem), false);
+            else
+                ScreenWeapon.TryCacheReadiedWeaponAtlas(MetalTypes.None, WeaponTypes.Melee, false);
         }
 
         public void ToggleSheath()

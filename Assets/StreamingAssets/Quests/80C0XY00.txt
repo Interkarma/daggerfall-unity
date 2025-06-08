@@ -188,6 +188,7 @@ QBN:
 Item _artifact_ artifact Volendrung anyInfo 1013
 Item _note_ letter used 1030
 
+Person _questgiver_ face 112 named Malacath anyInfo 1012
 Person _qgfriend_ group Noble male remote anyInfo 1011
 Person _murder_ face 1 factiontype Province remote anyInfo 1050 rumors 1051
 Person _ruler_ group Noble remote anyInfo 1052 rumors 1053

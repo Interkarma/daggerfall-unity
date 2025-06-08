@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -188,6 +188,17 @@ namespace DaggerfallWorkshop.Utility
         public virtual int GetStatDescriptionTextID(DFCareer.Stats stat)
         {
             return fallback.GetStatDescriptionTextID(stat);
+        }
+
+        /// <summary>
+        /// Gets the name associated with a custom enemy id (ie: not defined in MobileTypes).
+        /// Returns null if the enemy id is unknown.
+        /// </summary>
+        /// <param name="enemyId">Custom enemy id</param>
+        /// <returns>Name if the enemy id is known, null otherwise</returns>
+        public virtual string GetCustomEnemyName(int enemyId)
+        {
+            return fallback.GetCustomEnemyName(enemyId);
         }
 
         /// <summary>

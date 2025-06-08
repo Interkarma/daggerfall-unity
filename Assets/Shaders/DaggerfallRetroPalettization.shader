@@ -49,6 +49,9 @@
             
 	        fixed4 frag (v2f i) : SV_Target
 	        {
+                // Explore color space!
+                // return fixed4(GammaToLinearSpace(tex3D(_Lut, half3(i.texcoord, frac(_Time.x)))), 1.0);
+
                 fixed4 color = tex2D(_MainTex, i.texcoord);
 #ifdef EXCLUDE_SKY
                 float depth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, i.texcoord);
@@ -59,10 +62,7 @@
                   return color;
 #endif
                 
-                // Explore color space!
-                //fixed4 color = fixed4(i.texcoord, frac(_Time.x), 1.0);
-                
-                return fixed4(tex3D(_Lut, color.rgb).rgb, color.a);
+                return fixed4(GammaToLinearSpace(tex3D(_Lut, LinearToGammaSpace(color.rgb)).rgb), color.a);
             }
 			ENDCG
 		}

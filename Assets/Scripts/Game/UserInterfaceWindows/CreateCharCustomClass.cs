@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -59,6 +59,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         short nobilityRep = 0;
         short underworldRep = 0;
 
+        IMECompositionMode prevIME;
+
         #region Windows
 
         CreateCharReputationWindow createCharReputationWindow;
@@ -98,6 +100,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Rect specialAdvantageButtonRect = new Rect(249, 98, 66, 22);
         Rect specialDisadvantageButtonRect = new Rect(249, 122, 66, 22);
         Rect reputationButtonRect = new Rect(249, 146, 66, 22);
+        Rect resetButtonRect = new Rect(0, 0, 0,0);
         Rect exitButtonRect = new Rect(263, 172, 38, 21);
 
         #endregion
@@ -111,6 +114,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Button specialAdvantageButton;
         Button specialDisadvantageButton;
         Button reputationButton;
+        Button resetButton;
         Button exitButton;
 
         #endregion
@@ -195,6 +199,23 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             IsSetup = true;
         }
 
+        public override void OnPush()
+        {
+            base.OnPush();
+
+            // Enable IME composition during input
+            prevIME = Input.imeCompositionMode;
+            Input.imeCompositionMode = IMECompositionMode.On;
+        }
+
+        public override void OnPop()
+        {
+            base.OnPop();
+
+            // Restore previous IME composition mode
+            Input.imeCompositionMode = prevIME;
+        }
+
         protected void SetupButtons()
         {
             // Add skill selector buttons
@@ -211,7 +232,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             hitPointsUpButton.OnMouseClick += HitPointsUpButton_OnMouseClick;
             hitPointsUpButton.ClickSound = DaggerfallUI.Instance.GetAudioClip(SoundClips.ButtonClick);
             hitPointsDownButton = DaggerfallUI.AddButton(hitPointsDownButtonRect, NativePanel);
-            hitPointsDownButton.OnMouseUp += HitPointsDownButton_OnMouseClick;
+            hitPointsDownButton.OnMouseClick += HitPointsDownButton_OnMouseClick;
             hitPointsDownButton.ClickSound = DaggerfallUI.Instance.GetAudioClip(SoundClips.ButtonClick);
 
             // Help topics
@@ -231,6 +252,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             reputationButton = DaggerfallUI.AddButton(reputationButtonRect, NativePanel);
             reputationButton.OnMouseClick += ReputationButton_OnMouseClick;
             reputationButton.ClickSound = DaggerfallUI.Instance.GetAudioClip(SoundClips.ButtonClick);
+
+            // (Hidden) Reset bonus pool
+            resetButton = DaggerfallUI.AddButton(resetButtonRect, NativePanel);
+            resetButton.Hotkey = DaggerfallShortcut.GetBinding(DaggerfallShortcut.Buttons.ResetBonusPool);
+            resetButton.OnKeyboardEvent += ResetButton_OnKeyboardEvent;
 
             // Exit button
             exitButton = DaggerfallUI.AddButton(exitButtonRect, NativePanel);
@@ -375,6 +401,15 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             uiManager.PushWindow(createCharReputationWindow);
         }
 
+        protected virtual void ResetButton_OnKeyboardEvent(BaseScreenComponent sender, Event keyboardEvent)
+        {
+            if (keyboardEvent.type == EventType.KeyDown)
+            {
+                DaggerfallUI.Instance.PlayOneShot(SoundClips.ButtonClick);
+                statsRollout.BonusPool = 0;
+            }
+        }
+
         void ExitButton_OnMouseClick(BaseScreenComponent sender, Vector2 position)
         {
             DaggerfallMessageBox messageBox;
@@ -473,8 +508,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 daggerY = Math.Min(maxDaggerY, (int)(defaultDaggerY + (41 * (-difficultyPoints / 12f))));
             }
 
-            DaggerfallUI.Instance.StartCoroutine(AnimateDagger());
             daggerPanel.Position = new Vector2(defaultDaggerX, daggerY);
+            DaggerfallUI.Instance.StartCoroutine(AnimateDagger());
         }
 
         IEnumerator AnimateDagger()

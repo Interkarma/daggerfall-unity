@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -135,7 +135,10 @@ namespace DaggerfallWorkshop.Game.Items
                     foreach (EquipSlots slotToCheck in Enum.GetValues(typeof(EquipSlots)))
                     {
                         if (player.ItemEquipTable.GetItem(slotToCheck) == item)
+                        {
                             player.ItemEquipTable.UnequipItem(slotToCheck);
+                            player.UpdateEquippedArmorValues(item, false);
+                        }
                     }
                     itemsToRemove.Add(item);
                 }
@@ -350,7 +353,6 @@ namespace DaggerfallWorkshop.Game.Items
         /// <param name="itemIndex">Template index.</param>
         /// <param name="priorityToConjured">Prefer (short lived) conjured items.</param>
         /// <returns>An item of this type, or null if none found.</returns>
-
         public DaggerfallUnityItem GetItem(ItemGroups itemGroup, int itemIndex, bool priorityToConjured)
         {
             return GetItem(itemGroup, itemIndex, true, true, priorityToConjured);
@@ -365,7 +367,6 @@ namespace DaggerfallWorkshop.Game.Items
         /// <param name="allowQuestItem">Include quest items.</param>
         /// <param name="priorityToConjured">Prefer (short lived) conjured items.</param>
         /// <returns>An item of this type, or null if none found.</returns>
-
         public DaggerfallUnityItem GetItem(ItemGroups itemGroup, int itemIndex, bool allowEnchantedItem = true, bool allowQuestItem = true, bool priorityToConjured = false)
         {
             int groupIndex = DaggerfallUnity.Instance.ItemHelper.GetGroupIndex(itemGroup, itemIndex);

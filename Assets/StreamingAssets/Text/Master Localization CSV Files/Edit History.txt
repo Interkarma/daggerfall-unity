@@ -1,0 +1,44 @@
+0.15.2
+------
+Internal_RSC
+* 4023 > "You cannot train in one than one" to "You cannot train in more than one"
+
+0.15.3
+------
+Internal_Strings
+* adrenalineRushLower > Fix spurious newline
+* WeaponStoresB > Fix spurious newline
+NOTE: Unity Editor CSV exports these with " on a newline for some reason - needs to be manually patched anytime Internal_Strings is re-exported
+
+0.15.4
+------
+Internal_Strings
+* Localize class names
+* Localize guild ranks
+* daedricSkill > Disambiguation for skill string "Daedric" and material string "Daedric"
+* orcishSkill > Disambiguation for skill string "Orcish" and material string "Orcish"
+* midDateTimeFormatString > Add format string for in-game date shown on save/load UI
+
+0.16.0
+------
+Internal_Strings
+* hthDamageFormatString > Add format string for hand-to-hand damage on character sheet
+* affiliationFormatString > Add format string for affiliation info on character sheet
+
+0.16.1
+------
+Internal_RSC
+* Fix ID for class questions 9000.10, .20, .30, .40. These had trailing zero truncated at some point.
+NOTE: Possible issue with Unity CSV export. Need to check this anytime Internal_RSC is re-exported.
+Internal_Strings
+* Localize action type 12 answers (e.g. "yes" guard in Daggerfall Castle, "shutup" banner in Shedungent.
+* Localize "Random" button text when naming character during creation process.
+
+0.16.2
+------
+Internal_RSC
+* 5242 > "ofthe" to "of the"
+Internal_Strings
+* Add nordSurnameImmutableSuffix "sen" > appended manually to every random nord surname.
+* Add confirmDefaultControls > "Are you sure you want to set default controls?"
+* Add saveLoadPromptFormat > "{0} for {1}" for save/load UI.

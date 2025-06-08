@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<engine:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:engine="UnityEngine.UIElements"
+    xmlns:editor="UnityEditor.UIElements"
+    xsi:schemaLocation="DaggerfallWorkshop.Game.Addons.RmbBlockEditor.Elements"
+    xmlns:rbe="DaggerfallWorkshop.Game.Addons.RmbBlockEditor.Elements"
+>
+    <engine:VisualElement class="row pl pr pt mb right">
+        <engine:Button name="export-building" tooltip="Export Building">
+            <engine:Image class="export-icon"/>
+        </engine:Button>
+        <engine:Button name="open-in-world-data-editor" tooltip="Open Building in World Data Editor">
+            <engine:Image class="wde-icon"/> <!-- Add an appropriate icon here if desired -->
+        </engine:Button>
+    </engine:VisualElement>
+
+    <engine:VisualElement class="row pl pr mb">
+        <engine:VisualElement class="col-4">
+            <editor:IntegerField label="XPos: " name="building-x"/>
+        </engine:VisualElement>
+    </engine:VisualElement>
+
+    <engine:VisualElement class="row pl pr mb">
+        <engine:VisualElement class="col-4">
+            <editor:IntegerField label="ZPos: " name="building-z"/>
+        </engine:VisualElement>
+    </engine:VisualElement>
+
+    <engine:VisualElement class="row pl pr mb">
+        <engine:VisualElement class="col-4">
+            <editor:IntegerField label="ModelsYPos: " name="building-y"/>
+        </engine:VisualElement>
+    </engine:VisualElement>
+
+    <engine:VisualElement class="row pl pr mb">
+        <engine:VisualElement class="col-4">
+            <editor:IntegerField label="YRotation: " name="building-y-rotation"/>
+        </engine:VisualElement>
+    </engine:VisualElement>
+
+    <engine:VisualElement class="splitter"/>
+
+    <rbe:BuildingDataElement name="building-data-element" class="pr pl"/>
+</engine:UXML>

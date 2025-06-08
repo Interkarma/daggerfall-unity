@@ -1,5 +1,5 @@
-// Project:         Daggerfall Tools For Unity
-// Copyright:       Copyright (C) 2009-2021 Daggerfall Workshop
+// Project:         Daggerfall Unity
+// Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
@@ -341,6 +341,14 @@ namespace DaggerfallWorkshop.Utility
                         // Store editor objects and start markers
                         int archive = obj.Resources.FlatResource.TextureArchive;
                         int record = obj.Resources.FlatResource.TextureRecord;
+                        
+                        // Add animal sound
+                        // This was specifically added to accommodate the cat in
+                        // Direnni Tower. This should also enable animals added
+                        // to dungeons by mods to have proper sounds too.
+                        if (archive == TextureReader.AnimalsTextureArchive)
+                            GameObjectHelper.AddAnimalAudioSource(flatObject, record);
+
                         if (archive == TextureReader.EditorFlatsTextureArchive)
                         {
                             editorObjects.Add(obj);
@@ -1211,9 +1219,10 @@ namespace DaggerfallWorkshop.Utility
                 // Setup standard billboard and assign RDB data
                 go = GameObjectHelper.CreateDaggerfallBillboardGameObject(archive, record, parent);
                 go.transform.position = targetPosition;
-                DaggerfallBillboard dfBillboard = go.GetComponent<DaggerfallBillboard>();
-                dfBillboard.SetRDBResourceData(obj.Resources.FlatResource);
             }
+            Billboard dfBillboard = go.GetComponent<Billboard>();
+            if (dfBillboard)
+                dfBillboard.SetRDBResourceData(obj.Resources.FlatResource);
 
             // Add StaticNPC behaviour - required for quest system
             if (IsNPCFlat(archive))
@@ -1225,28 +1234,7 @@ namespace DaggerfallWorkshop.Utility
             // Special handling for individual NPCs found in layout data
             // This NPC may be used in 0 or more active quests at home
             int factionID = obj.Resources.FlatResource.FactionOrMobileId;
-            if (QuestMachine.Instance.IsIndividualNPC(factionID))
-            {
-                // Check if NPC has been placed elsewhere on a quest
-                if (QuestMachine.Instance.IsIndividualQuestNPCAtSiteLink(factionID))
-                {
-                    // Disable individual NPC if placed elsewhere
-                    go.SetActive(false);
-                }
-                else
-                {
-                    // Always add QuestResourceBehaviour to individual NPC
-                    // This is required to bootstrap quest as often questor is not set until after player clicks resource
-                    QuestResourceBehaviour questResourceBehaviour = go.AddComponent<QuestResourceBehaviour>();
-                    Person[] activePersonResources = QuestMachine.Instance.ActiveFactionPersons(factionID);
-                    if (activePersonResources != null && activePersonResources.Length > 0)
-                    {
-                        Person person = activePersonResources[0];
-                        questResourceBehaviour.AssignResource(person);
-                        person.QuestResourceBehaviour = questResourceBehaviour;
-                    }
-                }
-            }
+            QuestMachine.Instance.SetupIndividualStaticNPC(go, factionID);
 
             // Disable enemy editor flats
             if (archive == TextureReader.EditorFlatsTextureArchive && (record == 15 || record == 16))
@@ -1259,18 +1247,10 @@ namespace DaggerfallWorkshop.Utility
             return go;
         }
 
+        public static List<int> NPCFlatArchives = new List<int>{334, 346, 357, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184};
         public static bool IsNPCFlat(int archive)
         {
-            // These texture archives are NPCs
-            if (archive == 334 ||                               // Daggerfall people
-                archive == 346 ||                               // Wayrest people
-                archive == 357 ||                               // Sentinel people
-                archive >= 175 && archive <= 184)               // Other people
-            {
-                return true;
-            }
-
-            return false;
+            return NPCFlatArchives.Contains(archive);
         }
 
         public static bool IsTorchFlat(int archive, int record)
@@ -1326,9 +1306,9 @@ namespace DaggerfallWorkshop.Utility
             if (dungeonIndex < RandomEncounters.EncounterTables.Length)
             {
                 // Get water level from start marker if it exists
-                DaggerfallBillboard dfBillboard;
+                Billboard dfBillboard;
                 if (startMarkers.Length > 0)
-                    dfBillboard = startMarkers[0].GetComponent<DaggerfallBillboard>();
+                    dfBillboard = startMarkers[0].GetComponent<Billboard>();
                 else
                     dfBillboard = null;
 
@@ -1398,9 +1378,9 @@ namespace DaggerfallWorkshop.Utility
             if (dungeonIndex < RandomEncounters.EncounterTables.Length)
             {
                 // Get water level from start marker if it exists
-                DaggerfallBillboard dfBillboard;
+                Billboard dfBillboard;
                 if (startMarkers.Length > 0)
-                    dfBillboard = startMarkers[0].GetComponent<DaggerfallBillboard>();
+                    dfBillboard = startMarkers[0].GetComponent<Billboard>();
                 else
                     dfBillboard = null;
 
@@ -1478,10 +1458,15 @@ namespace DaggerfallWorkshop.Utility
 
         private static void AddFixedRDBEnemy(DFBlock.RdbObject obj, Transform parent, ref DFBlock blockData, GameObject[] startMarkers, bool serialize)
         {
-            // Get type value and ignore known invalid types
-            int typeValue = (int)(obj.Resources.FlatResource.FactionOrMobileId & 0xff);
-            if (typeValue == 99)
-                return;
+            bool isCustomMarker = obj.Resources.FlatResource.IsCustomData;
+
+            if (!isCustomMarker)
+            {
+                // Get type value and ignore known invalid types
+                int typeValue = (int)(obj.Resources.FlatResource.FactionOrMobileId & 0xff);
+                if (typeValue == 99)
+                    return;
+            }
 
             // Create unique LoadID for save sytem
             ulong loadID = 0;
@@ -1489,14 +1474,20 @@ namespace DaggerfallWorkshop.Utility
                 loadID = (ulong)(blockData.Position + obj.Position);
 
             // Cast to enum
-            MobileTypes type = (MobileTypes)(obj.Resources.FlatResource.FactionOrMobileId & 0xff);
+            // DF "Fixed Enemy" markers have garbage data in the 8 MSBs.
+            // For custom marker, we take all 16 bits as a MobileId, in case of custom enemies
+            MobileTypes type;
+            if (!isCustomMarker)
+                type = (MobileTypes)(obj.Resources.FlatResource.FactionOrMobileId & 0xff);
+            else
+                type = (MobileTypes)obj.Resources.FlatResource.FactionOrMobileId;
 
             byte classicSpawnDistanceType = obj.Resources.FlatResource.SoundIndex;
 
             // Get water level from start marker if it exists
-            DaggerfallBillboard dfBillboard;
+            Billboard dfBillboard;
             if (startMarkers.Length > 0)
-                dfBillboard = startMarkers[0].GetComponent<DaggerfallBillboard>();
+                dfBillboard = startMarkers[0].GetComponent<Billboard>();
             else
                 dfBillboard = null;
 
@@ -1533,9 +1524,11 @@ namespace DaggerfallWorkshop.Utility
             MobileGender gender = MobileGender.Unspecified;
             if ((int)type > 43 && useGenderFlag)
             {
-                if (obj.Resources.FlatResource.Flags == (int)DFBlock.EnemyGenders.Female)
+                int femaleFlag = (int)DFBlock.EnemyGenders.Female;
+                int maleFlag = (int)DFBlock.EnemyGenders.Male;
+                if ((obj.Resources.FlatResource.Flags & femaleFlag) == femaleFlag)
                     gender = MobileGender.Female;
-                if (obj.Resources.FlatResource.Flags == (int)DFBlock.EnemyGenders.Male)
+                if ((obj.Resources.FlatResource.Flags & maleFlag) == maleFlag)
                     gender = MobileGender.Male;
             }
 
@@ -1617,6 +1610,14 @@ namespace DaggerfallWorkshop.Utility
                     loadID,
                     null,
                     adjustPosition);
+            }
+
+            // Also Adjust random treasure to surface below so it doesn't end up floating if marker is floating
+            if (adjustPosition && loot)
+            {
+                Billboard dfBillboard = loot.gameObject.GetComponent<Billboard>();
+                if (dfBillboard)
+                    GameObjectHelper.AlignBillboardToGround(dfBillboard.gameObject, dfBillboard.Summary.Size, 4);
             }
 
             // Get dungeon type index

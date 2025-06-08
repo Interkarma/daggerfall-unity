@@ -262,12 +262,12 @@ _pcgetsgold_ task:
 _clearclick_ task:
 	when _qgclicked_ and not _victory_
 	clear _clearclick_ _qgclicked_
---the classic version was quite unusual and could break depending on engine fixes. This is far more waterproof.
 
--_S.13_ task:
--	toting _gem_ and _qgiver_ clicked 
--	end quest 
---this can't possibly be a justified end. Taking the gem is one of the ways to frustrate the ransom.
+_S.13_ task:
+	toting _gem_ and _qgiver_ clicked 
+	give pc _gold_
+	end quest 
+--added victory condition here, per message block 1002
 
 _S.14_ task:
 	when _S.10_ or _S.08_

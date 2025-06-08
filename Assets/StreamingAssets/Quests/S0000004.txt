@@ -85,10 +85,8 @@ What could've possessed the King of Firsthold to propose marriage to Morgiah?
 Morgiah has a three year engagement! Royals are a strange lot.
 
 QuestorPostfailure:  [1009]
-<ce>                  Very good. If you are not rewarded
-<ce>                   with death by the loyal servants
-<ce>                   of the Barrow, give this note to
-<ce>                       Princess Morgiah please.
+<ce>                  You've failed me, %pcf. I required an answer from _necs_ within one month.
+<ce>                  Now you dare return to me so late? Begone!
 
 QuestLogEntry:  [1010]
 _necs_,
@@ -146,6 +144,12 @@ Message:  1015
 <ce>           on his surcoat appears at your side, hands you an
 <ce>                    engraved card, and disappears.
 
+Message:  1016
+<ce>                  Very good. If you are not rewarded
+<ce>                   with death by the loyal servants
+<ce>                   of the Barrow, give this note to
+<ce>                       Princess Morgiah please.
+
 
 -- Symbols used in the QRC file:
 --
@@ -196,7 +200,7 @@ _S.02_ task:
 	drop _morgiah_ as questor 
 
 _S.03_ task:
-	toting letter44 and _necs_ clicked saying QuestorPostfailure 
+	toting letter44 and _necs_ clicked saying 1016 
 	get item letter13 
 	change repute with _necs_ by +10 
 
