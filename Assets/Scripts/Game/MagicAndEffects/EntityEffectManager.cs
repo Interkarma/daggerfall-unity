@@ -501,12 +501,14 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                 // Set parent bundle
                 effect.ParentBundle = instancedBundle;
 
-                // Spell Absorption, Reflection, Resistance - must have a caster entity set
-                if (sourceBundle.CasterEntityBehaviour)
+                // Spell Absorption, Reflection, Resistance - must have a caster entity set and only work for spells
+                if (sourceBundle.CasterEntityBehaviour && sourceBundle.Settings.BundleType == BundleTypes.Spell)
                 {
                     // Spell Absorption
-                    int absorbSpellPoints;
-                    if (sourceBundle.Settings.BundleType == BundleTypes.Spell && TryAbsorption(effect, sourceBundle.Settings.TargetType, sourceBundle.CasterEntityBehaviour.Entity, out absorbSpellPoints))
+                    
+                    SpellAbsorption absorbEffect = FindIncumbentEffect<SpellAbsorption>() as SpellAbsorption;
+                    int absorbSpellPoints = FormulaHelper.TryAbsorption(effect, sourceBundle.Settings.TargetType, sourceBundle.CasterEntityBehaviour.Entity, entityBehaviour.Entity, absorbEffect);
+                    if (absorbSpellPoints > 0)
                     {
                         // Spell passed all checks and was absorbed - tally cost output to target
                         totalAbsorbed += absorbSpellPoints;
@@ -518,11 +520,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
                     }
 
                     // Spell Reflection
-                    if (!bypassSavingThrows && sourceBundle.Settings.BundleType == BundleTypes.Spell && TryReflection(sourceBundle))
+                    if (!bypassSavingThrows && TryReflection(sourceBundle))
                         continue;
 
                     // Spell Resistance
-                    if (!bypassSavingThrows && sourceBundle.Settings.BundleType == BundleTypes.Spell && TryResistance(sourceBundle))
+                    if (!bypassSavingThrows && TryResistance(sourceBundle))
                         continue;
                 }
 
