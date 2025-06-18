@@ -46,7 +46,8 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <returns>True if sound is found.</returns>
         public static bool TryImportSound(SoundClips sound, out AudioClip audioClip)
         {
-            return TryImportAudioClip(sound.ToString(), ".wav", false, out audioClip);
+            // For some inane reason loading .wav files unstreamed is completely broken.
+            return TryImportAudioClip(sound.ToString(), ".wav", true, out audioClip);
         }
 
         /// <summary>
