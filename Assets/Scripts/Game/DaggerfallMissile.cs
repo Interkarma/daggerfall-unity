@@ -430,6 +430,19 @@ namespace DaggerfallWorkshop.Game
             return null;
         }
 
+        //allow other classes to use the layer masks
+        public static int GetLayerMask(bool player)
+        {
+            //Initialize the layer masks if they're still not
+            if (layerMaskDefault == -1)
+                InitializeLayerMasks();
+
+            if (player)
+                return layerMaskPlayer;
+
+            return layerMaskDefault;
+        }
+
         #endregion
 
         #region Private Methods
