@@ -1,10 +1,5 @@
--- Quest: C:\QUESTS\WORKING\S0000503.Qbn.
--- Main story quest.
--- QuestId: 503
-Messages: 72
 Quest: S0000503
 DisplayName: Former Student Part III
--- Message panels
 QRC:
 
 Message:  1020
@@ -30,7 +25,7 @@ Message:  1023
 %qdt:
  We have retrieved the map.  I have
  offered to go to ___keydung_
- to find a special _key_ which we
+ to find a special _holydagger_ which we
  need to enter ___itemdung_.
  I will meet _rebel_ back in
  _tavern_ in =keytime_ days.
@@ -54,7 +49,7 @@ Message:  1042
 <ce>             For some time now, I have been searching for
 <ce>                the location of ___itemdung_, reputedly
 <ce>           the resting place of a hoard of magical objects,
-<ce>              including one _item_ that I need for my own
+<ce>              including one _magicreward0_ that I need for my own
 <ce>              purposes -- another story for another time.
 <ce>             The issue at hand is that I have learned that
 <ce>               the Mages Guild of __magesguild_ has come
@@ -83,8 +78,8 @@ QuestTimeLapse:  [1045]
 
 Message:  1046
 <ce>          Very well.  ___itemdung_ cannot be entered without
-<ce>          the key, a _key_ which I have learned is somewhere
-<ce>           in ___keydung_.  Once you get the _key_, meet me
+<ce>          the key, a _holydagger_ which I have learned is somewhere
+<ce>           in ___keydung_.  Once you get the _holydagger_, meet me
 <ce>           in _tavern_ in __tavern_, say, in =keytime_ days.
 
 Message:  1047
@@ -95,10 +90,10 @@ Message:  1047
 <ce>                       ___itemdung_.  Good luck!
 
 Message:  1050
-<ce>           This must be the _key_, the key to ___itemdung_.
+<ce>           This must be the _holydagger_, the key to ___itemdung_.
 
 Message:  1051
-<ce>          With this _key_ in our possession, we are ready to
+<ce>          With this _holydagger_ in our possession, we are ready to
 <ce>               brave ___itemdung_.  Lead on, my friend!
 
 Message:  1052
@@ -108,14 +103,14 @@ Message:  1052
 Message:  1053
 <ce>              You are too late, _rebel_!  It was a simple
 <ce>              matter to follow you to ___itemdung_, once
-<ce>              you had found the _key_ for me.  The _item_
+<ce>              you had found the _holydagger_ for me.  The _magicreward0_
 <ce>                     is now mine, and mine alone!
 
 Message:  1054
 <ce>             "Well, friend %pcf, an enjoyable little jaunt
-<ce>             eh?  I'll take the _item_ and be on my way."
+<ce>             eh?  I'll take the _magicreward0_ and be on my way."
 <ce>                                    
-<ce>                  Do you give the _item_ to _rebel_?
+<ce>                  Do you give the _magicreward0_ to _rebel_?
 
 Message:  1055
 <ce>                           Until next time!
@@ -141,218 +136,214 @@ Message:  1071
 <ce>                         I'm afraid I'll have
 <ce>                           to leave you now.
 
-
--- Symbols used in the QRC file:
---
---               %g3 occurs 1 time.
---              %pcf occurs 2 times.
---              %qdt occurs 4 times.
---         =keytime_ occurs 7 times.
---       ____tavern_ occurs 3 times.
---      ___itemdung_ occurs 14 times.
---       ___keydung_ occurs 2 times.
---     __magesguild_ occurs 4 times.
---         __tavern_ occurs 5 times.
---            _item_ occurs 8 times.
---             _key_ occurs 7 times.
---           _rebel_ occurs 14 times.
---          _tavern_ occurs 10 times.
-
 QBN:
 Item _letter_ letter
-Item _item_ magic_item
 Item _map_ letter used 1030
-Item _I.03_ magic_item
-Item _I.04_ magic_item
-Item _I.05_ gold
-Item _key_ item class 10 subclass 11
+Item _magicreward0_ magic_item
+Item _magicreward1_ magic_item
+Item _magicreward2_ magic_item
+Item _goldreward_ gold
+Item _holydagger_ item class 10 subclass 11
 
 Person _rebel_ face 1 named Baltham_Greyman
 Person _dummy_ face 249 group Spellcaster remote
 
 Place _tavern_ remote tavern
---Place aide remote dungeon
 Place _magesguild_ remote magery
 Place _itemdung_ remote dungeon
 Place _keydung_ remote dungeon
-Place _L.05_ remote dungeon
+Place _teleportdungeon_ remote dungeon
 
-Clock _S.00_ 1.00:00
-Clock _S.02_ 30.00:00 0 flag 1 range 0 1
-Clock _S.10_ 00:00 0 flag 1 range 0 2
-Clock _S.11_ 00:01
+Clock _giveletter_ 62.00:00 97.00:00
+-- I temporarily set this to 1 day for debug purposes and forgot to return it.
+-- 62 to 97 is the correct timer
+Clock _30days_ 30.00:00
+-- they had to intend 30 specific days for some reason I don't know
+Clock _firstbalthamtimer_ 00:00 0 flag 1 range 0 2
+Clock _stuntimer_ 00:01
 Clock _keytime_ 00:00 0 flag 1 range 0 5
-Clock _S.21_ 6.22:40 0 flag 1 range 0 1
-Clock _S.31_ 00:00 0 flag 17 range 0 2
+Clock _sixdays_ 6.22:40 0 flag 1 range 0 1
+Clock _secondbalthamtimer_ 00:00 0 flag 17 range 0 2
+Clock _deathtimer_ 0:10
 
 Foe _guards_ is 3 Mage
 Foe _guardian_ is Battle_mage
-Foe _F.03_ is Mage
+Foe _balthamenemy_ is Mage
 
 --	Quest start-up:
-	start timer _S.00_ 
-	give item _I.05_ to _guardian_ 
-	give item _I.04_ to _guardian_ 
-	give item _I.03_ to _guardian_ 
-	give item _item_ to _guardian_ 
-	pc at _magesguild_ set _S.04_ 
-	pc at _itemdung_ set _S.16_ 
+	start timer _giveletter_ 
+	give item _goldreward_ to _guardian_ 
+	give item _magicreward2_ to _guardian_ 
+	give item _magicreward1_ to _guardian_ 
+	give item _magicreward0_ to _guardian_ 
+	pc at _magesguild_ set _inmagery_ 
+	pc at _itemdung_ set _indungeon_ 
 	_map_ used do _readmap_ 
 	place foe _guardian_ at _itemdung_ 
+	have _magicreward0_ set _takemageitem_
 
-_S.00_ task:
+_giveletter_ task:
 	place item _map_ at _magesguild_ 
-	start timer _S.02_ 
-	have _letter_ set _S.01_ 
+	start timer _30days_ 
+	have _letter_ set _haveletter_ 
 	give pc _letter_ notify 1070 
 
-_S.01_ task:
+_haveletter_ task:
 	take _letter_ from pc 
 	log 1020 step 0 
 	place npc _rebel_ at _tavern_ 
 	restore _rebel_
 
-variable _S.02_
-_S.03_ task:
+variable _30days_
+_clickbaltham_ task:
 	clicked npc _rebel_ 
-	start task _S.18_ 
+	start task _firstprompt_ 
 
-variable _S.04_
-_S.05_ task:
-	clicked item _item_ 
+_firstprompt_ task:
+	prompt 1040 yes _acceptquest_ no _target_ 
 
-_S.06_ task:
-	when _S.21_ and not _S.19_ 
-	when _S.02_ and not _S.08_ 
+_atimerhasended_ task:
+	when _sixdays_ and not _journeytodungeon_ 
+	when _30days_ and not _acceptquest_ 
 
-variable _S.07_
-_S.08_ task:
-	start timer _S.10_ 
+_acceptquest_ task:
+	start timer _firstbalthamtimer_ 
 	log 1021 step 1 
 	say 1042 
 	add _rebel_ face 
 	hide npc _rebel_
-	stop timer _S.02_
+	stop timer _30days_
 
 _target_ task:
 	say 1041 
 	remove log step 0
 --log message would stay in journal without this
 
-variable _S.10_
-_S.11_ task:
+variable _firstbalthamtimer_
+
+_clickmap_ task:
+	clicked item _map_ 
+	start timer _stuntimer_ 
+	say 1043 
+
+_spawnguards_ task:
+	when _clickmap_ and _inmagery_
+	create foe _guards_ every 0 minutes 1 times with 100% success 
+-- ensures guards can only spawn inside the guild
+
+_stuntimer_ task:
 	say 1044 
 	restrain foe _guards_ 
 
-_S.12_ task:
-	when _S.32_ and not _S.04_ 
+variable _inmagery_
+
+_offersidequest_ task:
+	when _clickmap_ and not _inmagery_ 
 	start timer _keytime_ 
-	prompt 1045 yes _spouse_ no _S.14_ 
+	prompt 1045 yes _acceptsidequest_ no _rejectsidequest_ 
 	drop _rebel_ face 
 	change repute with _dummy_ by -15 
-	stop timer _S.10_
+	stop timer _firstbalthamtimer_
+	stop timer _stuntimer_
+--added stop stuntimer here, otherwise it could trigger when irrelevant
 
-_spouse_ task:
-	place item _key_ at _keydung_ 
+_keytime_ task:
+	start timer _sixdays_ 
+	place npc _rebel_ at _tavern_
+	restore _rebel_
+
+_acceptsidequest_ task:
+	place item _holydagger_ at _keydung_ 
 	reveal _keydung_ 
 	log 1023 step 2 
 	say 1046 
 	restore _rebel_
 
-_S.14_ task:
+_rejectsidequest_ task:
 	log 1022 step 2 
 	say 1047 
-	clear _S.03_
+	clear _clickbaltham_
 
-_house1_ task:
-	clicked item _key_ 
+_clickdagger_ task:
+	clicked item _holydagger_ 
 	say 1050 
-	clear _S.03_
+	clear _clickbaltham_
 
-_S.16_ task:
-	have _key_ set _S.25_ 
+_indungeon_ task:
+	have _holydagger_ set _havedagger_ 
 
-_keytime_ task:
-	start timer _S.21_ 
-	place npc _rebel_ at _tavern_
-	restore _rebel_
-
-_S.18_ task:
-	prompt 1040 yes _S.08_ no _target_ 
-
-_S.19_ task:
-	when _S.03_ and _house1_ and _spouse_ 
-	when _S.14_ and _S.03_ 
-	start timer _S.31_
+_journeytodungeon_ task:
+	when _clickbaltham_ and _clickdagger_ and _acceptsidequest_ 
+	when _rejectsidequest_ and _clickbaltham_ 
+	start timer _secondbalthamtimer_
 	stop timer _keytime_ 
 	say 1051 
 	hide npc _rebel_ 
 	add _rebel_ face 
 --there's still a lingering bug here that I can't figure out. If you do the S.14 route, Baltham's sprite will remain visible at this point. I don't know why.
 
-
-variable _S.20_
-variable _S.21_
-_S.22_ task:
-	when _S.31_ and not _S.30_ 
-	when _S.10_ and not _S.12_ 
+variable _sixdays_
+_timeisup_ task:
+	when _secondbalthamtimer_ and not _finaldecision_ 
+	when _firstbalthamtimer_ and not _offersidequest_ 
 	say 1071 
 
 _readmap_ task:
 	reveal _itemdung_ 
 
-_S.24_ task:
-	when _S.16_ and not _S.25_ 
-	reveal _L.05_ 
+_teleporttrap_ task:
+	when _indungeon_ and not _havedagger_ 
+	reveal _teleportdungeon_ 
 	say 1052 
-	teleport pc to _L.05_ 
-	unset _S.24_ 
+	teleport pc to _teleportdungeon_ 
+	unset _teleporttrap_ 
 
-variable _S.25_
+variable _havedagger_
 _hitguardian_ task:
 	injured _guardian_ 
 	say 1053 
 
-_S.27_ task:
-	killed 1 _guardian_ 
-
-_S.28_ task:
-	take _item_ from pc 
+_removefirstreward_ task:
+	take _magicreward0_ from pc 
 	say 1055 
 
-_S.29_ task:
-	create foe _F.03_ every 0 minutes 1 times with 100% success 
+_defendfirstreward_ task:
+	create foe _balthamenemy_ every 0 minutes 1 times with 100% success 
 	say 1056 
-	make _item_ permanent 
+	make _magicreward0_ permanent 
 
-_S.30_ task:
-	when _S.05_ and not _S.16_ 
-	prompt 1054 yes _S.28_ no _S.29_ 
+variable _takemageitem_
+
+_finaldecision_ task:
+	when _takemageitem_ and not _indungeon_ 
+	prompt 1054 yes _removefirstreward_ no _defendfirstreward_ 
 	drop _rebel_ face 
+	remove log step 0
+	remove log step 1
+	remove log step 2
+-- needed to add remove-log actions due to new deathtimer task, see below
 
-variable _S.31_
-_S.32_ task:
-	clicked item _map_ 
-	create foe _guards_ every 0 minutes 1 times with 100% success 
---sometimes this would delay much, and spawn after fast travel + pacify message
-	start timer _S.11_ 
-	say 1043 
+variable _secondbalthamtimer_
 
-_S.33_ task:
-	when _S.06_ or _S.22_ or _S.31_ or _S.28_ 
-	make _I.05_ permanent 
-	make _I.04_ permanent 
-	make _I.03_ permanent 
+_finalend_ task:
+	when _atimerhasended_ or _timeisup_ or _secondbalthamtimer_ or _removefirstreward_ 
+	make _goldreward_ permanent 
+	make _magicreward2_ permanent 
+	make _magicreward1_ permanent 
 	end quest 
 
-_S.34_ task:
-	when _S.19_ and _S.14_ 
-	get item _key_ 
+_afreedagger_ task:
+	when _journeytodungeon_ and _rejectsidequest_ 
+	get item _holydagger_ 
 
-_S.35_ task:
-	killed _F.03_
-	make _I.05_ permanent 
-	make _I.04_ permanent 
-	make _I.03_ permanent 
+_endofbaltham_ task:
+	killed _balthamenemy_
+	make _goldreward_ permanent 
+	make _magicreward2_ permanent 
+	make _magicreward1_ permanent 
+	start timer _deathtimer_
+
+_deathtimer_ task:
 	end quest
---otherwise quest would hang on until end of final timer
+-- this is necessary due to a change near DFU 1.0 to make corpses disappear at quest end.
+-- this delay allows player to loot corpse.

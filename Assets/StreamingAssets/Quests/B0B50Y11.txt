@@ -35,9 +35,12 @@ AcceptQuest:  [1002]
 
 QuestComplete:  [1004]
 <ce>                       _nobleman_ will be quite
-<ce>                      pleased. %g has even offered
+<ce>                      pleased, and %g has even offered
 <ce>                       to dedicate a fountain in
 <ce>                               your name.
+
+--%g is always lowercase, so changed the sentence
+--structure here to allow it
 
 RumorsDuringQuest:  [1005]
 _nobleman_ was crazy to accept the deed to ___dungeon_. Crazy or stupid.
@@ -58,12 +61,16 @@ You failed %kno when you failed _nobleman_, %pcf. A grave disappointment.
 QuestLogEntry:  [1010]
 %qdt:
  _qgiver_ of
- ==qgiver_ in ___qgiver_
+ __qgiver_ in ___qgiver_
  pled with me to rid ___dungeon_
  of a ghost that is haunting
  it. I have =2dung_ days before
  they they need to begin
  the reconstruction.
+
+--changed ==qigver_ to __qgiver_ as this guarantees
+--showing the building name of the questgiver,
+--which is fine for a temple
 
 Message:  1011
 <ce>                      The ghost has been laid to
@@ -113,10 +120,18 @@ _S.01_ task:
 
 _S.02_ task:
 	clicked npc _qgiver_ 
+
+_wincondition_ task:
+	when _S.01_ and _S.02_
 	give pc nothing 
 	change repute with _local_ by +4 
 	change repute with _nobleman_ by +10 
 	end quest 
+
+--added this new wincondition task
+--as previously the quest could be
+--insta-completed by clicking on questgiver alone,
+--quest depended too much on clearclick
 
 _clearclick_ task:
 	when _S.02_ and not _S.01_ 

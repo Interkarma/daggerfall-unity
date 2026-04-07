@@ -13,17 +13,17 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                            I am _qgiver_.
-<ce>                 The Fighter's Guild doesn't hand out
+<ce>                 The Fighters Guild doesn't hand out
 <ce>                  charity work. If I weren't short on
 <ce>                 fighters right now, I'd have to send
-<ce>                 you away %pcn. I do need a fighter to
+<ce>                 you away, %pcn. I do need a fighter to
 <ce>                  chase off some barbarian that's
 <ce>                  running wild. Do it for me and I'll
 <ce>                    make sure everyone knows you're
 <ce>                     a stand up %ra. Is it a deal?
 
 RefuseQuest:  [1001]
-<ce>                    You've just make a big mistake
+<ce>                    You've just made a big mistake,
 <ce>                     %pcn. Don't come looking for
 <ce>                        work here for a while.
 
@@ -37,21 +37,21 @@ QuestComplete:  [1004]
 <ce>                        Did you get cut up bad?
 <ce>                     A couple more jobs like this
 <ce>                      and you can write your own
-<ce>                   ticket into the Fighter's Guild.
+<ce>                   ticket into the Fighters Guild.
 
 RumorsDuringQuest:  [1005]
 <ce>                Barbarians are raiding the farms again.
 
 RumorsPostfailure:  [1006]
 <ce>                 The barbarians looted four farmsteads
-<ce>                before the Fighter's Guild stepped in.
+<ce>                before the Fighters Guild stepped in.
 
 RumorsPostsuccess:  [1007]
 <ce>                  Aren't you the %ra that chased off
 <ce>                            the barbarian?
 
 QuestorPostsuccess:  [1008]
-<ce>               You managed that barbarian pretty well
+<ce>               You managed that barbarian pretty well,
 <ce>                         %pcf. Not bad at all.
 
 QuestorPostfailure:  [1009]
@@ -63,7 +63,7 @@ QuestLogEntry:  [1010]
 %qdt:
  The Fighters Guild of
  ___qgiver_ has
- offered to let me to take
+ offered to let me take
  care of some barbarian
  marauding _house_.
  I have one full day.

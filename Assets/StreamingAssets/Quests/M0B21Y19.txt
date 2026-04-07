@@ -143,7 +143,7 @@ Message:  1041
                                      <--->
 <ce>         The Dark Brotherhood has vowed to track down whoever
 <ce>              broke into their headquarters in ___darkb_.
-<ce>                 I'm sure glad it's not me their after.
+<ce>                 I'm sure glad it's not me they're after.
 
 Message:  1050
 <ce>               Yes...?  Wait, you're that Fighters Guild
@@ -156,7 +156,7 @@ Message:  1051
 <ce>                              It's a trap!
 
 Message:  1052
-<ce>                    Thank you from rescuing me from
+<ce>                    Thank you for rescuing me from
 <ce>                     those assassins.  If you could
 <ce>                        get me to _safehouse_ in
 <ce>                      __safehouse_, I can make my

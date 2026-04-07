@@ -90,7 +90,7 @@ Message:  1030
  The Fighters Guild
  of ___questgiver_ has hired me to
  slay a lich in =1stparton_ days or less.
- The liches' lair is a place called
+ The lich's lair is a place called
  ___mondung_.
 
 Message:  1080

@@ -48,7 +48,7 @@ RumorsDuringQuest:  [1005]
 
 RumorsPostfailure:  [1006]
 <ce> I'm glad that giant finally moved out of ___mondung_.  I guess it got
-<ce>       bored with it's bland diet of villager night after night.
+<ce>       bored with its bland diet of villager night after night.
 
 RumorsPostsuccess:  [1007]
 <ce>      Thank %god _dummy_ finally sent someone to kill that giant
@@ -59,12 +59,12 @@ QuestorPostsuccess:  [1008]
 
 QuestorPostfailure:  [1009]
 <ce>                In my day, you could get kicked out of
-<ce>               the Fighter's Guild if you couldn't kill
+<ce>               the Fighters Guild if you couldn't kill
 <ce>                a simple giant.  Times change, I guess.
 
 Message:  1020
 %qdt:
- _questgiver_ of the Fighter's Guild
+ _questgiver_ of the Fighters Guild
  of ___questgiver_ has hired me to
  kill a giant in ___mondung_.
  I am to report back within =qtime_ days
@@ -254,4 +254,8 @@ _giantWaveWhileInDungeon_ task:
 	pc at _mondung_ set _spawnGiants_
 
 _spawnGiants_ task:
-	create foe _giantFriends_ every 3 minutes 6 times with 50% success 
+	create foe _giantFriends_ every 15 minutes 6 times with 50% success 
+
+-- slowed spawn rate. this is a rank 0 quest, and I recognize that this is only after
+-- the giant has been injured, but the previous setup risked
+-- a new player getting surrounded by overwhelming spawns in the middle of combat.

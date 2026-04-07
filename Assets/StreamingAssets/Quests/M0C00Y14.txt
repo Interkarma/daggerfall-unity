@@ -22,7 +22,7 @@ QuestorOffer:  [1000]
 
 RefuseQuest:  [1001]
 <ce>                  Obviously you have no love for the
-<ce>                 Fighter's Guild. I will make sure to
+<ce>                 Fighters Guild. I will make sure to
 <ce>                   tell them what you really think.
 
 AcceptQuest:  [1002]
@@ -40,8 +40,10 @@ QuestComplete:  [1004]
 
 RumorsDuringQuest:  [1005]
 <ce>                   Some idiot bought four barrels of
-<ce>                  cheese. Now he's got giant rats in
-<ce>                              his house.
+<ce>                  cheese. Now she's got giant rats in
+<ce>                              her house.
+
+-- 1006 and 1007 refer to a female client, changed 1005's male for consistency
 
 RumorsPostfailure:  [1006]
 <ce>                  Some woman had to abandon her home.

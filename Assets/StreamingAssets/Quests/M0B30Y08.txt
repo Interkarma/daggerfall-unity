@@ -21,7 +21,7 @@ QuestorOffer:  [1000]
 RefuseQuest:  [1001]
 <ce>                Too bad. Normally only the temples get
 <ce>                jobs like this. You've passed up a good
-<ce>                               one %pcn.
+<ce>                               one, %pcn.
 
 AcceptQuest:  [1002]
 <ce>                 Her husband is a zombie. He hides out
@@ -48,12 +48,12 @@ RumorsPostfailure:  [1006]
 <ce>                    husband was found next to her.
 
 RumorsPostsuccess:  [1007]
-<ce>                 I hear the Fighter's Guild sent some
+<ce>                 I hear the Fighters Guild sent some
 <ce>                tough over to take care of that zombie.
 <ce>                    They're a good lot, the guild.
 
 QuestorPostsuccess:  [1008]
-<ce>                  You did well with that zombie %pcn.
+<ce>                  You did well with that zombie, %pcn.
 
 QuestorPostfailure:  [1009]
 <ce>                The zombie was too much, huh? Shouldn't

@@ -17,17 +17,17 @@ QuestorOffer:  [1000]
 <ce>                It seems a wild animal has gotten into
 <ce>                 his place. We need someone to go kill
 <ce>              the thing. The guild will pay _gold_ gold.
-<ce>                         Do you want it %pcn?
+<ce>                         Do you want it, %pcn?
 
 RefuseQuest:  [1001]
 <ce>                      I'm sure someone else will
 <ce>                      be willing to take care of
-<ce>                          this nuisance bear.
+<ce>                          this nuisance animal.
 
 AcceptQuest:  [1002]
 <ce>                    "OK, %pcf. Get over to _house_
 <ce>                 here in town. Get it done in one day.
-<ce>               Nobody wants a animal left roaming around
+<ce>               Nobody wants an animal left roaming around
 <ce>                in their place. Come back here when the
 <ce>                 beast is dead and I'll have your pay
 <ce>                           waiting for you."
@@ -46,7 +46,7 @@ RumorsPostfailure:  [1006]
 That creature mauled some woman before being chased out of town. What a pity.
 
 RumorsPostsuccess:  [1007]
-The Fighter's Guild killed that bear that got into _house_. It's a good thing we have them around.
+The Fighters Guild killed that animal that got into _house_. It's a good thing we have them around.
 
 QuestorPostsuccess:  [1008]
 Good job killin' that beast. What can I do for you?
@@ -75,19 +75,19 @@ Message:  1014
 
 Message:  1021
 <ce>                   You hear a voice call out from an
-<ce>                      upper floor, "Its a bear."
+<ce>                      upper floor, "It's a bear."
 
 Message:  1022
 <ce>                   You hear a voice call out from an
-<ce>                      upper floor, "Its a harpy."
+<ce>                      upper floor, "It's a harpy."
 
 Message:  1023
 <ce>                   You hear a voice call out from an
-<ce>                     upper floor, "Its a spider."
+<ce>                     upper floor, "It's a spider."
 
 Message:  1024
 <ce>                   You hear a voice call out from an
-<ce>                      upper floor, "Its a tiger."
+<ce>                      upper floor, "It's a tiger."
 
 Message:  1080
 <ce>                 By the way, since you seemed to have

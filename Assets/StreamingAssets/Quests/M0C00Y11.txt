@@ -14,7 +14,7 @@ QRC:
 QuestorOffer:  [1000]
 <ce>                       You can call me _qgiver_.
 <ce>             Normally we only give jobs to guild members.
-<ce>              But you show promise %pcn. I tell ya what.
+<ce>              But you show promise, %pcn. I tell ya what.
 <ce>                 I got a request to dispose of a giant
 <ce>              scorpion. Do that and I'll see if the guild
 <ce>            will overlook your reputation. Is that a deal?
@@ -25,14 +25,14 @@ RefuseQuest:  [1001]
 <ce>                              outta here.
 
 AcceptQuest:  [1002]
-<ce>                 You got guts %pcf, I'll give ya that.
+<ce>                 You've got guts, %pcf, I'll give ya that.
 <ce>            Apparently this scorpion escaped from someone's
 <ce>             personal collection. Right now it's cornered in
 <ce>                   _house_. Kill the thing today and
 <ce>                        I'll speak well of you.
 
 QuestComplete:  [1004]
-<ce>              I guess you aren't the weak kneed jellyfish
+<ce>              I guess you aren't the weak-kneed jellyfish
 <ce>               everyone says you are. I'll make sure the
 <ce>                     right people hear about this.
 
@@ -44,11 +44,11 @@ RumorsDuringQuest:  [1005]
 RumorsPostfailure:  [1006]
 <ce>               Some drunken fool stumbled into his house
 <ce>               and got killed by a giant scorpion. Seems
-<ce>               he thought the Fighter's Guild had taken
+<ce>               he thought the Fighters Guild had taken
 <ce>                          care of the beast.
 
 RumorsPostsuccess:  [1007]
-<ce>                 The Fighter's Guild is a good bunch.
+<ce>                 The Fighters Guild is a good bunch.
 <ce>                They killed a giant scorpion that found
 <ce>                     its way into someone's house.
 
