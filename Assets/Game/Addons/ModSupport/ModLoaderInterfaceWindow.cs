@@ -700,7 +700,7 @@ public class ModLoaderInterfaceWindow : DaggerfallPopupWindow
         text.Append(String.Format("{0} {1} {2}\r\n", VersionInfo.DaggerfallUnityProductName, VersionInfo.DaggerfallUnityStatus, VersionInfo.DaggerfallUnityVersion));
         for (int i = 0; i < modSettings.Length; i++)
         {
-            text.Append(String.Format("[{0}] {1} ({2}) (GUID {3})\r\n", modSettings[i].enabled ? 'x' : ' ', modSettings[i].modInfo.ModTitle, modSettings[i].modInfo.ModVersion, modSettings[i].modInfo.GUID));
+            text.Append(String.Format("[{0}] {1} ({2}) - GUID {3}\r\n", modSettings[i].enabled ? 'x' : ' ', modSettings[i].modInfo.ModTitle, modSettings[i].modInfo.ModVersion, modSettings[i].modInfo.GUID));
         }
         UnityEngine.TextEditor textEditor = new UnityEngine.TextEditor();
         textEditor.text = text.ToString();
