@@ -196,7 +196,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 // Draw tooltip text
                 for (int i = 0; i < textRows.Length; i++)
                 {
-                    font.DrawText(GrammarManager.grammarProcessor.ProcessGrammar(textRows[i]), textPos, LocalScale, textColor);
+                    font.DrawText(GrammarManager.grammarProcessor.ProcessGrammar(textRows[i]+"{.Maj}"), textPos, LocalScale, textColor);
                     textPos.y += font.GlyphHeight * LocalScale.y;
                 }
 
