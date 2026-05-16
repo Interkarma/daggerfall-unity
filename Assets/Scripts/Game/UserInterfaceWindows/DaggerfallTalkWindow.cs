@@ -387,7 +387,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
         {
             if (labelNameNPC != null)
             {
-                labelNameNPC.Text = GrammarManager.grammarProcessor.ProcessGrammar(TalkManager.Instance.NameNPC+"{.Maj}");
+                labelNameNPC.Text = GrammarManager.grammarProcessor.ProcessGrammar(TalkManager.Instance.NameNPC);
             }
         }
 
