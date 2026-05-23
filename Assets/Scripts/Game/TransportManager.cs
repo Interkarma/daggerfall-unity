@@ -330,6 +330,7 @@ namespace DaggerfallWorkshop.Game
         private void UpdateMode(TransportModes transportMode)
         {
             // Update the transport mode and stop any riding sounds playing.
+            TransportModes previousMode = mode;
             mode = transportMode;
             if (ridingAudioSource.isPlaying)
                 ridingAudioSource.Stop();
@@ -399,7 +400,22 @@ namespace DaggerfallWorkshop.Game
                 DaggerfallUI.Instance.FadeBehaviour.FadeHUDFromBlack();
                 mode = TransportModes.Foot;
             }
-        } 
+            // Raise mode changed event
+            RaiseOnTransportModeChangedEvent(transportMode, previousMode);
+        }
+        #endregion
+
+        #region Events
+
+        // OnTransportModeChanged
+        public delegate void OnTransportModeChangedEventHandler(TransportModes newMode, TransportModes previousMode);
+        public static event OnTransportModeChangedEventHandler OnTransportModeChanged;
+        protected virtual void RaiseOnTransportModeChangedEvent(TransportModes newMode, TransportModes previousMode)
+        {
+            if (OnTransportModeChanged != null)
+                OnTransportModeChanged(newMode, previousMode);
+        }
+
         #endregion
     }
 }
