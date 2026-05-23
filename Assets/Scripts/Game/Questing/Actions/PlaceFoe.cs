@@ -4,8 +4,8 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
-// 
+// Contributors:
+//
 // Notes:
 //
 
@@ -79,7 +79,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             }
 
             // Assign Foe to Place
-            place.AssignQuestResource(foeSymbol, marker);
+            place.AssignQuestResource(foe.Symbol, marker);
 
             SetComplete();
         }
