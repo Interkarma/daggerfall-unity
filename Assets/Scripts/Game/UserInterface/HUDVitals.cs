@@ -4,8 +4,8 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
-// 
+// Contributors:
+//
 // Notes:
 //
 
@@ -91,7 +91,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             HorizontalAlignment = HorizontalAlignment.Left;
             VerticalAlignment = VerticalAlignment.Bottom;
             SetMargins(Margins.All, borderSize);
-            
+
             healthBar.VerticalAlignment = VerticalAlignment.Bottom;
             fatigueBar.VerticalAlignment = VerticalAlignment.Bottom;
             magickaBar.VerticalAlignment = VerticalAlignment.Bottom;
@@ -318,7 +318,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 return;
             }
 
-            fatigueBar.Amount = playerEntity.CurrentFatigue / (float)playerEntity.MaxFatigue;
+            fatigueBarGain.Amount = playerEntity.CurrentFatigue / (float)playerEntity.MaxFatigue;
 
             // if there's any change in fatigue...
             if (vitalsDetector.FatigueLost != 0)
