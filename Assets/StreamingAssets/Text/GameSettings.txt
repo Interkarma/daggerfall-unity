@@ -172,6 +172,8 @@ terrainDistance,                                    Terrain Distance
 terrainDistanceInfo,                                Maximum distance of active terrains from player position
 shadowResolutionMode,                               Shadow Resolution
 shadowResolutionModeInfo,                           Quality of shadows
+enableObjectCulling,                                Object Culling
+enableObjectCullingInfo,                            Cull distant objects to improve performance
 dungeonLightShadows,                                Dungeon Light Shadows
 dungeonLightShadowsInfo,                            Dungeon lights cast shadows
 interiorLightShadows,                               Interior Light Shadows

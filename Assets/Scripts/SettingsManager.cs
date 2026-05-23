@@ -179,6 +179,7 @@ namespace DaggerfallWorkshop
         public float InteriorShadowDistance { get; set; }
         public float ExteriorShadowDistance { get; set; }
         public bool EnableTextureArrays { get; set; }
+        public bool EnableObjectCulling { get; set; }
         public int RandomDungeonTextures { get; set; }
         public int CursorWidth { get; set; }
         public int CursorHeight { get; set; }
@@ -425,6 +426,7 @@ namespace DaggerfallWorkshop
             InteriorShadowDistance = GetFloat(sectionVideo, "InteriorShadowDistance", 0.1f, 50.0f);
             ExteriorShadowDistance = GetFloat(sectionVideo, "ExteriorShadowDistance", 0.1f, 150.0f);
             EnableTextureArrays = GetBool(sectionVideo, "EnableTextureArrays");
+            EnableObjectCulling = GetBool(sectionVideo, "EnableObjectCulling");
             RandomDungeonTextures = GetInt(sectionVideo, "RandomDungeonTextures", 0, 4);
 
             AntialiasingMethod = GetInt(sectionEffects, "AntialiasingMethod", 0, 3);
@@ -622,6 +624,7 @@ namespace DaggerfallWorkshop
             SetFloat(sectionVideo, "InteriorShadowDistance", InteriorShadowDistance);
             SetFloat(sectionVideo, "ExteriorShadowDistance", ExteriorShadowDistance);
             SetBool(sectionVideo, "EnableTextureArrays", EnableTextureArrays);
+            SetBool(sectionVideo, "EnableObjectCulling", EnableObjectCulling);
             SetInt(sectionVideo, "RandomDungeonTextures", RandomDungeonTextures);
 
             SetInt(sectionEffects, "AntialiasingMethod", AntialiasingMethod);
