@@ -640,7 +640,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
 
         // Loads Asset bundle and adds to ModLookUp dictionary
-        private static bool LoadModAssetBundle(string modFilePath, [NotNullWhen(true)] out AssetBundle? ab)
+        private static bool LoadModAssetBundle(string modFilePath, [NotNullWhen(true)] out AssetBundle ab)
         {
             ab = null;
             if (!File.Exists(modFilePath))
@@ -769,7 +769,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// </summary>
         /// <param name="sources">The content of source files.</param>
         /// <returns>The compiled assembly or null.</returns>
-        public static Assembly? CompileFromSourceAssets(string[] sources, string modName = "(no mod name)")
+        public static Assembly CompileFromSourceAssets(string[] sources, string modName = "(no mod name)")
         {
             if (sources == null || sources.Length < 1)
             {

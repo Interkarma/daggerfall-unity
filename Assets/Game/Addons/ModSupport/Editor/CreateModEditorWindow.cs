@@ -5,7 +5,7 @@
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Lypyl (lypyl@dfworkshop.net)
 // Contributors:    TheLacus
-// 
+//
 // Notes:
 //
 
@@ -682,7 +682,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     if (filePath.EndsWith(".cs", StringComparison.Ordinal))
                     {
                         // Create a copy of C# script as a .txt text asset
-                        string? assetPath = CopyAsset<TextAsset>(filePath, ".txt");
+                        string assetPath = CopyAsset<TextAsset>(filePath, ".txt");
                         if (assetPath == null)
                             return false;
 
@@ -744,7 +744,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             catch (Exception) { }
         }
 
-        string? CopyAsset<T>(string path, string suffix = "") where T : UnityEngine.Object
+        string CopyAsset<T>(string path, string suffix = "") where T : UnityEngine.Object
         {
             string fileName = Path.GetFileName(path) + suffix;
             string newFilePath = Path.Combine(GetTempModDirPath(modInfo.ModTitle), fileName);
@@ -760,7 +760,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
 
 
-        static string? GetAssetPathFromFilePath(string fullPath)
+        static string GetAssetPathFromFilePath(string fullPath)
         {
             if (string.IsNullOrEmpty(fullPath))
             {
@@ -811,7 +811,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// </summary>
         /// <param name="prefabPath">Asset path of original prefab.</param>
         /// <returns>Paths of prefab copy and json data; null if not copied./returns>
-        private (string? prefabPath, string? dataPath)? CheckForImportedComponents(string prefabPath)
+        private (string prefabPath, string dataPath)? CheckForImportedComponents(string prefabPath)
         {
             var go = PrefabUtility.LoadPrefabContents(prefabPath);
 
@@ -821,9 +821,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 string importedComponentsPath = ImportedComponentAttribute.Save(go, tempModPath);
                 if (importedComponentsPath != null)
                 {
-                    string? tempPrefabPath = GetAssetPathFromFilePath($"{tempModPath}/{go.name}.prefab");
+                    string tempPrefabPath = GetAssetPathFromFilePath($"{tempModPath}/{go.name}.prefab");
                     PrefabUtility.SaveAsPrefabAsset(go, tempPrefabPath);
-                    string? tempDataPath = GetAssetPathFromFilePath(importedComponentsPath);
+                    string tempDataPath = GetAssetPathFromFilePath(importedComponentsPath);
                     return (tempPrefabPath, tempDataPath);
                 }
 

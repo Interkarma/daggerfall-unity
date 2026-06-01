@@ -1,9 +1,0 @@
-# NOTE: Requires **VS2019 16.7** or later
-
-# 'Correctness' Rules from '2.9.8' release with 'Recommended' analysis mode
-# Description: 'Correctness' Rules with enabled-by-default state from '2.9.8' release with 'Recommended' analysis mode. Rules that are first released in a version later than '2.9.8' are disabled.
-
-is_global = true
-
-global_level = -99
-

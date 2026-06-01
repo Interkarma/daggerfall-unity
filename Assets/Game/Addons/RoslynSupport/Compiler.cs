@@ -11,14 +11,14 @@ using Microsoft.CodeAnalysis.Emit;
 
 public sealed class Compiler
 {
-    private static Compiler? _compiler;
+    private static Compiler _compiler;
     public static Compiler Instance => _compiler ??= new();
 
     private Dictionary<string, Assembly> dynamicAssemblyResolver;
     private Dictionary<string, MetadataReference> referenceCache;
     private CSharpCompilationOptions defaultCompilationOptions;
 
-    private Assembly? OnAssemblyResolve(object sender, ResolveEventArgs e) =>
+    private Assembly OnAssemblyResolve(object sender, ResolveEventArgs e) =>
         dynamicAssemblyResolver.TryGetValue(e.Name, out var assembly) ? assembly : null;
 
     private void OnAssemblyLoad(object sender, AssemblyLoadEventArgs e)
@@ -54,7 +54,7 @@ public sealed class Compiler
         }
     }
 
-    public bool CompileSource(string assemblyName, string[] sources, [NotNullWhen(true)] out Assembly? assembly, bool isDebugBuild = false)
+    public bool CompileSource(string assemblyName, string[] sources, [NotNullWhen(true)] out Assembly assembly, bool isDebugBuild = false)
     {
         assembly = null;
         try

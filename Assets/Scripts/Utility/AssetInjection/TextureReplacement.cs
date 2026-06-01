@@ -1039,7 +1039,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="readOnly">Release copy on system memory after uploading to gpu.</param>
         /// <param name="tex">Imported texture.</param>
         /// <returns>True if texture exists and has been imported.</returns>
-        private static bool TryImportTextureFromDisk(string path, bool mipMaps, bool isLinear, bool readOnly, [NotNullWhen(true)] out Texture2D? tex)
+        private static bool TryImportTextureFromDisk(string path, bool mipMaps, bool isLinear, bool readOnly, [NotNullWhen(true)] out Texture2D tex)
         {
             const int retroThreshold = 256; // Imported textures with a width or height below this threshold will never be compressed to preserve retro appearance
 

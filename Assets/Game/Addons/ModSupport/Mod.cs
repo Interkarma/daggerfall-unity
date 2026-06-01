@@ -5,7 +5,7 @@
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Lypyl (lypyl@dfworkshop.net)
 // Contributors:    TheLacus
-// 
+//
 // Notes:
 //
 
@@ -468,9 +468,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// </summary>
         /// <param name="type">name of Type</param>
         /// <returns>System.Type</returns>
-        public Type? GetCompiledType(string type)
+        public Type GetCompiledType(string type)
         {
-            Type? t = null;
+            Type t = null;
 
             if (string.IsNullOrEmpty(type))
                 return null;
@@ -630,7 +630,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <param name="assetName">name of asset</param>
         /// <param name="loadedBundle">had to load asset bundle</param>
         /// <returns>A reference to the loaded asset or null if not found.</returns>
-        private T? LoadAssetFromBundle<T>(string assetName, out bool loadedBundle) where T : UnityEngine.Object
+        private T LoadAssetFromBundle<T>(string assetName, out bool loadedBundle) where T : UnityEngine.Object
         {
             LoadedAsset la = new LoadedAsset();
             loadedBundle = false;
@@ -808,7 +808,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 this.fallback = fallback;
             }
 
-            internal bool TryGetValue(string key, [NotNullWhen(true)] out string? value)
+            internal bool TryGetValue(string key, [NotNullWhen(true)] out string value)
             {
                 if (table == null)
                 {
@@ -838,7 +838,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         #region Setup
 
         // Returns array containing names of all assets in asset bundle
-        private string[]? GetAllAssetNames()
+        private string[] GetAllAssetNames()
         {
             try
             {
@@ -865,7 +865,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         {
             try
             {
-                TextAsset? modInfoAsset = null;
+                TextAsset modInfoAsset = null;
                 for (int i = 0; i < assetNames.Length; i++)
                 {
                     if (assetNames[i].EndsWith(ModManager.MODINFOEXTENSION))
@@ -878,7 +878,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     return false;
 
 
-                ModInfo? modInfo = null;
+                ModInfo modInfo = null;
                 if (ModManager._serializer.TryDeserialize(fsJsonParser.Parse(modInfoAsset.text), ref modInfo).Succeeded && modInfo != null)
                 {
                     this.ModInfo = modInfo;
@@ -952,7 +952,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// Compiles all source files to assembly
         /// </summary>
         /// <returns></returns>
-        public List<Assembly>? CompileSourceToAssemblies()
+        public List<Assembly> CompileSourceToAssemblies()
         {
 #if UNITY_EDITOR
             if (IsVirtual)
@@ -960,7 +960,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 #endif
 
             List<string> stringSource = new List<string>(sources.Count);
-            Assembly? assembly;
+            Assembly assembly;
 
             try
             {
@@ -1034,7 +1034,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// </summary>
         /// <param name="state"></param>
         /// <returns></returns>
-        public List<SetupOptions>? FindModLoaders(StateManager.StateTypes state)
+        public List<SetupOptions> FindModLoaders(StateManager.StateTypes state)
         {
             List<SetupOptions> modLoaders;
 
@@ -1139,7 +1139,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
 
         /// <summary>
-        /// Unloads the asset bundle associated to this mod. Loaded assets can still be retrieved from cache, 
+        /// Unloads the asset bundle associated to this mod. Loaded assets can still be retrieved from cache,
         /// unless they are also unloaded.
         /// </summary>
         /// <param name="unloadAllObjects">Remove all loaded assets from memory.</param>
@@ -1158,7 +1158,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// Loads the asset bundle associated to this mod.
         /// </summary>
         /// <returns>The loaded asset bundle or null.</returns>
-        public AssetBundle? LoadAssetBundle()
+        public AssetBundle LoadAssetBundle()
         {
 #if UNITY_EDITOR
             if (IsVirtual)

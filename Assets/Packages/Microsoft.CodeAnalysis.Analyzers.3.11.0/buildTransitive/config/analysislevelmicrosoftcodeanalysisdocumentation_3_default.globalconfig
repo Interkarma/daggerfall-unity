@@ -1,9 +1,0 @@
-# NOTE: Requires **VS2019 16.7** or later
-
-# 'MicrosoftCodeAnalysisDocumentation' Rules from '3.0.0' release with 'Default' analysis mode
-# Description: 'MicrosoftCodeAnalysisDocumentation' Rules with enabled-by-default state from '3.0.0' release with 'Default' analysis mode. Rules that are first released in a version later than '3.0.0' are disabled.
-
-is_global = true
-
-global_level = -99
-

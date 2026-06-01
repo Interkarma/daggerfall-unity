@@ -229,7 +229,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
     public struct Source
     {
         public TextAsset sourceTxt;
-        public TextAsset? pdbTxt;
+        public TextAsset pdbTxt;
         public bool isPreCompiled;
     }
 
