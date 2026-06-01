@@ -30,21 +30,21 @@ QuestComplete:  [1004]
 <ce>                        right before your eyes.
 
 RumorsDuringQuest:  [1005]
-<ce>   _hunter_ is coming to %reg to clean out the werebeast infection.
+<ce>   _hunter_ is coming to %reg to clean out the werebeast infestation.
 <ce> Maybe then we'll be able to walk the streets at night again without fear.
 
 RumorsPostfailure:  [1006]
-<ce>_hunter_ and %g3 men killed a lot of loops in %reg, but I'll be hanged
+<ce>_hunter_ and %g3 men killed a lot of loups in %reg, but I'll be hanged
 <ce>                          if they got 'em all.
                                      <--->
-<ce> _hunter_ should have left well enough alone.  %g3 crusades just send
+<ce> _hunter_ should have left well enough alone.  %G3 crusades just send
 <ce>                  the werecreatures into greater fury.
 
 RumorsPostsuccess:  [1007]
-<ce>_hunter_ and %g3 men killed a lot of loops in %reg, but I'll be hanged
+<ce>_hunter_ and %g3 men killed a lot of loups in %reg, but I'll be hanged
 <ce>                          if they got 'em all.
                                      <--->
-<ce> _hunter_ should have left well enough alone.  %g3 crusades just send
+<ce> _hunter_ should have left well enough alone.  %G3 crusades just send
 <ce>                  the lycanthropes into greater fury.
 
 QuestorPostsuccess:  [1008]
@@ -104,7 +104,7 @@ Message:  1020
  compassion. I offer you one last chance to save
  yourself.  Go to _priest_ of
  __priest_ in ___priest_ if you wish
- to live. %g is wise in the ways of lycanthropy, and if
+ to live. %G is wise in the ways of lycanthropy, and if
  anyone can help you, %g can.
     I will wait =huntstart_ days before sending my hunters
  after you.  Use the time wisely.
@@ -120,7 +120,7 @@ Message:  1021
 <ce>           can be lifted, although I hesitate to speak of it,
 <ce>          as the cure may be worse than the disease.  We must
 <ce>              lower our voices.  You may not be aware that
-<ce>           lycanthropy is an hereditary condition, passed on
+<ce>           lycanthropy is a hereditary condition, passed on
 <ce>            in certain families, although it can lie dormant
 <ce>            for generations before reappearing.  This is why
 <ce>          the great crusades against lycanthropes led by those
@@ -146,7 +146,7 @@ Message:  1022
 <ce>             As far as I know, he still lives in ___local_,
 <ce>            the family home for generations.  But first, you
 <ce>             will need to see _alchemist_ in ___alchemist_.
-<ce>            %g has assisted me in such matters before.  The
+<ce>            %G has assisted me in such matters before.  The
 <ce>          surest way to pass on the disease is for the victim
 <ce>          to drink the blood of the lycanthrope.  _alchemist_
 <ce>            will ask no questions and tell no tales at your
@@ -196,7 +196,7 @@ Message:  1026
 <ce>                and didn't want _child_ to find out the
 <ce>               truth about it.  I never figured out what
 <ce>                it was all about.  Yes, _child_ was his
-<ce>                only child.  %g was taken in by a family
+<ce>                only child.  %G was taken in by a family
 <ce>                 from __childhouse_ after %g3 father's
 <ce>                 death.  I'm afraid that's all I know.
 
@@ -227,7 +227,7 @@ Message:  1050
  The lycanthrope hunter _hunter_
  has sent me a letter vowing to
  hunt me down unless I cure myself
- of lycanthropy.  %g directed me to
+ of lycanthropy.  %G directed me to
  a _priest_ of __priest_,
  ___priest_. I have =huntstart_ days
  before the hunt begins.
@@ -247,7 +247,7 @@ Message:  1052
 %qdt:
  I declined _priest_'s offer to cure
  my lycanthropy by inflicting it on
- another.  %g3 only additional advice
+ another.  %G3 only additional advice
  was to seek out a book which might
  lead me to a Coven purported to have
  the cure.  The book's last known location

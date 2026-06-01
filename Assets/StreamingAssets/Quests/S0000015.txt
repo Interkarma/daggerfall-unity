@@ -37,7 +37,7 @@ Page 7
  (which he is bound to do, sooner rather than later)
  I will be king.
     If it weren't for that bitch queen and her brats,
- I would and could be patient. Never trust a dark elf
+ I would and could be patient. Never trust a dark elf,
  the old saying goes, for you cannot read truth in
  their eyes. If Barenziah has her way, Helseth will
  be heir and Elysana will be married off to some far-
@@ -52,15 +52,15 @@ Page 7
     First it is important to solidify my power base.
  I can (almost certainly) rely on Gothryd to support
  my bid for the throne, if Helseth is made heir. I
- have a spy network equalling Eadwyre, Gothryd,
- Akorith-i, or the Emperor. Perhaps the Necromancers
+ have a spy network equaling that of Eadwyre, Gothryd,
+ Akorithi, or the Emperor. Perhaps the Necromancers
  and the Underking's networks are more extensive, but
  I doubt it. The problem is raw physical power. I do
  not have a standing army. I need the gold to raise
 
 Message:  1018
 %qdt:
- I found a most damning couple of pages
+ I found a most-damning couple of pages
  in Woodborne Hall. I'm sure Lord Woodborne
  would be quite livid if they were to fall
  into the wrong hands.
@@ -117,17 +117,17 @@ Message:  1032
 <ce>               Lysandus. There shall be justice, and it
 <ce>              shall come from my hand! You would do best
 <ce>              to stay clear of Woodborne Hall and Wayrest
-<ce>                          for some time %pcn.
+<ce>                          for some time, %pcn.
 
 Message:  1033
-<ce>               This information is quite valuable %pcf.
+<ce>               This information is quite valuable, %pcf.
 <ce>              Let me gift you with _gold_ gold for giving
 <ce>               it to me. This will be quite handy in the
 <ce>                           coming conflict.
 
 Message:  1034
 <ce>               You were completely correct to bring this
-<ce>               to me. Otherwise it might have gotten out
+<ce>               to me. Otherwise, it might have gotten out
 <ce>               where it could do Lord Woodborne damage.
 <ce>                        Guards! Kill this %ra!
 

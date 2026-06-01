@@ -29,7 +29,7 @@ AcceptQuest:  [1002]
 <ce>                           Very good, %pcf.
 <ce>                Now, listen carefully: take this _item_
 <ce>            to the palace in __palace_ and find a =contact_.
-<ce>                   That will be _contact_. %g will be
+<ce>                   That will be _contact_. %G will be
 <ce>                 expecting you, and will likely reward
 <ce>                  you for your trouble.  You'd best be
 <ce>                  on your way.  Do not fail me, %pcf.
@@ -69,7 +69,7 @@ Ah, it's my agent of peace. How goes it with you, my friend?
 
 QuestorPostfailure:  [1009]
 <ce>                   By failing to bring _contact_ the
-<ce>                      _item_ you promised to get,
+<ce>                      _item_ you promised to deliver,
 <ce>                 you've made my peace plans rather more
 <ce>                            difficult, %pcf.
 <ce>                            Out of my sight.
@@ -77,7 +77,7 @@ QuestorPostfailure:  [1009]
 QuestLogEntry:  [1010]
 %qdt:
 _questgiver_ has
- given me _reward_ gold to go
+ implied a reward if I go
  to __palace_ palace
  to bring a peace offering, a _item_
  to _contact_.  I must be there in

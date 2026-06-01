@@ -18,12 +18,12 @@ QuestorOffer:  [1000]
 
 RefuseQuest:  [1001]
 <ce>              Pity. I will find someone else to help me.
-<ce>             But who will you find to help you, I wonder.
+<ce>             But who will you find to help you, I wonder?
 
 AcceptQuest:  [1002]
 <ce>               %oth, that is a relief to me. Do not ask
 <ce>             any questions -- get this letter to a certain
-<ce>               high level sorcerer at the Necromancers'
+<ce>               high-level sorcerer at the Necromancers'
 <ce>                crypt, Scourg Barrow in the Dragontail
 <ce>               Mountains. Avoid the rift. If you see it,
 <ce>                        you have gone too far.
@@ -59,7 +59,7 @@ QuestComplete:  [1004]
 <ce>            to Aubk-i. The girl is innocent to a fault, and
 <ce>             everyone knows that Gothryd is not the loyal
 <ce>           empire toady that Lysandus was. Of course my own
-<ce>           family...well enough of this boring court gossip.
+<ce>           family... well enough of this boring court gossip.
 <ce>                                    
 <ce>              If you really want to find this letter, you
 <ce>             should get in good with Mynisera, the former
@@ -82,7 +82,7 @@ Princess Morgiah is engaged to the King of Firsthold. A miracle of %god indeed.
 <--->
 What could've possessed the King of Firsthold to propose marriage to Morgiah?
 <--->
-Morgiah has a three year engagement! Royals are a strange lot.
+Morgiah has a three-year engagement! Royals are a strange lot.
 
 QuestorPostfailure:  [1009]
 <ce>                  You've failed me, %pcf. I required an answer from _necs_ within one month.
@@ -93,7 +93,7 @@ _necs_,
 <ce>                                    
 <ce>                I agree to your terms. I will give you
 <ce>              my first and you will exert your influence
-<ce>              on the King of Firsthold on Sumerset Isle.
+<ce>              on the King of Firsthold on Sumurset Isle.
 <ce>               Only you can let him speak with his dead
 <ce>              son. For that, he would even marry Nulfaga!
 <ce>                                    
@@ -148,7 +148,7 @@ Message:  1016
 <ce>                  Very good. If you are not rewarded
 <ce>                   with death by the loyal servants
 <ce>                   of the Barrow, give this note to
-<ce>                       Princess Morgiah please.
+<ce>                       Princess Morgiah, please.
 
 
 -- Symbols used in the QRC file:

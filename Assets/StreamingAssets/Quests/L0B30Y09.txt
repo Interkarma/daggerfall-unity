@@ -15,8 +15,8 @@ QuestorOffer:  [1000]
 <ce>                 We have an anonymous job for you. It
 <ce>                happens every now and then that someone
 <ce>                 pays us to remove someone, but never
-<ce>                 reveals why, or may even work though
-<ce>                  a go between to keep their identity
+<ce>                 reveals why, or may even work through
+<ce>                  a go-between to keep their identity
 <ce>                 secret. At any rate, the job is yours
 <ce>                            if you want it.
 

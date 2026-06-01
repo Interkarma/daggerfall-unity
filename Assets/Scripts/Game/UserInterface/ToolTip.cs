@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using DaggerfallWorkshop.Localization;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -195,7 +196,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 // Draw tooltip text
                 for (int i = 0; i < textRows.Length; i++)
                 {
-                    font.DrawText(textRows[i], textPos, LocalScale, textColor);
+                    font.DrawText(GrammarManager.grammarProcessor.ProcessGrammar(textRows[i]), textPos, LocalScale, textColor);
                     textPos.y += font.GlyphHeight * LocalScale.y;
                 }
 

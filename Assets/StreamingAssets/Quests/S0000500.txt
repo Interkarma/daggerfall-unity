@@ -29,7 +29,7 @@ Message:  1020
  _contact1_, asking me to meet %g2
  at _tavern_ in __tavern_,
  ____tavern_, on some matter having
- do with _traitor_ of Sentinel.
+ to do with _traitor_ of Sentinel.
 
 Message:  1021
 %qdt:
@@ -62,11 +62,11 @@ Dear %pcn:
 <ce>                              _contact1_
 
 Message:  1040
-<ce>                     %pcn? You were my last hope!
+<ce>                     %pcn? You are my last hope!
 <ce>                    _traitor_'s friends and allies
 <ce>                    have all proven faithless after
 <ce>                     he was arrested by the tyrant
-<ce>                     _queen_ on trumped up charges
+<ce>                     _queen_ on trumped-up charges
 <ce>                     of treason. He is now locked
 <ce>                       in the dungeons of Castle
 <ce>                     Sentinel, awaiting execution.

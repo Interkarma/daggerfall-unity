@@ -10,7 +10,7 @@ QRC:
 QuestorOffer:  [1000]
 <ce>                My husband's poor grandmother, Nulfaga,
 <ce>                is rumored to be in very frail health,
-<ce>                her once brilliant mind almost utterly
+<ce>                her once-brilliant mind almost utterly
 <ce>                 destroyed. She has locked herself in
 <ce>                her castle in the Wrothgarian Mountains
 <ce>                and experiments in magical studies with

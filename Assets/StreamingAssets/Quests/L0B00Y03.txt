@@ -60,7 +60,7 @@ RumorsPostsuccess:  [1007]
 Who can say what would've happened if that _mage_ had been suffered to live.
 
 QuestorPostsuccess:  [1008]
-Greeting and salutations. How may =qgiver_ assist thee, slayer of mages?
+Greetings and salutations. How may =qgiver_ assist thee, slayer of mages?
 
 QuestorPostfailure:  [1009]
 <ce>               You have failed your contract with us, so

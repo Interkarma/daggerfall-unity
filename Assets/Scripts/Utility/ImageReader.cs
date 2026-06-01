@@ -4,8 +4,8 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
-// 
+// Contributors:
+//
 // Notes:
 //
 
@@ -292,7 +292,7 @@ namespace DaggerfallWorkshop.Utility
                     int archive = AssetInjection.TextureReplacement.FileNameToArchive(filename);
                     if (createTexture && AssetInjection.TextureReplacement.TryImportTexture(archive, record, frame, out imageData.texture))
                         createTexture = false;
-                    if (createAllFrameTextures && AssetInjection.TextureReplacement.TryImportTexture(archive, record, out imageData.animatedTextures))
+                    if (createAllFrameTextures && frameCount > 1 && AssetInjection.TextureReplacement.TryImportTexture(archive, record, out imageData.animatedTextures))
                         createAllFrameTextures = false;
 
                     break;

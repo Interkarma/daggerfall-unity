@@ -79,7 +79,7 @@ I hear they found out that atronach was made with the soul of %t's brother!
 <--->
 A lot of people feel safer knowing that atronach is dead.
 <--->
-Everybody's talking about that atronach that %ra hunted down?
+Everybody's talking about that atronach that %ra hunted down.
 
 QuestorPostsuccess:  [1008]
 I haven't forgotten about the atronach crisis, if that's what's concerning you.

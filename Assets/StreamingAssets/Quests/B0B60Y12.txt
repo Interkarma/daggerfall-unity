@@ -16,7 +16,7 @@ QuestorOffer:  [1000]
 <ce>                        It seems _nobleman_ just
 <ce>                      read about an ancient family
 <ce>                      curse. Now %g is scared out
-<ce>                     of %g3 mind. %g wants someone
+<ce>                     of %g3 mind. %G wants someone
 <ce>                    to go destroy %g3 great, great,
 <ce>                       great grandmother, whom %g
 <ce>                      fears walks the earth as an
@@ -63,7 +63,7 @@ QuestComplete:  [1004]
 RumorsDuringQuest:  [1005]
 _nobleman_ is a superstitious fool, but %g3 great grandmother was an odd one.
 <--->
-_nobleman_ comes a strange family. Maybe %g3 great grandmother is a zombie.
+_nobleman_ comes from a strange family. Maybe %g3 great grandmother is a zombie.
 
 RumorsPostfailure:  [1006]
 %kno looked into _nobleman_'s story and, I guess, decided it was a hoax.

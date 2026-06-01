@@ -39,7 +39,7 @@ AcceptQuest:  [1002]
 
 QuestComplete:  [1004]
 <ce>                        Hail to the hero, %pcn!
-<ce>                       Well done! You name shall
+<ce>                       Well done! Your name shall
 <ce>                     be recorded in the histories.
 
 RumorsDuringQuest:  [1005]
@@ -87,7 +87,7 @@ Message:  1020
  it points toward. It is too
  late for me. I will die down
  here in ___dungeon2_,
- lost among it's dark passageways.
+ lost among its dark passageways.
  First, I will hide my clue.
  If I cannot...
 
@@ -110,7 +110,7 @@ Message:  1031
 <ce>                   to tell you mine. What's the use
 <ce>                    in bein' a wizard if you can't
 <ce>                    know things normal folks don't.
-<ce>                    I also know why your here. You
+<ce>                   I also know why you're here. You
 <ce>                      want Chrysamere, except you
 <ce>                   didn't know it by name, did you?
 <ce>                     The only way you're gonna get
@@ -122,7 +122,7 @@ Message:  1032
 <ce>                  I know your name. What's the use in
 <ce>                   bein' a wizard if you can't know
 <ce>                     things normal folks don't. I
-<ce>                     also know why your here. You
+<ce>                    also know why you're here. You
 <ce>                    want The Necromancer's Amulet,
 <ce>                     except you didn't know it by
 <ce>                      name, did you? The only way
@@ -135,7 +135,7 @@ Message:  1033
 <ce>                  I know your name. What's the use in
 <ce>                   bein' a wizard if you can't know
 <ce>                     things normal folks don't. I
-<ce>                     also know why your here. You
+<ce>                    also know why you're here. You
 <ce>                   want The Staff of Magnus, except
 <ce>                    you didn't know it by name, did
 <ce>                  you? The only way you're gonna get
@@ -147,7 +147,7 @@ Message:  1034
 <ce>                  I know your name. What's the use in
 <ce>                   bein' a wizard if you can't know
 <ce>                     things normal folks don't. I
-<ce>                     also know why your here. You
+<ce>                     also know why you're here. You
 <ce>                    want The Warlock's Ring, except
 <ce>                    you didn't know it by name, did
 <ce>                  you? The only way you're gonna get

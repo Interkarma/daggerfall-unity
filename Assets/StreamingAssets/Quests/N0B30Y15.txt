@@ -29,7 +29,7 @@ AcceptQuest:  [1002]
 <ce>                       Fine attitude %pcn. There
 <ce>                    is one thing I did not tell you.
 <ce>                   This imp was a familiar to a very
-<ce>                    high ranking mage. It seems the
+<ce>                    high-ranking mage. It seems the
 <ce>                  imp fell into an experimental spell
 <ce>                  and has been imbued with all manner
 <ce>                   of spell-like powers. You can find

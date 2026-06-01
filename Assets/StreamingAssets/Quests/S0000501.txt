@@ -11,7 +11,7 @@ QuestComplete:  [1004]
 <ce>                  %pcn, I knew I could count on you.
 <ce>                The friendship of the Queen of Sentinel
 <ce>                 is reward enough, but I have prepared
-<ce>                   some more tangible gifts as well.
+<ce>                   some more-tangible gifts, as well.
 
 RumorsDuringQuest:  [1005]
 <ce>    _traitor_ escaped from the dungeons of Castle Sentinel, I hear.
@@ -81,7 +81,7 @@ Message:  1040
 <ce>            and I want you to find him and bring him back.
 <ce>             Alive if possible, but kill him if necessary.
 <ce>                     Do not let him escape again.
-<ce>               You have =time2_ days.
+<ce>                          You have =time2_ days.
 
 Message:  1041
 <ce>                    You again! %oth, will you give

@@ -65,7 +65,7 @@ AcceptQuest:  [1002]
 <ce>                    in ___kidnapper_, a =kidnapper_
 <ce>                   named _kidnapper_. Once =2ransom_
 <ce>           days have passed, %g will send word to %g3 friends
-<ce>                   whereever they're keeping _victim_
+<ce>                   where-ever they're keeping _victim_
 <ce>              and they'll kill %g2. Please don't let that
 <ce>                       happen. Good luck, friend.
 
@@ -141,7 +141,7 @@ Message:  1013
 Message:  1014
 <ce>                          _qgiver_ sent you?
 <ce>                        %oth, thank %god! Quick,
-<ce>                          let's get out here!
+<ce>                         let's get out of here!
 
 Message:  1015
 =thug_,

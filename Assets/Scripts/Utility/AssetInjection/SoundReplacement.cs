@@ -5,7 +5,7 @@
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: TheLacus
 // Contributors:
-// 
+//
 // Notes:
 //
 
@@ -13,6 +13,7 @@ using System.Collections;
 using System.IO;
 using UnityEngine;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
+using UnityEngine.Networking;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
@@ -86,20 +87,33 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 string path = Path.Combine(soundPath, name + extension);
                 if (File.Exists(path))
                 {
-                    WWW www = new WWW("file://" + path); // TODO: Replace with UnityWebRequest
-                    if (streaming) {
-                        audioClip = www.GetAudioClip(true, true);
-                    }
-                    else
+                    string url = "file://" + path;
+                    AudioType audioType = GetAudioTypeFromExtension(extension);
+
+                    UnityWebRequest request = UnityWebRequestMultimedia.GetAudioClip(url, audioType);
+                    DownloadHandlerAudioClip downloadHandler = request.downloadHandler as DownloadHandlerAudioClip;
+
+                    if (downloadHandler == null)
                     {
-                        audioClip = www.GetAudioClip();
-                        DaggerfallUnity.Instance.StartCoroutine(LoadAudioData(www, audioClip));
+                        Debug.LogErrorFormat("Failed to create audio download handler for {0}", path);
+                        audioClip = null;
+                        request.Dispose();
+                        return false;
                     }
+                    
+                    downloadHandler.streamAudio = streaming;
+
+                    request.SendWebRequest();
+
+                    // Synchronous waiting otherwise the whole architecture has to be redone
+                    while (!request.isDone) { }
+                    audioClip = downloadHandler.audioClip;
+
                     return true;
                 }
 
                 // Seek from mods
-                if (ModManager.Instance != null && ModManager.Instance.TryGetAsset(name, false, out audioClip))
+                if (ModManager.Instance && ModManager.Instance.TryGetAsset(name, false, out audioClip))
                 {
                     if (audioClip.preloadAudioData || audioClip.LoadAudioData())
                         return true;
@@ -111,6 +125,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             audioClip = null;
             return false;
         }
+
 
         /// <summary>
         /// Import midi data from modding locations as a byte array.
@@ -143,17 +158,22 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             return false;
         }
 
-        /// <summary>
-        /// Load audio data from WWW in background.
-        /// </summary>
-        private static IEnumerator LoadAudioData(WWW www, AudioClip clip) // TODO: Replace with UnityWebRequest
+        private static AudioType GetAudioTypeFromExtension(string extension)
         {
-            yield return www;
-
-            if (clip.loadState == AudioDataLoadState.Failed)
-                Debug.LogErrorFormat("Failed to load audioclip: {0}", www.error);
-
-            www.Dispose();
+            switch (extension.ToLowerInvariant())
+            {
+                case ".wav":
+                    return AudioType.WAV;
+                case ".mp3":
+                    return AudioType.MPEG;
+                case ".ogg":
+                    return AudioType.OGGVORBIS;
+                case ".aif":
+                case ".aiff":
+                    return AudioType.AIFF;
+                default:
+                    return AudioType.UNKNOWN;
+            }
         }
 
         #endregion

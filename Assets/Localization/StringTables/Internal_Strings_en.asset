@@ -1654,7 +1654,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 325
-    m_Localized: Pickpocket
+    m_Localized: Pickpocketing
     m_Metadata:
       m_Items: []
   - m_Id: 326
@@ -2715,7 +2715,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 592
-    m_Localized: near deadra
+    m_Localized: near Daedra
     m_Metadata:
       m_Items: []
   - m_Id: 593
@@ -2953,7 +2953,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 651
-    m_Localized: You obtained the deeds and now own a house in %town of %region.
+    m_Localized: You obtained the deed and now own a house in %town of %region.
     m_Metadata:
       m_Items: []
   - m_Id: 652
@@ -2965,13 +2965,13 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 654
-    m_Localized: The Thieves Guild have revealed the closely guarded where-abouts
+    m_Localized: The Thieves Guild have revealed the closely-guarded whereabouts
       of a treasure trove called %map.
     m_Metadata:
       m_Items: []
   - m_Id: 655
     m_Localized: The Dark Brotherhood revealed the secret of some treasure-laden
-      crypts located at somewhere called %map.
+      crypts located somewhere called %map.
     m_Metadata:
       m_Items: []
   - m_Id: 656
@@ -3035,11 +3035,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 671
-    m_Localized: You cannot carry anymore stuff.
+    m_Localized: You cannot carry any more stuff.
     m_Metadata:
       m_Items: []
   - m_Id: 672
-    m_Localized: Your cart cannot hold anymore stuff.
+    m_Localized: Your wagon cannot hold any more stuff.
     m_Metadata:
       m_Items: []
   - m_Id: 673
@@ -3195,7 +3195,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 711
-    m_Localized: You are cured free from cost due to todays' holiday.
+    m_Localized: You are cured free from cost due to today's holiday.
     m_Metadata:
       m_Items: []
   - m_Id: 712
@@ -4202,7 +4202,7 @@ MonoBehaviour:
 
       Chemicals
 
-      Experiental
+      Experimental
       Products
 
       Alchemistry

@@ -12,7 +12,7 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                    We have a traitor in __qgiver_,
-<ce>                 a villianous _monster_ who has turned
+<ce>                 a villainous _monster_ who has turned
 <ce>                 against %g3 brethren. Our honor is at
 <ce>                         stake, %pct. Join our
 <ce>                            righteous fury.
@@ -20,7 +20,7 @@ QuestorOffer:  [1000]
 <ce>                      __qgiver_ has been betrayed
 <ce>                       by a perfidious _monster_.
 <ce>                  Will you help us track the cowardly
-<ce>                     villian down and destroy %g2?
+<ce>                     villain down and destroy %g2?
 
 RefuseQuest:  [1001]
 <ce>                 An ignoble reply. I expected better.

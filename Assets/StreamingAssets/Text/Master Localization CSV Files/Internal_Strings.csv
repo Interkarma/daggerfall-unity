@@ -481,7 +481,7 @@ centaurian,Centaurian
 impish,Impish
 lockpicking,Lockpicking
 mercantile,Mercantile
-pickpocket,Pickpocket
+pickpocket,Pickpocketing
 stealth,Stealth
 swimming,Swimming
 climbing,Climbing
@@ -746,7 +746,7 @@ duringFullMoon,during Full Moon
 duringHalfMoon,during Half Moon
 duringNewMoon,during New Moon
 nearUndead,near undead
-nearDaedra,near deadra
+nearDaedra,near Daedra
 nearHumanoids,near humanoids
 nearAnimals,near animals
 undeadLower,undead
@@ -805,11 +805,11 @@ endedQuest,ended
 finishQuestHeader,{0} {1} at {2}:
 quest,Quest
 noteHeader,{0} in {1}:
-houseDeed,You obtained the deeds and now own a house in %town of %region.
+houseDeed,You obtained the deed and now own a house in %town of %region.
 levelProgress,Progress made to the next level: {0}%
 readMap,Discovered the location of %map after studying a map.
-readMapTG,The Thieves Guild have revealed the closely guarded where-abouts of a treasure trove called %map.
-readMapDB,The Dark Brotherhood revealed the secret of some treasure-laden crypts located at somewhere called %map.
+readMapTG,The Thieves Guild have revealed the closely-guarded whereabouts of a treasure trove called %map.
+readMapDB,The Dark Brotherhood revealed the secret of some treasure-laden crypts located somewhere called %map.
 readMapFail,You have already discovered the location shown by this map.
 howManyItems,Pick how many items (max {0})?
 wagonFullGold,Your wagon could only hold {0} gold pieces.
@@ -825,8 +825,8 @@ letterOfCredit,You are paid with a letter of credit.
 stealSuccess,You are successful.
 stealFailure,You are not successful...
 cannotRemoveItem,You cannot remove this item.
-cannotCarryAnymore,You cannot carry anymore stuff.
-cannotHoldAnymore,Your cart cannot hold anymore stuff.
+cannotCarryAnymore,You cannot carry any more stuff.
+cannotHoldAnymore,Your wagon cannot hold any more stuff.
 cannotUseThis,You cannot use this.
 equippingWeapon,Equipping %s
 lightDouse,You douse the %it.
@@ -865,7 +865,7 @@ suggestedIcons,Suggested
 serviceMembersOnly,My services are reserved for members only.
 serviceDonateHowMuch,Donate how much money : 
 curedDisease,You are cured.
-freeHolidayCuring,You are cured free from cost due to todays' holiday.
+freeHolidayCuring,You are cured free from cost due to today's holiday.
 gettingQuests1,"Hmm, let me see what tasks we have available."
 gettingQuests2,"Please have patience and wait here a moment, %pcf."
 illegalRestWarning,It is illegal to camp in or near a city. Continue?
@@ -1158,7 +1158,7 @@ Herb Garden
 Pharmaceuticals
 Chemistry
 Chemicals
-Experiental Products
+Experimental Products
 Alchemistry
 Alchemical Solutions
 Metallurgy"
