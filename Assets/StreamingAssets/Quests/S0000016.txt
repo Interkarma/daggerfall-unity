@@ -25,7 +25,7 @@ Message:  1012
 <ce>                                    
 <ce>          I do not know who of these seven is most worthy of
 <ce>          the Power, for too long have I let my passions make
-<ce>           me mad. Sometimes the fate of a world hang on the
+<ce>          me mad. Sometimes the fate of a world hangs on the
 <ce>           decision of one person. You have chosen who will
 <ce>          command great Numidium. You bear the burden for the
 <ce>                             consequences.
@@ -36,13 +36,13 @@ Message:  1012
 <ce>            freed. You will be transported back to my side.
 
 Message:  1020
-<ce>                   Your work is done %pcn. The world
+<ce>                   Your work is done, %pcn. The world
 <ce>            is no longer as it once was. Such is the way of
 <ce>             things. Oh, and if you tell my lich statue to
 <ce>              shut up, the door to my chamber will open.
 
 Message:  1050
-<ce>                  Nulfaga cackles, "Not so fast %pcn.
+<ce>                  Nulfaga cackles, "Not so fast, %pcn.
 <ce>          Don't you want to see the result of your handiwork?
 <ce>           Look now into the Book of the Time. Read upon its
 <ce>            pages the history of what shall pass within the

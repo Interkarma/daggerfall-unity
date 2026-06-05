@@ -35,7 +35,7 @@ AcceptQuest:  [1002]
 <ce>                       time with _contact_. Go to
 <ce>                      ___contact_ of ____contact_,
 <ce>                     to a place called __contact_.
-<ce>                %g will pay you =reward_ gold pieces for
+<ce>                %G will pay you =reward_ gold pieces for
 <ce>                     bringing %g2 _foil_. Don't you
 <ce>                  just love these dangerous missions?
 
@@ -43,16 +43,16 @@ QuestFail:  [1003]
 <ce>                  I have nothing to discuss with you.
 
 QuestComplete:  [1004]
-<ce>                      %pcf! How did...I mean, I'm
+<ce>                      %pcf! How did... I mean, I'm
 <ce>                      glad to see you. And _foil_
-<ce>                too. Here take the gold. Object? What's
-<ce>                a totem? Well, its been nice talking to
+<ce>                too. Here, take the gold. Object? What's
+<ce>                a totem? Well, it's been nice talking to
 <ce>                            you. Gotta run!
 
 RumorsDuringQuest:  [1005]
 A crowd of shady characters was here a while ago, looking for a %ra mercenary.
 <--->
-Princess Elysana been spending a lot of time in the Wayrest wilderness, I hear.
+Princess Elysana's been spending a lot of time in the Wayrest wilderness, I hear.
 
 RumorsPostfailure:  [1006]
 Hear about the gang that ambushed that %ra? Funny business that, if you ask me.
@@ -62,18 +62,18 @@ Those guys who ambushed that %ra weren't from around here. Hired assassins.
 RumorsPostsuccess:  [1007]
 Hear some mystery man is hiring assassins to kill a certain %ra mercenary.
 <--->
-_contact_ was mad as can be. You'd think %g's be happy to see %g2 cousin.
+_contact_ was mad as can be. You'd think %g'd be happy to see %g3 cousin.
 
 QuestLogEntry:  [1010]
 %qdt:
  Princess Elysana has asked me to escort
  her cousin _foil_ to ___contact_
- of ____contact_ to meet _contact_. %g will pay
+ of ____contact_ to meet _contact_. %G will pay
  me =reward_ gold, and give me something
  relative to the Totem.
 
 Message:  1011
-<ce>                    _foil_ suddenly runs away, %g2
+<ce>                    _foil_ suddenly runs away, %g3
 <ce>               feet making no sound as %g disappears into
 <ce>                              the shadows.
 

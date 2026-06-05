@@ -80,6 +80,11 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public override List<DFCareer.Skills> TrainingSkills { get { return null; } }
 
+        public override bool IsSatisfyQuestReqByLevel()
+        {
+            return true;
+        }
+
         #endregion
 
         #region Knightly Order

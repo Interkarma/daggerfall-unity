@@ -318,6 +318,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             foreach (TextLabel label in bookLabels)
             {
                 label.Position = new Vector2(x, y);
+                label.Parent = pagePanel; // Establish parent scale before measuring wrapped text.
                 label.MaxWidth = (int)pagePanel.Size.x;
                 label.RectRestrictedRenderArea = pagePanel.RectRestrictedRenderArea;
                 label.RestrictedRenderAreaCoordinateType = TextLabel.RestrictedRenderArea_CoordinateType.ParentCoordinates;

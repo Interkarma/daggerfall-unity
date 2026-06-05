@@ -7,7 +7,7 @@
 -- Edited for Daggerfall Unity by Jay_H
 Messages: 52
 Quest: N0B00Y16
-DisplayName: Open a chest
+DisplayName: Open a Chest
 -- Message panels
 QRC:
 
@@ -34,7 +34,7 @@ AcceptQuest:  [1002]
 <ce>                  matters, but the Guild could use %g3
 <ce>                patronage, so I agreed to send someone.
 <ce>                From what I am told, it sounds like one
-<ce>                   of _mage_'s trick boxes.  %g made
+<ce>                   of _mage_'s trick boxes.  %G made
 <ce>                 hundreds of them in %g3 day, mainly as
 <ce>                 gifts for %g3 friends, and they still
 <ce>               turn up from time to time, as the workman-
@@ -42,7 +42,7 @@ AcceptQuest:  [1002]
 <ce>                Oh yes, well, the secret to these boxes
 <ce>               is that they are almost impossible to open
 <ce>              in any way except by the use of the simple,
-<ce>               standard Open spell.  %g specifically made
+<ce>               standard Open spell.  %G specifically made
 <ce>             them resistant to the fancy alternative spells
 <ce>              %g3 friends liked to use.  Yes, %g tended to
 <ce>              waste %g3 considerable talents on jokes like
@@ -61,7 +61,7 @@ QuestComplete:  [1004]
 <ce>                     and all that rot.  Jolly good.
 
 RumorsDuringQuest:  [1005]
-<ce>        Did you hear about _merchant_?  %g bought an old chest
+<ce>        Did you hear about _merchant_?  %G bought an old chest
 <ce>                and now %g can't open it.  What a hoot!
 
 RumorsPostfailure:  [1006]
@@ -95,7 +95,7 @@ Message:  1030
 <ce>                   I knew my old friend _questgiver_
 <ce>                   wouldn't let me down.  Here is the
 <ce>                   box.  I hope you have some idea of
-<ce>                  how to open it.  I'm at my wits end.
+<ce>                  how to open it.  I'm at my wit's end.
 
 Message:  1040
 <ce>                  As you cast Open on the chest, the
@@ -134,7 +134,7 @@ Message:  1043
 
 Message:  1050
 <ce>                    Tell _questgiver_ I appreciate
-<ce>                   %g2 sending you to help...I guess.
+<ce>                   %g2 sending you to help... I guess.
 <ce>                     Of course, if I had known what
 <ce>                      was inside, I might not have
 <ce>                       been so eager to open it!

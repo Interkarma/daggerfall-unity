@@ -12,7 +12,7 @@ DisplayName: The Harpies' Nest
 QRC:
 
 QuestorOffer:  [1000]
-<ce>          I have a not uncommon situation on my hands. A nest
+<ce>          I have a not-uncommon situation on my hands. A nest
 <ce>           of harpies has moved into an old property of mine,
 <ce>          and while I personally couldn't care less, our wise
 <ce>            and benevolent %rt has decreed that the owner of
@@ -36,11 +36,11 @@ AcceptQuest:  [1002]
 <ce>              days. Obviously that does not leave a lot of
 <ce>                   time. I had hoped that _contact_,
 <ce>          the mercenary I had hired earlier from the Fighters
-<ce>            Guild would have been more capable. And, listen,
+<ce>            Guild, would have been more capable. And, listen,
 <ce>                   %pcf, you don't have to clear out
 <ce>                all ___mondung_. Just kill four or five
 <ce>             of the critters and get back here. I know! The
-<ce>               clan leaders wear specially dyed gryphon's
+<ce>               clan leaders wear specially-dyed gryphon's
 <ce>                   feathers. Bring back one of those
 <ce>               and I'll have the proof I need. Just make
 <ce>             certain you don't fail to return in =2mondung_
@@ -106,7 +106,7 @@ __qgiver_, ___qgiver_
  interview, let me tell you that I promised the
  Guildmaster I'd ask you to look for _contact_
  while you're in ___mondung_. _contact_
- looks is a =contact_, so %g should
+ is a =contact_, so %g should
  stick out at ___mondung_.
       Well, I've fulfilled my promise to the Guildmaster.
  Personally, I don't care if you throw this letter away
@@ -143,7 +143,7 @@ Message:  1020
  =2mondung_ days for a reward of _reward_ gold pieces.
 
 Message:  1050
-1 harpie dead
+1 harpy dead
 
 Message:  1051
 2 harpies dead

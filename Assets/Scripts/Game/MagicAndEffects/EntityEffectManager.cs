@@ -2097,6 +2097,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         private void PlayerSpellCasting_OnReleaseFrame()
         {
+            castInProgress = false;
+
             // Must have a ready spell
             if (readySpell == null)
                 return;
@@ -2126,7 +2128,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
             // Clear ready spell and reset casting - do not update last spell if casting from item
             RaiseOnCastReadySpell(readySpell);
-            if (!readySpellDoesNotCostSpellPoints)
+            if (readySpellDoesNotCostSpellPoints)
+            {
+                lastReadySpellCastingCost = 0;
+            }
+            else
             {
                 lastSpell = readySpell;
                 lastReadySpellCastingCost = readySpellCastingCost;
@@ -2134,7 +2140,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             readySpell = null;
             readySpellCastingCost = 0;
             instantCast = false;
-            castInProgress = false;
             readySpellDoesNotCostSpellPoints = false;
         }
 

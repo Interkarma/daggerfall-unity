@@ -30,12 +30,12 @@ RefuseQuest:  [1001]
 AcceptQuest:  [1002]
 <ce>                       _nobleman_ wants to begin
 <ce>                    rebuilding within =2dung_ days.
-<ce>                    %g has the deed to ___dungeon_,
+<ce>                    %G has the deed to ___dungeon_,
 <ce>                     where you'll find the spirit.
 
 QuestComplete:  [1004]
 <ce>                       _nobleman_ will be quite
-<ce>                      pleased. %g has even offered
+<ce>                      pleased. %G has even offered
 <ce>                       to dedicate a fountain in
 <ce>                               your name.
 
@@ -62,7 +62,7 @@ QuestLogEntry:  [1010]
  pled with me to rid ___dungeon_
  of a ghost that is haunting
  it. I have =2dung_ days before
- they they need to begin
+ they need to begin
  the reconstruction.
 
 Message:  1011

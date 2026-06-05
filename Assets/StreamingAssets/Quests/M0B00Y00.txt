@@ -13,7 +13,7 @@ QRC:
 QuestorOffer:  [1000]
 <ce>          We've got a little job you might be interested in.
 <ce>            Seems there's a loup -- whatcha call your basic
-<ce>             werewolf, wereboar, or some kind 'o werebeasty
+<ce>             werewolf, wereboar, or some kind o' werebeasty
 <ce>                 that's been bothering a lot of farmers
 <ce>              in the area, and we need someone to kill it.
 <ce>          It'll mean _reward_ gold in your pocket. That sound
@@ -46,7 +46,7 @@ Didja hear that howling last night? Wolf howling?
 RumorsPostfailure:  [1006]
 Werewolves are real nomads, I guess. I hear our loup moved down south.
 <--->
-My cousin tells me that our wereboar was spotted down south aways.
+My cousin tells me that our wereboar was spotted down south a ways.
 
 RumorsPostsuccess:  [1007]
 I hear they found out that werething was a priest during the day!
@@ -60,7 +60,7 @@ QuestorPostsuccess:  [1008]
 
 QuestorPostfailure:  [1009]
 <ce>                  Get outta here. You're so pathetic.
-<ce>                   You couldn't even handle a werewolf.
+<ce>                  You couldn't even handle a werewolf.
 
 Message:  1020
 <ce>                   The lycanthrope threat is ended.

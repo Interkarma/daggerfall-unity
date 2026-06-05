@@ -33,7 +33,7 @@ AcceptQuest:  [1002]
 <ce>                            In ___dungeon_,
 <ce>                       you will find _custodian_,
 <ce>                   a servant of this temple for many
-<ce>                   years. %g will safeguard the item
+<ce>                   years. %G will safeguard the item
 <ce>                  and keep it out of the hands of the
 <ce>                  orcs. We have bound it in spells to
 <ce>                   protect you from its evil effects.
@@ -83,7 +83,7 @@ Message:  1011
 <ce>                              _evilitem_.
 
 Message:  1012
-<ce>            The evil _evilitem_, sparks and disintegrates.
+<ce>            The evil _evilitem_ sparks and disintegrates.
 <ce>                      You suddenly feel very sick.
 
 

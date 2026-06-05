@@ -22,7 +22,7 @@ QuestorOffer:  [1000]
                                      <--->
 <ce>                         Hi, I'm _questgiver_.
 <ce>                     I need someone to drop off an
-<ce>                    item for me. It's a just a short
+<ce>                     item for me. It's just a short
 <ce>                     trip across town, but I'm too
 <ce>                  busy right now. There's _gold_ gold
 <ce>                             in it for ya.
@@ -39,20 +39,20 @@ RefuseQuest:  [1001]
 AcceptQuest:  [1002]
 <ce>                   Great! Here is the package. Take
 <ce>                      it to _pickuplocal_ here in
-<ce>                    town. %g will pay you. It needs
+<ce>                    town. %G will pay you. It needs
 <ce>                   to be there by this time tomorrow.
                                      <--->
 <ce>                   At last, someone willing to work
 <ce>                    for a living. Just take this to
 <ce>                      _pickuplocal_ here in town.
-<ce>                    %g'll give you the _gold_ gold.
+<ce>                    %G'll give you the _gold_ gold.
 <ce>                       Get it to %g2 by this time
 <ce>                               tomorrow.
 
 QuestComplete:  [1004]
 <ce>                       I was hoping _questgiver_
 <ce>                would be able to get this to me in time.
-<ce>                      %g has been so busy lately.
+<ce>                      %G has been so busy lately.
 <ce>                  Here is the _gold_ %g promised you.
 
 RumorsDuringQuest:  [1005]

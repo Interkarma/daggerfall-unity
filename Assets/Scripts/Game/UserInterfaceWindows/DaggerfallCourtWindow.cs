@@ -19,6 +19,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Guilds;
+using DaggerfallWorkshop.Localization;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -465,7 +466,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         {
             daysInPrisonLeft--;
             daysUntilFreedomLabel.Text = TextManager.Instance.GetLocalizedText("daysUntilFreedom");
-            daysUntilFreedomLabel.Text = daysUntilFreedomLabel.Text.Replace("%d", daysInPrisonLeft.ToString());
+            daysUntilFreedomLabel.Text = GrammarManager.grammarProcessor.ProcessGrammar(daysUntilFreedomLabel.Text.Replace("%d", daysInPrisonLeft.ToString()));
 
             if (daysInPrisonLeft == 0)
             {
@@ -519,7 +520,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             courtPanel.BackgroundTexture = nativeTexture;
 
             daysUntilFreedomLabel.Text = TextManager.Instance.GetLocalizedText("daysUntilFreedom");
-            daysUntilFreedomLabel.Text = daysUntilFreedomLabel.Text.Replace("%d", daysInPrison.ToString());
+            daysUntilFreedomLabel.Text = GrammarManager.grammarProcessor.ProcessGrammar(daysUntilFreedomLabel.Text.Replace("%d", daysInPrison.ToString()));
         }
     }
 }

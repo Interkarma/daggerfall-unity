@@ -923,24 +923,41 @@ namespace DaggerfallWorkshop.Game
             return seen;
         }
 
+        private static int defaultLayerOnlyMask = 0;
+        private static RaycastHit[] hitsBuffer = new RaycastHit[4];
+
         bool CanHearTarget()
         {
             float hearingScale = 1f;
 
-            // If something is between enemy and target then return false (was reduce hearingScale by half), to minimize
-            // enemies walking against walls.
-            // Hearing is not impeded by doors or other non-static objects
-            RaycastHit hit;
-            Ray ray = new Ray(transform.position, directionToTarget);
-            if (Physics.Raycast(ray, out hit))
-            {
-                //DaggerfallEntityBehaviour entity = hit.transform.gameObject.GetComponent<DaggerfallEntityBehaviour>();
-                if (GameObjectHelper.IsStaticGeometry(hit.transform.gameObject))
-                    return false;
-            }
+            if (defaultLayerOnlyMask == 0)
+                defaultLayerOnlyMask = 1 << LayerMask.NameToLayer("Default");
 
             // TODO: Modify this by how much noise the target is making
-            return distanceToTarget < (HearingRadius * hearingScale) + mobile.Enemy.HearingModifier;
+            if (distanceToTarget < (HearingRadius * hearingScale) + mobile.Enemy.HearingModifier)
+            {
+                // If something is between enemy and target then return false (was reduce hearingScale by half), to minimize
+                // enemies walking against walls.
+                // Hearing is not impeded by doors or other non-static objects
+                Ray ray = new Ray(transform.position, directionToTarget);
+                int nhits;
+                while (true) {
+                    nhits = Physics.RaycastNonAlloc(ray, hitsBuffer, distanceToTarget, defaultLayerOnlyMask);
+                    if (nhits < hitsBuffer.Length)
+                        break;
+                    // hitsBuffer may have overflowed, retry with a larger buffer
+                    hitsBuffer = new RaycastHit[hitsBuffer.Length * 2];
+                };
+                for (int i = 0; i < nhits; i++)
+                {
+                    //DaggerfallEntityBehaviour entity = hit.transform.gameObject.GetComponent<DaggerfallEntityBehaviour>();
+                    if (GameObjectHelper.IsStaticGeometry(hitsBuffer[i].transform.gameObject))
+                        return false;
+                }
+                return true;
+            }
+
+            return false;
         }
 
         #endregion
