@@ -5,7 +5,7 @@
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Allofich, Numidium, TheLacus
-// 
+//
 // Notes:
 //
 
@@ -88,8 +88,8 @@ namespace DaggerfallWorkshop.Game
         public const float MobileNPCActivationDistance = 256 * MeshReader.GlobalScale;
 
         // Opening and closing hours by building type
-        public static byte[] openHours  = {  7,  8,  9,  8,  0,  9, 10, 10,  9,  6,  9, 11,  9,  9,  0,  0, 10, 0 };
-        public static byte[] closeHours = { 22, 16, 19, 15, 25, 21, 19, 20, 18, 23, 23, 23, 20, 20, 25, 25, 16, 0 };
+        public static byte[] openHours  = {  7,  8,  9,  8,  0,  9, 10, 10,  9,  6,  9, 11,  9,  9,  0,  0, 10, 0, 6, 6, 6, 6, 6, 6, 0 };
+        public static byte[] closeHours = { 22, 16, 19, 15, 25, 21, 19, 20, 18, 23, 23, 23, 20, 20, 25, 25, 16, 0, 18, 18 ,18, 18, 18, 18, 25 };
 
         const int PrivatePropertyId = 37;
 
@@ -1040,7 +1040,7 @@ namespace DaggerfallWorkshop.Game
             if (openEffect == null)
                 return false;
 
-            return openEffect.TriggerExteriorOpenEffect(buildingLockValue); 
+            return openEffect.TriggerExteriorOpenEffect(buildingLockValue);
         }
 
         /// <summary>
@@ -1285,10 +1285,9 @@ namespace DaggerfallWorkshop.Game
             // Handle House1 through House4
             // TODO: Figure out the rest of house door calculations.
             // TODO: Need to lock doors if quest target for stealing, and unlock for other quests.
-            else if (type >= DFLocation.BuildingTypes.House1 && type <= DFLocation.BuildingTypes.House4
-                && DaggerfallUnity.Instance.WorldTime.Now.IsDay)
+            else if (type >= DFLocation.BuildingTypes.House1 && type <= DFLocation.BuildingTypes.House4)
             {
-                unlocked = true;
+                unlocked = IsBuildingOpen(type);
             }
             // Handle stores
             else if (RMBLayout.IsShop(type))
