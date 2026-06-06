@@ -58,12 +58,12 @@ QuestComplete:  [1004]
 <ce>                         See you later, maybe.
 
 RumorsDuringQuest:  [1005]
-They say _enemy_ got all %g3 power direct from the daedras themselves.
+They say _enemy_ got all %g3 power direct from the daedra themselves.
 <--->
 _enemy_ must have made a deal with the daedra. No one can be that lucky.
 
 RumorsPostfailure:  [1006]
-_enemy_ left %reg quick as you like. I guess %g's past caught up with %g2.
+_enemy_ left %reg quick as you like. I guess %g3 past caught up with %g2.
 <--->
 You can cheat the daedra. _enemy_ did. Had to run away, but %g's still alive.
 
@@ -85,7 +85,7 @@ Hermaeus Mora has a mind as old as Tamriel. And a body of slime.
 Message:  1013
 The Oghma Infinium is the book of knowledge. But knowledge can be forgotten.
 <--->
-It is the book that gifts its reader with stronger bodies and abler minds.
+It is the book that gifts its readers with stronger bodies and abler minds.
 
 Message:  1020
 %qdt:

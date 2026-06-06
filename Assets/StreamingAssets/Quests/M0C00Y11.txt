@@ -32,7 +32,7 @@ AcceptQuest:  [1002]
 <ce>                        I'll speak well of you.
 
 QuestComplete:  [1004]
-<ce>              I guess you aren't the weak kneed jellyfish
+<ce>              I guess you aren't the weak-kneed jellyfish
 <ce>               everyone says you are. I'll make sure the
 <ce>                     right people hear about this.
 
@@ -44,11 +44,11 @@ RumorsDuringQuest:  [1005]
 RumorsPostfailure:  [1006]
 <ce>               Some drunken fool stumbled into his house
 <ce>               and got killed by a giant scorpion. Seems
-<ce>               he thought the Fighter's Guild had taken
+<ce>               he thought the Fighters Guild had taken
 <ce>                          care of the beast.
 
 RumorsPostsuccess:  [1007]
-<ce>                 The Fighter's Guild is a good bunch.
+<ce>                 The Fighters Guild is a good bunch.
 <ce>                They killed a giant scorpion that found
 <ce>                     its way into someone's house.
 
@@ -64,7 +64,7 @@ QuestorPostfailure:  [1009]
 QuestLogEntry:  [1010]
 %qdt:
  The Fighters Guild of ___qgiver_
- has offered to let me to slay a
+ has offered to let me slay a
  giant scorpion which has gotten into
  _house_. It's got be done today.
 

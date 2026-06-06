@@ -25,7 +25,7 @@ RefuseQuest:  [1001]
 <ce>                        contemptible, sniveling,
 <ce>                        virtuous, sterling piece
 <ce>                        of goblin snot! I'm not
-<ce>                        going waste my precious
+<ce>                       going to waste my precious
 <ce>                          time with anyone so
 <ce>                           poisonously moral.
 
@@ -96,7 +96,7 @@ Vaernima is the Daedra Lady of Corruption and Decay. Not nice to look at.
 Vaernima is a Regent of Oblivion, and her sphere is Corruption and Decay.
 
 Message:  1014
-The Skull of Corruptions creates dark and oppositional duplicates of a target.
+The Skull of Corruption creates dark and oppositional duplicates of a target.
 <--->
 The Skull brings forth a target's dark half from Vaernima's plane of Oblivion.
 

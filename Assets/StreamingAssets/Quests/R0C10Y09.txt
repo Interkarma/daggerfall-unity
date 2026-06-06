@@ -25,7 +25,7 @@ RefuseQuest:  [1001]
 
 AcceptQuest:  [1002]
 <ce>               Good. I have a ... procurer in my employ.
-<ce>                       Distinctive looking, =spy_
+<ce>                      A distinctive-looking =spy_
 <ce>                      going by the name of _spy_.
 <ce>                     Well, _spy_'s found a special
 <ce>                       _item_ of interest to me,
@@ -41,7 +41,7 @@ AcceptQuest:  [1002]
 
 QuestFail:  [1003]
 <ce>                      %pcf, you're back, which is
-<ce>                    pleasant, but without my _item_
+<ce>                    pleasant, but without my _item_,
 <ce>                    which is not so pleasant. Is the
 <ce>                    assignment too difficult for you
 <ce>                        to understand? Go get my

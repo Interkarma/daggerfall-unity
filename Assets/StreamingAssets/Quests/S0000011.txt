@@ -19,11 +19,11 @@ QuestorOffer:  [1000]
 <ce>                  someone I can trust to correct some
 <ce>              wayward revolutionaries. For _reward_ gold
 <ce>                pieces, will you perform such a service
-<ce>                 for me? I am also prepared to reward
-<ce>            you with information as well as _reward_ gold.
+<ce>                    for me? I am prepared to reward
+<ce>                    you with information, as well.
 
 RefuseQuest:  [1001]
-<ce>                 That is a pity indeed. Prince Helseth
+<ce>                 That is a pity, indeed. Prince Helseth
 <ce>                is usually correct in his assessment of
 <ce>                people, but it would appear that he is
 <ce>                         wrong in this matter.
@@ -34,7 +34,7 @@ AcceptQuest:  [1002]
 <ce>            biography of me which my worst enemy would call
 <ce>            cruel and defamatory. Because the book was also
 <ce>             excessively critical of the Empire and Septim
-<ce>           Imperial family, it was wisely suppressed and its
+<ce>           Imperial family, it was widely suppressed and its
 <ce>            author executed. Unfortunately, chapters of the
 <ce>          book resurface from time to time. I have reason to
 <ce>          believe one chapter of the book has been purchased
@@ -52,7 +52,7 @@ QuestComplete:  [1004]
 <ce>                         Very well done, %pcf.
 
 RumorsDuringQuest:  [1005]
-Queen Barenziah is supposedly in a bad mood. You can never tell though.
+Queen Barenziah is supposedly in a bad mood. You can never tell, though.
 <--->
 A book's coming out with the real story about the former Queen of Mournhold.
 
@@ -91,7 +91,7 @@ Chapter 6
  
  "You dance on the edge of a volcano, child," Drelliane
  scolded, as Barenziah admired the emerald ring her lover
- had given her to celebrate their one month anniversary.
+ had given her to celebrate their one-month anniversary.
  
  "How so? We make one another happy. We harm no one.
  Symmachus bade me to be discriminate and discreet. Who
@@ -104,7 +104,7 @@ Chapter 6
  
  Barenziah shrugged. Even before she and Septim had
  become lovers she'd had no more from his family than bare
- civility. Threadbare civility. "What matter? It is Tiber
+ civility. Threadbare civility. "What's it matter? It is Tiber
  who holds power."
  
  "It is his son who holds the future. Do not hold his mother
@@ -121,8 +121,8 @@ Chapter 6
  They come and go as the seasons do, but the families of the
  powerful live on for a time. You must be a family friend if
  you would see lasting profit from your relationship. Ah,
- how can I make you truly see, you who are so young and
- human-bred as well! If you take care you and Mournhold are
+ how can I make you truly see, you who are so young, and
+ human-bred as well! If you take care, you and Mournhold are
  like to live to see the fall of Septim's dynasty, if indeed
  he has founded one, as you have seen its rise. It is the way
  of human history. They ebb and flow like the tides. Their
@@ -138,9 +138,9 @@ Chapter 6
  filled with joy and pleasure, and the nights yet better.
  
  "What is wrong with me?" Barenziah lamented. "Look, not one
- of my skirts fit? What's become of my waist? Am I getting
+ of my skirts fit. What's become of my waist? Am I getting
  fat?" Barenziah regarded her thin arms and legs and her
- undeniably thickened waist in the mirror with displeasure.
+ undeniably-thickened waist in the mirror with displeasure.
  
  Drelliane shrugged. "You appear to be with child, young as
  you are. Constant pairing with a human has brought you early
@@ -162,7 +162,7 @@ Chapter 6
  "With child?" He looked shocked. Stunned. "You're sure of
  it? I was told elves do not bear so young."
  
- Barenziah smile uneasily, "How can I be sure? I've never -- "
+ Barenziah smiled uneasily, "How can I be sure? I've never -- "
  
  "I'll fetch my healer."
  
@@ -208,7 +208,7 @@ Chapter 6
  to soothe the pain and clean the blood that pooled under her
  legs, but there was nothing to fill the emptiness. Tiber
  Septim sent gifts and flowers, and came for short visits,
- always well attended. Barenziah received these visits with
+ always well-attended. Barenziah received these visits with
  pleasure, but he came no more at night nor did she wish for
  him. After a month, when she was physically recovered, it
  was announced that Symmachus had requested she come to
@@ -273,10 +273,10 @@ Message:  1050
 
 Message:  1051
 <ce>             What a shame. Ah well, we'll hire some other
-<ce>                            mercenary then.
+<ce>                            mercenary, then.
 
 Message:  1052
-<ce>                     Very good. Off with you then.
+<ce>                     Very good. Off with you, then.
 
 Message:  1054
 <ce>                        Here is your _jewelry_.
@@ -290,7 +290,7 @@ Message:  1060
  has hired me to continue the quest that
  the Queen of Wayrest began: finding the
  lost chapter of her biography. Rumor
- has it that it is in the Necromancers
+ has it that it is in the Necromancers'
  stronghold, Scourg Barrow, in the
  Dragontail Mountains.
 

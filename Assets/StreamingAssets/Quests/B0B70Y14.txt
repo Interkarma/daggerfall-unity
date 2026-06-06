@@ -20,7 +20,7 @@ QuestorOffer:  [1000]
 <ce>               it's bad. All sorts of Daedric beings are
 <ce>                entering into our world. The Mages Guild
 <ce>               says it can seal the breach, but it falls
-<ce>                  to us to slay the Daedras that have
+<ce>                  to us to slay the Daedra that have
 <ce>                  already crossed over. Will you take
 <ce>                      up this quest, not for gold,
 <ce>                             but for glory?
@@ -91,7 +91,7 @@ QuestLogEntry:  [1010]
 %qdt:
  _qgiver_ of
  ==qgiver_ in ___qgiver_
- says that Daedras are pouring
+ says that Daedra are pouring
  through a dimensional rift.
  I must go to ___dungeon_
  and kill them all. They will
@@ -106,7 +106,7 @@ Message:  1011
 <ce>                                    
 <ce>                       "The last Daedra is dead.
 <ce>                        With it dead, Tamriel is
-<ce>                        safe again. Hey what are
+<ce>                        safe again. Hey, what are
 <ce>                        you doing! Let go of my
 <ce>                        arms! I am a guild mage!
 <ce>                        Don't blow out that..."

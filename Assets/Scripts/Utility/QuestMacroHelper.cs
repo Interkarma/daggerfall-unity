@@ -17,6 +17,7 @@ using DaggerfallWorkshop.Game.Questing;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Player;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
+using DaggerfallWorkshop.Localization;
 
 namespace DaggerfallWorkshop.Utility
 {
@@ -154,7 +155,7 @@ namespace DaggerfallWorkshop.Utility
                 }
 
                 // Store result back into token
-                tokens[token].text = final;
+                tokens[token].text = GrammarManager.grammarProcessor.ProcessGrammar(final);
             }
         }
 

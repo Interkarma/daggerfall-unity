@@ -69,7 +69,7 @@ RumorsPostfailure:  [1006]
 Everyone's afraid to do anything at all fun with people like =monster_ around.
 
 RumorsPostsuccess:  [1007]
-Lots of people are happy about =monster_'s death. Just desserts for %g3 ilk.
+Lots of people are happy about =monster_'s death. Just deserts for %g3 ilk.
 <--->
 The orgies have started up again now that =monster_'s out of the picture.
 

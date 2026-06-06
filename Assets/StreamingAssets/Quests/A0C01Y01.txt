@@ -38,7 +38,7 @@ RumorsDuringQuest:  [1005]
 <ce>                             rough %g2 up.
 
 RumorsPostfailure:  [1006]
-<ce>                    I saw _qgiver_ recently. %g was
+<ce>                    I saw _qgiver_ recently. %G was
 <ce>                        beaten up by some thugs.
 
 RumorsPostsuccess:  [1007]

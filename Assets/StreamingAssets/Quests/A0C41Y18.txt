@@ -24,7 +24,7 @@ AcceptQuest:  [1002]
 <ce>                 Thank %god! You don't know how much
 <ce>                  this means to me. Here's your gold.
 <ce>                Now, take this to _dummy_ in ___dummy_.
-<ce>                 %g'll pay you the rest. I really must
+<ce>                 %G'll pay you the rest. I really must
 <ce>                   be going now. Thank you so much!
 
 QuestComplete:   [1004]

@@ -32,7 +32,7 @@ QuestorOffer:  [1000]
 RefuseQuest:  [1001]
 <ce>                    A heart of stone, just like The
 <ce>                      Fighters Guild. What is an
-<ce>                  innocent child's life worth anyhow?
+<ce>                  innocent child's life worth, anyhow?
 
 AcceptQuest:  [1002]
 <ce>                   Thank you, thank you. I can give
@@ -170,7 +170,7 @@ Message:  1018
 Message:  1019
 %qdt:
  I have met with _knight_ of
- The Fighters Guild. %g told me that
+ The Fighters Guild. %G told me that
  _child_ is being kept in safety at
  _childlocale_ in __childlocale_.
 

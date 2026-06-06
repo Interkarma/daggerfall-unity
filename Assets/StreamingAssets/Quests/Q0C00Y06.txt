@@ -12,7 +12,7 @@ DisplayName: Problems with Vampires
 QRC:
 
 QuestorOffer:  [1000]
-<ce>                  We have a potential problem I fear.
+<ce>                 We have a potential problem, I fear.
 <ce>                 A vampire ancient hateful of witches
 <ce>                  hath moved into an abandoned castle
 <ce>                  in our territory. Obviously this is

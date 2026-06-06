@@ -2277,7 +2277,7 @@ namespace Wenzil.Console
                 }
                 else
                 {
-                    return "Quest ID '" + args[0] + "' could not be found";
+                    return "Quest ID '" + args[0] + "': not found, or parsing error (see quest_log.txt)";
                 }
             }
         }
