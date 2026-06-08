@@ -983,68 +983,60 @@ namespace DaggerfallWorkshop.Game
                         {
                             if (hit.collider != collider)
                             {
-                                //target center does not have LOS
-                                //Debug.DrawRay(ray.origin, hit.point - ray.origin, Color.blue, 3);
+                                //Target center does not have LOS
                                 canHit = false;
-
-                                //if target is an enemy, check if head, feet, or sides have clear LOS
-                                if (DaggerfallUnity.Settings.MeleeAttackDetection > 0 && controller != null)
-                                {
-                                    Vector3 point = Vector3.zero;
-                                    point = center + (mainCamera.transform.up * (controller.height * 0.25f));
-                                    ray.direction = point - ray.origin;
-                                    if (Physics.Raycast(ray, out hit, 6, playerLayerMask, QueryTriggerInteraction.Ignore))
-                                    {
-                                        if (hit.collider == collider)
-                                            canHit = true;
-                                    }
-                                    if (!canHit)
-                                    {
-                                        //if head is obstructed, check feet
-                                        point = center - (mainCamera.transform.up * (controller.height * 0.25f));
-                                        ray.direction = point - ray.origin;
-                                        if (Physics.Raycast(ray, out hit, 6, playerLayerMask, QueryTriggerInteraction.Ignore))
-                                        {
-                                            if (hit.collider == collider)
-                                                canHit = true;
-                                        }
-                                    }
-                                    if (!canHit)
-                                    {
-                                        //if feet is obstructed, check right flank
-                                        point = center + (mainCamera.transform.right * (controller.radius * 0.5f));
-                                        ray.direction = point - ray.origin;
-                                        if (Physics.Raycast(ray, out hit, 6, playerLayerMask, QueryTriggerInteraction.Ignore))
-                                        {
-                                            if (hit.collider == collider)
-                                                canHit = true;
-                                        }
-                                    }
-                                    if (!canHit)
-                                    {
-                                        //if right flank is obstructed, check left flank
-                                        point = center - (mainCamera.transform.right * (controller.radius * 0.5f));
-                                        ray.direction = point - ray.origin;
-                                        if (Physics.Raycast(ray, out hit, 6, playerLayerMask, QueryTriggerInteraction.Ignore))
-                                        {
-                                            if (hit.collider == collider)
-                                                canHit = true;
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                //Target is unobstructed
-                                //Debug.DrawRay(ray.origin, hit.point - ray.origin, Color.green, 3);
                             }
                         }
                         else
                         {
-                            //Target is outside radial weapon reach
-                            //Debug.DrawRay(ray.origin, ray.direction * weaponReach, Color.yellow, 3);
-                            /*if (radialReach)
-                                canHit = false;*/
+                            //Target center is outside radial weapon reach
+                            canHit = false;
+                        }
+
+                        //If basic collision check fails and setting is Quality, do complex collision check
+                        if (DaggerfallUnity.Settings.MeleeAttackDetection > 0 && !canHit && controller != null)
+                        {
+                            Vector3 point = Vector3.zero;
+                            point = center + (mainCamera.transform.up * (controller.height * 0.25f));
+                            ray.direction = point - ray.origin;
+                            if (Physics.Raycast(ray, out hit, weaponReach, playerLayerMask, QueryTriggerInteraction.Ignore))
+                            {
+                                if (hit.collider == collider)
+                                    canHit = true;
+                            }
+                            if (!canHit)
+                            {
+                                //if head is obstructed, check feet
+                                point = center - (mainCamera.transform.up * (controller.height * 0.25f));
+                                ray.direction = point - ray.origin;
+                                if (Physics.Raycast(ray, out hit, weaponReach, playerLayerMask, QueryTriggerInteraction.Ignore))
+                                {
+                                    if (hit.collider == collider)
+                                        canHit = true;
+                                }
+                            }
+                            if (!canHit)
+                            {
+                                //if feet is obstructed, check right flank
+                                point = center + (mainCamera.transform.right * (controller.radius * 0.5f));
+                                ray.direction = point - ray.origin;
+                                if (Physics.Raycast(ray, out hit, weaponReach, playerLayerMask, QueryTriggerInteraction.Ignore))
+                                {
+                                    if (hit.collider == collider)
+                                        canHit = true;
+                                }
+                            }
+                            if (!canHit)
+                            {
+                                //if right flank is obstructed, check left flank
+                                point = center - (mainCamera.transform.right * (controller.radius * 0.5f));
+                                ray.direction = point - ray.origin;
+                                if (Physics.Raycast(ray, out hit, weaponReach, playerLayerMask, QueryTriggerInteraction.Ignore))
+                                {
+                                    if (hit.collider == collider)
+                                        canHit = true;
+                                }
+                            }
                         }
 
                         if (canHit)
@@ -1068,10 +1060,13 @@ namespace DaggerfallWorkshop.Game
                 //Logic: pacified NPCs and commoners can only be attacked if they are the only targets in front of the player
                 ray.origin = mainCamera.transform.position;
                 ray.direction = mainCamera.transform.forward;
+
                 if (Physics.SphereCast(ray, SphereCastRadius, out hit, weapon.Reach, playerLayerMask))
                 {
                     if (!WeaponEnvDamage(strikingWeapon, hit) || Physics.Raycast(ray, out hit, weaponReach, playerLayerMask))
+                    {
                         hitEnemy = WeaponDamage(strikingWeapon, false, false, hit.transform, hit.point, mainCamera.transform.forward);
+                    }
                 }
             }
         }
