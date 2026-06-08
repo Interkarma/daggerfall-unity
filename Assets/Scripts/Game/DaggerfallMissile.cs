@@ -396,7 +396,7 @@ namespace DaggerfallWorkshop.Game
             RaycastHit hit;
             aimPosition -= aimDirection * 0.1f;
             Ray ray = new Ray(aimPosition, aimDirection);
-            if (Physics.SphereCast(ray, SphereCastRadius, out hit, TouchRange, PhysicsLayers.DefaultRaycastLayersWithoutAutomap))
+            if (Physics.SphereCast(ray, SphereCastRadius, out hit, TouchRange))
                 return hit.transform.GetComponent<DaggerfallEntityBehaviour>();
             else
                 return null;
@@ -444,7 +444,7 @@ namespace DaggerfallWorkshop.Game
             transform.position = position;
 
             // Collect AOE targets and ignore duplicates
-            Collider[] overlaps = Physics.OverlapSphere(position, ExplosionRadius, PhysicsLayers.DefaultRaycastLayersWithoutAutomap);
+            Collider[] overlaps = Physics.OverlapSphere(position, ExplosionRadius);
             for (int i = 0; i < overlaps.Length; i++)
             {
                 DaggerfallEntityBehaviour aoeEntity = overlaps[i].GetComponent<DaggerfallEntityBehaviour>();

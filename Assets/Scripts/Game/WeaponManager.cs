@@ -196,7 +196,7 @@ namespace DaggerfallWorkshop.Game
             //weaponSensitivity = DaggerfallUnity.Settings.WeaponSensitivity;
             mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
             player = transform.gameObject;
-            playerLayerMask = ~(1 << LayerMask.NameToLayer("Player") | 1 << LayerMask.NameToLayer("Automap"));
+            playerLayerMask = ~(1 << LayerMask.NameToLayer("Player"));
             _gesture = new Gesture();
             _longestDim = Math.Max(Screen.width, Screen.height);
             SetMelee(ScreenWeapon);
