@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -191,7 +192,7 @@ namespace DaggerfallWorkshop.Game
         private void HangMoveDirection()
         {
             RaycastHit hit;
-            if (Physics.SphereCast(controller.transform.position, scanner.HeadHitRadius, controller.transform.up,  out hit, 2f))
+            if (Physics.SphereCast(controller.transform.position, scanner.HeadHitRadius, controller.transform.up,  out hit, 2f, PhysicsLayers.DefaultRaycastLayersWithoutAutomap))
             {
                 float playerspeed = speedChanger.GetClimbingSpeed(playerMotor.Speed);
                 Vector3 moveVector = Vector3.zero;

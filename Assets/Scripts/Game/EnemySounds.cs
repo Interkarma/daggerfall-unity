@@ -13,6 +13,7 @@ using UnityEngine;
 using System.Collections;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -235,7 +236,7 @@ namespace DaggerfallWorkshop.Game
             // Only checks when enemy plays attract sound, so not very expensive.
             RaycastHit hit;
             Ray ray = new Ray(transform.position, directionToPlayer);
-            if (Physics.Raycast(ray, out hit))
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, PhysicsLayers.DefaultRaycastLayersWithoutAutomap))
             {
                 // Ignore player hit
                 if (hit.transform.gameObject == player)

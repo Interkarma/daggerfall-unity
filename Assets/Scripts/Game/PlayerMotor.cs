@@ -190,7 +190,7 @@ namespace DaggerfallWorkshop.Game
             // Collision fix for when player is levitating but feet are "close enough" to ground to rest
             // This is required as controller physics requires movement to process grounded collision normally
             Ray ray = new Ray(transform.position, Vector3.down);
-            return (Physics.Raycast(ray, controller.height / 2 + 0.2f));
+            return (Physics.Raycast(ray, controller.height / 2 + 0.2f, PhysicsLayers.DefaultRaycastLayersWithoutAutomap));
         }
 
         /// <summary>
@@ -427,7 +427,7 @@ namespace DaggerfallWorkshop.Game
         {
             RaycastHit hit;
             Ray ray = new Ray(transform.position, Vector3.down);
-            if (Physics.Raycast(ray, out hit, distance))
+            if (Physics.Raycast(ray, out hit, distance, PhysicsLayers.DefaultRaycastLayersWithoutAutomap))
                 return hit.point;
 
             return transform.position;
@@ -438,7 +438,7 @@ namespace DaggerfallWorkshop.Game
         {
             RaycastHit hit;
             Ray ray = new Ray(transform.position + (Vector3.up * extraHeight), Vector3.down);
-            if (Physics.Raycast(ray, out hit, (controller.height * 2) + extraHeight + extraDistance))
+            if (Physics.Raycast(ray, out hit, (controller.height * 2) + extraHeight + extraDistance, PhysicsLayers.DefaultRaycastLayersWithoutAutomap))
             {
                 // Position player at hit position plus just over half controller height up
                 transform.position = hit.point + Vector3.up * (controller.height * 0.65f);
@@ -508,7 +508,7 @@ namespace DaggerfallWorkshop.Game
 
             // Must be outside and actually be standing on a terrain object not some other object (e.g. player ship)
             RaycastHit hit;
-            if (GameManager.Instance.PlayerEnterExit.IsPlayerInside || !Physics.Raycast(transform.position, Vector3.down, out hit, rayDistance * 2))
+            if (GameManager.Instance.PlayerEnterExit.IsPlayerInside || !Physics.Raycast(transform.position, Vector3.down, out hit, rayDistance * 2, PhysicsLayers.DefaultRaycastLayersWithoutAutomap))
             {
                 return false;
             }
@@ -534,7 +534,7 @@ namespace DaggerfallWorkshop.Game
 
             // Must be outside and actually be standing on a terrain object not some other object (e.g. player ship)
             RaycastHit hit;
-            if (GameManager.Instance.PlayerEnterExit.IsPlayerInside || !Physics.Raycast(transform.position, Vector3.down, out hit, rayDistance * 2))
+            if (GameManager.Instance.PlayerEnterExit.IsPlayerInside || !Physics.Raycast(transform.position, Vector3.down, out hit, rayDistance * 2, PhysicsLayers.DefaultRaycastLayersWithoutAutomap))
             {
                 return false;
             }

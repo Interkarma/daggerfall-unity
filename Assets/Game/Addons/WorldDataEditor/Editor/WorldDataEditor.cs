@@ -14,6 +14,7 @@ using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Utility;
+using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
 {
@@ -924,7 +925,7 @@ namespace DaggerfallWorkshop.Game.Utility.WorldDataEditor
                     // Try to position where the camera is looking
                     Ray newRay = new Ray(SceneView.lastActiveSceneView.camera.transform.position, SceneView.lastActiveSceneView.camera.transform.forward);
                     RaycastHit hit = new RaycastHit();
-                    if (Physics.Raycast(newRay, out hit, 200))
+                    if (Physics.Raycast(newRay, out hit, 200, PhysicsLayers.DefaultRaycastLayersWithoutAutomap))
                         go.transform.position = hit.point;
                     else
                         go.transform.position = SceneView.lastActiveSceneView.camera.transform.position + (SceneView.lastActiveSceneView.camera.transform.forward * 10);

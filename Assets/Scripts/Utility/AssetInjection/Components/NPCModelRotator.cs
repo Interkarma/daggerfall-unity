@@ -10,6 +10,7 @@
 //
 
 using DaggerfallWorkshop.Game;
+using DaggerfallWorkshop.Game.Utility;
 using UnityEngine;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
@@ -53,7 +54,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                 {
                     closestDoorDistance = Vector3.Distance(transform.position, closestStaticDoorPos);
 
-                    bool visible = !Physics.Raycast(transform.position, closestStaticDoorPos - transform.position, closestDoorDistance - 0.5f);
+                    bool visible = !Physics.Raycast(transform.position, closestStaticDoorPos - transform.position, closestDoorDistance - 0.5f, PhysicsLayers.DefaultRaycastLayersWithoutAutomap);
                     if (visible)
                         closestDoorVisible = true;
                 }
@@ -66,7 +67,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
                     //Debug.LogFormat("Door at {0}, centre {1}  rot {2}", actionDoors[i].transform.position, doorCentre, actionDoors[i].transform.rotation);
 
                     float distance = Vector3.Distance(transform.position, doorCentre);
-                    bool visible = !Physics.Raycast(transform.position, doorCentre - transform.position, distance - 0.5f);
+                    bool visible = !Physics.Raycast(transform.position, doorCentre - transform.position, distance - 0.5f, PhysicsLayers.DefaultRaycastLayersWithoutAutomap);
 
                     if (visible)
                     {

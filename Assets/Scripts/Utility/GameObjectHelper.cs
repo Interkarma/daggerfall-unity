@@ -338,7 +338,7 @@ namespace DaggerfallWorkshop.Utility
             // Cast ray down to find ground below
             RaycastHit hit;
             Ray ray = new Ray(go.transform.position + new Vector3(0, 0.2f, 0), Vector3.down);
-            if (!Physics.Raycast(ray, out hit, distance))
+            if (!Physics.Raycast(ray, out hit, distance, PhysicsLayers.DefaultRaycastLayersWithoutAutomap))
                 return;
 
             // Position bottom just above ground by adjusting parent gameobject
@@ -354,7 +354,7 @@ namespace DaggerfallWorkshop.Utility
             // Cast ray down from slightly above midpoint to find ground below
             RaycastHit hit;
             Ray ray = new Ray(controller.transform.position + new Vector3(0, 0.2f, 0), Vector3.down);
-            if (!Physics.Raycast(ray, out hit, distance))
+            if (!Physics.Raycast(ray, out hit, distance, PhysicsLayers.DefaultRaycastLayersWithoutAutomap))
                 return;
 
             // Position bottom just above ground by adjusting parent gameobject

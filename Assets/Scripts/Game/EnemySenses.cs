@@ -550,7 +550,7 @@ namespace DaggerfallWorkshop.Game
 
             // If aware of target, if distance is too far or can see nothing is there, use last known position as assumed current position
             if (targetInSight || targetInEarshot || (predictedTargetPos - transform.position).magnitude > SightRadius + mobile.Enemy.SightModifier
-                || !Physics.Raycast(transform.position, (predictedTargetPosWithoutLead - transform.position).normalized, out tempHit, SightRadius + mobile.Enemy.SightModifier))
+                || !Physics.Raycast(transform.position, (predictedTargetPosWithoutLead - transform.position).normalized, out tempHit, SightRadius + mobile.Enemy.SightModifier, PhysicsLayers.DefaultRaycastLayersWithoutAutomap))
             {
                 assumedCurrentPosition = lastKnownTargetPos;
             }
@@ -605,7 +605,7 @@ namespace DaggerfallWorkshop.Game
                 // Don't predict target will move through obstacles (prevent predicting movement through walls)
                 RaycastHit hit;
                 Ray ray = new Ray(assumedCurrentPosition, (prediction - assumedCurrentPosition).normalized);
-                if (Physics.Raycast(ray, out hit, (prediction - assumedCurrentPosition).magnitude))
+                if (Physics.Raycast(ray, out hit, (prediction - assumedCurrentPosition).magnitude, PhysicsLayers.DefaultRaycastLayersWithoutAutomap))
                     prediction = assumedCurrentPosition;
             }
 
@@ -902,7 +902,7 @@ namespace DaggerfallWorkshop.Game
                     Vector3 eyeDirectionToTarget = eyeToTarget.normalized;
                     Ray ray = new Ray(eyePos, eyeDirectionToTarget);
 
-                    if (Physics.Raycast(ray, out hit, SightRadius))
+                    if (Physics.Raycast(ray, out hit, SightRadius, PhysicsLayers.DefaultRaycastLayersWithoutAutomap))
                     {
                         // Check if hit was target
                         DaggerfallEntityBehaviour entity = hit.transform.gameObject.GetComponent<DaggerfallEntityBehaviour>();

@@ -19,6 +19,7 @@ using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game.Serialization;
+using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallConnect.FallExe;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
@@ -1521,7 +1522,7 @@ namespace Wenzil.Console
                     DaggerfallActionDoor door;
                     RaycastHit hitInfo;
                     Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-                    if (!(Physics.Raycast(ray, out hitInfo)))
+                    if (!(Physics.Raycast(ray, out hitInfo, Mathf.Infinity, PhysicsLayers.DefaultRaycastLayersWithoutAutomap)))
                         return error;
                     else
                     {
@@ -1550,7 +1551,7 @@ namespace Wenzil.Console
                 DaggerfallAction action;
                 RaycastHit hitInfo;
                 Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-                if (!(Physics.Raycast(ray, out hitInfo)))
+                if (!(Physics.Raycast(ray, out hitInfo, Mathf.Infinity, PhysicsLayers.DefaultRaycastLayersWithoutAutomap)))
                     return error;
                 else
                 {
@@ -1672,7 +1673,7 @@ namespace Wenzil.Console
                 Vector3 origin = Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0));
                 Ray ray = new Ray(origin + Camera.main.transform.forward * .2f, Camera.main.transform.forward);
                 GameManager.Instance.AcrobatMotor.ClearFallingDamage();
-                if (!(Physics.Raycast(ray, out hitInfo, maxDistance)))
+                if (!(Physics.Raycast(ray, out hitInfo, maxDistance, PhysicsLayers.DefaultRaycastLayersWithoutAutomap)))
                 {
                     Console.Log("Didn't hit anything...");
                     if (forceTeleOnNoHit)
@@ -2171,7 +2172,7 @@ namespace Wenzil.Console
                 Vector3 origin = frictionMotor.ContactPoint;
                 origin.y += cc.height;
                 Ray ray = new Ray(origin, Vector3.down);
-                if (!(Physics.Raycast(ray, out hitInfo, cc.height * 2)))
+                if (!(Physics.Raycast(ray, out hitInfo, cc.height * 2, PhysicsLayers.DefaultRaycastLayersWithoutAutomap)))
                 {
                     return "Failed to reposition - try Teleport or if inside tele2exit";
                 }
