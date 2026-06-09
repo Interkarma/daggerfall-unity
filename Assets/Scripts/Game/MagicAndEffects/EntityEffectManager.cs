@@ -414,7 +414,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             {
                 Vector3 aimPosition = GameManager.Instance.MainCamera.transform.position;
                 Vector3 aimDirection = GameManager.Instance.MainCamera.transform.forward;
-                if (DaggerfallMissile.GetEntityTargetInTouchRange(aimPosition, aimDirection) == null)
+                if (DaggerfallMissile.GetEntityTargetInTouchRange(aimPosition, aimDirection, DaggerfallMissile.GetLayerMask(true)) == null)
                 {
                     //Debug.Log("Target entity not in range for touch spell.");
                     return;
