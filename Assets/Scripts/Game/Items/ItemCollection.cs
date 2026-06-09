@@ -264,7 +264,7 @@ namespace DaggerfallWorkshop.Game.Items
                 return null;
             if (numberToPick == stack.stackCount)
                 return stack;
-            DaggerfallUnityItem pickedItems = new DaggerfallUnityItem(stack);
+            DaggerfallUnityItem pickedItems = ItemBuilder.CreateItem(stack.ItemGroup, stack.TemplateIndex);
             pickedItems.stackCount = numberToPick;
             AddItem(pickedItems, noStack: true);
             stack.stackCount -= numberToPick;
