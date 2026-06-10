@@ -1,6 +1,5 @@
 using DaggerfallConnect;
 using DaggerfallWorkshop.Game;
-using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Utility;
 using System.Collections;
 using System.Collections.Generic;
@@ -100,7 +99,7 @@ namespace DaggerfallWorkshop.Game
             sliding = false;
             // See if surface immediately below should be slid down. We use this normally rather than a ControllerColliderHit point,
             // because that interferes with step climbing amongst other annoyances
-            if (Physics.Raycast(myTransform.position, -Vector3.up, out hit, rayDistance, PhysicsLayers.DefaultRaycastLayersWithoutAutomap))
+            if (Physics.Raycast(myTransform.position, -Vector3.up, out hit, rayDistance))
             {
                 if (Vector3.Angle(hit.normal, Vector3.up) > slideLimit)
                     sliding = true;
@@ -109,7 +108,7 @@ namespace DaggerfallWorkshop.Game
             // So if the above raycast didn't catch anything, raycast down from the stored ControllerColliderHit point instead
             else
             {
-                Physics.Raycast(contactPoint + Vector3.up, -Vector3.up, out hit, Mathf.Infinity, PhysicsLayers.DefaultRaycastLayersWithoutAutomap);
+                Physics.Raycast(contactPoint + Vector3.up, -Vector3.up, out hit);
                 if (Vector3.Angle(hit.normal, Vector3.up) > slideLimit)
                     sliding = true;
             }
@@ -129,8 +128,8 @@ namespace DaggerfallWorkshop.Game
             Ray headRay = new Ray(myTransform.position + new Vector3(0, heightChanger.FixedControllerStandingHeight / 2 + 0.25f, 0), myTransform.forward);
             Ray eyeRay = new Ray(GameManager.Instance.MainCamera.transform.position, myTransform.forward);
             RaycastHit headHit;
-            bool headRayHit = Physics.Raycast(headRay, out headHit, raySampleDistance, PhysicsLayers.DefaultRaycastLayersWithoutAutomap);
-            bool eyeRayHit = Physics.Raycast(eyeRay, raySampleDistance, PhysicsLayers.DefaultRaycastLayersWithoutAutomap);
+            bool headRayHit = Physics.Raycast(headRay, out headHit, raySampleDistance);
+            bool eyeRayHit = Physics.Raycast(eyeRay, raySampleDistance);
 
             //Debug.LogFormat("Ray contact: HeadRay: {0}, EyeRay {1}", headRayHit, eyeRayHit);
 

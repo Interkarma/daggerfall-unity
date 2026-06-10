@@ -20,10 +20,10 @@ using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Banking;
 using DaggerfallWorkshop.Game.Guilds;
-using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
 using DaggerfallWorkshop.Localization;
@@ -209,7 +209,7 @@ namespace DaggerfallWorkshop.Game
             playerGPS = GetComponent<PlayerGPS>();
             playerEnterExit = GetComponent<PlayerEnterExit>();
             mainCamera = GameManager.Instance.MainCamera;
-            playerLayerMask = ~(1 << LayerMask.NameToLayer("Player") | 1 << LayerMask.NameToLayer("Automap"));
+            playerLayerMask = ~(1 << LayerMask.NameToLayer("Player"));
         }
 
         void Update()

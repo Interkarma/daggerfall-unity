@@ -715,7 +715,7 @@ namespace DaggerfallWorkshop.Game.Entity
                             // Check if npc sees player
                             Vector3 eyeToTarget = playerEyePos - eyePos;
                             Ray ray = new Ray(eyePos, eyeToTarget.normalized);
-                            if (Physics.Raycast(ray, out hit, 77.5f, PhysicsLayers.DefaultRaycastLayersWithoutAutomap))
+                            if (Physics.Raycast(ray, out hit, 77.5f))
                             {
                                 // Check if hit was player
                                 DaggerfallEntityBehaviour entity = hit.transform.gameObject.GetComponent<DaggerfallEntityBehaviour>();

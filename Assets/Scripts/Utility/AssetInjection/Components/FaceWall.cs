@@ -12,7 +12,6 @@
 using System;
 using UnityEngine;
 using UnityEngine.Serialization;
-using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
@@ -101,7 +100,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         private bool HitWall(Vector3 direction)
         {
             Vector3 worldSpaceDirection = transform.TransformDirection(direction);
-            return Physics.Raycast(gameObject.transform.position, worldSpaceDirection, MaxDistance, PhysicsLayers.DefaultRaycastLayersWithoutAutomap);
+            return Physics.Raycast(gameObject.transform.position, worldSpaceDirection, MaxDistance);
         }
 
         /// <summary>
@@ -110,7 +109,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         private void Move()
         {
             RaycastHit hitInfo;
-            if (Physics.Raycast(new Ray(transform.position, transform.forward), out hitInfo, MaxDistance, PhysicsLayers.DefaultRaycastLayersWithoutAutomap))
+            if (Physics.Raycast(new Ray(transform.position, transform.forward), out hitInfo, MaxDistance))
             {
                 Bounds bounds = meshRenderer.bounds;
 
@@ -134,14 +133,14 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             Vector3 bottomPoint = gameObject.transform.position;
             bottomPoint.y = bounds.min.y;
             RaycastHit hitInfoBottom;
-            if (!Physics.Raycast(new Ray(bottomPoint, transform.forward), out hitInfoBottom, MaxDistance, PhysicsLayers.DefaultRaycastLayersWithoutAutomap))
+            if (!Physics.Raycast(new Ray(bottomPoint, transform.forward), out hitInfoBottom, MaxDistance))
                 return;
 
             // Top point on bounds
             Vector3 topPoint = gameObject.transform.position;
             topPoint.y = bounds.max.y;
             RaycastHit hitInfoTop;
-            if (!Physics.Raycast(new Ray(topPoint, transform.forward), out hitInfoTop, MaxDistance, PhysicsLayers.DefaultRaycastLayersWithoutAutomap))
+            if (!Physics.Raycast(new Ray(topPoint, transform.forward), out hitInfoTop, MaxDistance))
                 return;
 
             // Calculate angle and rotate

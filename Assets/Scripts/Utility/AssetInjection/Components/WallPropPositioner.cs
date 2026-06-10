@@ -10,7 +10,6 @@
 //
 
 using UnityEngine;
-using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
@@ -79,14 +78,14 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             Vector3 bottomPoint = gameObject.transform.position;
             bottomPoint.y = bounds.min.y;
             RaycastHit hitInfoBottom;
-            if (!Physics.Raycast(new Ray(bottomPoint, worldSpaceDirection), out hitInfoBottom, maxDistance, PhysicsLayers.DefaultRaycastLayersWithoutAutomap))
+            if (!Physics.Raycast(new Ray(bottomPoint, worldSpaceDirection), out hitInfoBottom, maxDistance))
                 return;
 
             // Top point on bounds
             Vector3 topPoint = gameObject.transform.position;
             topPoint.y = bounds.max.y;
             RaycastHit hitInfoTop;
-            if (!Physics.Raycast(new Ray(topPoint, worldSpaceDirection), out hitInfoTop, maxDistance, PhysicsLayers.DefaultRaycastLayersWithoutAutomap))
+            if (!Physics.Raycast(new Ray(topPoint, worldSpaceDirection), out hitInfoTop, maxDistance))
                 return;
 
             // Calculate delta
@@ -108,7 +107,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         private bool HitWall(Vector3 direction)
         {
             Vector3 worldSpaceDirection = transform.TransformDirection(direction);
-            return Physics.Raycast(gameObject.transform.position, worldSpaceDirection, maxDistance, PhysicsLayers.DefaultRaycastLayersWithoutAutomap);
+            return Physics.Raycast(gameObject.transform.position, worldSpaceDirection, maxDistance);
         }
     }
 }

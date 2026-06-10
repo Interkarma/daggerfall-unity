@@ -16,7 +16,6 @@ using UnityEngine;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -162,7 +161,7 @@ namespace DaggerfallWorkshop.Game
 
             RaycastHit hit;
 
-            if (!acrobatMotor.Jumping && Physics.SphereCast(checkStepRay, 0.1f, out hit, maxRange, PhysicsLayers.DefaultRaycastLayersWithoutAutomap))
+            if (!acrobatMotor.Jumping && Physics.SphereCast(checkStepRay, 0.1f, out hit, maxRange))
                 StepHitDistance = hit.distance;
             else
                 StepHitDistance = 0f;
@@ -172,7 +171,7 @@ namespace DaggerfallWorkshop.Game
         {
             //Ray ray = new Ray(controller.transform.position, Vector3.up);
             RaycastHit hit = new RaycastHit();
-            if (Physics.SphereCast(ray, HeadHitRadius, out hit, 2f, PhysicsLayers.DefaultRaycastLayersWithoutAutomap))
+            if (Physics.SphereCast(ray, HeadHitRadius, out hit, 2f))
             {
                 if (hit.collider.GetComponent<MeshCollider>())
                 {
@@ -224,7 +223,7 @@ namespace DaggerfallWorkshop.Game
 
             // use recursion to raycast vectors to find the adjacent wall
             Debug.DrawRay(origin, direction, Color.green, Time.deltaTime);
-            if (Physics.Raycast(origin, direction, out hit, distance, PhysicsLayers.DefaultRaycastLayersWithoutAutomap)
+            if (Physics.Raycast(origin, direction, out hit, distance)
                 && (hit.collider.gameObject.GetComponent<MeshCollider>() != null))
             {
                 // normal vector of raycasthit
@@ -315,7 +314,7 @@ namespace DaggerfallWorkshop.Game
             else
                 inFrontDirection = controller.transform.forward;
                
-            HitSomethingInFront = (Physics.Raycast(controller.transform.position, inFrontDirection, out hit, controller.radius + 0.1f, PhysicsLayers.DefaultRaycastLayersWithoutAutomap));
+            HitSomethingInFront = (Physics.Raycast(controller.transform.position, inFrontDirection, out hit, controller.radius + 0.1f));
         }
 
         public void ResetAdjacentSurfaces()

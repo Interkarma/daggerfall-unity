@@ -317,7 +317,7 @@ namespace DaggerfallWorkshop.Game
             // boolean that means ground directly below us is too close for climbing or rappelling
             bool tooCloseToGroundForClimb = (((isClimbing && (inputBack || isSlipping)) || airborneGraspWall)
                 // short circuit evaluate the raycast, also prevents bug where you could teleport across town
-                && Physics.Raycast(controller.transform.position, Vector3.down, controller.height / 2 + 0.12f, PhysicsLayers.DefaultRaycastLayersWithoutAutomap));
+                && Physics.Raycast(controller.transform.position, Vector3.down, controller.height / 2 + 0.12f));
 
             CalcFrequencyAndToleranceOfWallChecks(airborneGraspWall);
 
@@ -371,9 +371,9 @@ namespace DaggerfallWorkshop.Game
                 // Test close to front of head for backward sloping wall like Scourg Barrow and bump a little backwards
                 // Then slightly further back for short overhangs like eaves and bump more backwards and a little upwards
                 // Height of raycast test is extended to help ensure there is clear space above not just an angled ceiling
-                if (!Physics.Raycast(frontTestPosition, Vector3.up, controller.height / 2 + 0.3f, PhysicsLayers.DefaultRaycastLayersWithoutAutomap))
+                if (!Physics.Raycast(frontTestPosition, Vector3.up, controller.height / 2 + 0.3f))
                     controller.transform.position += -wallDirection * 0.1f;
-                else if (!Physics.Raycast(backTestPosition, Vector3.up, controller.height / 2 + 0.5f, PhysicsLayers.DefaultRaycastLayersWithoutAutomap))
+                else if (!Physics.Raycast(backTestPosition, Vector3.up, controller.height / 2 + 0.5f))
                     controller.transform.position += -wallDirection * 0.4f + Vector3.up * 0.3f;
             }
 
@@ -588,7 +588,7 @@ namespace DaggerfallWorkshop.Game
                 wallDirection = -cornerNormalRay.direction;
             // Cast character controller shape forward to see if it is about to hit anything.
             Debug.DrawRay(controller.transform.position, wallDirection, Color.gray);
-            if (Physics.CapsuleCast(p1, p2, controller.radius, wallDirection, out hit, controller.radius + 0.1f, PhysicsLayers.DefaultRaycastLayersWithoutAutomap))
+            if (Physics.CapsuleCast(p1, p2, controller.radius, wallDirection, out hit, controller.radius + 0.1f))
             {
                 // Immediately stop climbing if object not valid
                 if (!IsClimable(hit.transform))

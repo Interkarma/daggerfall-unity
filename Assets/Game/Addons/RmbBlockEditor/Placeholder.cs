@@ -7,7 +7,6 @@
 
 using System;
 using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop.Game.Utility;
 using UnityEditor;
 using UnityEngine;
 
@@ -85,7 +84,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 
             Vector3 mousePosition = Event.current.mousePosition;
             Ray ray = HandleUtility.GUIPointToWorldRay(mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, PhysicsLayers.DefaultRaycastLayersWithoutAutomap) && !mouseHasDragged)
+            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity) && !mouseHasDragged)
             {
                 OnRaycastHit(hit);
             }

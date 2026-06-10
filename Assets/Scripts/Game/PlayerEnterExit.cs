@@ -17,7 +17,6 @@ using DaggerfallWorkshop.Utility;
 using DaggerfallConnect;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
-using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Entity;
@@ -1243,7 +1242,7 @@ namespace DaggerfallWorkshop.Game
             // Snap player to ground
             RaycastHit hit;
             Ray ray = new Ray(transform.position, Vector3.down);
-            if (Physics.Raycast(ray, out hit, PlayerHeightChanger.controllerStandingHeight * 2f, PhysicsLayers.DefaultRaycastLayersWithoutAutomap))
+            if (Physics.Raycast(ray, out hit, PlayerHeightChanger.controllerStandingHeight * 2f))
             {
                 // Clear falling damage so player doesn't take damage if they transitioned into a dungeon while jumping
                 GameManager.Instance.AcrobatMotor.ClearFallingDamage();
