@@ -240,7 +240,8 @@ namespace DaggerfallWorkshop.Game.UserInterface
             {
                 folders.Clear();
                 folderList.ClearItems();
-                return;
+                if (currentPath != drives[driveList.SelectedIndex])
+                    folderList.AddItem(parentDirectory);
             }
         }
 
