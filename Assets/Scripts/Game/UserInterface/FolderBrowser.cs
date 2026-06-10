@@ -236,8 +236,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 folderScroller.ScrollIndex = 0;
                 folderList.SelectedIndex = 0;
             }
-            catch
+            catch (Exception e)
             {
+                Debug.LogErrorFormat("FolderBrowser: Failed to enumerate '{0}': {1}", currentPath, e.Message);
                 folders.Clear();
                 folderList.ClearItems();
                 if (currentPath != drives[driveList.SelectedIndex])
