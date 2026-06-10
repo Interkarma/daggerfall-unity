@@ -250,6 +250,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 folderList.ClearItems();
                 if (currentPath != drives[driveList.SelectedIndex])
                     folderList.AddItem(parentDirectory);
+                folderList.AddItem("(could not read directory)");
             }
         }
 
