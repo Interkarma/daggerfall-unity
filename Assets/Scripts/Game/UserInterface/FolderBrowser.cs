@@ -222,12 +222,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 foreach (var directory in directoryList)
                 {
-                    DirectoryInfo info = new DirectoryInfo(directory);
-                    if (showHiddenFilesCheck.IsChecked || (info.Attributes & FileAttributes.Hidden) == 0)
+                    try
                     {
-                        string name = Path.GetFileName(directory);
-                        folders.Add(name);
-                        folderList.AddItem(name);
+                        DirectoryInfo info = new DirectoryInfo(directory);
+                        if (showHiddenFilesCheck.IsChecked || (info.Attributes & FileAttributes.Hidden) == 0)
+                        {
+                            string name = Path.GetFileName(directory);
+                            folders.Add(name);
+                            folderList.AddItem(name);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogWarningFormat("FolderBrowser: Skipping inaccessible directory '{0}': {1}", directory, e.Message);
                     }
                 }
 
