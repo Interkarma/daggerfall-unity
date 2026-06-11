@@ -915,17 +915,17 @@ namespace DaggerfallWorkshop.Game.Questing
 
             //Debug.LogFormat("Found a total of {0} possible dungeons of type {1} in {2}", foundIndices == null ? 0 : foundIndices.Length, dungeonTypeIndex, regionData.Name);
 
-            // Add equivalence(s) if too few dungeons to select from
-            if (dungeonTypeIndex >= 0 && alternateDungeonTypeIndices != null)
+            if (dungeonTypeIndex >= 0)
             {
                 int equivalentIndex = 0;
                 if (foundIndices == null)
                 {
                     foundIndices = new int[] {};
                 }
+                // Add equivalence(s) if too few dungeons to select from
                 while (foundIndices.Length < DaggerfallUnity.Settings.DungeonsPoolSizeTarget)
                 {
-                    if (alternateDungeonTypeIndices.Length > equivalentIndex)
+                    if (alternateDungeonTypeIndices != null && alternateDungeonTypeIndices.Length > equivalentIndex)
                     {
                         int[] equivalentIndices = CollectDungeonIndicesOfType(regionData, alternateDungeonTypeIndices[equivalentIndex]);
                         if (equivalentIndices != null && equivalentIndices.Length > 0)
