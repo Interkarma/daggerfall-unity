@@ -2680,7 +2680,7 @@ namespace Wenzil.Console
         {
             public static readonly string name = "summondaedra";
             public static readonly string description = "Summons a daedra prince to test quest delivery.";
-            public static readonly string usage = "summondaedra [filename] (note: matches the .VID filename for daedea in /arena2 folder.)";
+            public static readonly string usage = "summondaedra [filename] (note: matches the .VID filename for daedra in /arena2 folder.)";
 
             public static string Execute(params string[] args)
             {
