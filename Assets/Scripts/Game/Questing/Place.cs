@@ -43,6 +43,7 @@ namespace DaggerfallWorkshop.Game.Questing
         int p2;                     // Parameter 2
         int p3;                     // Parameter 3
         int[] alternateDungeonTypeIndices; // DFU extension for remote dungeons
+        bool listedSitesOnly;              // DFU extension for remote dungeons
 
         SiteDetails siteDetails;    // Site found using inputs
 
@@ -144,7 +145,7 @@ namespace DaggerfallWorkshop.Game.Questing
             base.SetResource(line);
 
             // Match string for Place variants
-            string matchStr = @"(Place|place) (?<symbol>[a-zA-Z0-9_.-]+) (?<siteType>local|remote|permanent|randompermanent) (?<siteList>[a-zA-Z0-9_.,]+)";
+            string matchStr = @"(Place|place) (?<symbol>[a-zA-Z0-9_.-]+) (?<siteType>local|remote|permanent|randompermanent) (?<siteList>[a-zA-Z0-9_.,]+)(?<only> only)?";
 
             // Try to match source line with pattern
             bool randomSiteList = false;
@@ -181,6 +182,9 @@ namespace DaggerfallWorkshop.Game.Questing
                 {
                     throw new Exception(string.Format("Place found no site type match found for source: '{0}'. Must be local|remote|permanent.", line));
                 }
+
+                string only = match.Groups["only"].Value;
+                listedSitesOnly = (string.Compare(only, " only", true) == 0);
 
                 // Get place name for parameter lookup
                 string srcSiteList = match.Groups["siteList"].Value;
@@ -780,7 +784,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     result = SelectRemoteTownSite((DFLocation.BuildingTypes)p2);
                     break;
                 case 1:
-                    result = SelectRemoteDungeonSite(p2, alternateDungeonTypeIndices);
+                    result = SelectRemoteDungeonSite(p2);
                     break;
                 case 2:
                     result = SelectRemoteLocationExteriorSite(p2);
@@ -893,7 +897,7 @@ namespace DaggerfallWorkshop.Game.Questing
         /// This is probably because types 17-18 don't seem to contain quest markers.
         /// Warning: Not all dungeon types are available in all regions. http://en.uesp.net/wiki/Daggerfall:Dungeons#Overview_of_Dungeon_Locations
         /// </summary>
-        bool SelectRemoteDungeonSite(int dungeonTypeIndex, int[] alternateDungeonTypeIndices)
+        bool SelectRemoteDungeonSite(int dungeonTypeIndex)
         {
             // Get player region
             int regionIndex = GameManager.Instance.PlayerGPS.CurrentRegionIndex;
@@ -919,15 +923,27 @@ namespace DaggerfallWorkshop.Game.Questing
                 {
                     foundIndices = new int[] {};
                 }
-                while (foundIndices.Length < DaggerfallUnity.Settings.DungeonsPoolSizeTarget && alternateDungeonTypeIndices.Length > equivalentIndex)
+                while (foundIndices.Length < DaggerfallUnity.Settings.DungeonsPoolSizeTarget)
                 {
-                    int[] equivalentIndices = CollectDungeonIndicesOfType(regionData, alternateDungeonTypeIndices[equivalentIndex]);
-                    if (equivalentIndices != null && equivalentIndices.Length > 0)
+                    if (alternateDungeonTypeIndices.Length > equivalentIndex)
                     {
-                        // Debug.LogFormat("Adding {0} possible dungeons of type {1} by equivalence", equivalentIndices.Length, alternateDungeonTypeIndices[equivalentIndex]);
-                        foundIndices = foundIndices.Concat(equivalentIndices).ToArray();
+                        int[] equivalentIndices = CollectDungeonIndicesOfType(regionData, alternateDungeonTypeIndices[equivalentIndex]);
+                        if (equivalentIndices != null && equivalentIndices.Length > 0)
+                        {
+                            // Debug.LogFormat("Adding {0} possible dungeons of type {1} by equivalence", equivalentIndices.Length, alternateDungeonTypeIndices[equivalentIndex]);
+                            foundIndices = foundIndices.Concat(equivalentIndices).ToArray();
+                        }
+                        equivalentIndex++;
                     }
-                    equivalentIndex++;
+                    else
+                    {
+                        if (!listedSitesOnly)
+                        {
+                            // If everything failed, pick any dungeon (DFU classic behavior)
+                            foundIndices = CollectDungeonIndicesOfType(regionData, -1);
+                        }
+                        break;
+                    }
                 }
             }
 

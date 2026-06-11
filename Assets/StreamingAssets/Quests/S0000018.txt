@@ -109,7 +109,7 @@ Person _medora_ named Medora atHome
 Person _gortwog_ named Gortwog atHome
 
 Place _orsinium_ permanent OrsiniumCastle2
-Place _crypt_ remote dungeon0
+Place _crypt_ remote dungeon0 only
 
 Clock _delay_ 00:02 0 flag 1 range 0 1
 Clock _S.01_ 00:02 0 flag 1 range 0 1
