@@ -25,7 +25,7 @@ AcceptQuest:  [1002]
 <ce>                  Here's the situation. Seems _dummy_
 <ce>                has this pet sabertooth tiger -- don't
 <ce>                 ask -- and it ran off a few days ago.
-<ce>                   %g had it tracked to ___mondung_,
+<ce>                   %G had it tracked to ___mondung_,
 <ce>                but now we need someone to go in there
 <ce>                  and bring it out. Alive. The trick
 <ce>                 is that it's been trained to respond
@@ -54,7 +54,7 @@ QuestComplete:  [1004]
 <ce>                    at heart, wouldn't hurt a fly.
 <ce>                  Here's your _gold_ gold, just like
 <ce>                   I promised that nice _questgiver_
-<ce>                        at the Fighter's Guild.
+<ce>                        at the Fighters Guild.
 
 RumorsDuringQuest:  [1005]
 <ce>     Did you hear that _dummy_'s tiger escaped again?  Killed and
@@ -64,7 +64,7 @@ RumorsPostfailure:  [1006]
 <ce>    _dummy_'s tiger seems to have disappeared for good. Thank %god!
 
 RumorsPostsuccess:  [1007]
-<ce>     _dummy_ actually hired someone from the Fighter's Guild to go
+<ce>     _dummy_ actually hired someone from the Fighters Guild to go
 <ce>fetch %g3 pet tiger for %g2. What sap would take a silly job like that?
 
 QuestorPostsuccess:  [1008]
@@ -85,7 +85,7 @@ Message:  1020
  very well. I am to bring the tiger back
  to its owner, _dummy_, at __dummy_
  of ___dummy_ within =qtime_ days.
- %g'll pay me _gold_ gold.
+ %G'll pay me _gold_ gold.
 
 Message:  1021
 %qdt:
@@ -160,7 +160,7 @@ Message:  1061
 <ce>                   Yes, what do you want?  Oh...good
 <ce>                   gracious, a letter from _victim_!
 <ce>                     Why is it stained with blood?
-<ce>                    %g's dead?  Dear me. %g always
+<ce>                    %G's dead?  Dear me. %G always
 <ce>                    was so sweet to me, I'm afraid
 <ce>                   %g had the delusion that we were
 <ce>                   in love. Poor soul, what a tragic

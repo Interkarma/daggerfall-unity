@@ -38,6 +38,9 @@ MainMenuLoad,         L
 MainMenuStart,        S
 MainMenuExit,         E
 
+-- Character class creation screen
+ResetBonusPool,       Ctrl-U
+
 -- Options menu
 OptionsExit,          E
 OptionsContinue,      C

@@ -21,7 +21,7 @@ QuestorOffer:  [1000]
 <ce>                      monster. This foul parasite
 <ce>                        lives in a decrepit old
 <ce>                       place called ___mondung_.
-<ce>                          %g has agreed to pay
+<ce>                          %G has agreed to pay
 <ce>                    the creature's assassin _reward_
 <ce>                        gold in return. Not too
 <ce>                      bad, I'm sure you'll agree.

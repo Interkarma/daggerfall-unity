@@ -74,14 +74,14 @@ Poor Aubk-i. Her maid's been spreading the wildest tales about her.
 RumorsPostfailure:  [1006]
 That werewolf moved on, out of Tristore Laboratory. Migratory beasts they are.
 <--->
-Didn't expect that loop to live in Tristore Laboratory for as long as it did.
+Didn't expect that loup to live in Tristore Laboratory for as long as it did.
 <--->
 Boy, those Shapeshifters sure put the kibosh on some %ra out yonder.
 
 RumorsPostsuccess:  [1007]
 Some %ra adventurer chased the werewolf at Tristore Laboratory out of Betony.
 <--->
-The peasants who live around Tristore Laboratory are happy the loop is gone.
+The peasants who live around Tristore Laboratory are happy the loup is gone.
 <--->
 The Shapeshifters have some %ra to thank for saving one of their own.
 
@@ -242,7 +242,7 @@ Sibling rivalry's all the rage over in ___wereBrother_.
 Tsk. The things youngsters will try to get attention.
 
 Message:  1026
-Property of the Shapeshifter's Guild
+Property of the Shapeshifter's Guild.
 
 Message:  1027
 You feel a sickening jolt as the _relic_ vanishes.
@@ -251,12 +251,12 @@ Message:  1028
 <ce>                    Have you lost your mind, %pct?
 <ce>                 I was inclined to help you, but after
 <ce>                   your assault on _wereBrother_ ...
-<ce>                Slink along back to that whore Cyndassa
-<ce>                why don't you. Worthless piece of %ra.
+<ce>                Slink along back to that whore Cyndassa,
+<ce>                why don't you? Worthless piece of %ra.
 
 Message:  1029
 <ce>                  On second thought, %pct, why don't
-<ce>                   I just tag along.  I'll hold the
+<ce>                   I just tag along?  I'll hold the
 <ce>                         _relic_, as it can be
 <ce>                         a bit tricky to use.
 
@@ -282,7 +282,7 @@ Message:  1032
 Message:  1033
 <ce>              Now, if I might beg the favor of escorting
 <ce>                us to the Beldama of the Sisters of the
-<ce>                  Bluff. You'll find it on the map in
+<ce>                   Bluff. You'll find it on the map
 <ce>                        in Daggerfall province.
 
 Message:  1034

@@ -60,7 +60,7 @@ QuestLogEntry:  [1010]
  
       Those doddering, unenlightened
  barbarians who call themselves the Mages
- Guild are involved in yet another rather
+ Guild are involved in yet another rather-
  pointless endeavor. This time, they may,
  though accidentally, be on a path toward
  breaking the shade and exposing %vam.
@@ -97,7 +97,7 @@ Message:  1012
 <ce>                        anywhere in %reg. _mage_
 <ce>                    is in ___mondung_, a laboratory
 <ce>               of sorts. I want you to get the notes for
-<ce>                 this research and bring it back to me.
+<ce>                this research and bring them back to me.
 <ce>                      _mage_, I understand, keeps
 <ce>              the notes on %g3 person under the laughable
 <ce>                misconception that they are safe there.

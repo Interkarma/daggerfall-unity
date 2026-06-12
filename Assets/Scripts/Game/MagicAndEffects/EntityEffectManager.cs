@@ -312,7 +312,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public bool SetReadySpell(EntityEffectBundle spell, bool noSpellPointCost = false)
         {
             // Do nothing if silenced or cast already in progress
-            if ((SilenceCheck() && !noSpellPointCost) || castInProgress)
+            if ((!noSpellPointCost && SilenceCheck()) || castInProgress)
                 return false;
 
             // Spell must appear valid
@@ -401,7 +401,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
         public void CastReadySpell()
         {
             // Do nothing if silenced
-            if (SilenceCheck())
+            if (!readySpellDoesNotCostSpellPoints && SilenceCheck())
                 return;
 
             // Must have a ready spell and a previous cast must not be in progress
@@ -414,7 +414,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             {
                 Vector3 aimPosition = GameManager.Instance.MainCamera.transform.position;
                 Vector3 aimDirection = GameManager.Instance.MainCamera.transform.forward;
-                if (DaggerfallMissile.GetEntityTargetInTouchRange(aimPosition, aimDirection) == null)
+                if (DaggerfallMissile.GetEntityTargetInTouchRange(aimPosition, aimDirection, DaggerfallMissile.GetLayerMask(true)) == null)
                 {
                     //Debug.Log("Target entity not in range for touch spell.");
                     return;
@@ -2097,6 +2097,8 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
         private void PlayerSpellCasting_OnReleaseFrame()
         {
+            castInProgress = false;
+
             // Must have a ready spell
             if (readySpell == null)
                 return;
@@ -2126,7 +2128,11 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
 
             // Clear ready spell and reset casting - do not update last spell if casting from item
             RaiseOnCastReadySpell(readySpell);
-            if (!readySpellDoesNotCostSpellPoints)
+            if (readySpellDoesNotCostSpellPoints)
+            {
+                lastReadySpellCastingCost = 0;
+            }
+            else
             {
                 lastSpell = readySpell;
                 lastReadySpellCastingCost = readySpellCastingCost;
@@ -2134,7 +2140,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects
             readySpell = null;
             readySpellCastingCost = 0;
             instantCast = false;
-            castInProgress = false;
             readySpellDoesNotCostSpellPoints = false;
         }
 

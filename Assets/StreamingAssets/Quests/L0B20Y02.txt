@@ -74,7 +74,7 @@ QuestorPostfailure:  [1009]
 <ce>                   What makes you think that I'd be
 <ce>                    interested in talking with a %ra
 <ce>                     who can't even slay one lousy
-<ce>                    knight. Leave my sight at once.
+<ce>                    knight? Leave my sight at once.
 
 Message:  1020
 %qdt:

@@ -81,9 +81,9 @@ QuestLogEntry:  [1010]
 Message:  1011
 _npc1_,
     You are a most spiteful man. How could I ever
- have thought that I loved you. Since you caught me
+ have thought that I loved you? Since you caught me
  on the balcony in the arms of _npc2_,
- I can now reveal that we are indeed lovers. %g is
+ I can now reveal that we are indeed lovers. %G is
  able to give me everything that you cannot. You made
  me feel unclean with your disgusting gifts of gold.
  Do not ever darken my doorway again.
@@ -96,7 +96,7 @@ My dearest _npc1_,
  anything to regain your love. What you saw on the
  balcony was not of my desire. I had too much to drink
  that night and _npc2_ took advantage of
- the moment to steal a kiss. %g has been flogged and
+ the moment to steal a kiss. %G has been flogged and
  is no longer in my service. Please forgive me.
  I love only you.
  
@@ -143,7 +143,7 @@ Message:  1019
 Baron _npc1_,
     Count _npc2_ will be
  waiting for you in the pass.
- %g3 truce agreement is an
+ %G3 truce agreement is an
  honorable and fair one.
                   _npc3_
 
@@ -160,7 +160,7 @@ Message:  1021
 Honorable _npc1_,
     I have decided to cast my
  vote for _npc3_ at the
- next guild meeting. %g has
+ next guild meeting. %G has
  shown %g3 faithfulness to
  the guild many times.
                   _npc2_

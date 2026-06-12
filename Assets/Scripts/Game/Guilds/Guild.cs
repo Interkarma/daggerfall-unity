@@ -48,6 +48,11 @@ namespace DaggerfallWorkshop.Game.Guilds
 
         public abstract List<DFCareer.Skills> TrainingSkills { get; }
 
+        public virtual bool IsSatisfyQuestReqByLevel()
+        {
+            return false;
+        }
+
         #endregion
 
         #region Guild Ranks

@@ -236,5 +236,19 @@ MonoBehaviour:
       and modding support
     m_Metadata:
       m_Items: []
+  - m_Id: 392878225761951744
+    m_Localized: 'Performance
+
+      Quality'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 392920400377864192
+    m_Localized: Hit Detection
+    m_Metadata:
+      m_Items: []
+  - m_Id: 392920453876211712
+    m_Localized: Protect Friendlies and Neutrals
+    m_Metadata:
+      m_Items: []
   references:
     version: 1

@@ -40,7 +40,7 @@ QuestComplete:  [1004]
 
 RumorsDuringQuest:  [1005]
 <ce>                  The Mages Guild has refused to kill
-<ce>                that rampaging gargoyle. They claim its
+<ce>                that rampaging gargoyle. They claim it's
 <ce>                    not their fault. Lazy bastards.
 
 RumorsPostfailure:  [1006]

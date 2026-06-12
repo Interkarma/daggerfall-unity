@@ -97,7 +97,7 @@ Dear %pcn,
 <ce>                               _vampire_
 
 Message:  1011
-%g's a very nice and intelligent =vampire_ at __vampire_.
+%G's a very nice and intelligent =vampire_ at __vampire_.
 <--->
 _vampire_ is that nice =vampire_ you'll find at __vampire_, %di of here.
 

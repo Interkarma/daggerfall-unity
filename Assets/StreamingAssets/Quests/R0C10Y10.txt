@@ -17,7 +17,7 @@ QuestorOffer:  [1000]
 <ce>                      agent of mine, speak up now.
                                      <--->
 <ce>                I could use the services of someone of
-<ce>               moderate talent, above average discretion,
+<ce>               moderate talent, above-average discretion,
 <ce>                 and willingness to assume the position
 <ce>                  of a lowly courier for _reward_ gold
 <ce>                      pieces. Are you that person?
@@ -41,7 +41,7 @@ QuestFail:  [1003]
 
 QuestComplete:  [1004]
 <ce>                   Ah, good to see you %pcf. And the
-<ce>                  _weapon_ too. Excellent. Here's the
+<ce>                  _weapon_, too. Excellent. Here's the
 <ce>                _reward_ gold pieces I believe you were
 <ce>                       promised by _questgiver_.
 

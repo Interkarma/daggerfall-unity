@@ -37,7 +37,7 @@ AcceptQuest:  [1002]
 <ce>              in =1stparton_ days that would make our job
 <ce>               much easier. When the deed is done, report
 <ce>                 to my cousin's palace in ___qgfriend_.
-<ce>                  %g's the one who's going to pay you
+<ce>                  %G's the one who's going to pay you
 <ce>                             for all this.
 
 QuestFail:  [1003]
@@ -92,7 +92,7 @@ Message:  1015
 %qdt:
  I have =1stparton_ days to slay an orc shaman
  in ___mondung_, and then get to _qgfriend_'s
- palace in ___qgfriend_.  %g
+ palace in ___qgfriend_.  %G
  will pay me my _reward_ gold pieces
  for the shaman's death.
 

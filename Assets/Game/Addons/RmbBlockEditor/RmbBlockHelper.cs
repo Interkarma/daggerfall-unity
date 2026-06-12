@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -350,6 +350,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             }
             catch (Exception error)
             {
+                Debug.LogException(error);
                 // Return a magenta-colored flat if the id can't be found
                 Texture2D texture = new Texture2D(1, 1);
                 texture.SetPixel(0, 0, Color.magenta);

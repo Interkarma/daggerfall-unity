@@ -34,15 +34,15 @@ RumorsPostfailure:  [1006]
 <ce>_hunter_ and %g3 men killed a lot of vampires in %reg, but I doubt they
 <ce>                             got them all.
                                      <--->
-<ce> _hunter_ should have left well enough alone.  %g3 crusades just send
-<ce> the vampires into hiding, and when %g leaves, they come back stronger than  ever.
+<ce> _hunter_ should have left well enough alone.  %G3 crusades just send
+<ce> the vampires into hiding, and when %g leaves, they come back stronger than ever.
 
 RumorsPostsuccess:  [1007]
 <ce>_hunter_ and %g3 men killed a lot of vampires in %reg, but I doubt they
 <ce>                             got them all.
                                      <--->
-<ce> _hunter_ should have left well enough alone.  %g3 crusades just send
-<ce> the vampires into hiding, and when %g leaves, they come back stronger than  ever.
+<ce> _hunter_ should have left well enough alone.  %G3 crusades just send
+<ce> the vampires into hiding, and when %g leaves, they come back stronger than ever.
 
 QuestorPostsuccess:  [1008]
 Error -- 1008 called
@@ -110,7 +110,7 @@ Message:  1022
 <ce>             we can save the lives of many of our kinfolk.
 <ce>              Do not underestimate the danger you are in,
 <ce>               %pcf.  _hunter_ is ruthless and competent,
-<ce>              and %g3 spies are everywhere.  %g would make
+<ce>              and %g3 spies are everywhere.  %G would make
 <ce>              an excellent addition to %vam -- perhaps %g
 <ce>              will yet.  Be that as it may, %g knows your
 <ce>              name, and do not doubt that %g will attempt
@@ -131,7 +131,7 @@ Message:  1023
 <ce>                 advise against intruding on an elder's
 <ce>             seclusion lightly, however.  It would be best
 <ce>                 if you looked up _vamp2_ of ___vamp2_.
-<ce>              %g is the Keeper of the Bloodline, and will
+<ce>              %G is the Keeper of the Bloodline, and will
 <ce>              be able to tell you with certainty which of
 <ce>              %vam elders is your bloodfather.  Take this
 <ce>              bracelet to %g2 so %g will know I sent you.

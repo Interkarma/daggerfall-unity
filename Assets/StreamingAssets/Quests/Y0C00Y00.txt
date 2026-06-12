@@ -96,7 +96,7 @@ Message:  1020
  to meet with _contact_ and receive
  _artifact_ for slaying the frost
  daedra for Mehrunes Dagon.
- %g will wait for me at _tavern_
+ %G will wait for me at _tavern_
  in __tavern_.
 
 Message:  1030

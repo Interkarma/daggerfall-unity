@@ -15,7 +15,7 @@ QuestorOffer:  [1000]
 <ce>                   Shhh! Don't let anyone else hear
 <ce>                         this, %pct. I just got
 <ce>               word that a dragon has been spotted! Well,
-<ce>                 not a full grown dragon, just a little
+<ce>                 not a full-grown dragon, just a little
 <ce>               dragonling. There is no quest more heroic
 <ce>                 for a member of ==qgiver_ than to slay
 <ce>               a dragon. I know where it is, you go kill
@@ -76,7 +76,7 @@ I heard a great joke. %jok
 <--->
 %jok Can you explain that to me?
 <--->
-The legal system in %reg has it good points and bad ones.
+The legal system in %reg has its good points and bad ones.
 
 RumorsPostfailure:  [1006]
 %kno went stomping about in ___dungeon_ for no reason.

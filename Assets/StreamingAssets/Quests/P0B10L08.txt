@@ -98,7 +98,7 @@ Message:  1013
 Blood Sponge,
  
       My coven tells me that your monsters,
- your weird little pack of blood snorting
+ your weird little pack of blood-snorting
  bugaboos, have a monopoly on the terror
  business in %reg, and that my
  own children are afraid to expand their
@@ -126,7 +126,7 @@ Message:  1015
 <ce>                        Welcome to ___mondung_,
 <ce>                      %pcn. I take it you are here
 <ce>                           on behalf of %vam
-<ce>                    to acknowledge that the Coven of
+<ce>                    to acknowledge that The Coven of
 <ce>                     ==daedra_, Prince of Oblivion
 <ce>                     is henceforth supreme in %reg?
 

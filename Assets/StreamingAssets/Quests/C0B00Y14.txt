@@ -71,7 +71,7 @@ Message:  1020
  _questgiver_ of __questgiver_
  in ___questgiver_ has sent me
  to slay an undead creature haunting
- ___mondung_.  %g gave me a vial
+ ___mondung_.  %G gave me a vial
  of specially prepared holy water
  which I must sprinkle on the monster's
  body in order to prevent its spirit
@@ -99,13 +99,13 @@ Message:  1050
 <ce>                Ah, wait, I am so forgetful these days!
 <ce>                 You first need to take the holy water
 <ce>                      to _priest_, of __priest_ in
-<ce>                  ___priest_.  %g will place the final
+<ce>                  ___priest_.  %G will place the final
 <ce>                            blessing on it.
 
 Message:  1051
 <ce>                   _priest_ takes the vial from you
-<ce>                  without a word.  %g gravely blesses
-<ce>                    it, then you.  %g hands it back
+<ce>                  without a word.  %G gravely blesses
+<ce>                    it, then you.  %G hands it back
 <ce>                    and returns to %g3 meditations.
 
 Message:  1060

@@ -34,9 +34,9 @@ RumorsDuringQuest:  [1005]
 <ce>                   I think it's hilarious! _qgiver_'s
 <ce>                  _house_ is overrun with giant bugs!
                                      <--->
-<ce>                    I feel sorry for _qgiver_. %g3
+<ce>                    I feel sorry for _qgiver_. %G3
 <ce>                    _house_ has been virtually taken
-<ce>                over by 12 foot long rats with poisonous
+<ce>                over by 12-foot-long rats with poisonous
 <ce>                stingers. I hear they can turn a man to
 <ce>                      stone with a single glance!
 
@@ -62,7 +62,7 @@ QuestorPostsuccess:  [1008]
                                      <--->
 <ce>                Everyone, listen up. I want you to meet
 <ce>             my friend, %pcn, exterminator extraordinaire.
-<ce>               %g rid my _house_ of three dozen monsters!
+<ce>               %G rid my _house_ of three dozen monsters!
 
 QuestorPostfailure:  [1009]
 <ce>                  You! You ruined me! I lost _house_
@@ -77,8 +77,8 @@ QuestorPostfailure:  [1009]
 QuestLogEntry:  [1010]
 %qdt:
  In ___qgiver_, I met _qgiver_.
- %g asked me to rid _house_ in
- __house_ of monsters. %g needs
+ %G asked me to rid _house_ in
+ __house_ of monsters. %G needs
  them gone within a day.
 
 Message:  1011

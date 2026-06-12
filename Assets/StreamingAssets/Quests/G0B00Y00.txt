@@ -51,7 +51,7 @@ The traitor is apparently tougher than _qgiver_ thought. What an escape.
 The renegade has moved north I hear, but the memory still plagues the order.
 
 RumorsPostsuccess:  [1007]
-The traitor's story just proves it. You don't play around with the Kynaran Order.
+The traitor's story just proves it: you don't play around with the Kynaran Order.
 <--->
 I always thought the Order would be more merciful to that dolt.
 

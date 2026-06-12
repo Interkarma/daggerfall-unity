@@ -55,10 +55,10 @@ RumorsPostsuccess:  [1007]
 Did you hear about that war hero? Killed in a duel. What a shame.
 
 QuestorPostsuccess:  [1008]
-You battle with that war hero is still being told %pcn.
+Your battle with that war hero is still being told %pcn.
 
 QuestorPostfailure:  [1009]
-You failed in your contract to kill the war hero. The brotherhood never forgets failure.
+You failed in your contract to kill the war hero. The Brotherhood never forgets failure.
 
 Message:  1020
 %qdt:

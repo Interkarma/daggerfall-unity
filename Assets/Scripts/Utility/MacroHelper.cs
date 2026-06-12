@@ -34,6 +34,7 @@ namespace DaggerfallWorkshop.Utility
 
         public static System.Random random = new System.Random();
 
+        
         #region macro definitions and handler mappings
 
         static Dictionary<string, MacroHandler> macroHandlers = new Dictionary<string, MacroHandler>()
@@ -235,6 +236,13 @@ namespace DaggerfallWorkshop.Utility
             { "%pg2", PlayerPronoun2 }, // Him/Her (player)
             { "%pg2self", PlayerPronoun2self },// Himself/Herself (player)
             { "%pg3", PlayerPronoun3 },  // His/Her (player)
+            { "%pg4", PlayerPronoun4 },  // His/Hers (player)
+            { "%G", PronounCap }, // He/She, first letter capitalized
+            { "%G1", PronounCap }, // He/She, first letter capitalized
+            { "%G2", Pronoun2Cap }, // Him/Her, first letter capitalized
+            { "%G2self", Pronoun2selfCap }, // Himself/Herself, first letter capitalized
+            { "%G3", Pronoun3Cap }, // His/Her, first letter capitalized
+            { "%G4", Pronoun4Cap }, // His/Hers, first letter capitalized
             { "%hrn", HomeRegion },  // Home region (of person)
             { "%pcl", PlayerLastname }, // Character's last name
             { "%day", DayNum }, // Current day of the month (ex: 1, 2, ..., 30)
@@ -388,6 +396,12 @@ namespace DaggerfallWorkshop.Utility
                 default:
                     return TextManager.Instance.GetLocalizedText("Lord");
             }
+        }
+
+        private static string CapFirst(string tempString)
+        {
+            // Capitalizes first letter of a string, e.g. for capitalized pronoun macros
+            return tempString.Substring(0, 1).ToUpper() + tempString.Substring(1);
         }
 
         #endregion
@@ -866,7 +880,11 @@ namespace DaggerfallWorkshop.Utility
         }
         private static string PlayerPronoun3(IMacroContextProvider mcp)
         {   // %pg3
-            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? TextManager.Instance.GetLocalizedText("pronounHer") : TextManager.Instance.GetLocalizedText("pronounHis");
+            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? TextManager.Instance.GetLocalizedText("pronounHer2") : TextManager.Instance.GetLocalizedText("pronounHis");
+        }
+        private static string PlayerPronoun4(IMacroContextProvider mcp)
+        {   // %pg4
+            return (GameManager.Instance.PlayerEntity.Gender == Genders.Female) ? TextManager.Instance.GetLocalizedText("pronounHers") : TextManager.Instance.GetLocalizedText("pronounHis2");
         }
 
         private static string Honorific(IMacroContextProvider mcp)
@@ -1314,13 +1332,37 @@ namespace DaggerfallWorkshop.Utility
             if (mcp == null) return null;
             return mcp.GetMacroDataSource().Pronoun3();
         }
-
         public static string Pronoun4(IMacroContextProvider mcp)
         {   // %g4
             if (mcp == null) return null;
             return mcp.GetMacroDataSource().Pronoun4();
         }
-
+        public static string PronounCap(IMacroContextProvider mcp)
+        {   // %G & %G1
+            if (mcp == null) return null;
+            return CapFirst(mcp.GetMacroDataSource().Pronoun());
+        }
+        public static string Pronoun2Cap(IMacroContextProvider mcp)
+        {   // %G2
+            if (mcp == null) return null;
+            return CapFirst(mcp.GetMacroDataSource().Pronoun2());
+        }
+        public static string Pronoun2selfCap(IMacroContextProvider mcp)
+        {   // %G2self
+            if (mcp == null) return null;
+            return CapFirst(mcp.GetMacroDataSource().Pronoun2self());
+        }
+        public static string Pronoun3Cap(IMacroContextProvider mcp)
+        {   // %G3
+            if (mcp == null) return null;
+            return CapFirst(mcp.GetMacroDataSource().Pronoun3());
+        }
+        public static string Pronoun4Cap(IMacroContextProvider mcp)
+        {   // %G4
+            if (mcp == null) return null;
+            return CapFirst(mcp.GetMacroDataSource().Pronoun4());
+        }
+        
         public static string QuestDate(IMacroContextProvider mcp)
         {   // %qdt
             if (mcp == null) return null;

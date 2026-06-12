@@ -18,7 +18,7 @@ QuestorOffer:  [1000]
 <ce>                 you need to exercise your humility and
 <ce>                  take on an assignment with dangerous
 <ce>                   political connotations. We have a
-<ce>                  contract on a high ranking member of
+<ce>                  contract on a high-ranking member of
 <ce>                  the Mages Guild. Are you up for it?
 
 RefuseQuest:  [1001]

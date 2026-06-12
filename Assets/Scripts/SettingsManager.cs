@@ -79,6 +79,7 @@ namespace DaggerfallWorkshop
         const string sectionChildGuard = "ChildGuard";
         const string sectionGUI = "GUI";
         const string sectionSpells = "Spells";
+        const string sectionMeleeAttacks = "MeleeAttacks";
         const string sectionControls = "Controls";
         const string sectionMap = "Map";
         const string sectionStartup = "Startup";
@@ -272,6 +273,10 @@ namespace DaggerfallWorkshop
         // [Spells]
         public bool EnableSpellLighting { get; set; }
         public bool EnableSpellShadows { get; set; }
+
+        // [MeleeAttacks]
+        public int MeleeAttackDetection { get; set; }
+        public bool MeleeAttackFriendlyProtection { get; set; }
 
         // [Controls]
         public bool InvertMouseVertical { get; set; }
@@ -509,6 +514,9 @@ namespace DaggerfallWorkshop
             DisableEnemyDeathAlert = GetBool(sectionGUI, "DisableEnemyDeathAlert");
             HideLoginName = GetBool(sectionGUI, "HideLoginName");
 
+            MeleeAttackDetection = GetInt(sectionMeleeAttacks, "MeleeAttackDetection", 0, 1);
+            MeleeAttackFriendlyProtection = GetBool(sectionMeleeAttacks, "MeleeAttackFriendlyProtection");
+
             EnableSpellLighting = GetBool(sectionSpells, "EnableSpellLighting");
             EnableSpellShadows = GetBool(sectionSpells, "EnableSpellShadows");
 
@@ -706,6 +714,9 @@ namespace DaggerfallWorkshop
             SetInt(sectionGUI, "QuestRumorWeight", QuestRumorWeight);
             SetBool(sectionGUI, "DisableEnemyDeathAlert", DisableEnemyDeathAlert);
             SetBool(sectionGUI, "HideLoginName", HideLoginName);
+
+            SetInt(sectionMeleeAttacks, "MeleeAttackDetection", MeleeAttackDetection);
+            SetBool(sectionMeleeAttacks, "MeleeAttackFriendlyProtection", MeleeAttackFriendlyProtection);
 
             SetBool(sectionSpells, "EnableSpellLighting", EnableSpellLighting);
             SetBool(sectionSpells, "EnableSpellShadows", EnableSpellShadows);
