@@ -925,12 +925,13 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Add equivalence(s) if too few dungeons to select from
                 while (foundIndices.Length < DaggerfallUnity.Settings.DungeonsPoolSizeTarget)
                 {
+                    Debug.LogFormat("Dungeon candidates list too short ({}) for proper randomization", foundIndices.Length);
                     if (alternateDungeonTypeIndices != null && alternateDungeonTypeIndices.Length > equivalentIndex)
                     {
                         int[] equivalentIndices = CollectDungeonIndicesOfType(regionData, alternateDungeonTypeIndices[equivalentIndex]);
                         if (equivalentIndices != null && equivalentIndices.Length > 0)
                         {
-                            // Debug.LogFormat("Adding {0} possible dungeons of type {1} by equivalence", equivalentIndices.Length, alternateDungeonTypeIndices[equivalentIndex]);
+                            Debug.LogFormat("Adding {0} possible dungeons of type {1} by equivalence", equivalentIndices.Length, alternateDungeonTypeIndices[equivalentIndex]);
                             foundIndices = foundIndices.Concat(equivalentIndices).ToArray();
                         }
                         equivalentIndex++;
@@ -940,7 +941,12 @@ namespace DaggerfallWorkshop.Game.Questing
                         if (!listedSitesOnly)
                         {
                             // If everything failed, pick any dungeon (DFU classic behavior)
+                            Debug.LogFormat("Falling back to picking any dungeon (classic DFU behavior)");
                             foundIndices = CollectDungeonIndicesOfType(regionData, -1);
+                        }
+                        else
+                        {
+                            Debug.LogFormat("No dungeon types fallback, continuing with available pool");
                         }
                         break;
                     }
