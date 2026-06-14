@@ -5,7 +5,7 @@
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Lypyl (lypyl@dfworkshop.net)
 // Contributors:    TheLacus
-// 
+//
 // Notes:
 //
 
@@ -24,6 +24,7 @@ using UnityEngine.Localization.Settings;
 using DaggerfallWorkshop.Utility;
 using FullSerializer;
 using DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DaggerfallWorkshop.Game.Utility.ModSupport
 {
@@ -656,7 +657,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                             loadedAssets[assetName] = la;
                         }
 
-                        return la.Obj as T;
+                        if (la.Obj is T o) return o;
+                        return null;
                     }
 
                     loadedAssets.Remove(assetName);
@@ -673,14 +675,15 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                         la.TimeStamp = time;
                         loadedAssets.Add(assetName, la);
                     }
-                    return la.Obj as T;
+                    if (la.Obj is T o) return o;
+                    return null;
                 }
 #endif
 
                 if (AssetBundle == null)
                     loadedBundle = LoadAssetBundle();
 
-                if (AssetBundle.Contains(assetName))
+                if (AssetBundle != null && AssetBundle.Contains(assetName))
                 {
                     la.Obj = AssetBundle.LoadAsset<T>(assetName);
 
@@ -805,7 +808,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 this.fallback = fallback;
             }
 
-            internal bool TryGetValue(string key, out string value)
+            internal bool TryGetValue(string key, [NotNullWhen(true)] out string value)
             {
                 if (table == null)
                 {
@@ -876,7 +879,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
 
 
                 ModInfo modInfo = null;
-                if (ModManager._serializer.TryDeserialize(fsJsonParser.Parse(modInfoAsset.text), ref modInfo).Succeeded)
+                if (ModManager._serializer.TryDeserialize(fsJsonParser.Parse(modInfoAsset.text), ref modInfo).Succeeded && modInfo != null)
                 {
                     this.ModInfo = modInfo;
                     return true;
@@ -913,21 +916,27 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                     else if (assetName.EndsWith(".dll.bytes", StringComparison.Ordinal))
                     {
                         isSource = true;
-                        isPrecompiled = true;    
+                        isPrecompiled = true;
+                    }
+                    else if (assetName.EndsWith(".pdb.bytes", StringComparison.Ordinal))
+                    {
+                        continue;
                     }
 
                     if (isSource)
                     {
                         var newSource = GetAsset<TextAsset>(assetName);
+                        var pdbSource = GetAsset<TextAsset>(assetName.Replace(".dll.bytes", ".pdb.bytes"));
                         if (newSource)
                         {
                             sources.Add(new Source()
                             {
                                 sourceTxt = newSource,
+                                pdbTxt = pdbSource,
                                 isPreCompiled = isPrecompiled
                             });
                         }
-                    }  
+                    }
                 }
 
                 return true;
@@ -959,7 +968,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 {
                     if (sources[i].isPreCompiled)
                     {
-                        assembly = Assembly.Load(sources[i].sourceTxt.bytes);
+                        assembly = Assembly.Load(sources[i].sourceTxt.bytes, sources[i].pdbTxt?.bytes);
                         if (assembly != null)
                             assemblies.Add(assembly);
                     }
@@ -1009,9 +1018,10 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 }
                 else if (fileName.EndsWith(".dll.bytes", StringComparison.Ordinal))
                 {
-                    var textAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(fileName);
-                    if (textAsset)
-                        types.AddRange(Assembly.Load(textAsset.bytes).GetTypes());
+                    var assemblyAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(fileName);
+                    var pdbAsset = AssetDatabase.LoadAssetAtPath<TextAsset>(fileName.Replace(".dll.bytes", ".pdb.bytes"));
+                    if (assemblyAsset != null)
+                        types.AddRange(Assembly.Load(assemblyAsset.bytes, pdbAsset?.bytes).GetTypes());
                 }
             }
 
@@ -1035,7 +1045,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 foreach (Type type in types)
                     FindModLoaders(state, type, modLoaders);
                 modLoaders.Sort();
-                return modLoaders;           
+                return modLoaders;
             }
 #endif
             if (assemblies == null || assemblies.Count < 1)
@@ -1113,8 +1123,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                 return false;
             else
             {
-                if (la.T == typeof(GameObject) && AssetBundle.Contains(ImportedComponentAttribute.MakeFileName(assetName)))
-                    ImportedComponentAttribute.Restore(this, la.Obj as GameObject, assetName);
+                if (la.Obj is GameObject go && AssetBundle.Contains(ImportedComponentAttribute.MakeFileName(assetName)))
+                    ImportedComponentAttribute.Restore(this, go, assetName);
 
                 loadedAssets.Add(assetName, la);
 
@@ -1129,7 +1139,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
 
         /// <summary>
-        /// Unloads the asset bundle associated to this mod. Loaded assets can still be retrieved from cache, 
+        /// Unloads the asset bundle associated to this mod. Loaded assets can still be retrieved from cache,
         /// unless they are also unloaded.
         /// </summary>
         /// <param name="unloadAllObjects">Remove all loaded assets from memory.</param>

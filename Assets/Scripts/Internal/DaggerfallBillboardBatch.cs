@@ -5,7 +5,7 @@
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Andrzej Łukasik (andrew.r.lukasik)
-// 
+//
 // Notes:
 //
 
@@ -213,7 +213,7 @@ namespace DaggerfallWorkshop
                     {
                         atlasRects = new NativeArray<Rect>(cachedMaterial.atlasRects, Allocator.TempJob),
                         atlasIndices = new NativeArray<RecordIndex>(cachedMaterial.atlasIndices, Allocator.TempJob),
-                        billboards = billboardData,
+                        billboards = billboardData.AsArray(),
                         uv = meshUVs,
                     };
                     UvAnimationDependency = animateUVJob.Schedule(numBillboardsToAnimate, 128, Dependency);
@@ -243,7 +243,7 @@ namespace DaggerfallWorkshop
             meshAABB = new NativeArray<Bounds>(1, Allocator.Persistent);
 
             isUnmanagedMemoryAllocated = 1;
-            
+
             ___AllocateUnmanagedMemory.End();
         }
 
@@ -511,6 +511,7 @@ namespace DaggerfallWorkshop
                     billboardItems = billboardData.AsParallelWriter(),
                 };
                 Dependency = job.Schedule(arrayLength: numItemsToAdd, innerloopBatchCount: 128, dependsOn: JobHandle.CombineDependencies(Dependency, dependency));
+                Dependancy.Complete(); // make sure there are no unfinished jobs
                 ___schedule.End();
             }
 
@@ -549,7 +550,7 @@ namespace DaggerfallWorkshop
             ___AddItem.Begin();
 
             Dependency.Complete();// make sure there are no unfinished jobs
-            
+
             // make sure unmanaged memory is allocated
             if (isUnmanagedMemoryAllocated == 0) AllocateUnmanagedMemory();
 
@@ -587,7 +588,7 @@ namespace DaggerfallWorkshop
 
             // make sure unmanaged memory is allocated
             if (isUnmanagedMemoryAllocated == 0) AllocateUnmanagedMemory();
-            
+
             ___schedule.Begin();
             AddCustomItemsJob job = new AddCustomItemsJob
             {
@@ -742,7 +743,7 @@ namespace DaggerfallWorkshop
 
             JobHandle getCustomBatchDataJobHandle = new GetCustomMaterialBatchDataJob
             {
-                billboards = billboardData,
+                billboards = billboardData.AsArray(),
                 atlasRects = new NativeArray<Rect>(cachedMaterial.atlasRects, Allocator.TempJob),
                 atlasIndices = new NativeArray<RecordIndex>(cachedMaterial.atlasIndices, Allocator.TempJob),
                 origin = origins,
@@ -765,7 +766,7 @@ namespace DaggerfallWorkshop
 
             JobHandle uvJobHandle = new CustomRectUVJob
             {
-                billboards = billboardData,
+                billboards = billboardData.AsArray(),
                 uv = meshUVs,
             }.Schedule(numBillboards, 128, getCustomBatchDataJobHandle);
 
@@ -849,7 +850,7 @@ namespace DaggerfallWorkshop
 
             GetBatchDataJob getBatchDataJob = new GetBatchDataJob
             {
-                billboards = billboardData,
+                billboards = billboardData.AsArray(),
                 recordSize = new NativeArray<Vector2>(cachedMaterial.recordSizes, Allocator.TempJob).Reinterpret<float2>(),
                 recordScale = new NativeArray<Vector2>(cachedMaterial.recordScales, Allocator.TempJob).Reinterpret<float2>(),
                 atlasRects = new NativeArray<Rect>(cachedMaterial.atlasRects, Allocator.TempJob),
