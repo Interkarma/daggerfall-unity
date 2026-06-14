@@ -13,6 +13,7 @@ using UnityEngine;
 using DaggerfallConnect.Arena2;
 using DaggerfallConnect;
 using DaggerfallWorkshop.Utility.AssetInjection;
+using System.Collections.Generic;
 
 namespace DaggerfallWorkshop
 {
@@ -109,6 +110,7 @@ namespace DaggerfallWorkshop
             float maxTerrainHeight = DaggerfallUnity.Instance.TerrainSampler.MaxTerrainHeight;
             float beachLine = DaggerfallUnity.Instance.TerrainSampler.BeachElevation;
 
+            List<DaggerfallBillboardBatch.BasicInfo> basicItems = new List<DaggerfallBillboardBatch.BasicInfo>();
             for (int y = 0; y < tDim; y++)
             {
                 for (int x = 0; x < tDim; x++)
@@ -162,12 +164,22 @@ namespace DaggerfallWorkshop
                     // Add to batch unless a mesh replacement is found
                     int record = Random.Range(1, 32);
                     if (terrainDist > 1 || !MeshReplacement.ImportNatureGameObject(dfBillboardBatch.TextureArchive, record, terrain, x, y))
-                        dfBillboardBatch.AddItem(record, pos);
+                        //dfBillboardBatch.AddItem(record, pos);
+                    {
+                         basicItems.Add(new DaggerfallBillboardBatch.BasicInfo
+                        {
+                            textureRecord = record,
+                            localPosition = new Unity.Mathematics.float3(pos.x, pos.y, pos.z)
+                        });
+                    }
                     else if (!NatureMeshUsed)
                         NatureMeshUsed = true;  // Signal that nature mesh has been used to initiate extra terrain updates
                 }
             }
-
+            if (basicItems.Count > 0)
+            {
+                 dfBillboardBatch.AddItemsAsync(basicItems.ToArray()).Complete();
+            }
             // Apply new batch
             dfBillboardBatch.Apply();
         }

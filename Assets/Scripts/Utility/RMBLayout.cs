@@ -231,6 +231,7 @@ namespace DaggerfallWorkshop.Utility
             if (!dfUnity.IsReady)
                 return;
 
+            List<DaggerfallBillboardBatch.BasicInfo> basicItems = new List<DaggerfallBillboardBatch.BasicInfo>();
             for (int y = 0; y < 16; y++)
             {
                 for (int x = 0; x < 16; x++)
@@ -256,7 +257,12 @@ namespace DaggerfallWorkshop.Utility
                     // Add billboard to batch or standalone
                     if (billboardBatch != null)
                     {
-                        billboardBatch.AddItem(scenery.TextureRecord, billboardPosition);
+                        //billboardBatch.AddItem(scenery.TextureRecord, billboardPosition);
+                        basicItems.Add(new DaggerfallBillboardBatch.BasicInfo
+                        {
+                            textureRecord = scenery.TextureRecord,
+                            localPosition = new Unity.Mathematics.float3(billboardPosition.x, billboardPosition.y, billboardPosition.z)
+                        });						
                     }
                     else
                     {
@@ -265,6 +271,10 @@ namespace DaggerfallWorkshop.Utility
                         AlignBillboardToBase(go);
                     }
                 }
+            }
+            if (billboardBatch != null && basicItems.Count > 0)
+            {
+                billboardBatch.AddItemsAsync(basicItems.ToArray()).Complete();
             }
         }
 
@@ -285,6 +295,7 @@ namespace DaggerfallWorkshop.Utility
             if (!dfUnity.Option_ImportLightPrefabs || dfUnity.Option_CityLightPrefab == null)
                 return;
 
+            List<DaggerfallBillboardBatch.BasicInfo> basicItems = new List<DaggerfallBillboardBatch.BasicInfo>();
             // Iterate block flats for lights
             foreach (DFBlock.RmbBlockFlatObjectRecord obj in blockData.RmbBlock.MiscFlatObjectRecords)
             {
@@ -304,7 +315,12 @@ namespace DaggerfallWorkshop.Utility
                     // Add billboard to batch or standalone
                     if (billboardBatch != null)
                     {
-                        billboardBatch.AddItem(obj.TextureRecord, billboardPosition);
+                        //billboardBatch.AddItem(obj.TextureRecord, billboardPosition);
+                         basicItems.Add(new DaggerfallBillboardBatch.BasicInfo
+                        {
+                            textureRecord = obj.TextureRecord,
+                            localPosition = new Unity.Mathematics.float3(billboardPosition.x, billboardPosition.y, billboardPosition.z)
+                        });
                     }
                     else
                     {
@@ -316,6 +332,10 @@ namespace DaggerfallWorkshop.Utility
                     // Import light prefab
                     AddLight(dfUnity, obj, lightsParent);
                 }
+            }
+            if (billboardBatch != null && basicItems.Count > 0)
+            {
+                 billboardBatch.AddItemsAsync(basicItems.ToArray()).Complete();
             }
         }
 
