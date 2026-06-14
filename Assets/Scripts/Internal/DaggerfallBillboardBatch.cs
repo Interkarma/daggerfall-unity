@@ -511,7 +511,7 @@ namespace DaggerfallWorkshop
                     billboardItems = billboardData.AsParallelWriter(),
                 };
                 Dependency = job.Schedule(arrayLength: numItemsToAdd, innerloopBatchCount: 128, dependsOn: JobHandle.CombineDependencies(Dependency, dependency));
-                Dependancy.Complete(); // make sure there are no unfinished jobs
+                Dependency.Complete(); // make sure there are no unfinished jobs
                 ___schedule.End();
             }
 
