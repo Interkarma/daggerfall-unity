@@ -257,7 +257,6 @@ namespace DaggerfallWorkshop.Utility
                     // Add billboard to batch or standalone
                     if (billboardBatch != null)
                     {
-                        //billboardBatch.AddItem(scenery.TextureRecord, billboardPosition);
                         basicItems.Add(new DaggerfallBillboardBatch.BasicInfo
                         {
                             textureRecord = scenery.TextureRecord,
@@ -315,7 +314,6 @@ namespace DaggerfallWorkshop.Utility
                     // Add billboard to batch or standalone
                     if (billboardBatch != null)
                     {
-                        //billboardBatch.AddItem(obj.TextureRecord, billboardPosition);
                          basicItems.Add(new DaggerfallBillboardBatch.BasicInfo
                         {
                             textureRecord = obj.TextureRecord,
