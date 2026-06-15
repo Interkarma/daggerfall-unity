@@ -164,7 +164,6 @@ namespace DaggerfallWorkshop
                     // Add to batch unless a mesh replacement is found
                     int record = Random.Range(1, 32);
                     if (terrainDist > 1 || !MeshReplacement.ImportNatureGameObject(dfBillboardBatch.TextureArchive, record, terrain, x, y))
-                        //dfBillboardBatch.AddItem(record, pos);
                     {
                          basicItems.Add(new DaggerfallBillboardBatch.BasicInfo
                         {
