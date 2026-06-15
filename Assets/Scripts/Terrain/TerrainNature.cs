@@ -110,7 +110,7 @@ namespace DaggerfallWorkshop
             float maxTerrainHeight = DaggerfallUnity.Instance.TerrainSampler.MaxTerrainHeight;
             float beachLine = DaggerfallUnity.Instance.TerrainSampler.BeachElevation;
 
-            List<DaggerfallBillboardBatch.BasicInfo> basicItems = new List<DaggerfallBillboardBatch.BasicInfo>();
+            List<DaggerfallBillboardBatch.BasicInfo> basicItems = new List<DaggerfallBillboardBatch.BasicInfo>(tDim * tDim);
             for (int y = 0; y < tDim; y++)
             {
                 for (int x = 0; x < tDim; x++)
