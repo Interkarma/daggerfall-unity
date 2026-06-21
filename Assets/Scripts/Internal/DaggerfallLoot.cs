@@ -300,7 +300,7 @@ namespace DaggerfallWorkshop
             DaggerfallUnityItem item = null;
             Game.Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
 
-            if (buildingType < DFLocation.BuildingTypes.House5)
+            if (buildingType <= DFLocation.BuildingTypes.Town23)
             {
                 if (modelIndex >= 2)
                 {
