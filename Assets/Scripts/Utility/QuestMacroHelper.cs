@@ -168,6 +168,101 @@ namespace DaggerfallWorkshop.Utility
             }
         }
 
+        /// <summary>
+        /// Expands name macros found inside letter message tokens and returns signoff.
+        /// </summary>
+        /// <param name="parentQuest">Parent quest of message.</param>
+        /// <param name="tokens">Array of message tokens to expand macros inside of.</param>
+        public string ExpandLetterSignoff(Quest parentQuest, TextFile.Token[] tokens)
+        {
+            string signoff = "";
+            int lines = 0;
+            for (int t = tokens.Length - 1; t >= 0; t--)
+            {
+                string[] words = GetWords(tokens[t].text);
+
+                for (int w = 0; w < words.Length; w++)
+                {
+                    Macro macro = GetMacro(words[w]);
+
+                    switch (macro.type)
+                    {
+                        // Expand simple name and other macros
+                        case MacroTypes.NameMacro1:
+                        case MacroTypes.DetailsMacro:
+                        case MacroTypes.FactionMacro:
+                        case MacroTypes.ContextMacro:
+                        case MacroTypes.BindingMacro:
+                        {
+                            if (macro.type == MacroTypes.ContextMacro)
+                            {
+                                words[w] = words[w].Replace(macro.token, MacroHelper.GetValue(macro.token, parentQuest, parentQuest.ExternalMCP));
+                            }
+                            else
+                            {
+                                QuestResource resource = parentQuest.GetResource(macro.symbol);
+                                if (resource != null)
+                                {
+                                    string result;
+                                    if (resource.ExpandMacro(macro.type, out result))
+                                    {
+                                        words[w] = words[w].Replace(macro.token, result);
+                                    }
+
+                                    if (macro.type == MacroTypes.NameMacro1)
+                                    {
+                                        // reveal dialog linked resources in talk window
+                                        System.Type type = resource.GetType();
+                                        if (type.Equals(typeof(DaggerfallWorkshop.Game.Questing.Place)))
+                                        {
+                                                GameManager.Instance.TalkManager.AddDialogForQuestInfoResource(parentQuest.UID, macro.symbol, TalkManager.QuestInfoResourceType.Location);
+                                        }
+                                        else if (type.Equals(typeof(DaggerfallWorkshop.Game.Questing.Person)))
+                                        {
+                                                GameManager.Instance.TalkManager.AddDialogForQuestInfoResource(parentQuest.UID, macro.symbol, TalkManager.QuestInfoResourceType.Person);
+                                        }
+                                        else if (type.Equals(typeof(DaggerfallWorkshop.Game.Questing.Item)))
+                                        {
+                                                GameManager.Instance.TalkManager.AddDialogForQuestInfoResource(parentQuest.UID, macro.symbol, TalkManager.QuestInfoResourceType.Thing);
+                                        }
+                                    }
+                                }
+                            }
+
+                            break;
+                        }
+
+                        // Replace location name macros with "..."
+                        case MacroTypes.NameMacro2:
+                        case MacroTypes.NameMacro3:
+                        case MacroTypes.NameMacro4:
+                            words[w] = "...";
+                            break;
+                    }
+                }
+
+                // Reassemble words and expanded macros back into final token text
+                string final = string.Empty;
+                for (int i = 0; i < words.Length; i++)
+                {
+                    final += words[i];
+                    if (i != words.Length - 1)
+                        final += " ";
+                }
+
+                // Construct signoff
+                if (!string.IsNullOrEmpty(final))
+                {
+                    signoff = final.Trim() + " " + signoff;
+                    lines++;
+                }
+                if (lines >= 1)
+                    break;
+            }
+
+            return TextManager.Instance.GetLocalizedText("letterPrefix") + signoff;
+        }
+
         #endregion
 
         #region Private Methods
