@@ -5,7 +5,7 @@
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Nystul, Hazelnut, Numidium, Ferital
-// 
+//
 // Notes:
 //
 
@@ -346,7 +346,7 @@ namespace DaggerfallWorkshop
             PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
             DFLocation.BuildingTypes buildingType = playerEnterExit.BuildingType;
             if ((RMBLayout.IsShop(buildingType) && !playerEnterExit.IsPlayerInsideOpenShop) ||
-                (!RMBLayout.IsShop(buildingType) && buildingType <= DFLocation.BuildingTypes.Palace && buildingType != DFLocation.BuildingTypes.HouseForSale))
+                (!RMBLayout.IsShop(buildingType) && buildingType <= DFLocation.BuildingTypes.House4 && buildingType != DFLocation.BuildingTypes.HouseForSale))
             {
                 Transform npcTransforms = transform.Find(peopleFlats);
                 if (PlayerActivate.IsBuildingOpen(buildingType))
@@ -1202,21 +1202,20 @@ namespace DaggerfallWorkshop
                 StaticNPC npc = go.AddComponent<StaticNPC>();
                 npc.SetLayoutData(obj, entryDoor.buildingKey);
 
-                // Disable people if shop or building is closed
                 DFLocation.BuildingTypes buildingType = buildingData.buildingType;
-                if ((RMBLayout.IsShop(buildingType) && !GameManager.Instance.PlayerEnterExit.IsPlayerInsideOpenShop) ||
-                    (buildingType <= DFLocation.BuildingTypes.Palace && !RMBLayout.IsShop(buildingType) 
-                     && !(PlayerActivate.IsBuildingOpen(buildingType) || buildingType == DFLocation.BuildingTypes.GuildHall && guild.HallAccessAnytime())))
-                {
-                    go.SetActive(false);
-                }
+                bool isTGDBHouseMember = buildingData.buildingType == DFLocation.BuildingTypes.House2 && buildingData.factionID != 0 && isMemberOfBuildingGuild;
+
                 // Disable people if player owns this house
-                else if (DaggerfallBankManager.IsHouseOwned(buildingData.buildingKey))
+                if (DaggerfallBankManager.IsHouseOwned(buildingData.buildingKey))
                 {
                     go.SetActive(false);
                 }
-                // Disable people if this is TG/DB house and player is not a member
-                else if (buildingData.buildingType == DFLocation.BuildingTypes.House2 && buildingData.factionID != 0 && !isMemberOfBuildingGuild)
+                // Disable people if shop or building is closed (or this is TG/DB house and player is not a member)
+                else if ((RMBLayout.IsShop(buildingType) && !GameManager.Instance.PlayerEnterExit.IsPlayerInsideOpenShop) ||
+                         (!RMBLayout.IsShop(buildingType) && buildingType <= DFLocation.BuildingTypes.House4
+                            && !PlayerActivate.IsBuildingOpen(buildingType)
+                            && !(buildingType == DFLocation.BuildingTypes.GuildHall && guild.HallAccessAnytime())
+                            && !isTGDBHouseMember))
                 {
                     go.SetActive(false);
                 }
@@ -1264,7 +1263,7 @@ namespace DaggerfallWorkshop
                     {
                         boxCollider.center = meshRenderer.bounds.center;
                         boxCollider.size = meshRenderer.bounds.size;
-                    }  
+                    }
 
                     // Update climate
                     DaggerfallMesh dfMesh = go.GetComponent<DaggerfallMesh>();
