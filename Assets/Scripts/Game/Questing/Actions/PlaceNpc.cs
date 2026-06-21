@@ -4,8 +4,8 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
-// 
+// Contributors:
+//
 // Notes:
 //
 
@@ -123,6 +123,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
         {
             public Symbol npcSymbol;
             public Symbol placeSymbol;
+            public int marker;
         }
 
         public override object GetSaveData()
@@ -130,6 +131,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             SaveData_v1 data = new SaveData_v1();
             data.npcSymbol = npcSymbol;
             data.placeSymbol = placeSymbol;
+            data.marker = marker;
 
             return data;
         }
@@ -142,6 +144,7 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             SaveData_v1 data = (SaveData_v1)dataIn;
             npcSymbol = data.npcSymbol;
             placeSymbol = data.placeSymbol;
+            marker = data.marker;
         }
 
         #endregion
