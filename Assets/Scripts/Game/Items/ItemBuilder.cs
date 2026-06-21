@@ -387,7 +387,7 @@ namespace DaggerfallWorkshop.Game.Items
                 newItem = new DaggerfallUnityItem(ItemGroups.Weapons, groupIndex);
             else
                 newItem = CreateItem(ItemGroups.Weapons, customItemTemplates[groupIndex - enumArray.Length]);
- 
+
             // Random weapon material
             WeaponMaterialTypes material = FormulaHelper.RandomMaterial(playerLevel);
 
@@ -491,7 +491,11 @@ namespace DaggerfallWorkshop.Game.Items
 
             if (armor.nativeMaterialValue == (int)ArmorMaterialTypes.Leather)
             {
-                armor.weightInKg /= 2;
+                // Formula provided by Erisceres
+                // S_w = INT(B_w * 4)           scaled weight
+                // A_w = S_w / 2                adjusted weight
+                // F_w = Mathf.Round(A_w) / 4   final weight
+                armor.weightInKg = Mathf.Round((int)(armor.weightInKg * 4) / 2) / 4;
             }
             else if (armor.nativeMaterialValue == (int)ArmorMaterialTypes.Chain)
             {
