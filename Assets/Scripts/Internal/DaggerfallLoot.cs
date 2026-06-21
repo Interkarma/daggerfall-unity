@@ -278,6 +278,18 @@ namespace DaggerfallWorkshop
                                         ArmorMaterialTypes material = FormulaHelper.RandomArmorMaterial(playerEntity.Level);
                                         ItemBuilder.ApplyArmorSettings(item, playerEntity.Gender, playerEntity.Race, material);
                                     }
+                                    else if (itemGroup == ItemGroups.MensClothing)
+                                    {
+                                        item.dyeColor = ItemBuilder.RandomClothingDye();
+                                        ItemBuilder.SetRace(item, playerEntity.Race);
+                                        ItemBuilder.SetVariant(item, UnityEngine.Random.Range(0, item.TotalVariants));
+                                    }
+                                    else if (itemGroup == ItemGroups.WomensClothing)
+                                    {
+                                        item.dyeColor = ItemBuilder.RandomClothingDye();
+                                        ItemBuilder.SetRace(item, playerEntity.Race);
+                                        ItemBuilder.SetVariant(item, UnityEngine.Random.Range(0, item.TotalVariants));
+                                    }
 
                                     items.AddItem(item);
                                 }
