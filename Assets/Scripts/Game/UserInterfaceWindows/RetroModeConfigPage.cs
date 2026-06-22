@@ -41,6 +41,11 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 TextManager.Instance.GetLocalizedText("retroModeOff"),
                 TextManager.Instance.GetLocalizedText("retroMode320x200"),
                 TextManager.Instance.GetLocalizedText("retroMode640x400"),
+                "960x540 [16:9]", //Localization isn't really necessary here.
+                "960x600 [16:10]",
+                "1280x720 [16:9]",
+                "1280x800 [16:10]",
+                "1440x1080 [4:3]"
             };
             modeSlider = AddSlider(parent, TextManager.Instance.GetLocalizedText("mode"), modes.Length, ref pos);
             modeSlider.OnScroll += ModeSlider_OnScroll;
