@@ -268,7 +268,7 @@ Person _vamp_ factiontype Vampire_Clan local
 Person _mg_ faction The_Mages_Guild local
 Person _mage_ face 1 group Group_5.1 remote
 
-Place _mondung_ remote dungeon9
+Place _mondung_ remote dungeon9 only
 
 Clock _queston_ 00:00 0 flag 17 range 0 2
 Clock _2ndparton_ 00:10 00:30 flag 9 range 0 0
