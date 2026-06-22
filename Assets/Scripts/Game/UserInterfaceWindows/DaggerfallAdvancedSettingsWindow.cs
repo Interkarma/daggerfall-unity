@@ -140,6 +140,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HorizontalSlider dungeonAmbientLightScale;
         HorizontalSlider nightAmbientLightScale;
         HorizontalSlider playerTorchLightScale;
+        HorizontalSlider meleeAttackDetection;
+        Checkbox meleeAttackFriendlyProtection;
 
         // Video
         HorizontalSlider resolution;
@@ -270,6 +272,12 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             musicVolume = AddSlider(rightPanel, "musicVolume", 0, 100, DaggerfallUnity.Settings.MusicVolume * 100);
             musicVolume.DisplayUnits = 100;
             musicVolume.OnScroll += MusicVolume_OnScroll;
+
+            // Melee Attacks
+            AddSectionTitle(rightPanel, "meleeAttacks");
+            meleeAttackDetection = AddSlider(rightPanel, "meleeAttackDetection",
+                DaggerfallUnity.Settings.MeleeAttackDetection, TextManager.Instance.GetLocalizedTextList("meleeAttackDetectionModes", TextCollections.TextSettings));
+            meleeAttackFriendlyProtection = AddCheckbox(rightPanel, "meleeAttackFriendlyProtection", DaggerfallUnity.Settings.MeleeAttackFriendlyProtection);
 
             // Spells
             AddSectionTitle(rightPanel, "spells");
@@ -443,6 +451,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             DaggerfallUnity.Settings.EnableSpellLighting = spellLighting.IsChecked;
             DaggerfallUnity.Settings.EnableSpellShadows = spellShadows.IsChecked;
+
+            DaggerfallUnity.Settings.MeleeAttackDetection = meleeAttackDetection.ScrollIndex;
+            DaggerfallUnity.Settings.MeleeAttackFriendlyProtection = meleeAttackFriendlyProtection.IsChecked;
 
             /* GUI */
 

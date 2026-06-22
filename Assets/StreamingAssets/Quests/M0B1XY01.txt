@@ -20,7 +20,7 @@ QuestorOffer:  [1000]
 <ce>                      little hackin' 'n slashin'?
 
 RefuseQuest:  [1001]
-<ce>                      Too bad. Seemed pretty like
+<ce>                         Too bad. Seemed like
 <ce>                   a pretty damn generous deal to me.
 
 AcceptQuest:  [1002]
@@ -36,7 +36,7 @@ AcceptQuest:  [1002]
 <ce>                            get outta here.
 
 QuestFail:  [1003]
-<ce>                  Listen kid, I'm know I'm a charmer,
+<ce>                   Listen kid, I know I'm a charmer,
 <ce>                     but them harpies are waiting,
 <ce>                     and make sure to get all five
 <ce>                            of 'em, get it?

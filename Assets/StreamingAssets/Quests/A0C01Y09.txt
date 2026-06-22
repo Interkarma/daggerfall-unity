@@ -33,13 +33,13 @@ RefuseQuest:  [1001]
 AcceptQuest:  [1002]
 <ce>                    Excellent! You are a smart one.
 <ce>                    This is easy gold. Go to _store_
-<ce>                and find _merchant_. %g has the specific
+<ce>                and find _merchant_. %G has the specific
 <ce>                   _item_ I need. Remember, there is
 <ce>                   only a month 'til the celebration.
                                      <--->
 <ce>          Very good. This is easy gold. You'll have to go to
 <ce>                 _store_ to find the exact kind I need.
-<ce>                 Talk to _merchant_. %g runs the place.
+<ce>                 Talk to _merchant_. %G runs the place.
 
 
 QuestComplete:  [1004]

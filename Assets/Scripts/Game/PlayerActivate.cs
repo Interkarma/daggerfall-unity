@@ -5,7 +5,7 @@
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Allofich, Numidium, TheLacus
-// 
+//
 // Notes:
 //
 
@@ -26,6 +26,7 @@ using DaggerfallWorkshop.Utility.AssetInjection;
 using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
+using DaggerfallWorkshop.Localization;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -87,8 +88,8 @@ namespace DaggerfallWorkshop.Game
         public const float MobileNPCActivationDistance = 256 * MeshReader.GlobalScale;
 
         // Opening and closing hours by building type
-        public static byte[] openHours  = {  7,  8,  9,  8,  0,  9, 10, 10,  9,  6,  9, 11,  9,  9,  0,  0, 10, 0 };
-        public static byte[] closeHours = { 22, 16, 19, 15, 25, 21, 19, 20, 18, 23, 23, 23, 20, 20, 25, 25, 16, 0 };
+        public static byte[] openHours  = {  7,  8,  9,  8,  0,  9, 10, 10,  9,  6,  9, 11,  9,  9,  0,  0, 10, 0, 6, 6, 6, 6, 6, 6, 0 };
+        public static byte[] closeHours = { 22, 16, 19, 15, 25, 21, 19, 20, 18, 23, 23, 23, 20, 20, 25, 25, 16, 0, 18, 18 ,18, 18, 18, 18, 25 };
 
         const int PrivatePropertyId = 37;
 
@@ -468,7 +469,7 @@ namespace DaggerfallWorkshop.Game
                 if (GameManager.Instance.PlayerGPS.GetDiscoveredBuilding(building.buildingKey, out db))
                 {
                     // Check against quest system for an overriding quest-assigned display name for this building
-                    DaggerfallUI.AddHUDText(db.displayName);
+                    DaggerfallUI.AddHUDText(GrammarManager.grammarProcessor.ProcessGrammar(db.displayName));
 
                     if (!buildingUnlocked && buildingType < DFLocation.BuildingTypes.Temple
                         && buildingType != DFLocation.BuildingTypes.HouseForSale)
@@ -957,7 +958,7 @@ namespace DaggerfallWorkshop.Game
             }
             // Open inventory window with activated loot container as remote target (if we fall through to here)
             DaggerfallUI.Instance.InventoryWindow.LootTarget = loot;
-            DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
+            uiManager.PushWindow(DaggerfallUI.Instance.InventoryWindow);
         }
 
         void DisableEmptyCorpseContainer(GameObject go)
@@ -1039,7 +1040,7 @@ namespace DaggerfallWorkshop.Game
             if (openEffect == null)
                 return false;
 
-            return openEffect.TriggerExteriorOpenEffect(buildingLockValue); 
+            return openEffect.TriggerExteriorOpenEffect(buildingLockValue);
         }
 
         /// <summary>
@@ -1087,7 +1088,8 @@ namespace DaggerfallWorkshop.Game
             if (messageBoxButton == DaggerfallMessageBox.MessageBoxButtons.Yes)
             {
                 // Open inventory window with activated private container as remote target (pre-set)
-                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
+                UserInterfaceManager uiManager = DaggerfallUI.Instance.UserInterfaceManager;
+                uiManager.PushWindow(DaggerfallUI.Instance.InventoryWindow);
             }
             else
                 DaggerfallUI.Instance.InventoryWindow.LootTarget = null;
@@ -1284,10 +1286,9 @@ namespace DaggerfallWorkshop.Game
             // Handle House1 through House4
             // TODO: Figure out the rest of house door calculations.
             // TODO: Need to lock doors if quest target for stealing, and unlock for other quests.
-            else if (type >= DFLocation.BuildingTypes.House1 && type <= DFLocation.BuildingTypes.House4
-                && DaggerfallUnity.Instance.WorldTime.Now.IsDay)
+            else if (type >= DFLocation.BuildingTypes.House1 && type <= DFLocation.BuildingTypes.House4)
             {
-                unlocked = true;
+                unlocked = IsBuildingOpen(type);
             }
             // Handle stores
             else if (RMBLayout.IsShop(type))

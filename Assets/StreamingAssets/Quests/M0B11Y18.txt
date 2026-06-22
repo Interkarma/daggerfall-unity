@@ -26,7 +26,7 @@ AcceptQuest:  [1002]
 <ce>                blade and can keep a secret. Naturally,
 <ce>                    I thought of you. _target_ will
 <ce>              meet you at 10:00 tonight at _targethouse_.
-<ce>                %g will tell you more when you arrive.
+<ce>                %G will tell you more when you arrive.
 <ce>              I would come with you, but since I am known
 <ce>                as %g3 friend, I might lead %g3 enemies
 <ce>                 to %g2. Watch your back on this one.

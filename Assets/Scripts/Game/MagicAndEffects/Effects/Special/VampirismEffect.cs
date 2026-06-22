@@ -12,6 +12,7 @@
 using UnityEngine;
 using FullSerializer;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.Questing;
 using DaggerfallWorkshop.Game.Items;
@@ -169,14 +170,16 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
 
         public override bool GetCustomRaceGenderAttackSoundData(PlayerEntity entity, out SoundClips soundClipOut)
         {
+            const int chanceOfBarkSound = 20;
+
             switch (entity.Gender)
             {
                 default:
                 case Genders.Male:
-                    soundClipOut = SoundClips.EnemyVampireAttack;
+                    soundClipOut = Dice100.SuccessRoll(chanceOfBarkSound) ? SoundClips.EnemyVampireBark : SoundClips.EnemyVampireAttack;
                     break;
                 case Genders.Female:
-                    soundClipOut = SoundClips.EnemyFemaleVampireAttack;
+                    soundClipOut = Dice100.SuccessRoll(chanceOfBarkSound) ? SoundClips.EnemyFemaleVampireBark : SoundClips.EnemyFemaleVampireAttack;
                     break;
             }
 

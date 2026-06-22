@@ -97,7 +97,7 @@ Sheogorath is the Mad One, the Daedra who revels in chaos and lunacy.
 Message:  1013
 _artifact_ is an ancient artifact with wildly random magical effects.
 <--->
-_artifact_ can transform its targets into other other creatures.
+_artifact_ can transform its targets into other creatures.
 
 Message:  1014
 _qgfriend_ is one of the Daedra Prince Sheogorath's most loyal servants.

@@ -11,8 +11,8 @@ DisplayName: The Rite of Atonement
 QRC:
 
 QuestorOffer:  [1000]
-<ce>                 They tell me that you quite loyal to
-<ce>                 the temple. I need you perform a vital
+<ce>                They tell me that you are quite loyal to
+<ce>                 the temple. I need you to perform a vital
 <ce>                   task for us. %god has become angry
 <ce>                 with us. You need not concern yourself
 <ce>                  with why. Our only hope is to hold a
@@ -66,7 +66,7 @@ QuestLogEntry:  [1010]
 %qdt:
  _qgiver_ of __qgiver_,
  in ___qgiver_, told me that %g3 god was
- angered. %g needs untainted
+ angered. %G needs untainted
  _ingredient_ from ___dungeon_
  for a rite of atonement. It
  must be in _qgiver_'s

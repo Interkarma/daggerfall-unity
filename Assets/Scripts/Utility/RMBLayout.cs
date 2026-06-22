@@ -840,47 +840,58 @@ namespace DaggerfallWorkshop.Utility
 
                     // Get model data
                     ModelData modelData;
-                    dfUnity.MeshReader.GetModelData(obj.ModelIdNum, out modelData);
+                    bool hasModelData = dfUnity.MeshReader.GetModelData(obj.ModelIdNum, out modelData);
 
-                    // Does this model have doors?
+                    // Does this Daggerfall model have any static doors?
                     StaticDoor[] staticDoors = null;
                     if (modelData.Doors != null)
                         staticDoors = GameObjectHelper.GetStaticDoors(ref modelData, blockData.Index, recordCount, modelMatrix);
 
+                    // Import custom GameObject, or else use the Daggerfall model
+                    GameObject go;
+                    if (!(go = MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, parent, modelMatrix)))
+                    {
+                        if (!hasModelData) {
+                            Debug.LogError($"Could not load model '{obj.ModelIdNum}' in block '{blockData.Name}'");
+                            continue;
+                        } else if (combiner == null || IsCityGate(obj.ModelIdNum) || IsBulletinBoard(obj.ModelIdNum) || PlayerActivate.HasCustomActivation(obj.ModelIdNum)) {
+                            AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent);
+                        } else {
+                            combiner.Add(ref modelData, modelMatrix);
+                        }
+                    }
+
                     // Store building information for first model of record
                     // First model is main record structure, others are attachments like posts
                     // Only main structure is needed to resolve building after hit-test
-                    int buildingKey = 0;
                     if (firstModel)
                     {
-                        // Create building key for this record - considered experimental for now
-                        buildingKey = BuildingDirectory.MakeBuildingKey((byte)layoutX, (byte)layoutY, (byte)recordCount);
-
                         StaticBuilding staticBuilding = new StaticBuilding();
                         staticBuilding.modelMatrix = modelMatrix;
                         staticBuilding.recordIndex = recordCount;
-                        staticBuilding.centre = new Vector3(modelData.DFMesh.Centre.X, modelData.DFMesh.Centre.Y, modelData.DFMesh.Centre.Z) * MeshReader.GlobalScale;
-                        staticBuilding.size = new Vector3(modelData.DFMesh.Size.X, modelData.DFMesh.Size.Y, modelData.DFMesh.Size.Z) * MeshReader.GlobalScale;
+                        if (go == null || modelData.Indices != null) {
+                            staticBuilding.size = new Vector3(modelData.DFMesh.Size.X, modelData.DFMesh.Size.Y, modelData.DFMesh.Size.Z) * MeshReader.GlobalScale;
+                            staticBuilding.centre = new Vector3(0, modelData.DFMesh.Size.Y / 2, 0) * MeshReader.GlobalScale; // All DF meshes are already centred on X & Z, moved this assumption to here from DaggerfallStaticBuildings.hasHit()
+                        } else {
+                            Renderer goRenderer = go.GetComponent<Renderer>();
+                            staticBuilding.centre = new Vector3(goRenderer.bounds.center.x, goRenderer.bounds.center.y, goRenderer.bounds.center.z) - go.transform.position;
+                            staticBuilding.size = new Vector3(goRenderer.bounds.size.x, goRenderer.bounds.size.y, goRenderer.bounds.size.z);
+                        }
                         buildingsOut.Add(staticBuilding);
                         firstModel = false;
                     }
 
-                    bool dontCreateStaticDoors = false;
-
-                    // Import custom GameObject or use Daggerfall Model
-                    GameObject go;
-                    if (go = MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, parent, modelMatrix))
+                    // For a custom model, create building key for this record and initialise any custom doors
+                    bool disableClassicDoors = false;
+                    if (go != null)
                     {
-                        // Find doors
-                        if (staticDoors != null && staticDoors.Length > 0)
-                            CustomDoor.InitDoors(go, staticDoors, buildingKey, out dontCreateStaticDoors);
+                        int buildingKey = BuildingDirectory.MakeBuildingKey((byte)layoutX, (byte)layoutY, (byte)recordCount);
+                        List<StaticDoor> customStaticDoors = CustomDoor.InitDoors(go, staticDoors, buildingKey, blockData.Index, recordCount, modelMatrix, out disableClassicDoors);
+                        doorsOut.AddRange(customStaticDoors);
                     }
-                    else if (combiner == null || IsCityGate(obj.ModelIdNum) || IsBulletinBoard(obj.ModelIdNum) || PlayerActivate.HasCustomActivation(obj.ModelIdNum))
-                        AddStandaloneModel(dfUnity, ref modelData, modelMatrix, parent);
-                    else
-                        combiner.Add(ref modelData, modelMatrix);
 
-                    if (modelData.Doors != null && !dontCreateStaticDoors)
+                    // Add any DF model static doors unless suppressed
+                    if (modelData.Doors != null && !disableClassicDoors)
                         doorsOut.AddRange(staticDoors);
                 }
 

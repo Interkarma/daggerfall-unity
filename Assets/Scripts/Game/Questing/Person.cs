@@ -20,6 +20,8 @@ using DaggerfallWorkshop.Game.Utility;
 using DaggerfallConnect.Arena2;
 using FullSerializer;
 using DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects;
+using DaggerfallWorkshop.Game.Guilds;
+using DaggerfallWorkshop.Localization;
 
 namespace DaggerfallWorkshop.Game.Questing
 {
@@ -228,7 +230,7 @@ namespace DaggerfallWorkshop.Game.Questing
                     if (careerAllianceGroup.Success)
                         careerAllianceName = careerAllianceGroup.Value;
 
-                    // Gender
+                    // GenderNums
                     Group genderGroup = option.Groups["gender"];
                     if (genderGroup.Success)
                         genderName = genderGroup.Value;
@@ -291,6 +293,9 @@ namespace DaggerfallWorkshop.Game.Questing
             // Store this person in quest as last Person encountered
             // This will be used for subsequent pronoun macros, etc.
             ParentQuest.LastResourceReferenced = this;
+
+            // Send the person's gender to the grammar processor
+            GrammarManager.grammarProcessor.SetNPCGenderGetter(() => ParentQuest.LastResourceReferenced?.Gender ?? Genders.Male);
 
             Place dialogPlace = GetDialogPlace();
             if (dialogPlace != null)
@@ -980,9 +985,10 @@ namespace DaggerfallWorkshop.Game.Questing
                     return GetRandomFactionOfType(factionType);
 
                 // Type 10 Knightly_Guard does not exist in FACTION.TXT but IS used in some quests
-                // Redirecting this to "Generic Knightly Order" #844 to ensure NPC is created
+                // Redirecting this to a random knightly order to ensure NPC is created and faction is properly resolved
                 case FactionFile.FactionTypes.KnightlyGuard:
-                    return 844;
+                    var knightlyOrderIds = (int[])Enum.GetValues(typeof(KnightlyOrder.Orders));
+                    return knightlyOrderIds[UnityEngine.Random.Range(0, knightlyOrderIds.Length)];
 
                 // Type 11 Magic_User does not exist in FACTION.TXT and is not used in any quests
                 // Redirecting this to "Mages Guild" #40 to ensure NPC is created

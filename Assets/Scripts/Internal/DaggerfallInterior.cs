@@ -5,7 +5,7 @@
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Nystul, Hazelnut, Numidium, Ferital
-// 
+//
 // Notes:
 //
 
@@ -346,7 +346,7 @@ namespace DaggerfallWorkshop
             PlayerEnterExit playerEnterExit = GameManager.Instance.PlayerEnterExit;
             DFLocation.BuildingTypes buildingType = playerEnterExit.BuildingType;
             if ((RMBLayout.IsShop(buildingType) && !playerEnterExit.IsPlayerInsideOpenShop) ||
-                (!RMBLayout.IsShop(buildingType) && buildingType <= DFLocation.BuildingTypes.Palace && buildingType != DFLocation.BuildingTypes.HouseForSale))
+                (!RMBLayout.IsShop(buildingType) && buildingType <= DFLocation.BuildingTypes.House4 && buildingType != DFLocation.BuildingTypes.HouseForSale))
             {
                 Transform npcTransforms = transform.Find(peopleFlats);
                 if (PlayerActivate.IsBuildingOpen(buildingType))
@@ -444,9 +444,11 @@ namespace DaggerfallWorkshop
                 Vector3 modelScale = RMBLayout.GetModelScaleVector(obj);
                 Matrix4x4 modelMatrix = Matrix4x4.TRS(modelPosition, Quaternion.Euler(modelRotation), modelScale);
 
-                // Does this model have doors?
+                // Does this Daggerfall model have any static doors?
+                bool disableClassicDoors = false;
+                StaticDoor[] staticDoors = null;
                 if (modelData.Doors != null)
-                    doors.AddRange(GameObjectHelper.GetStaticDoors(ref modelData, entryDoor.blockIndex, entryDoor.recordIndex, modelMatrix));
+                    staticDoors = GameObjectHelper.GetStaticDoors(ref modelData, entryDoor.blockIndex, entryDoor.recordIndex, modelMatrix);
 
                 // Inject custom GameObject if available
                 GameObject modelGO = MeshReplacement.ImportCustomGameobject(obj.ModelIdNum, node.transform, modelMatrix);
@@ -471,6 +473,17 @@ namespace DaggerfallWorkshop
                         dfMesh.SetClimate(climateBase, climateSeason, WindowStyle.Disabled);
                     }
                 }
+                else
+                {
+                    // For a custom model initialise any custom doors
+                    List<StaticDoor> customStaticDoors = CustomDoor.InitDoorsInterior(modelGO, staticDoors, entryDoor.blockIndex, entryDoor.recordIndex, modelMatrix, out disableClassicDoors);
+                    doors.AddRange(customStaticDoors);
+                }
+
+                // Add any DF model static doors unless suppressed
+                if (modelData.Doors != null && !disableClassicDoors)
+                    doors.AddRange(staticDoors);
+
 
                 if ((modelGO != null) && (isAutomapRun))
                     modelGO.AddComponent<AutomapModel>();
@@ -516,16 +529,246 @@ namespace DaggerfallWorkshop
         /// <returns>True if model should be filtered out from this specific interior.</returns>
         bool IsBadInteriorModel(uint modelID)
         {
-            // RESIBM01.RMB (Index 601), BuildingRecord 7
-            if (EntryDoor.blockIndex == 601 && EntryDoor.recordIndex == 7)
+            // ARMRGL01.RMB (Index 51), BuildingRecord 1
+            if (EntryDoor.blockIndex == 51 && EntryDoor.recordIndex == 1)
             {
                 // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
                 if (modelID == 31000)
                     return true;
             }
 
-            // CUSTAA02.RMB (Index 697), BuildingRecord 1
-            if (EntryDoor.blockIndex == 697 && EntryDoor.recordIndex == 1)
+            // GENRGM00.RMB (Index 84), BuildingRecord 8, 9, 10, 11
+            if (EntryDoor.blockIndex == 84 && (EntryDoor.recordIndex == 8 ||
+                                               EntryDoor.recordIndex == 9 ||
+                                               EntryDoor.recordIndex == 10 ||
+                                               EntryDoor.recordIndex == 11))
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
+            // GENRGL01.RMB (Index 88), BuildingRecord 2, 3, 4
+            if (EntryDoor.blockIndex == 88 && (EntryDoor.recordIndex == 2 ||
+                                               EntryDoor.recordIndex == 3 ||
+                                               EntryDoor.recordIndex == 4))
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
+            // TVRNGL04.RMB (Index 96), BuildingRecord 2, 5, 6
+            if (EntryDoor.blockIndex == 96 && (EntryDoor.recordIndex == 2 ||
+                                               EntryDoor.recordIndex == 5 ||
+                                               EntryDoor.recordIndex == 6))
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
+            // FIGHGL00.RMB (Index 106), BuildingRecord 1
+            if (EntryDoor.blockIndex == 106 && EntryDoor.recordIndex == 1)
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
+            // RESIGL00.RMB (Index 154), BuildingRecord 0, 1, 2
+            if (EntryDoor.blockIndex == 154 && (EntryDoor.recordIndex == 0 ||
+                                                EntryDoor.recordIndex == 1 ||
+                                                EntryDoor.recordIndex == 2))
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
+            // RESIGL04.RMB (Index 155), BuildingRecord 0, 1, 2, 3
+            if (EntryDoor.blockIndex == 155 && (EntryDoor.recordIndex == 0 ||
+                                                EntryDoor.recordIndex == 1 ||
+                                                EntryDoor.recordIndex == 2 ||
+                                                EntryDoor.recordIndex == 3))
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
+            // RESIGL03.RMB (Index 156), BuildingRecord 0, 1
+            if (EntryDoor.blockIndex == 156 && (EntryDoor.recordIndex == 0 ||
+                                                EntryDoor.recordIndex == 1))
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
+            // RESIGM01.RMB (Index 158), BuildingRecord 6, 7
+            if (EntryDoor.blockIndex == 158 && (EntryDoor.recordIndex == 6 ||
+                                                EntryDoor.recordIndex == 7))
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+            // RENRGS00.RMB (Index 159), BuildingRecord 0
+            if (EntryDoor.blockIndex == 159 && EntryDoor.recordIndex == 0)
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
+            // TVRNGL02.RMB (Index 169), BuildingRecord 5, 8
+            if (EntryDoor.blockIndex == 169 && (EntryDoor.recordIndex == 5 ||
+                                                EntryDoor.recordIndex == 8))
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+            // GENRBM00.RMB (Index 388), BuildingRecord 2, 3, 4, 5
+            if (EntryDoor.blockIndex == 388 && (EntryDoor.recordIndex == 2 ||
+                                                EntryDoor.recordIndex == 3 ||
+                                                EntryDoor.recordIndex == 4 ||
+                                                EntryDoor.recordIndex == 5))
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
+            // LIBRBL00.RMB (Index 502), BuildingRecord 2
+            if (EntryDoor.blockIndex == 502 && EntryDoor.recordIndex == 2)
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+            // CUSTGA07.RMB (Index 513), BuildingRecord 1, 2, 12
+            if (EntryDoor.blockIndex == 513 && (EntryDoor.recordIndex == 1 ||
+                                                EntryDoor.recordIndex == 2 ||
+                                                EntryDoor.recordIndex == 12))
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
+            // CUSTGA08.RMB (Index 514), BuildingRecord 0, 5, 6
+            if (EntryDoor.blockIndex == 514 && (EntryDoor.recordIndex == 0 ||
+                                                EntryDoor.recordIndex == 5 ||
+                                                EntryDoor.recordIndex == 6))
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
+            // CUSTGA10.RMB (Index 516), BuildingRecord 0
+            if (EntryDoor.blockIndex == 516 && EntryDoor.recordIndex == 0)
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
+            // CUSTGA11.RMB (Index 534), BuildingRecord 10
+            if (EntryDoor.blockIndex == 534 && EntryDoor.recordIndex == 10)
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
+            // CUSTGA13.RMB (Index 537), BuildingRecord 5
+            if (EntryDoor.blockIndex == 537 && EntryDoor.recordIndex == 5)
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
+            // CUSTGA34.RMB (Index 538), BuildingRecord 12
+            if (EntryDoor.blockIndex == 538 && EntryDoor.recordIndex == 12)
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
+            // CUSTGA32.RMB (Index 574), BuildingRecord 10, 12
+            if (EntryDoor.blockIndex == 574 && (EntryDoor.recordIndex == 10 ||
+                                                EntryDoor.recordIndex == 12))
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
+            // CUSTGA29.RMB (Index 575), BuildingRecord 12, 13
+            if (EntryDoor.blockIndex == 575 && (EntryDoor.recordIndex == 12 ||
+                                                EntryDoor.recordIndex == 13))
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
+            // RESIBL02.RMB (Index 597), BuildingRecord 7, 8
+            if (EntryDoor.blockIndex == 597 && (EntryDoor.recordIndex == 7 ||
+                                                EntryDoor.recordIndex == 8))
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
+            // RESIBM01.RMB (Index 601), BuildingRecord 6, 7
+            if (EntryDoor.blockIndex == 601 && (EntryDoor.recordIndex == 6 ||
+                                                EntryDoor.recordIndex == 7))
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
+            // RESIGL02.RMB (Index 680), BuildingRecord 7, 8
+            if (EntryDoor.blockIndex == 680 && (EntryDoor.recordIndex == 7 ||
+                                                EntryDoor.recordIndex == 8))
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
+            // CUSTAA02.RMB (Index 697), BuildingRecord 0, 1, 2, 3
+            if (EntryDoor.blockIndex == 697 && (EntryDoor.recordIndex == 0 ||
+                                                EntryDoor.recordIndex == 1 ||
+                                                EntryDoor.recordIndex == 2 ||
+                                                EntryDoor.recordIndex == 3))
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
+            // ARMRBL01.RMB (Index 1195), BuildingRecord 1
+            if (EntryDoor.blockIndex == 1195 && EntryDoor.recordIndex == 1)
+            {
+                // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
+                if (modelID == 31000)
+                    return true;
+            }
+
+            // CUSTGA05.RMB (Index 1278), BuildingRecord 1, 2, 3, 4
+            if (EntryDoor.blockIndex == 1278 && (EntryDoor.recordIndex == 1 ||
+                                                 EntryDoor.recordIndex == 2 ||
+                                                 EntryDoor.recordIndex == 3 ||
+                                                 EntryDoor.recordIndex == 4))
             {
                 // Bad placement of modelID 31000 overlapping stairs, trapping player upstairs
                 if (modelID == 31000)
@@ -959,21 +1202,20 @@ namespace DaggerfallWorkshop
                 StaticNPC npc = go.AddComponent<StaticNPC>();
                 npc.SetLayoutData(obj, entryDoor.buildingKey);
 
-                // Disable people if shop or building is closed
                 DFLocation.BuildingTypes buildingType = buildingData.buildingType;
-                if ((RMBLayout.IsShop(buildingType) && !GameManager.Instance.PlayerEnterExit.IsPlayerInsideOpenShop) ||
-                    (buildingType <= DFLocation.BuildingTypes.Palace && !RMBLayout.IsShop(buildingType) 
-                     && !(PlayerActivate.IsBuildingOpen(buildingType) || buildingType == DFLocation.BuildingTypes.GuildHall && guild.HallAccessAnytime())))
-                {
-                    go.SetActive(false);
-                }
+                bool isTGDBHouseMember = buildingData.buildingType == DFLocation.BuildingTypes.House2 && buildingData.factionID != 0 && isMemberOfBuildingGuild;
+
                 // Disable people if player owns this house
-                else if (DaggerfallBankManager.IsHouseOwned(buildingData.buildingKey))
+                if (DaggerfallBankManager.IsHouseOwned(buildingData.buildingKey))
                 {
                     go.SetActive(false);
                 }
-                // Disable people if this is TG/DB house and player is not a member
-                else if (buildingData.buildingType == DFLocation.BuildingTypes.House2 && buildingData.factionID != 0 && !isMemberOfBuildingGuild)
+                // Disable people if shop or building is closed (or this is TG/DB house and player is not a member)
+                else if ((RMBLayout.IsShop(buildingType) && !GameManager.Instance.PlayerEnterExit.IsPlayerInsideOpenShop) ||
+                         (!RMBLayout.IsShop(buildingType) && buildingType <= DFLocation.BuildingTypes.House4
+                            && !PlayerActivate.IsBuildingOpen(buildingType)
+                            && !(buildingType == DFLocation.BuildingTypes.GuildHall && guild.HallAccessAnytime())
+                            && !isTGDBHouseMember))
                 {
                     go.SetActive(false);
                 }
@@ -1021,7 +1263,7 @@ namespace DaggerfallWorkshop
                     {
                         boxCollider.center = meshRenderer.bounds.center;
                         boxCollider.size = meshRenderer.bounds.size;
-                    }  
+                    }
 
                     // Update climate
                     DaggerfallMesh dfMesh = go.GetComponent<DaggerfallMesh>();

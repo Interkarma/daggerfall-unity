@@ -27,7 +27,7 @@ My dear %pcf,
     I am looking forward to making your acquaintance
  less formally, %pcf. Do not fail to come.
  
-<ce>                               In death,
+<ce>                               In Death,
 <ce>                           _vampire_ of %vam
 
 RefuseQuest:  [1001]

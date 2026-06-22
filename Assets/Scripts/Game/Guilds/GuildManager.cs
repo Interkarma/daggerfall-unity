@@ -178,7 +178,10 @@ namespace DaggerfallWorkshop.Game.Guilds
                         return (IGuild)Activator.CreateInstance(guildType, new object[] { KnightlyOrder.GetOrder(variant) });
 
                     default:
-                        return (IGuild)Activator.CreateInstance(guildType);
+                        if (guildType.GetConstructor(new Type[] { typeof(int) }) != null)
+                            return (IGuild)Activator.CreateInstance(guildType, new object[] { variant });
+                        else
+                            return (IGuild)Activator.CreateInstance(guildType);
                 }
             }
             else

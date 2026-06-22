@@ -373,6 +373,13 @@
     margin: 5px;
 }
 
+.wde-icon {
+    background-image: resource("Assets/Game/Addons/RmbBlockEditor/Editor/Assets/wde.png");
+    width: 20px;
+    height: 20px;
+    margin: 5px;
+}
+
 .file-search-icon {
     background-image: resource("Assets/Game/Addons/RmbBlockEditor/Editor/Assets/file-search.png");
     width: 20px;

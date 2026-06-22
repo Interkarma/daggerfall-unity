@@ -42,11 +42,11 @@ QuestFail:  [1003]
 <ce>                     We have not time for chatter.
 
 QuestComplete:  [1004]
-<ce>                  Quick sister, take this %ra's load.
+<ce>                  Quick, sister, take this %ra's load.
 <ce>                           Mince the _item1_,
 <ce>                         peel the _item2_, and
 <ce>                          grind the _item3_ to
-<ce>                  bits. Here we have three glittering
+<ce>                  bits. Here, we have three glittering
 <ce>                 baubles we have no use for. Take them,
 <ce>                   %pcn, as our way of thanking thee.
 
@@ -56,7 +56,7 @@ The weather has been predictable lately. The Witches must be sleeping.
 One of those witches tried to come to town on business, but we chased her out.
 
 RumorsPostfailure:  [1006]
-Remember when the witches cursed our %t. Guess they're losing their spark.
+Remember when the witches cursed our %t? Guess they're losing their spark.
 <--->
 It's said that the ==qgiver_ are losing their skills.
 

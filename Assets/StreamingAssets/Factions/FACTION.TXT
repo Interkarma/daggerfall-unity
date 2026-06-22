@@ -4830,7 +4830,7 @@ vam: 154
 	race: 2
 	flat: 183 3
 	flat: 183 9
-	sgroup: 2
+	sgroup: 3
 	ggroup: 15
 	flags: 0
 	minf: 20

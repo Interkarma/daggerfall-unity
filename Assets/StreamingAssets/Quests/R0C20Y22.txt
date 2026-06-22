@@ -78,7 +78,7 @@ QuestLogEntry:  [1010]
  _questgiver_ has hired me
  to deliver a _item_ to someone
  in ___contact_ named _contact_.
- %g will meet me at __contact_
+ %G will meet me at __contact_
  in =queston_ days to reward me if I have not
  already been minced by the orcs who are also
  after the _item_.
@@ -92,7 +92,7 @@ Message:  1013
 _orsinium_ is well-known in ___orsinium_ as an orc sympathizer.
 <--->
 <ce>I know for a fact that _orsinium_ is a filthy orc-lover.  I've seen %g2
-<ce> myself, meeting with the brutes outside of ___orsinium_.  %g should be run out
+<ce> myself, meeting with the brutes outside of ___orsinium_.  %G should be run out
 <ce>                        of town, if you ask me.
 
 Message:  1015

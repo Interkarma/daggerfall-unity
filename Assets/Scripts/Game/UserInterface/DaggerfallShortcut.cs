@@ -47,6 +47,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
             MainMenuStart,
             MainMenuExit,
 
+            // Class Creation Menu
+            ResetBonusPool,
+
             // Options menu
             OptionsExit,
             OptionsContinue,

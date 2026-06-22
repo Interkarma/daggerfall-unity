@@ -4,24 +4,22 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Lypyl (lypyldf@gmail.com), Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
-// 
+// Contributors:    Hazelnut
+//
 // Notes:
 //
 
 using System;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.Serialization;
 using DaggerfallConnect.Arena2;
-using DaggerfallConnect.FallExe;
 using FullSerializer;
 using DaggerfallWorkshop.Game.Guilds;
 
 /*Example patterns:
- * 
+ *
  * Item _gold_ gold
  * Item _gold1_ gold range 5 to 25
  * Item talisman talisman
@@ -31,6 +29,7 @@ using DaggerfallWorkshop.Game.Guilds;
  * Item _artifact_ artifact Ring_of_Khajiit anyInfo 1014
  * Item _I.06_ item class 17 subclass 13
  * Item _I.06_ item class 17 subclass -1
+ * Item _modItem1_ item class 0 template 538
  */
 
 namespace DaggerfallWorkshop.Game.Questing
@@ -145,6 +144,7 @@ namespace DaggerfallWorkshop.Game.Questing
             base.SetResource(line);
 
             string declMatchStr = @"(Item|item) (?<symbol>[a-zA-Z0-9_.-]+) item class (?<itemClass>\d+) subclass (?<itemSubClass>\d+)|"+
+                                  @"(Item|item) (?<symbol>[a-zA-Z0-9_.-]+) item class (?<itemClass>\d+) template (?<itemTemplate>\d+)|" +
                                   @"(Item|item) (?<symbol>[a-zA-Z0-9_.-]+) (?<artifact>artifact) (?<itemName>[a-zA-Z0-9_.-]+)|"+
                                   @"(Item|item) (?<symbol>[a-zA-Z0-9_.-]+) (?<itemName>[a-zA-Z0-9_.-]+) key (?<itemKey>\d+)|"+
                                   @"(Item|item) (?<symbol>[a-zA-Z0-9_.-]+) (?<itemName>[a-zA-Z0-9_.-]+)";
@@ -156,6 +156,7 @@ namespace DaggerfallWorkshop.Game.Questing
             int itemKey = -1;
             int itemClass = -1;
             int itemSubClass = -1;
+            int itemTemplate = -1;
             bool isGold = false;
             int rangeLow = -1;
             int rangeHigh = -1;
@@ -175,8 +176,13 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 // Item subclass value
                 Group itemSubClassGroup = match.Groups["itemSubClass"];
-                if (itemClassGroup.Success)
+                if (itemSubClassGroup.Success)
                     itemSubClass = Parser.ParseInt(itemSubClassGroup.Value);
+
+                // Item template value
+                Group itemTemplateGroup = match.Groups["itemTemplate"];
+                if (itemTemplateGroup.Success)
+                    itemTemplate = Parser.ParseInt(itemTemplateGroup.Value);
 
                 // Artifact status
                 if (!string.IsNullOrEmpty(match.Groups["artifact"].Value))
@@ -211,11 +217,13 @@ namespace DaggerfallWorkshop.Game.Questing
 
                 // Create item
                 if (itemClass != -1 && itemSubClass != -1 && !isGold)
-                    item = CreateItem(itemClass, itemSubClass);         // Create item by class and subclass (a.k.a ItemGroup and GroupIndex)
+                    item = CreateItem(itemClass, itemSubClass);                         // Create item by class and subclass (a.k.a ItemGroup and GroupIndex)
+                else if (itemClass != -1 && itemTemplate > 0 && !isGold)
+                    item = ItemBuilder.CreateItem((ItemGroups)itemClass, itemTemplate); // Create item by class and template index (used for modded items)
                 else if (!string.IsNullOrEmpty(itemName) && !isGold)
-                    item = CreateItem(itemName, itemKey);                        // Create by name of item in lookup table
+                    item = CreateItem(itemName, itemKey);                               // Create by name of item in lookup table
                 else if (isGold)
-                    item = CreateGold(rangeLow, rangeHigh);             // Create gold pieces of amount by level or range values
+                    item = CreateGold(rangeLow, rangeHigh);                             // Create gold pieces of amount by level or range values
                 else
                     throw new Exception(string.Format("Could not create Item from line {0}", line));
 
@@ -273,8 +281,19 @@ namespace DaggerfallWorkshop.Game.Questing
             madePermanent = true;
 
             // Set current DaggerfallUnityItem instance as permanent
-            if (DaggerfallUnityItem != null)
-                DaggerfallUnityItem.MakePermanent();
+            if (item != null)
+                item.MakePermanent();
+
+            // Make sure permanency is synced for items in player item collections
+            Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+            DaggerfallUnityItem[] items = playerEntity.Items.ExportQuestItems(ParentQuest.UID, Symbol);
+            if (items == null || items.Length == 0)
+                return;
+
+            foreach (DaggerfallUnityItem dfitem in items)
+            {
+                dfitem.MakePermanent();
+            }
         }
 
         #endregion
@@ -342,7 +361,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 // Create item
                 result = new DaggerfallUnityItem((ItemGroups)itemClass, itemSubClass);
             }
-            
+
             // Randomise clothing dye
             if (result.IsClothing)
                 result.dyeColor = ItemBuilder.RandomClothingDye();
@@ -360,7 +379,7 @@ namespace DaggerfallWorkshop.Game.Questing
                 Symbol.Original
             );
 
-             return result;
+            return result;
         }
 
         // Create stack of gold pieces

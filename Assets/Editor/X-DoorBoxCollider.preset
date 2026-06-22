@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!181963792 &2655988077585873504
+Preset:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: X-DoorBoxCollider
+  m_TargetType:
+    m_NativeTypeID: 65
+    m_ManagedTypePPtr: {fileID: 0}
+    m_ManagedTypeFallback: 
+  m_Properties:
+  - target: {fileID: 0}
+    propertyPath: m_Material
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_IsTrigger
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_Enabled
+    value: 1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_Size.x
+    value: 0.5
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_Size.y
+    value: 2.25
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_Size.z
+    value: 1.25
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_Center.x
+    value: -4.85
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_Center.y
+    value: 1.1
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: m_Center.z
+    value: 11.2
+    objectReference: {fileID: 0}

@@ -24,7 +24,7 @@ QuestorOffer:  [1000]
 <ce>                          Are you interested?
 
 RefuseQuest:  [1001]
-<ce>                     I should have known you weren't
+<ce>                    I should have known you were not
 <ce>                          serious about work.
 
 AcceptQuest:  [1002]
@@ -41,7 +41,7 @@ QuestComplete:  [1004]
 
 RumorsDuringQuest:  [1005]
 <ce>               Did you hear about the idiot that brought
-<ce>                home a giant spider's egg. Now he's got
+<ce>                home a giant spider's egg? Now he's got
 <ce>                an eight-legged pet that's trying to eat
 <ce>                            him for dinner!
 

@@ -25,7 +25,7 @@ AcceptQuest:  [1002]
 <ce>                  Here's the situation. Seems _dummy_
 <ce>                has this pet sabertooth tiger -- don't
 <ce>                 ask -- and it ran off a few days ago.
-<ce>                   %g had it tracked to ___mondung_,
+<ce>                   %G had it tracked to ___mondung_,
 <ce>                but now we need someone to go in there
 <ce>                  and bring it out. Alive. The trick
 <ce>                 is that it's been trained to respond
@@ -85,7 +85,7 @@ Message:  1020
  very well. I am to bring the tiger back
  to its owner, _dummy_, at __dummy_
  of ___dummy_ within =qtime_ days.
- %g'll pay me _gold_ gold.
+ %G'll pay me _gold_ gold.
 
 Message:  1021
 %qdt:
@@ -160,7 +160,7 @@ Message:  1061
 <ce>                   Yes, what do you want?  Oh...good
 <ce>                   gracious, a letter from _victim_!
 <ce>                     Why is it stained with blood?
-<ce>                    %g's dead?  Dear me. %g always
+<ce>                    %G's dead?  Dear me. %G always
 <ce>                    was so sweet to me, I'm afraid
 <ce>                   %g had the delusion that we were
 <ce>                   in love. Poor soul, what a tragic

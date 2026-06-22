@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Localization;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -212,6 +213,9 @@ namespace DaggerfallWorkshop.Game.UserInterface
         public TextLabel AddTextLabel(string text, DaggerfallFont font, Color color)
         {
             TextLabel textLabel = new TextLabel();
+
+            textLabel.Parent = this; //Establish parent early.
+
             textLabel.AutoSize = AutoSizeModes.None;
             textLabel.MinTextureDim = minTextureDimTextLabel;
             textLabel.Font = font;
@@ -223,8 +227,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Use max width if it has been specified
             if (maxTextWidth > 0)
                 textLabel.MaxWidth = maxTextWidth;
-            textLabel.Text = text;
-            textLabel.Parent = this;
+            textLabel.Text = GrammarManager.grammarProcessor.ProcessGrammar(text);
             textLabel.TextColor = color;
             textLabel.ShadowColor = ShadowColor;
             textLabel.ShadowPosition = ShadowPosition;

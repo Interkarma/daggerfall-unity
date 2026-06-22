@@ -580,6 +580,28 @@ namespace DaggerfallWorkshop.Game
                 return NPCKnowledgeAboutItem.KnowsAboutItem;
             }
 
+            // Fixed from classic: an NPC who is no aware of the location of a quest building
+            // where a quest person is located obviously can't know the person location
+            if (listItem.questionType == QuestionType.Person && currentKeySubjectBuildingKey != -1)
+            {
+                foreach (ListItem buildingGroupListItem in listTopicLocation)
+                {
+                    ListItem buildingListItem = buildingGroupListItem.listChildItems.Find(x => x.buildingKey == currentKeySubjectBuildingKey);
+                    if (buildingListItem != null)
+                    {
+                        // Set the NPC knowledge about the building if it has not been set yet
+                        if (buildingListItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.NotSet)
+                            buildingListItem.npcKnowledgeAboutItem = GetNPCKnowledgeAboutItem(buildingListItem);
+
+                        if (buildingListItem.npcKnowledgeAboutItem == NPCKnowledgeAboutItem.DoesNotKnowAboutItem)
+                            return NPCKnowledgeAboutItem.DoesNotKnowAboutItem;
+
+                        // Found the building, no need to continue
+                        break;
+                    }
+                }
+            }
+
             // Make roll result be the same every time for a given NPC
             if (currentNPCType == NPCType.Mobile)
                 DFRandom.Seed = (uint)lastTargetMobileNPC.GetHashCode();

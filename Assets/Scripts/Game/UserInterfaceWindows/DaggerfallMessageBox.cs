@@ -527,7 +527,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             float imagePanelHeight = 0;
             if (imagePanel != null && imagePanel.BackgroundTexture != null)
             {
-                imagePanelHeight = imagePanel.BackgroundTexture.height;
+                imagePanelHeight = imagePanel.Size.y;
                 finalSize.y += imagePanelHeight;
                 imagePanel.VerticalAlignment = VerticalAlignment.Top;
                 label.VerticalAlignment = VerticalAlignment.Bottom;

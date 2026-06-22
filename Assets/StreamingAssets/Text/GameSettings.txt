@@ -14,6 +14,7 @@ game,                                               Game
 controls,                                           Controls
 audio,                                              Audio
 spells,                                             Spells
+meleeAttacks,                                       Melee Attacks
 tooltips,                                           Tooltips
 hud,                                                HUD
 gui,                                                GUI
@@ -59,6 +60,10 @@ bowDrawback,                                        Bows - draw and release
 bowDrawbackInfo,                                    Enables bow drawback while holding RH mouse; release to fire
 toggleSneak,                                        Toggle Sneak
 toggleSneakInfo,                                    Allows the Sneak action to be toggled rather than held
+meleeAttackDetection,                               Hit Detection
+meleeAttackDetectionInfo,                           Complexity of melee attack targeting
+meleeAttackFriendlyProtection,                      Protect Friendlies and Neutrals
+meleeAttackFriendlyProtectionInfo,                  Prevents non-hostile entities from being unintentionally attacked
 
 toolTips,                                           Tool Tips
 toolTipsInfo,                                       Shows information about GUI items

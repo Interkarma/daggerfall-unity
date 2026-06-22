@@ -26,6 +26,8 @@ namespace DaggerfallWorkshop.AudioSynthesis.Synthesis
             // Get the correct instrument depending if it is a drum or not
             SynthParameters sChan = synthChannels[channel];
             Patch inst = bank.GetPatch(sChan.bankSelect, sChan.program);
+            if (inst == null && channel == MidiHelper.DrumChannel)
+                inst = bank.GetPatch(sChan.bankSelect, 0); // Attempt falling back to patch 0 for drums
             if (inst == null)
                 return;
             // A NoteOn can trigger multiple voices via layers

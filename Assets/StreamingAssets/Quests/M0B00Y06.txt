@@ -58,7 +58,7 @@ QuestLogEntry:  [1010]
 %qdt:
  The Fighters Guild of ___qgiver_
  has asked me to slay a wild beast which
- has gotten into _house_. It's got
+ has gotten into _house_. It's got to
  be done in one day.
 
 Message:  1011

@@ -1296,7 +1296,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             if (usingWagon)
             {
                 // Check wagon weight limit
-                int wagonCanHold = ComputeCanHoldAmount(playerGold, DaggerfallBankManager.goldUnitWeightInKg, ItemHelper.WagonKgLimit, remoteItems.GetWeight());
+                int wagonCanHold = ComputeCanHoldAmount(playerGold, DaggerfallBankManager.goldPieceWeightInKg, ItemHelper.WagonKgLimit, remoteItems.GetWeight());
                 if (goldToDrop > wagonCanHold)
                 {
                     goldToDrop = wagonCanHold;
@@ -2249,7 +2249,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void UpdateItemInfoPanelGold()
         {
             int gold = GameManager.Instance.PlayerEntity.GoldPieces;
-            float weight = gold * DaggerfallBankManager.goldUnitWeightInKg;
+            float weight = gold * DaggerfallBankManager.goldPieceWeightInKg;
             TextFile.Token[] tokens = {
                 TextFile.CreateTextToken(string.Format(goldAmount, gold)),
                 TextFile.NewLineToken,

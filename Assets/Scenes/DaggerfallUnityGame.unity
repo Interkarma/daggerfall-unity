@@ -2625,6 +2625,10 @@ PrefabInstance:
       propertyPath: m_Value
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 11400012, guid: 312abd0527754e047a6bfbc424f09ace, type: 3}
+      propertyPath: closeOnEscape
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 11400024, guid: 312abd0527754e047a6bfbc424f09ace, type: 3}
       propertyPath: m_FontData.m_Font
       value: 

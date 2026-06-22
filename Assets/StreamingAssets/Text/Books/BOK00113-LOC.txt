@@ -6,16 +6,13 @@ IsUnique: False
 WhenVarSet: LiftedCurse
 Content:
 
-
 [/font=2]
 
 [/center]Bourn in Wood, Part II
 
+[/center]by Lord Woodborne
 
-[/center]
-[/font=4]by Lord Woodborne
-
-[/center]
+[/font=4]
 
 [/center]
 

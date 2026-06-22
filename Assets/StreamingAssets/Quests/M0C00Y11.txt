@@ -64,7 +64,7 @@ QuestorPostfailure:  [1009]
 QuestLogEntry:  [1010]
 %qdt:
  The Fighters Guild of ___qgiver_
- has offered to let me to slay a
+ has offered to let me slay a
  giant scorpion which has gotten into
  _house_. It's got be done today.
 

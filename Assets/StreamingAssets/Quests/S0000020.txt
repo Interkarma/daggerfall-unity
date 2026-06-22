@@ -36,8 +36,8 @@ QuestLogEntry:  [1010]
  the orc warlord, a letter from her.
 
 Message:  1015
-So, Mynisera seeks to sweet talk me.
- Bah! Her letter is of no value to me
+So, Mynisera seeks to sweet-talk me.
+ Bah! Her old letter is of no value to me
  anymore. She may have it. However, my
  people may not be so lenient toward a
  %ra wandering the halls of Orsinium.
@@ -51,7 +51,7 @@ Lord Gortwog,
  King of Orcs,
  Warlord of the Subterranean Realms
  
-    Hail and long life King Gortwog. Long
+    Hail and long life, King Gortwog. Long
  have you and the Orcish people sought
  formal recognition by the empire. My dead
  husband King Lysandus supported your claim
@@ -88,17 +88,17 @@ Queen Mynisera,
 
 Message:  1030
 <ce>                    %pcf, this letter is dangerous.
- Gortwog had undoubtedly sold copies of it
- to everyone from Wayrest to the Underking.
- After all, if the powers of the Iliac Bay
- become embroiled in war over the Totem, he
- stands to gain quite a lot.
+<ce>               Gortwog has undoubtedly sold copies of it
+<ce>               to everyone from Wayrest to the Underking.
+<ce>               After all, if the powers of the Iliac Bay
+<ce>               become embroiled in war over the Totem, he
+<ce>                      stands to gain quite a lot.
  
- Go now. You have done your job. I am sure
- the Totem will find its way into your life
- somehow. You seem to have a knack for such
- things. Just remember, the only safe master
- of the Totem is the emperor.
+<ce>               Go now. You have done your job. I am sure
+<ce>               the Totem will find its way into your life
+<ce>               somehow. You seem to have a knack for such
+<ce>               things. Just remember, the only safe master
+<ce>                      of the Totem is the emperor.
 
 Message:  1040
 <ce>               You still don't know where the Emperor's

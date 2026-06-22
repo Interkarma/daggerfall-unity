@@ -5,7 +5,7 @@
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Allofich, Hazelnut, ifkopifko, Numidium, TheLacus
-// 
+//
 // Notes:
 //
 
@@ -277,7 +277,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             chance += shopQuality + weightAndNumItems;
             return Mathf.Clamp(chance, 5, 95);
         }
-        
+
         // Calculate chance of stealth skill hiding the user.
         public static int CalculateStealthChance(float distanceToTarget, DaggerfallEntityBehaviour target)
         {
@@ -1460,14 +1460,24 @@ namespace DaggerfallWorkshop.Game.Formulas
             int biographyMod = 0;
 
             PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+
+            // Apply player racial flags
+            if (target == playerEntity)
+            {
+                var raceTemplate = playerEntity.GetLiveRaceTemplate();
+                if (SpellHasFlags(elementType, raceTemplate.ResistanceFlags, effectFlags))
+                    savingThrow += 30;
+                if (SpellHasFlags(elementType, raceTemplate.ImmunityFlags, effectFlags))
+                    savingThrow = 100;
+                if (SpellHasFlags(elementType, raceTemplate.LowToleranceFlags, effectFlags))
+                    savingThrow -= 25;
+                if (SpellHasFlags(elementType, raceTemplate.CriticalWeaknessFlags, effectFlags))
+                    savingThrow -= 50;
+            }
+
             if ((effectFlags & DFCareer.EffectFlags.Paralysis) != 0)
             {
                 toleranceFlags |= GetToleranceFlag(target.Career.Paralysis);
-                // Innate immunity if high elf. Start with 100 saving throw, but can be modified by
-                // tolerance flags. Note this differs from classic, where high elves have 100% immunity
-                // regardless of tolerance flags.
-                if (target == playerEntity && playerEntity.Race == Races.HighElf)
-                    savingThrow = 100;
             }
             if ((effectFlags & DFCareer.EffectFlags.Magic) != 0)
             {
@@ -1509,10 +1519,6 @@ namespace DaggerfallWorkshop.Game.Formulas
                 savingThrow += 25;
 
             savingThrow += biographyMod + modifier;
-            if (elementType == DFCareer.Elements.Frost && target == playerEntity && playerEntity.Race == Races.Nord)
-                savingThrow += 30;
-            else if (elementType == DFCareer.Elements.Magic && target == playerEntity && playerEntity.Race == Races.Breton)
-                savingThrow += 30;
 
             // Handle perfect immunity of 100% or greater
             // Otherwise clamping to 5-95 allows a perfectly immune character to sometimes receive incoming payload
@@ -1538,6 +1544,16 @@ namespace DaggerfallWorkshop.Game.Formulas
             }
 
             return Mathf.Clamp(percentDamageOrDuration, 0, 100);
+        }
+
+        private static bool SpellHasFlags(DFCareer.Elements elementType, DFCareer.EffectFlags checkFlags, DFCareer.EffectFlags spellEffectFlags)
+        {
+            return (elementType == DFCareer.Elements.Fire && (checkFlags & DFCareer.EffectFlags.Fire) != 0) ||
+            (elementType == DFCareer.Elements.Frost && (checkFlags & DFCareer.EffectFlags.Frost) != 0) ||
+            (elementType == DFCareer.Elements.DiseaseOrPoison && (checkFlags & spellEffectFlags & (DFCareer.EffectFlags.Disease | DFCareer.EffectFlags.Poison)) != 0) ||
+            (elementType == DFCareer.Elements.Shock && (checkFlags & DFCareer.EffectFlags.Shock) != 0) ||
+            (elementType == DFCareer.Elements.Magic && (checkFlags & DFCareer.EffectFlags.Magic) != 0) ||
+            (spellEffectFlags & DFCareer.EffectFlags.Paralysis) != 0 && (checkFlags & DFCareer.EffectFlags.Paralysis) != 0;
         }
 
         public static int SavingThrow(IEntityEffect sourceEffect, DaggerfallEntity target)
@@ -2248,7 +2264,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             if(TryGetOverride("CalculateEffectCosts", out del))
                 return del(effect, settings, casterEntity);
 
-            bool activeComponents = false;            
+            bool activeComponents = false;
 
             // Get related skill
             int skillValue = 0;
@@ -2531,7 +2547,7 @@ namespace DaggerfallWorkshop.Game.Formulas
 
             int cost = 0;
             int skill = 50; // 50 is used for item enchantments
-            
+
             for (int i = 0; i < 3; ++i)
             {
                 if (i < spell.effects.Length && spell.effects[i].type != -1)
@@ -2668,7 +2684,7 @@ namespace DaggerfallWorkshop.Game.Formulas
             // The below yields correct enchantment power for staves matching classic
             switch(weaponMaterial)
             {
-                default:       
+                default:
                 case WeaponMaterialTypes.Steel:         // Steel uses base enchantment power
                     return 0f;
                 case WeaponMaterialTypes.Iron:          // Iron is -25% from base
@@ -3052,6 +3068,12 @@ namespace DaggerfallWorkshop.Game.Formulas
                     {
                         a = TextManager.Instance.GetLocalizedText("palace");
                     }
+                    singleton = true;
+                    break;
+
+                case DFLocation.BuildingTypes.Town23:
+                    // City wall
+                    a = TextManager.Instance.GetLocalizedText("cityWall");
                     singleton = true;
                     break;
 

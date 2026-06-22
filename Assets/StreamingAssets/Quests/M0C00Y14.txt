@@ -36,7 +36,7 @@ QuestComplete:  [1004]
 <ce>                    Killing rats, even giant ones,
 <ce>                      doesn't take much skill. It
 <ce>                      does put you in favor with
-<ce>                         us though. Good work.
+<ce>                        us, though. Good work.
 
 RumorsDuringQuest:  [1005]
 <ce>                   Some idiot bought four barrels of

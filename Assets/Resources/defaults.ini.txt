@@ -118,6 +118,10 @@ QuestRumorWeight = 50
 DisableEnemyDeathAlert=False
 HideLoginName=False
 
+[MeleeAttacks]
+MeleeAttackDetection=0
+MeleeAttackFriendlyProtection=True
+
 [Spells]
 EnableSpellLighting=True
 EnableSpellShadows=True
