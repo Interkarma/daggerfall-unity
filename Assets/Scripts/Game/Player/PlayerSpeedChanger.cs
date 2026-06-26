@@ -261,9 +261,10 @@ namespace DaggerfallWorkshop.Game
         /// Remove custom speed modifier from speed modifer dictionary using stored UID. Returns true if removed, false if not found. Ensure to set if it is a run or walk speed modifier being removed.
         /// </summary>
         /// <param name="UID">The Unique Universal ID created and provided when original value was added to dictionary. Store this value to reference your speed modifier later.</param>
+		/// <param name="removeRunSpeed">Not used, kept for legacy with previous version of RemoveSpeedMod() before PR 2735.
         /// <param name="refreshSpeed">will cause routine to also update the player speed using the list to sequentially multiply the current base value by the list modifier values.</param>
         /// <returns></returns>   
-        public bool RemoveSpeedMod(string UID, bool refreshSpeed = true)
+        public bool RemoveSpeedMod(string UID, bool removeRunSpeed = false, bool refreshSpeed = true)
         {
             //setup false bool for manipulation.
             bool removed = false;
