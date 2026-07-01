@@ -168,6 +168,7 @@ namespace DaggerfallWorkshop.Game
         const float raycastDistanceDown = 3.0f; // 3 meters should be enough (note: flying too high will result in geometry not being revealed by this raycast
         const float raycastDistanceViewDirection = 30.0f; // don't want to make it too easy to discover big halls - although it shouldn't be to small as well
         const float raycastDistanceEntranceMarkerReveal = 100.0f;
+        static readonly Vector3 automapOffset = new Vector3(0, -10000.0f, 0); // positional offset of the automap geometry, so that it does not overlap real geo
 
         const float scanRateGeometryDiscoveryInHertz = 5.0f; // n times per second the discovery of new geometry/meshes is checked
 
@@ -390,6 +391,22 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
+        /// Conversion of real game world position to automap position
+        /// </summary>
+        public Vector3 ToAutomapPosition(Vector3 realPosition)
+        {
+            return realPosition + automapOffset;
+        }
+
+        /// <summary>
+        /// Conversion of automap position to real game world position
+        /// </summary>
+        public Vector3 FromAutomapPosition(Vector3 automapPosition)
+        {
+            return automapPosition - automapOffset;
+        }
+
+        /// <summary>
         /// sets the number of dungeons that are memorized
         /// </summary>
         public void SetNumberOfDungeonMemorized(int n)
@@ -406,12 +423,10 @@ namespace DaggerfallWorkshop.Game
             // since new teleporters could have been discovered by pc since last time map was open this must be checked here       
             CreateTeleporterMarkers();
 
-            SetActivationStateOfMapObjects(true);
-
-            gameobjectPlayerMarkerArrow.transform.position = gameObjectPlayerAdvanced.transform.position;
+            gameobjectPlayerMarkerArrow.transform.position = ToAutomapPosition(gameObjectPlayerAdvanced.transform.position);
             gameobjectPlayerMarkerArrow.transform.rotation = gameObjectPlayerAdvanced.transform.rotation;
 
-            gameobjectBeaconPlayerPosition.transform.position = gameObjectPlayerAdvanced.transform.position + rayPlayerPosOffset;
+            gameobjectBeaconPlayerPosition.transform.position = ToAutomapPosition(gameObjectPlayerAdvanced.transform.position + rayPlayerPosOffset);
 
             // create camera (if not present) that will render automap level geometry
             CreateAutomapCamera();
@@ -429,12 +444,6 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         public void UpdateAutomapStateOnWindowPop()
         {
-            // about SetActivationStateOfMapObjects(false):
-            // this will not be enough if we will eventually allow gui windows to be opened while exploring the world
-            // then it will be necessary to either only disable the colliders on the automap level geometry or
-            // make player collision ignore colliders of objects in automap layer - I would clearly prefer this option
-            SetActivationStateOfMapObjects(false);
-
             if ((GameManager.Instance.PlayerEnterExit.IsPlayerInside) && ((GameManager.Instance.PlayerEnterExit.IsPlayerInsideBuilding) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeon) || (GameManager.Instance.PlayerEnterExit.IsPlayerInsideDungeonCastle)))
             {
                 // and get rid of lights used to light the automap level geometry
@@ -661,7 +670,7 @@ namespace DaggerfallWorkshop.Game
                         }
                     }
 
-                    gameobjectTeleporterConnection.transform.position = (connection.teleporterEntrance.position + connection.teleporterExit.position) * 0.5f;
+                    gameobjectTeleporterConnection.transform.position = ToAutomapPosition((connection.teleporterEntrance.position + connection.teleporterExit.position) * 0.5f);
                     gameobjectTeleporterConnection.transform.localScale = new Vector3(0.2f, (connection.teleporterEntrance.position - connection.teleporterExit.position).magnitude * 0.5f, 0.2f);
                     gameobjectTeleporterConnection.transform.rotation = Quaternion.FromToRotation(Vector3.up, (connection.teleporterEntrance.position - connection.teleporterExit.position));
 
@@ -771,7 +780,7 @@ namespace DaggerfallWorkshop.Game
                 if (!nearestHit.Value.transform.name.StartsWith(NameGameobjectUserNoteMarkerSubStringStart))
                 {
                     // add a new user note marker
-                    Vector3 spawningPosition = (nearestHit.Value.point) + nearestHit.Value.normal * 0.7f;
+                    Vector3 spawningPosition = FromAutomapPosition(nearestHit.Value.point + nearestHit.Value.normal * 0.7f);
 
                     // test if there is already a user note marker near to the requested spawning position
                     var enumerator = listUserNoteMarkers.GetEnumerator();
@@ -833,7 +842,7 @@ namespace DaggerfallWorkshop.Game
 
             if (nearestHit.HasValue)
             {
-                float distance = (cameraAutomap.transform.position - gameObjectPlayerAdvanced.transform.position).magnitude;
+                float distance = (cameraAutomap.transform.position - ToAutomapPosition(gameObjectPlayerAdvanced.transform.position)).magnitude;
                 cameraAutomap.transform.position = (nearestHit.Value.point);
                 cameraAutomap.transform.position -= cameraAutomap.transform.forward * distance;
             }
@@ -866,9 +875,10 @@ namespace DaggerfallWorkshop.Game
 
             if (nearestHit.HasValue)
             {
-                gameObjectPlayerAdvanced.transform.position = nearestHit.Value.point + Vector3.up * 0.1f;
-                gameobjectBeaconPlayerPosition.transform.position = nearestHit.Value.point + rayPlayerPosOffset;
-                gameobjectPlayerMarkerArrow.transform.position = nearestHit.Value.point + rayPlayerPosOffset;
+                Vector3 realHitPoint = FromAutomapPosition(nearestHit.Value.point);
+                gameObjectPlayerAdvanced.transform.position = realHitPoint + Vector3.up * 0.1f;
+                gameobjectBeaconPlayerPosition.transform.position = ToAutomapPosition(realHitPoint + rayPlayerPosOffset);
+                gameobjectPlayerMarkerArrow.transform.position = ToAutomapPosition(realHitPoint + rayPlayerPosOffset);
             }
 
             // don't forget to update micro map texture, so new player position is visualized correctly on micro map
@@ -1088,11 +1098,12 @@ namespace DaggerfallWorkshop.Game
 #endif
 
             // main raycast (on Colliders in layer "Automap")
-            bool didHit1 = Physics.Raycast(rayStartPos, rayDirection, out hit1, rayDistance, 1 << layerAutomap);
+            Vector3 automapRayStartPos = ToAutomapPosition(rayStartPos);
+            bool didHit1 = Physics.Raycast(automapRayStartPos, rayDirection, out hit1, rayDistance, 1 << layerAutomap);
             // 2nd (protection) raycast (on Colliders in layer "Automap") with offset (protection against hole in daggerfall geometry prevention)
-            bool didHit2 = Physics.Raycast(rayStartPos + offsetSecondProtectionRaycast, rayDirection, out hit2, rayDistance, 1 << layerAutomap);
+            bool didHit2 = Physics.Raycast(automapRayStartPos + offsetSecondProtectionRaycast, rayDirection, out hit2, rayDistance, 1 << layerAutomap);
             // 3rd (protection) raycast (on Colliders in layer "Automap") with offset (protection against hole in daggerfall geometry prevention)
-            bool didHit3 = Physics.Raycast(rayStartPos + offsetThirdProtectionRaycast, rayDirection, out hit3, rayDistance, 1 << layerAutomap);
+            bool didHit3 = Physics.Raycast(automapRayStartPos + offsetThirdProtectionRaycast, rayDirection, out hit3, rayDistance, 1 << layerAutomap);
 
 #if DEBUG_RAYCASTS
             //Debug.Log(String.Format("hitTG1: {0}, hitTG2: {1}, hitTG3: {2}, hit1: {3}, hit2: {4}, hit3: {5}", didHitTrueLevelGeometry1, didHitTrueLevelGeometry2, didHitTrueLevelGeometry3, didHit1, didHit2, didHit3));
@@ -1154,9 +1165,6 @@ namespace DaggerfallWorkshop.Game
 
             if ((gameobjectGeometry != null) && ((GameManager.Instance.IsPlayerInsideBuilding) || (GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsideCastle)))
             {
-                // enable automap level geometry for revealing (so raycasts can hit colliders of automap level geometry)
-                gameobjectGeometry.SetActive(true);
-
                 // reveal geometry right below player - raycast down from player head position
                 Vector3 rayStartPos = gameObjectPlayerAdvanced.transform.position + Camera.main.transform.localPosition;
                 Vector3 rayDirection = Vector3.down;
@@ -1189,9 +1197,6 @@ namespace DaggerfallWorkshop.Game
                         ScanWithRaycastInDirectionAndUpdateMeshesAndMaterials(rayStartPos + stepVector, rayDirection, rayDistance, offsetSecondProtectionRaycast);
                     }
                 }
-
-                // disable gameobjectGeometry so player movement won't be affected by geometry colliders of automap level geometry
-                gameobjectGeometry.SetActive(false);
             }
 
             // entrance marker discovery check - only do as long as undiscovered
@@ -1211,7 +1216,7 @@ namespace DaggerfallWorkshop.Game
 
                 int layerMask = (1 << layerPlayer) + 1; // test against player and level geometry (+1... == 1 << 1 == "Default" layer == level geometry)
 
-                Vector3 entranceMarkerPos = gameObjectEntrancePositionCubeMarker.transform.position;
+                Vector3 entranceMarkerPos = FromAutomapPosition(gameObjectEntrancePositionCubeMarker.transform.position);
                 Vector3 playerColliderPos = playerCollider.transform.position; //GameManager.Instance.PlayerGPS.transform.position; //Camera.main.transform.position;
                 // raycast 1
                 Vector3 rayStartPos = entranceMarkerPos;
@@ -1281,7 +1286,7 @@ namespace DaggerfallWorkshop.Game
         {
             while (true)
             {
-                // only proceed if automap is not opened (otherwise command gameobjectGeometry.SetActive(false); will mess with automap rendering when scheduling is a bitch and overwrites changes from UpdateAutomapStateOnWindowPush()
+                // only update discovery while automap is closed
                 if (!isOpenAutomap)
                 {
                     CheckForNewlyDiscoveredMeshes();
@@ -1297,7 +1302,7 @@ namespace DaggerfallWorkshop.Game
         {
             float slicingPositionY;
             if (!DaggerfallUnity.Settings.AutomapAlwaysMaxOutSliceLevel)
-                slicingPositionY = gameObjectPlayerAdvanced.transform.position.y + Camera.main.transform.localPosition.y + slicingBiasY;
+                slicingPositionY = ToAutomapPosition(gameObjectPlayerAdvanced.transform.position + Camera.main.transform.localPosition).y + slicingBiasY;
             else
                 slicingPositionY = float.MaxValue;
             Shader.SetGlobalFloat("_SclicingPositionY", slicingPositionY);
@@ -1314,25 +1319,6 @@ namespace DaggerfallWorkshop.Game
         //    material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
         //    material.renderQueue = 3000;
         //}
-
-        /// <summary>
-        /// sets active state of map GameObjects like geometry, beacons, user note markers and teleporter markers
-        /// used on automap open to enable (show) objects and hide them on automap close
-        /// it is important to set them inactive when closing the map - so that ingame raycasts won't hit colliders of map objects
-        /// </summary>
-        /// <param name="active">the desired activation state for the map objects to be set</param>
-        private void SetActivationStateOfMapObjects(bool active)
-        {          
-            gameobjectGeometry.SetActive(active);
-
-            gameobjectBeacons.SetActive(active);
-
-            if (gameObjectUserNoteMarkers != null)
-                gameObjectUserNoteMarkers.SetActive(active);
-
-            if (gameobjectTeleporterMarkers != null)
-                gameobjectTeleporterMarkers.SetActive(active);
-        }
 
         /// <summary>
         /// setup beacons: lazy creation of player marker arrow and beacons including
@@ -1357,7 +1343,7 @@ namespace DaggerfallWorkshop.Game
                 gameobjectPlayerMarkerArrow.layer = layerAutomap;
                 gameobjectPlayerMarkerArrow.AddComponent<MeshCollider>();
             }
-            gameobjectPlayerMarkerArrow.transform.position = gameObjectPlayerAdvanced.transform.position;
+            gameobjectPlayerMarkerArrow.transform.position = ToAutomapPosition(gameObjectPlayerAdvanced.transform.position);
             gameobjectPlayerMarkerArrow.transform.rotation = gameObjectPlayerAdvanced.transform.rotation;
 
             if (!gameobjectBeaconPlayerPosition)
@@ -1373,7 +1359,7 @@ namespace DaggerfallWorkshop.Game
                 //SetMaterialTransparency(material);
                 gameobjectBeaconPlayerPosition.GetComponent<MeshRenderer>().material = material;
             }
-            gameobjectBeaconPlayerPosition.transform.position = gameObjectPlayerAdvanced.transform.position + rayPlayerPosOffset;
+            gameobjectBeaconPlayerPosition.transform.position = ToAutomapPosition(gameObjectPlayerAdvanced.transform.position + rayPlayerPosOffset);
 
             if (!gameobjectBeaconRotationPivotAxis)
             {
@@ -1444,17 +1430,19 @@ namespace DaggerfallWorkshop.Game
             {
                 // entrance marker to dungeon start marker
                 DaggerfallDungeon dungeon = GameManager.Instance.DungeonParent.GetComponentInChildren<DaggerfallDungeon>();
-                gameobjectBeaconEntrancePosition.transform.position = dungeon.StartMarker.transform.position + rayEntrancePosOffset;
+                gameobjectBeaconEntrancePosition.transform.position = ToAutomapPosition(dungeon.StartMarker.transform.position + rayEntrancePosOffset);
                 gameobjectBeaconEntrancePosition.SetActive(false); // set do undiscovered
             }
             else
             {
                 // entrance marker to current position (position player entered)                
                 StaticDoor door = entranceDoor.Value;
-                gameobjectBeaconEntrancePosition.transform.position = door.ownerRotation * door.buildingMatrix.MultiplyPoint3x4(door.centre);
-                gameobjectBeaconEntrancePosition.transform.position += door.ownerPosition;
+                Vector3 entrancePosition = door.ownerRotation * door.buildingMatrix.MultiplyPoint3x4(door.centre);
+                entrancePosition += door.ownerPosition;
+                gameobjectBeaconEntrancePosition.transform.position = ToAutomapPosition(entrancePosition);
                 gameobjectBeaconEntrancePosition.SetActive(true); // set do discovered
             }
+
         }
 
         private void DestroyBeacons()
@@ -1576,7 +1564,7 @@ namespace DaggerfallWorkshop.Game
             }
             GameObject gameObjectUserNoteMarker = CreateDiamondShapePrimitive();
             gameObjectUserNoteMarker.transform.SetParent(gameObjectUserNoteMarkers.transform);
-            gameObjectUserNoteMarker.transform.position = spawningPosition;
+            gameObjectUserNoteMarker.transform.position = ToAutomapPosition(spawningPosition);
             gameObjectUserNoteMarker.name = NameGameobjectUserNoteMarkerSubStringStart + id;
             Material materialUserNoteMarker = new Material(Shader.Find("Standard"));
             materialUserNoteMarker.color = new Color(1.0f, 0.55f, 0.0f);
@@ -1622,14 +1610,12 @@ namespace DaggerfallWorkshop.Game
                 gameobjectTeleporterMarkers.layer = layerAutomap;
             }
 
-            gameobjectTeleporterMarkers.SetActive(false);
-
             string teleporterEntranceName = NameGameobjectTeleporterSubStringStart + dictkey + NameGameobjectTeleporterEntranceSubStringEnd;
             if (gameobjectTeleporterMarkers.transform.Find(teleporterEntranceName) == null)
             {
                 GameObject gameObjectTeleporterEntrance = new GameObject(teleporterEntranceName);
                 gameObjectTeleporterEntrance.transform.SetParent(gameobjectTeleporterMarkers.transform);
-                gameObjectTeleporterEntrance.transform.position = startPoint.position; // + Vector3.up * 1.0f;
+                gameObjectTeleporterEntrance.transform.position = ToAutomapPosition(startPoint.position); // + Vector3.up * 1.0f;
                 gameObjectTeleporterEntrance.transform.rotation = startPoint.rotation;
                 gameObjectTeleporterEntrance.transform.Rotate(0.0f, 90.0f, 0.0f);
                 gameObjectTeleporterEntrance.layer = layerAutomap;
@@ -1653,7 +1639,7 @@ namespace DaggerfallWorkshop.Game
             {
                 GameObject gameObjectTeleporterExit = new GameObject(teleporterExitName);
                 gameObjectTeleporterExit.transform.SetParent(gameobjectTeleporterMarkers.transform);
-                gameObjectTeleporterExit.transform.position = endPoint.position; // + Vector3.up * 0.2f;
+                gameObjectTeleporterExit.transform.position = ToAutomapPosition(endPoint.position); // + Vector3.up * 0.2f;
                 //gameObjectTeleporterExit.transform.rotation = endPoint.rotation;
                 //gameObjectTeleporterExit.transform.Rotate(0.0f, 180.0f, 0.0f);
                 gameObjectTeleporterExit.transform.rotation = startPoint.rotation; // take rotation from portal entrance
@@ -1847,7 +1833,7 @@ namespace DaggerfallWorkshop.Game
             float nearestDistance = float.MaxValue;
             foreach (RaycastHit hit in hits)
             {
-                if ((hit.distance < nearestDistance) && (hit.collider.gameObject.GetComponent<MeshRenderer>().enabled))
+                if ((hit.distance < nearestDistance) && hit.collider.gameObject.TryGetComponent(out MeshRenderer meshRend) && meshRend.enabled)
                 {
                     nearestHit = hit;
                     nearestDistance = hit.distance;
@@ -1891,7 +1877,7 @@ namespace DaggerfallWorkshop.Game
                     gameobjectInterior.transform.SetParent(gameobjectGeometry.transform);
 
                     // copy position and rotation from real level geometry
-                    gameobjectGeometry.transform.position = elem.transform.position;
+                    gameobjectGeometry.transform.position = ToAutomapPosition(elem.transform.position);
                     gameobjectGeometry.transform.rotation = elem.transform.rotation;
 
                     // do this (here in createIndoorGeometryForAutomap()) analog in the same way and the same place like in createDungeonGeometryForAutomap()
@@ -1955,7 +1941,7 @@ namespace DaggerfallWorkshop.Game
                     gameobjectDungeon.transform.SetParent(gameobjectGeometry.transform);
 
                     // copy position and rotation from real level geometry
-                    gameobjectGeometry.transform.position = elem.transform.position;
+                    gameobjectGeometry.transform.position = ToAutomapPosition(elem.transform.position);
                     gameobjectGeometry.transform.rotation = elem.transform.rotation;
 
                     // do this here when DaggerfallDungeon GameObject is present, so that a call to SetupBeacons() will not fail (it needs the DaggerfallDungeon component of this GameObject)                    
@@ -1985,7 +1971,7 @@ namespace DaggerfallWorkshop.Game
             if (nativeBlockWaterLevel == 10000)
                 return;
 
-            float waterLevel = nativeBlockWaterLevel * -1 * MeshReader.GlobalScale;
+            float waterLevel = ToAutomapPosition(new Vector3(0, nativeBlockWaterLevel * -1 * MeshReader.GlobalScale, 0)).y;
             MeshRenderer[] renderers = parent.GetComponentsInChildren<MeshRenderer>();
 
             if (renderers != null)
@@ -2484,16 +2470,12 @@ namespace DaggerfallWorkshop.Game
                 CreateIndoorGeometryForAutomap(door.Value);
                 RestoreStateAutomapDungeon(true);
                 resetAutomapSettingsFromExternalScript = true; // set flag so external script (DaggerfallAutomapWindow) can pull flag and reset automap values on next window push
-
-                SetActivationStateOfMapObjects(false);
             }
             else if ((GameManager.Instance.IsPlayerInsideDungeon) || (GameManager.Instance.IsPlayerInsideCastle))
             {
                 CreateDungeonGeometryForAutomap();
                 RestoreStateAutomapDungeon(!initFromLoadingSave); // if a save game was loaded, do not reset the revisited state (don't set parameter forceNotVisitedInThisRun to true)
                 resetAutomapSettingsFromExternalScript = true; // set flag so external script (DaggerfallAutomapWindow) can pull flag and reset automap values on next window push
-
-                SetActivationStateOfMapObjects(false);
             }
             else
             {
@@ -2525,12 +2507,22 @@ namespace DaggerfallWorkshop.Game
         {
             SaveStateAutomapInterior();
             DestroyBeacons();
+            if (gameobjectGeometry != null)
+            {
+                UnityEngine.Object.Destroy(gameobjectGeometry);
+                gameobjectGeometry = null;
+            }
         }
 
         private void OnTransitionToDungeonExterior(PlayerEnterExit.TransitionEventArgs args)
         {
             SaveStateAutomapDungeon(true);
             DestroyBeacons();
+            if (gameobjectGeometry != null)
+            {
+                UnityEngine.Object.Destroy(gameobjectGeometry);
+                gameobjectGeometry = null;
+            }
         }
 
         void OnLoadEvent(SaveData_v1 saveData)
@@ -2585,7 +2577,7 @@ namespace DaggerfallWorkshop.Game
                 if (GameManager.Instance.IsPlayerInsideBuilding)
                     playerIsInsideBuilding = true;
 
-                Vector3 playerAdvancedPos = gameObjectPlayerAdvanced.transform.position;
+                Vector3 playerAdvancedPos = ToAutomapPosition(gameObjectPlayerAdvanced.transform.position);
                 Material automapMaterial = new Material(Shader.Find("Daggerfall/Automap"));
                 automapMaterial.SetColor("_WaterColor", GameManager.Instance.PlayerEnterExit.UnderwaterFog.waterMapColor);
 
