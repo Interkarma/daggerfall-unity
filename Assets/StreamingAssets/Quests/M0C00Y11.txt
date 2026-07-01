@@ -14,7 +14,7 @@ QRC:
 QuestorOffer:  [1000]
 <ce>                       You can call me _qgiver_.
 <ce>             Normally we only give jobs to guild members.
-<ce>              But you show promise %pcn. I tell ya what.
+<ce>              But you show promise, %pcn. I tell ya what.
 <ce>                 I got a request to dispose of a giant
 <ce>              scorpion. Do that and I'll see if the guild
 <ce>            will overlook your reputation. Is that a deal?
@@ -25,7 +25,7 @@ RefuseQuest:  [1001]
 <ce>                              outta here.
 
 AcceptQuest:  [1002]
-<ce>                 You got guts %pcf, I'll give ya that.
+<ce>                 You've got guts, %pcf, I'll give ya that.
 <ce>            Apparently this scorpion escaped from someone's
 <ce>             personal collection. Right now it's cornered in
 <ce>                   _house_. Kill the thing today and
