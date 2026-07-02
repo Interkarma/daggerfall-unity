@@ -51,7 +51,7 @@ namespace DaggerfallWorkshop.Game
         {
             if (entityBehaviour)
             {
-                int damage = FormulaHelper.CalculateFallDamage(fallDistance);
+                int damage = FormulaHelper.CalculateFallDamage(entityBehaviour.Entity,GameManager.Instance.AcrobatMotor.fallingDamageThreshold,fallDistance);
 
                 if (damage > 0)
                     RemoveHealth(damage);
