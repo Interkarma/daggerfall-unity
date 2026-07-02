@@ -3570,6 +3570,9 @@ namespace DaggerfallWorkshop.Game
                 string textFragment = tokens[i].text;
                 if (textFragment != null && textFragment != string.Empty)
                     builder.Append(textFragment);
+                else if (tokens[i].formatting == TextFile.Formatting.JustifyCenter)
+					// To avoid consecutive lines with [/center] in dialog screen to stick together.
+                    builder.Append(" ");
                 else
                     builder.Append(separatorString);
             }
