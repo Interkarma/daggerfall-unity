@@ -248,17 +248,17 @@
 
 .h1 {
     -unity-text-align: middle-center;
-    font-size: 20;
+    font-size: 20px;
 }
 
 .h2 {
     -unity-text-align: middle-center;
-    font-size: 18;
+    font-size: 18px;
 }
 
 .h3 {
     -unity-text-align: middle-center;
-    font-size: 16;
+    font-size: 16px;
 }
 
 .automap-cell {
