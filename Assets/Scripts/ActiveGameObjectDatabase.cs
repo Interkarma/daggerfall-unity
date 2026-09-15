@@ -31,6 +31,11 @@ namespace DaggerfallWorkshop
         // If a system calls SetActive(false) on an object without destroying it, it will not be returned here
         public IEnumerable<GameObject> GetActiveObjects()
         {
+            return GetActiveObjects(false);
+        }
+
+        public IEnumerable<GameObject> GetActiveObjects(bool includeInactive)
+        {
             cacheLock.EnterReadLock();
             try
             {
@@ -42,7 +47,7 @@ namespace DaggerfallWorkshop
                         // A null check on a GameObject does more than C#'s reference check,
                         // it also checks if the object has been destroyed
                         // Like Object.FindObjectsOfType, we should only include active objects 
-                        if (activeObject != null && activeObject.activeInHierarchy)
+                        if (activeObject != null && (includeInactive || activeObject.activeInHierarchy))
                             gameObjects.Add(activeObject);
                     }
                 }
@@ -59,10 +64,15 @@ namespace DaggerfallWorkshop
         // If a system calls SetActive(false) on an object without destroying it, it will not be returned here
         public IEnumerable<T> GetActiveComponents<T>() where T : MonoBehaviour
         {
-            foreach (GameObject gameObject in GetActiveObjects())
+            return GetActiveComponents<T>(false);
+        }
+
+        public IEnumerable<T> GetActiveComponents<T>(bool includeInactive) where T : MonoBehaviour
+        {
+            foreach (GameObject gameObject in GetActiveObjects(includeInactive))
             {
                 var t = gameObject.GetComponent<T>();
-                if (t != null && t.isActiveAndEnabled)
+                if (t != null && (includeInactive || t.isActiveAndEnabled))
                     yield return t;
             }
         }
@@ -201,35 +211,86 @@ namespace DaggerfallWorkshop
         static GameObjectCache staticNpcCache = new GameObjectCache("Static NPC");
         static GameObjectCache actionDoorCache = new GameObjectCache("Action Door");
         static GameObjectCache rdbCache = new GameObjectCache("RDB");
+        static GameObjectCache billboardCache = new GameObjectCache("Billboard");
+
+        public static IEnumerable<GameObject> GetActiveBillboardObjects()
+        {
+            return GetActiveBillboardObjects(false);
+        }
+
+        public static IEnumerable<GameObject> GetActiveBillboardObjects(bool includeInactive)
+        {
+            return billboardCache.GetActiveObjects(includeInactive);
+        }
+
+        public static IEnumerable<DaggerfallBillboard> GetActiveBillboards()
+        {
+            return GetActiveBillboards(false);
+        }
+
+        public static IEnumerable<DaggerfallBillboard> GetActiveBillboards(bool includeInactive)
+        {
+            return billboardCache.GetActiveComponents<DaggerfallBillboard>(includeInactive);
+        }
+
+        public static void RegisterBillboard(GameObject billboard)
+        {
+            billboardCache.AddObject(billboard);
+        }
 
         // Gets all the active enemy GameObjects. Must be registered as Enemy (see below)
         public static IEnumerable<GameObject> GetActiveEnemyObjects()
         {
-            return enemyCache.GetActiveObjects();
+            return GetActiveEnemyObjects(false);
+        }
+
+        public static IEnumerable<GameObject> GetActiveEnemyObjects(bool includeInactive)
+        {
+            return enemyCache.GetActiveObjects(includeInactive);
         }
 
         // Gets all the enabled DaggerfallEntityBehaviour components from active registered enemies
         public static IEnumerable<DaggerfallEntityBehaviour> GetActiveEnemyBehaviours()
         {
-            return enemyCache.GetActiveComponents<DaggerfallEntityBehaviour>();
+            return GetActiveEnemyBehaviours(false);
+        }
+
+        public static IEnumerable<DaggerfallEntityBehaviour> GetActiveEnemyBehaviours(bool includeInactive)
+        {
+            return enemyCache.GetActiveComponents<DaggerfallEntityBehaviour>(includeInactive);
         }
 
         // Gets all the enabled DaggerfallEnemy components from active registered enemies
         public static IEnumerable<DaggerfallEnemy> GetActiveEnemyEntities()
         {
-            return enemyCache.GetActiveComponents<DaggerfallEnemy>();
+            return GetActiveEnemyEntities(false);
+        }
+
+        public static IEnumerable<DaggerfallEnemy> GetActiveEnemyEntities(bool includeInactive)
+        {
+            return enemyCache.GetActiveComponents<DaggerfallEnemy>(includeInactive);
         }
 
         // Gets all the enabled QuestResourceBehaviour components from active registered enemies
         public static IEnumerable<QuestResourceBehaviour> GetActiveEnemyQuestResourceBehaviours()
         {
-            return enemyCache.GetActiveComponents<QuestResourceBehaviour>();
+            return GetActiveEnemyQuestResourceBehaviours(false);
+        }
+
+        public static IEnumerable<QuestResourceBehaviour> GetActiveEnemyQuestResourceBehaviours(bool includeInactive)
+        {
+            return enemyCache.GetActiveComponents<QuestResourceBehaviour>(includeInactive);
         }
 
         // Gets all the enabled EnemyMotor components from active registered enemies
         public static IEnumerable<EnemyMotor> GetActiveEnemyMotors()
         {
-            return enemyCache.GetActiveComponents<EnemyMotor>();
+            return GetActiveEnemyMotors(false);
+        }
+
+        public static IEnumerable<EnemyMotor> GetActiveEnemyMotors(bool includeInactive)
+        {
+            return enemyCache.GetActiveComponents<EnemyMotor>(includeInactive);
         }
 
         // Registers an enemy (monster or class) to the enemy cache. Does not have to be active
@@ -241,13 +302,23 @@ namespace DaggerfallWorkshop
         // Gets all the active Civilian Mobile GameObjects. Must be registered as Civilian Mobile (see below)
         public static IEnumerable<GameObject> GetActiveCivilianMobileObjects()
         {
-            return civilianCache.GetActiveObjects();
+            return GetActiveCivilianMobileObjects(false);
+        }
+
+        public static IEnumerable<GameObject> GetActiveCivilianMobileObjects(bool includeInactive)
+        {
+            return civilianCache.GetActiveObjects(includeInactive);
         }
 
         // Gets all the enabled DaggerfallEntityBehaviour components from active registered Civilian Mobiles
         public static IEnumerable<DaggerfallEntityBehaviour> GetActiveCivilianMobileBehaviours()
         {
-            return civilianCache.GetActiveComponents<DaggerfallEntityBehaviour>();
+            return GetActiveCivilianMobileBehaviours(false);
+        }
+
+        public static IEnumerable<DaggerfallEntityBehaviour> GetActiveCivilianMobileBehaviours(bool includeInactive)
+        {
+            return civilianCache.GetActiveComponents<DaggerfallEntityBehaviour>(includeInactive);
         }
 
         // Registers a mobile civilian NPC to the civilian cache. Does not have to be active
@@ -259,13 +330,23 @@ namespace DaggerfallWorkshop
         // Gets all the active loot GameObjects. Must be registered as Loot (see below)
         public static IEnumerable<GameObject> GetActiveLootObjects()
         {
-            return lootCache.GetActiveObjects();
+            return GetActiveLootObjects(false);
+        }
+
+        public static IEnumerable<GameObject> GetActiveLootObjects(bool includeInactive)
+        {
+            return lootCache.GetActiveObjects(includeInactive);
         }
 
         // Gets all the enabled DaggerfallLoot components from active registered loot
         public static IEnumerable<DaggerfallLoot> GetActiveLoot()
         {
-            return lootCache.GetActiveComponents<DaggerfallLoot>();
+            return GetActiveLoot(false);
+        }
+
+        public static IEnumerable<DaggerfallLoot> GetActiveLoot(bool includeInactive)
+        {
+            return lootCache.GetActiveComponents<DaggerfallLoot>(includeInactive);
         }
 
         // Registers a loot object to the loot cache. Does not have to be active
@@ -277,13 +358,23 @@ namespace DaggerfallWorkshop
         // Gets all the active Foe Spawner GameObjects. Must be registered as Foe Spawner (see below)
         public static IEnumerable<GameObject> GetActiveFoeSpawnerObjects()
         {
-            return foeSpawnerCache.GetActiveObjects();
+            return GetActiveFoeSpawnerObjects(false);
+        }
+
+        public static IEnumerable<GameObject> GetActiveFoeSpawnerObjects(bool includeInactive)
+        {
+            return foeSpawnerCache.GetActiveObjects(includeInactive);
         }
 
         // Gets all the enabled FoeSpawner components from active registered foe spawners
         public static IEnumerable<FoeSpawner> GetActiveFoeSpawners()
         {
-            return foeSpawnerCache.GetActiveComponents<FoeSpawner>();
+            return GetActiveFoeSpawners(false);
+        }
+
+        public static IEnumerable<FoeSpawner> GetActiveFoeSpawners(bool includeInactive)
+        {
+            return foeSpawnerCache.GetActiveComponents<FoeSpawner>(includeInactive);
         }
 
         // Registers a foe spawner object to the foe spawner cache. Does not have to be active
@@ -295,19 +386,34 @@ namespace DaggerfallWorkshop
         // Gets all the active Static NPC GameObjects. Must be registered as a Static NPC (see below)
         public static IEnumerable<GameObject> GetActiveStaticNPCObjects()
         {
-            return staticNpcCache.GetActiveObjects();
+            return GetActiveStaticNPCObjects(false);
+        }
+
+        public static IEnumerable<GameObject> GetActiveStaticNPCObjects(bool includeInactive)
+        {
+            return staticNpcCache.GetActiveObjects(includeInactive);
         }
 
         // Gets all the enabled StaticNPC components from active registered static NPCs
         public static IEnumerable<StaticNPC> GetActiveStaticNPCs()
         {
-            return staticNpcCache.GetActiveComponents<StaticNPC>();
+            return GetActiveStaticNPCs(false);
+        }
+
+        public static IEnumerable<StaticNPC> GetActiveStaticNPCs(bool includeInactive)
+        {
+            return staticNpcCache.GetActiveComponents<StaticNPC>(includeInactive);
         }
 
         // Gets all the enabled QuestResourceBehaviour components from active registered static NPCs
         public static IEnumerable<QuestResourceBehaviour> GetActiveStaticNPCQuestResourceBehaviours()
         {
-            return staticNpcCache.GetActiveComponents<QuestResourceBehaviour>();
+            return GetActiveStaticNPCQuestResourceBehaviours(false);
+        }
+
+        public static IEnumerable<QuestResourceBehaviour> GetActiveStaticNPCQuestResourceBehaviours(bool includeInactive)
+        {
+            return staticNpcCache.GetActiveComponents<QuestResourceBehaviour>(includeInactive);
         }
 
         // Registers a static NPC object to the Static NPC cache. Does not have to be active
@@ -319,13 +425,23 @@ namespace DaggerfallWorkshop
         // Gets all the active Action Door GameObjects. Must be registered as Action Door (see below)
         public static IEnumerable<GameObject> GetActiveActionDoorObjects()
         {
-            return actionDoorCache.GetActiveObjects();
+            return GetActiveActionDoorObjects(false);
+        }
+
+        public static IEnumerable<GameObject> GetActiveActionDoorObjects(bool includeInactive)
+        {
+            return actionDoorCache.GetActiveObjects(includeInactive);
         }
 
         // Gets all the enabled DaggerfallActionDoor components from active registered doors
         public static IEnumerable<DaggerfallActionDoor> GetActiveActionDoors()
         {
-            return actionDoorCache.GetActiveComponents<DaggerfallActionDoor>();
+            return GetActiveActionDoors(false);
+        }
+
+        public static IEnumerable<DaggerfallActionDoor> GetActiveActionDoors(bool includeInactive)
+        {
+            return actionDoorCache.GetActiveComponents<DaggerfallActionDoor>(includeInactive);
         }
 
         // Registers an Action Door object to the Action Door cache. Does not have to be active
@@ -338,13 +454,23 @@ namespace DaggerfallWorkshop
         // Gets all the active RDB GameObjects. Must be registered as RDB (see below)
         public static IEnumerable<GameObject> GetActiveRDBObjects()
         {
-            return rdbCache.GetActiveObjects();
+            return GetActiveRDBObjects(false);
+        }
+
+        public static IEnumerable<GameObject> GetActiveRDBObjects(bool includeInactive)
+        {
+            return rdbCache.GetActiveObjects(includeInactive);
         }
 
         // Gets all the enabled DaggerfallStaticDoors components from active registered RDBs
         public static IEnumerable<DaggerfallStaticDoors> GetActiveRDBStaticDoors()
         {
-            return rdbCache.GetActiveComponents<DaggerfallStaticDoors>();
+            return GetActiveRDBStaticDoors(false);
+        }
+
+        public static IEnumerable<DaggerfallStaticDoors> GetActiveRDBStaticDoors(bool includeInactive)
+        {
+            return rdbCache.GetActiveComponents<DaggerfallStaticDoors>(includeInactive);
         }
 
         // Registers a Daggerfall dungeon block "RDB" game object to the RDB cache. Does not have to be active
@@ -363,6 +489,7 @@ namespace DaggerfallWorkshop
             yield return staticNpcCache.GetDebugString();
             yield return actionDoorCache.GetDebugString();
             yield return rdbCache.GetDebugString();
+            yield return billboardCache.GetDebugString();
         }
     }
 }
