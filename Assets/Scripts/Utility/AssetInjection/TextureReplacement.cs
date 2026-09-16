@@ -28,6 +28,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DaggerfallWorkshop.Utility.AssetInjection
 {
@@ -362,7 +363,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="tex">Imported texture.</param>
         /// <returns>True if texture imported.</returns>
         public static bool TryImportTextureFromLooseFiles(int archive, int record, int frame, TextureMap textureMap, bool readOnly, out Texture2D tex)
-        { 
+        {
             if (DaggerfallUnity.Settings.AssetInjection)
             {
                 string path = Path.Combine(texturesPath, GetName(archive, record, frame, textureMap));
@@ -370,7 +371,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             }
 
             tex = null;
-            return false;           
+            return false;
         }
 
         /// <summary>
@@ -780,7 +781,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="filename">Name of CIF/RCI file.</param>
         /// <param name="record">Record index.</param>
         /// <param name="frame">Frame index. It's different than zero only for animations.</param>
-        static public string GetNameCifRci (string filename, int record, int frame = 0)
+        static public string GetNameCifRci(string filename, int record, int frame = 0)
         {
             return string.Format("{0}_{1}-{2}", filename, record, frame);
         }
@@ -1038,7 +1039,7 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         /// <param name="readOnly">Release copy on system memory after uploading to gpu.</param>
         /// <param name="tex">Imported texture.</param>
         /// <returns>True if texture exists and has been imported.</returns>
-        private static bool TryImportTextureFromDisk(string path, bool mipMaps, bool isLinear, bool readOnly, out Texture2D tex)
+        private static bool TryImportTextureFromDisk(string path, bool mipMaps, bool isLinear, bool readOnly, [NotNullWhen(true)] out Texture2D tex)
         {
             const int retroThreshold = 256; // Imported textures with a width or height below this threshold will never be compressed to preserve retro appearance
 
@@ -1049,9 +1050,16 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
             {
                 byte[] bytes = File.ReadAllBytes(path);
                 Vector2Int resolution = FindPngResolution(bytes) ?? throw new Exception($"Failed to find PNG resolution for {path}");
-                TextureFormat textureFormat = resolution.x < retroThreshold || resolution.y < retroThreshold ? TextureFormat.ARGB32 : TextureFormat;
 
-                tex = new Texture2D(4, 4, textureFormat, mipMaps, isLinear);
+                // TODO: Look into switching to DXT5|BC7 for DX11 platforms, however it's unavailable for MacOS on OpenGL.
+                // TODO: Look into resizing textures to nearest multiple of 4
+                // DXT5|BC3 textures must be multiples of 4 to compress
+                bool wantsCompression = DaggerfallUnity.Instance.MaterialReader.CompressModdedTextures;
+                bool isCompressable = resolution.x % 4 == 0 && resolution.y % 4 == 0;
+                bool isRetroTexture = resolution.x < retroThreshold || resolution.y < retroThreshold;
+                TextureFormat textureFormat = ((wantsCompression && !isCompressable) || isRetroTexture) ? TextureFormat.ARGB32 : TextureFormat;
+
+                tex = new Texture2D(resolution.x, resolution.y, textureFormat, mipMaps, isLinear);
                 if (!tex.LoadImage(bytes, readOnly))
                     Debug.LogError($"Failed to import texture data at {path}");
 
@@ -1323,4 +1331,3 @@ namespace DaggerfallWorkshop.Utility.AssetInjection
         #endregion
     }
 }
- 

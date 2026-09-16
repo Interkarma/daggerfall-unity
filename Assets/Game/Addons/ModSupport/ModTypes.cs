@@ -200,7 +200,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// The position of the mod inside the mods collection.
         /// </summary>
         public readonly int ModIndex;
-        
+
         /// <summary>
         /// The position of the mod in the load order.
         /// </summary>
@@ -229,6 +229,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
     public struct Source
     {
         public TextAsset sourceTxt;
+        public TextAsset pdbTxt;
         public bool isPreCompiled;
     }
 

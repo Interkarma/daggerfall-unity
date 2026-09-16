@@ -4,8 +4,8 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    
-// 
+// Contributors:
+//
 // Notes:
 //
 
@@ -154,7 +154,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
                 // Setup spawn position
                 DFPosition worldPosition = cityNavigation.NavGridToWorldPosition(spawnPosition);
-                Vector3 scenePosition = cityNavigation.WorldToScenePosition(worldPosition);                
+                Vector3 scenePosition = cityNavigation.WorldToScenePosition(worldPosition);
                 poolItem.npc.Motor.transform.position = scenePosition;
                 GameObjectHelper.AlignBillboardToGround(poolItem.npc.Motor.gameObject, new Vector2(0, 2f));
 

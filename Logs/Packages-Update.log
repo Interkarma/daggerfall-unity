@@ -55,3 +55,23 @@ The following packages were updated:
   com.unity.ide.vscode from version 1.2.3 to 1.2.5
   com.unity.test-framework from version 1.1.24 to 1.1.31
   com.unity.xr.legacyinputhelpers from version 2.1.7 to 2.1.9
+
+=== Wed Mar 19 14:49:22 2025
+
+Packages were changed.
+Update Mode: updateDependencies
+
+The following packages were added:
+  com.unity.ai.navigation@1.1.5
+The following packages were updated:
+  com.unity.addressables from version 1.21.1 to 1.22.3
+  com.unity.burst from version 1.7.1 to 1.8.19
+  com.unity.collab-proxy from version 1.14.18 to 2.7.1
+  com.unity.collections from version 0.9.0-preview.6 to 1.2.4
+  com.unity.ide.rider from version 3.0.28 to 3.0.34
+  com.unity.localization from version 1.4.2 to 1.5.2
+  com.unity.postprocessing from version 3.1.1 to 3.4.0
+  com.unity.test-framework from version 1.1.31 to 1.1.33
+  com.unity.textmeshpro from version 2.1.4 to 3.0.7
+  com.unity.timeline from version 1.2.18 to 1.7.6
+  com.unity.xr.legacyinputhelpers from version 2.1.9 to 2.1.12

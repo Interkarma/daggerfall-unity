@@ -4,8 +4,8 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: TheLacus
-// Contributors:    
-// 
+// Contributors:
+//
 // Notes:
 //
 
@@ -79,7 +79,7 @@ namespace DaggerfallWorkshop.Utility
         /// <summary>
         /// Seeks a value from the collection. This is O(1) if lookup dictionary is created, otherwise is O(n).
         /// </summary>
-        public virtual bool TryGetValue(T1 key, out T2 item)
+        public new virtual bool TryGetValue(T1 key, out T2 item)
         {
             if (Dictionary != null)
                 return Dictionary.TryGetValue(key, out item);
