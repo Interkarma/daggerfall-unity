@@ -187,7 +187,7 @@ Person _sage_ group Cleric remote anyInfo 1050 rumors 1050
 Person _giver_ group Questor
 Person _dummy_ group Innkeeper remote
 
-Place _dungeon_ remote dungeon0
+Place _dungeon_ remote dungeon0 only
 
 Clock _S.10_ 1001.00:00 0 flag 1 range 0 1
 

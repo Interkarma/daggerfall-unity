@@ -169,7 +169,7 @@ Item _letter_ letter used 1020
 Person _vampire_ face 40 factiontype Vampire_Clan local anyInfo 1011 rumors 1012
 Person _vampname_ face 4 factiontype Vampire_Clan male remote
 
-Place _mondung_ remote dungeon8
+Place _mondung_ remote dungeon8 only
 
 Clock _1stparton_ 00:00 0 flag 1 range 2 5
 

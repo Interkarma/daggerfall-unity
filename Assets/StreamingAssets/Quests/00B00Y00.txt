@@ -95,7 +95,7 @@ Item _reward_ gold
 
 Person _questgiver_ group Questor
 
-Place _mondung_ remote dungeon9
+Place _mondung_ remote dungeon9 only
 
 Clock _1stparton_ 00:00 0 flag 17 range 0 2
 

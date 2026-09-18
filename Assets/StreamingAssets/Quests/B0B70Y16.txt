@@ -131,7 +131,7 @@ QBN:
 Person _qgiver_ group Questor
 Person _local_ face 93 group Resident2 male local
 
-Place _dungeon_ remote dungeon14
+Place _dungeon_ remote dungeon14 only
 
 Clock _2dung_ 00:00 0 flag 17 range 0 2
 
