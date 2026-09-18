@@ -95,21 +95,29 @@ namespace DaggerfallWorkshop.Utility
 
         void SetRetroAspectViewport()
         {
-            float heightRatio = 0;
+            float heightRatio;
             int viewWidth = 0;
             RetroModeAspects aspect = (RetroModeAspects)DaggerfallUnity.Settings.RetroModeAspectCorrection;
             if (aspect == RetroModeAspects.FourThree)
             {
-                // Classic rendered at 320x200 (Mode13h/16:10) but was typically displayed on 4:3 monitors (e.g. 320x240)
-                // In this environment display output signal was stretched 20% higher in vertical dimension
-                // This setting scales output viewport to simulate resulting aspect ratio in this environment
-                // Works from ideal 16:10 > 4:3 upscale (1600x1200 or 5x width, 6x height, 20% higher) and ratios into actual screen area
+                if (DaggerfallUnity.Settings.RetroRenderingMode <= 2)
+                {
+                    // Classic rendered at 320x200 (Mode13h/16:10) but was typically displayed on 4:3 monitors (e.g. 320x240)
+                    // In this environment display output signal was stretched 20% higher in vertical dimension
+                    // This setting scales output viewport to simulate resulting aspect ratio in this environment
+                    // Works from ideal 16:10 > 4:3 upscale (1600x1200 or 5x width, 6x height, 20% higher) and ratios into actual screen area
 
-                // Start with screen height at 6x classic to get a ratio
-                heightRatio = Screen.height / 6f / 200f;
+                    // Start with screen height at 6x classic to get a ratio
+                    heightRatio = Screen.height / 6f / 200f;
 
-                // Then determine 5x classic width at this ratio
-                viewWidth = (int)(320f * 5f * heightRatio);
+                    // Then determine 5x classic width at this ratio
+                    viewWidth = (int)(320f * 5f * heightRatio);
+                }
+                else
+                {
+                    //4:3 aspect, but using non-stretched display resolutions (square pixels).
+                    viewWidth = (int)(Screen.height * 4f / 3f);
+                }
             }
             else if (aspect == RetroModeAspects.SixteenTen)
             {
