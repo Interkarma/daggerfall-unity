@@ -30,16 +30,20 @@ namespace DaggerfallWorkshop.Game
         public const float classicToUnitySpeedUnitRatio = 39.5f; // was estimated from comparing a walk over the same distance in classic and DF Unity
         public const float dfWalkBase = 150f;
         private const float dfCrouchBase = 50f;
-        private const float dfRideBase = dfWalkBase + 225f;
-        private const float dfCartBase = dfWalkBase + 100f;
+        private const float dfRideBase = 375f;
+        private const float dfCartBase = 250f;
 
         public bool walkSpeedOverride = true;
         private float currentWalkSpeed = 0;
-        private Dictionary<string, float> walkSpeedModifierList = new Dictionary<string, float>();
+        private Dictionary<string, float> walkSpeedModifiers = new Dictionary<string, float>();
 
         public bool runSpeedOverride = true;
         private float currentRunSpeed = 0;
-        private Dictionary<string, float> runSpeedModifierList = new Dictionary<string, float>();
+        private Dictionary<string, float> runSpeedModifiers = new Dictionary<string, float>();
+
+        public bool rideSpeedOverride = true;
+        private float currentRideSpeed = 0;
+        private Dictionary<string, float> rideSpeedModifiers = new Dictionary<string, float>();
 
         public delegate bool CanPlayerRun();
         public CanPlayerRun CanRun { get; set; }
@@ -51,8 +55,12 @@ namespace DaggerfallWorkshop.Game
 
         public bool updateWalkSpeed;
         public bool updateRunSpeed;
+        public bool updateRideSpeed;
+
         private float previousBaseWalkSpeed;
         private float previousBaseRunSpeed;
+        private float previousBaseRideSpeed;
+
         private float baseSpeed = 0;
 
         private void Start()
@@ -62,6 +70,7 @@ namespace DaggerfallWorkshop.Game
             CanRun = CanRunUnlessRiding;
             currentWalkSpeed = GetWalkSpeed(GameManager.Instance.PlayerEntity);
             currentRunSpeed = GetRunSpeed();
+            currentRideSpeed = GetRideSpeed();
         }
 
         /// <summary>
@@ -110,25 +119,26 @@ namespace DaggerfallWorkshop.Game
                 isRunning = CanRun() && runningMode;
                 isSneaking = !isRunning && sneakingMode;
             }
-            else
+            else if (!CanRun())
             {
-                if (!CanRun())
-                    isRunning = false;
-                // you can't switch running on/off while in mid air
+                isRunning = false; // you can't switch running on/off while in mid air
             }
 
             if (isRunning)
             {
                 speed = RefreshRunSpeed();
-
-                //switch sneaking off if was previously sneaking
-                sneakingMode = false;
+                sneakingMode = false; //switch sneaking off if was previously sneaking
             }
             else if (isSneaking)
             {
                 // Handle sneak key. Reduces movement speed to half, then subtracts 1 in classic speed units
                 speed /= 2;
                 speed -= (1 / classicToUnitySpeedUnitRatio);
+            }
+
+            if (playerMotor.IsRiding)
+            {
+                speed = RefreshRideSpeed();
             }
 
             InputManager.Instance.MaximizeJoystickMovement = isRunning;
@@ -148,15 +158,20 @@ namespace DaggerfallWorkshop.Game
         {
             Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
             float playerSpeed = player.Stats.LiveSpeed;
-            if (playerMotor == null) // fixes null reference bug.
+            if (playerMotor == null)
                 playerMotor = GameManager.Instance.PlayerMotor;
             // crouching speed penalty doesn't apply if swimming.
             if (playerMotor.IsCrouching && !levitateMotor.IsSwimming)
                 baseSpeed = (playerSpeed + dfCrouchBase) / classicToUnitySpeedUnitRatio;
             else if (playerMotor.IsRiding)
             {
-                float rideSpeed = (GameManager.Instance.TransportManager.TransportMode == TransportModes.Cart) ? dfCartBase : dfRideBase;
-                baseSpeed = (playerSpeed + rideSpeed) / classicToUnitySpeedUnitRatio;
+                float currentRideBase = 0;
+                bool playerIsRidingHorseWithNoCart = GameManager.Instance.TransportManager.TransportMode == TransportModes.Horse;
+                if (playerIsRidingHorseWithNoCart)
+                    currentRideBase = dfRideBase;
+                else
+                    currentRideBase = dfCartBase;
+                baseSpeed = (playerSpeed + currentRideBase) / classicToUnitySpeedUnitRatio;
             }
             else
             {
@@ -168,8 +183,8 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Add custom walk speed modifier to speed modifer dictionary. Returns unique ID for referencing of custom speedModifier for future manipulation.
         /// </summary>
-        /// <param name="speedModifier">the amount to change players base walk speed by percentages. AKA, .75 will lower player movement by 25%. Using 0 or negatives will do nothing but return null.</param>
         /// <param name="UID">The Unique Universal ID created and provided when original value was added to dictionary. Store this value to reference your speed modifier later.</param>
+        /// <param name="walkSpeedModifier">the amount to change players base walk speed by percentages. AKA, .75 will lower player movement by 25%. Using 0 or negatives will do nothing but return null.</param>
         /// <param name="refreshWalkSpeed">will cause routine to also update the player speed using the list to sequentially multiply the current base value by the list modifier values.</param>
         /// <returns></returns>
         public bool AddWalkSpeedMod(out string UID, float walkSpeedModifier = 0, bool refreshWalkSpeed = true)
@@ -181,7 +196,7 @@ namespace DaggerfallWorkshop.Game
             if (walkSpeedModifier > 0)
             {
                 UID = System.Guid.NewGuid().ToString();
-                walkSpeedModifierList.Add(UID, walkSpeedModifier);
+                walkSpeedModifiers.Add(UID, walkSpeedModifier);
                 added = true;
             }
             //trigger an update to the walk speed loop to push updated walk speed value.
@@ -193,10 +208,10 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Add custom walk speed modifier to speed modifer dictionary. Returns unique ID for referencing of custom speedModifier for future manipulation.
         /// </summary>
-        /// <param name="speedModifier">the amount to change players base walk speed by percentages. AKA, .75 will lower player movement by 25%. Using 0 or negatives will do nothing but return null.</param>
         /// <param name="UID">The Unique Universal ID created and provided when original value was added to dictionary. Store this value to reference your speed modifier later.</param>
-        /// <param name="refreshWalkSpeed">will cause routine to also update the player speed using the list to sequentially multiply the current base value by the list modifier values.</param>
-        /// <returns></returns>
+        /// <param name="speedModifier">the amount to change players base walk speed by percentages. AKA, .75 will lower player movement by 25%. Using 0 or negatives will do nothing but return null.</param>
+        /// <param name="refreshRunSpeed">will cause routine to also update the player speed using the list to sequentially multiply the current base value by the list modifier values.</param>
+        /// <returns></returns>        
         public bool AddRunSpeedMod(out string UID, float speedModifier = 0, bool refreshRunSpeed = true)
         {
             bool added = false;
@@ -206,7 +221,7 @@ namespace DaggerfallWorkshop.Game
             if (speedModifier > 0)
             {
                 UID = System.Guid.NewGuid().ToString();
-                runSpeedModifierList.Add(UID, speedModifier);
+                runSpeedModifiers.Add(UID, speedModifier);
                 added = true;
             }
 
@@ -217,12 +232,38 @@ namespace DaggerfallWorkshop.Game
         }
 
         /// <summary>
+        /// Add custom ride speed modifier to speed modifer dictionary. Returns unique ID for referencing of custom speedModifier for future manipulation.
+        /// </summary>
+        /// <param name="UID">The Unique Universal ID created and provided when original value was added to dictionary. Store this value to reference your speed modifier later.</param>
+        /// <param name="speedModifier">the amount to change players base ride speed by percentages. AKA, .75 will lower player movement by 25%. Using 0 or negatives will do nothing but return null.</param>
+        /// <param name="refreshRideSpeed">will cause routine to also update the player speed using the list to sequentially multiply the current base value by the list modifier values.</param>
+        /// <returns></returns>        
+        public bool AddRideSpeedMod(out string UID, float speedModifier = 0, bool refreshRideSpeed = true)
+        {
+            bool added = false;
+            UID = null;
+
+            //if they set a speed modifier greater than 0, grab the list index using count, and add item (which will be at the lastID index spot).
+            if (speedModifier > 0)
+            {
+                UID = System.Guid.NewGuid().ToString();
+                rideSpeedModifiers.Add(UID, speedModifier);
+                added = true;
+            }
+
+            //trigger an update to the ride speed loop to push updated ride speed value.
+            updateRideSpeed = refreshRideSpeed;
+
+            return added;
+        }
+
+        /// <summary>
         /// Remove custom speed modifier from speed modifer dictionary using stored UID. Returns true if removed, false if not found. Ensure to set if it is a run or walk speed modifier being removed.
         /// </summary>
-        /// <param name="speedModifier">the amount to change players base walk speed by percentages. AKA, .75 will lower player movement by 25%. Using 0 or negatives will do nothing but return null.</param>
         /// <param name="UID">The Unique Universal ID created and provided when original value was added to dictionary. Store this value to reference your speed modifier later.</param>
-        /// <param name="refreshWalkSpeed">will cause routine to also update the player speed using the list to sequentially multiply the current base value by the list modifier values.</param>
-        /// <returns></returns>
+		/// <param name="removeRunSpeed">Not used, kept for legacy with previous version of RemoveSpeedMod() before PR 2735.
+        /// <param name="refreshSpeed">will cause routine to also update the player speed using the list to sequentially multiply the current base value by the list modifier values.</param>
+        /// <returns></returns>   
         public bool RemoveSpeedMod(string UID, bool removeRunSpeed = false, bool refreshSpeed = true)
         {
             //setup false bool for manipulation.
@@ -232,162 +273,113 @@ namespace DaggerfallWorkshop.Game
             if (UID == "" || UID == null)
                 return removed;
 
-            //if there is a modifier put in, see if dictionary contains it in the unique keys, and then remove and return true.
-            if (!removeRunSpeed && walkSpeedModifierList.ContainsKey(UID))
-            {
-                walkSpeedModifierList.Remove(UID);
-                removed = true;
-            }
-
-            //if there is a modifier put in, see if dictionary contains it in the unique keys, and then remove and return true.
-            if (removeRunSpeed && runSpeedModifierList.ContainsKey(UID))
-            {
-                runSpeedModifierList.Remove(UID);
-                removed = true;
-            }
+            //look through all three lists to see if the UID is in any of them. If it is, remove and flag boolean(s) true.
+            bool walkSpeedModifierIsRemoved = walkSpeedModifiers.Remove(UID);
+            bool runSpeedModifierIsRemoved = runSpeedModifiers.Remove(UID);
+            bool rideSpeedModifierIsRemoved = rideSpeedModifiers.Remove(UID);
+            removed = walkSpeedModifierIsRemoved || runSpeedModifierIsRemoved || rideSpeedModifierIsRemoved;
 
             //trigger an update to the walk speed loop to push updated walk speed value.
             updateWalkSpeed = refreshSpeed;
             updateRunSpeed = refreshSpeed;
+            updateRideSpeed = refreshSpeed;
 
             return removed;
         }
 
         /// <summary>
-        /// Clears our associated modifier list of all values. default to clearing out both run and walk speed modifier list.
+        /// Clears modifiers on walk, run and ride speeds.
+        /// Default values will clear out all three groups of modifiers.
         /// </summary>
-        /// <param name="walkSpeedReset">clear out walk speed modifier list.</param>
-        /// <param name="runSpeedReset">clear out run speed modifier list</param>
-        public bool ResetSpeed(bool walkSpeedReset = true, bool runSpeedReset = true)
+        /// <param name="walkSpeedReset">clear out walk speed modifiers.</param>
+        /// <param name="runSpeedReset">clear out run speed modifiers</param>
+        /// <param name="rideSpeedReset">clear out ride speed modifiers</param>
+        public bool ResetSpeed(bool walkSpeedReset = true, bool runSpeedReset = true, bool rideSpeedReset = true)
         {
             bool reset = false;
-
-            //if walk speed is reset, reset all needed properties to reset walk speed.
-            if (walkSpeedReset)
-            {
-                walkSpeedModifierList.Clear();
-                reset = true;
-                updateWalkSpeed = true;
-            }
-
-            //if run speed is reset, reset all needed properties to reset run speed.
-            if (runSpeedReset)
-            {
-                runSpeedModifierList.Clear();
-                reset = true;
-                updateRunSpeed = true;
-            }
-
+            if (walkSpeedReset) { walkSpeedModifiers.Clear(); reset = updateWalkSpeed = true; }
+            if (runSpeedReset) { runSpeedModifiers.Clear(); reset = updateRunSpeed = true; }
+            if (rideSpeedReset) { rideSpeedModifiers.Clear(); reset = updateRideSpeed = true; }
             return reset;
         }
 
         /// <summary>
-        /// Updates the players walk speed using for loop and dictionary values to ensure proper sequential processing to get proper end speed.
-        /// Processing of modifiers is processed by their addition order. First added by modder is multiplied first, and so on.
+        /// Refresh walk speed based on modifiers and override settings.
         /// </summary>
+        /// <returns></returns>
         public float RefreshWalkSpeed()
         {
-            //setup and grab needed base values for computing end speed.
-            float baseWalkSpeed = GetWalkSpeed(GameManager.Instance.PlayerEntity);
-            float overrideSpeed = 0;
-
-            //if there are no modifiers in the dictionary, return the base walk speed before modifying it.
-            if (walkSpeedModifierList.Count == 0 || walkSpeedOverride == false)
-                return baseWalkSpeed;
-
-            //checks to see if players base run speed updated, and if so, triggers new speed update loop below.
-            if (previousBaseWalkSpeed != baseWalkSpeed)
-            {
-                previousBaseWalkSpeed = baseWalkSpeed;
-                updateWalkSpeed = true;
-            }
-
-            //if updateWalkSpeed switch is turned to true, update walk speed using an if then and while loop.
-            if (updateWalkSpeed)
-            {
-                //shunt collection as a numerator into a object var to be used.
-                using (var modifierValue = walkSpeedModifierList.GetEnumerator())
-                {
-                    //if the first item is moved do this, calculate speed using base speed as the starting point.
-                    if (modifierValue.MoveNext())
-                    {
-                        overrideSpeed = baseWalkSpeed * modifierValue.Current.Value;
-
-                        //once first move next is done to get speed from base value, start while loop to sequentally calculate subsequent values.
-                        while (modifierValue.MoveNext())
-                        {
-                            overrideSpeed = overrideSpeed * modifierValue.Current.Value;
-                        }
-                    }
-                }
-
-                //assign override speed and switch updateWalkSpeed to false to stop it from looping every time it is called.
-                //only want it to loop when collection changes - AKA, add, remove, ect - or modder forces switch flip.
-                currentWalkSpeed = overrideSpeed;
-                updateWalkSpeed = false;
-            }
-
-            //return the final modified walk speed.
-            return currentWalkSpeed;
+            float baseSpeed = GetWalkSpeed();
+            return RefreshSpeed(baseSpeed, walkSpeedModifiers, walkSpeedOverride, ref previousBaseWalkSpeed, ref updateWalkSpeed, ref currentWalkSpeed);
         }
 
         /// <summary>
-        /// Updates the players walk speed using for loop and dictionary values to ensure proper sequential processing to get proper end speed.
-        /// Processing of modifiers is processed by their addition order. First added by modder is multiplied first, and so on.
+        /// Refresh run speed based on modifiers and override settings.
         /// </summary>
+        /// <returns></returns>
         public float RefreshRunSpeed()
         {
-            //setup and grab needed base values for computing end speed.
-            float baseRunSpeed = GetRunSpeed();
-            float overrideSpeed = 0;
+            float baseSpeed = GetRunSpeed();
+            return RefreshSpeed(baseSpeed, runSpeedModifiers, runSpeedOverride, ref previousBaseRunSpeed, ref updateRunSpeed, ref currentRunSpeed);
+        }
 
-            //if there are no modifiers in the dictionary, return the base walk speed before modifying it.
-            if (runSpeedModifierList.Count == 0 || runSpeedOverride == false)
-                return baseRunSpeed;
+        /// <summary>
+        /// Refresh ride speed based on modifiers and override settings.
+        /// </summary>
+        /// <returns></returns>
+        public float RefreshRideSpeed()
+        {
+            float baseSpeed = GetRideSpeed();
+            return RefreshSpeed(baseSpeed, rideSpeedModifiers, rideSpeedOverride, ref previousBaseRideSpeed, ref updateRideSpeed, ref currentRideSpeed);
+        }
 
-            //checks to see if players base run speed updated, and if so, triggers new speed update loop below.
-            if (previousBaseRunSpeed != baseRunSpeed)
+        /// <summary>
+        /// Refresh speed based on modifiers and override settings.
+        /// </summary>
+        /// <param name="baseSpeed"></param>
+        /// <param name="modifiers"></param>
+        /// <param name="overrideEnabled"></param>
+        /// <param name="previousBaseSpeed"></param>
+        /// <param name="updateFlag"></param>
+        /// <param name="currentSpeed"></param>
+        /// <returns></returns>
+        private float RefreshSpeed(float baseSpeed, IDictionary<string, float> modifiers, bool overrideEnabled, ref float previousBaseSpeed, ref bool updateFlag, ref float currentSpeed)
+        {
+            // If there are no modifiers or override is disabled, return the base speed.
+            if (modifiers.Count == 0 || !overrideEnabled)
+                return baseSpeed;
+
+            // If the base speed has changed, store it and flag that an update is needed.
+            if (previousBaseSpeed != baseSpeed)
             {
-                previousBaseRunSpeed = baseRunSpeed;
-                updateRunSpeed = true;
+                previousBaseSpeed = baseSpeed;
+                updateFlag = true;
             }
 
-            //if updateWalkSpeed switch is turned to true, update walk speed using an if then and while loop.
-            if (updateRunSpeed)
+            // Process the modifiers only if flagged for an update.
+            if (updateFlag)
             {
-                //shunt collection as a numerator into a object var to be used.
-                using (var modifierValue = runSpeedModifierList.GetEnumerator())
-                {
-                    //if the first item is moved do this, calculate speed using base speed as the starting point.
-                    if (modifierValue.MoveNext())
-                    {
-                        overrideSpeed = baseRunSpeed * modifierValue.Current.Value;
+                float overrideSpeed = baseSpeed;
 
-                        //once first move next is done to get speed from base value, start while loop to sequentally calculate subsequent values.
-                        while (modifierValue.MoveNext())
-                        {
-                            overrideSpeed = overrideSpeed * modifierValue.Current.Value;
-                        }
-                    }
-                }
+                // Process each modifier in sequence.
+                foreach (var modifier in modifiers)
+                    overrideSpeed *= modifier.Value;
 
-                //assign override speed and switch updateWalkSpeed to false to stop it from looping every time it is called.
-                //only want it to loop when collection changes - AKA, add, remove, ect - or modder forces switch flip.
-                currentRunSpeed = overrideSpeed;
-                updateRunSpeed = false;
+                // Update the current speed and reset the update flag.
+                currentSpeed = overrideSpeed;
+                updateFlag = false;
             }
 
-            //return the final modified walk speed.
-            return currentRunSpeed;
+            return currentSpeed;
         }
 
         /// <summary>
         /// Get LiveSpeed adjusted for walking
         /// </summary>
-        /// <param name="player">the PlayerEntity to use</param>
         /// <returns></returns>
-        public float GetWalkSpeed(Entity.PlayerEntity player)
+        public float GetWalkSpeed()
         {
+            Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
             float drag = 0.5f * (100 - (player.Stats.LiveSpeed >= 30 ? player.Stats.LiveSpeed : 30));
             return (player.Stats.LiveSpeed + dfWalkBase - drag) / classicToUnitySpeedUnitRatio;
         }
@@ -395,7 +387,6 @@ namespace DaggerfallWorkshop.Game
         /// <summary>
         /// Get LiveSpeed adjusted for running
         /// </summary>
-        /// <param name="baseSpeed"></param>
         /// <returns></returns>
         public float GetRunSpeed()
         {
@@ -408,6 +399,23 @@ namespace DaggerfallWorkshop.Game
             else
                 baseRunSpeed = (player.Stats.LiveSpeed + dfWalkBase) / classicToUnitySpeedUnitRatio;
             return baseRunSpeed * (1.35f + (player.Skills.GetLiveSkillValue(DFCareer.Skills.Running) / 200f));
+        }
+
+        /// <summary>
+        /// Get LiveSpeed adjusted for riding
+        /// </summary>
+        /// <returns></returns>
+        public float GetRideSpeed()
+        {
+            Entity.PlayerEntity player = GameManager.Instance.PlayerEntity;
+            float currentRideBase = 0;
+            bool playerIsRidingHorseWithNoCart = GameManager.Instance.TransportManager.TransportMode == TransportModes.Horse;
+            if (playerIsRidingHorseWithNoCart)
+                currentRideBase = dfRideBase;
+            else
+                currentRideBase = dfCartBase;
+            float baseRideSpeed = (player.Stats.LiveSpeed + currentRideBase) / classicToUnitySpeedUnitRatio; ;
+            return baseRideSpeed;
         }
 
         /// <summary>
@@ -428,5 +436,12 @@ namespace DaggerfallWorkshop.Game
             float climbingBoost = player.IsEnhancedClimbing ? 2f : 1f;
             return (baseSpeed / 3) * climbingBoost;
         }
+
+        /// <summary>
+        /// Legacy method signature for older mods to keep working. Use GetWalkSpeed() instead.
+        /// </summary>
+        /// <param name="player"></param>
+        /// <returns></returns>
+        public float GetWalkSpeed(Entity.PlayerEntity player) { return GetWalkSpeed(); }
     }
 }
