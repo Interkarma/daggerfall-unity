@@ -337,7 +337,7 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
                 target.MetalType = MetalTypes.None;
                 target.DrawWeaponSound = SoundClips.None;
                 target.SwingWeaponSound = SoundClips.SwingHighPitch;
-                target.Reach = WeaponManager.defaultWeaponReach;
+                target.Reach = GameManager.Instance.WeaponManager.WeaponReach;
                 return true;
             }
 
