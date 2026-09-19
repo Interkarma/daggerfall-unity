@@ -3025,9 +3025,23 @@ namespace DaggerfallWorkshop.Game.Formulas
                     break;
 
                 case DFLocation.BuildingTypes.Temple:
-                    // Temples get name from faction data - always seem to be first child of factionID
+                    // Temples get name from faction data - always seem to be first child of the top-level factionID
                     if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(factionID, out factionData))
                     {
+                        // Traverse up to find the top-level faction
+                        while (factionData.parent != 0)
+                        {
+                            if (GameManager.Instance.PlayerEntity.FactionData.GetFactionData(factionData.parent, out FactionFile.FactionData parentFaction))
+                            {
+                                factionData = parentFaction;
+                            }
+                            else
+                            {
+                                break; // If we can't find the parent, stop the loop
+                            }
+                        }
+
+                        // Now that we have the top-level faction, get its first child
                         if (factionData.children.Count > 0)
                         {
                             FactionFile.FactionData firstChild;
