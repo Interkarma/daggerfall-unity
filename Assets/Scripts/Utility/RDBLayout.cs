@@ -785,13 +785,11 @@ namespace DaggerfallWorkshop.Utility
                 axis = DFBlock.RdbActionAxes.NegativeX;
                 action.Magnitude = 400; // Classic magnitude is 392 but player is able to stick to that angle so increasing to 400
             }
+            // Rotating crossings in "traps corridor" in Orsinium
             if (action.ActionAxisRawValue == 12 && action.ModelDescription == "C0E")
             {
                 axis = DFBlock.RdbActionAxes.NegativeY;
-                // Debug.LogFormat("Use 1024 instead of {0}", action.Magnitude);
-                // action.Magnitude = 1024; // half turn
                 action.ActionDuration = 0;
-                Debug.Log("It's another trap");
             }
 
             Vector3 vector = Vector3.zero;
@@ -833,6 +831,7 @@ namespace DaggerfallWorkshop.Utility
         {
             Vector3 vector = Vector3.zero;
             float magnitude = action.Magnitude;
+            // Portcullis at the beginning of "traps corridor" in Orsinium
             if (action.ActionAxisRawValue == 11 && action.ModelDescription == "C0X")
             {
                 axis = DFBlock.RdbActionAxes.NegativeY;
