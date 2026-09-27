@@ -55,6 +55,7 @@ namespace DaggerfallWorkshop
 
         AudioSource audioSource;
         ActionState currentState;
+        bool runForwardOnly = false;
         float cooldown;
 
         //lookup for action type12, temp. storing them here
@@ -114,6 +115,12 @@ namespace DaggerfallWorkshop
         public float Duration
         {
             get { return ActionDuration / 20f; }
+        }
+
+        public bool RunForwardOnly
+         {
+            get { return runForwardOnly; }
+            set { runForwardOnly = value; }
         }
 
         //Action flag -> Action Delegate lookup
@@ -462,17 +469,20 @@ namespace DaggerfallWorkshop
         /// </summary>
         public static void Move(GameObject triggerObj, DaggerfallAction thisAction)
         {
+            if (thisAction.runForwardOnly && (thisAction.CurrentState == ActionState.Start || thisAction.CurrentState == ActionState.End))
+            {
+                Debug.LogFormat("Move RunForwardOnly: actionState={0}", thisAction.CurrentState);
+            }
             if (thisAction.CurrentState == ActionState.Start)
             {
                 thisAction.CurrentState = ActionState.PlayingForward;
                 thisAction.TweenToEnd(thisAction.Duration);
             }
-            else if (thisAction.CurrentState == ActionState.End)
+            else if (thisAction.CurrentState == ActionState.End && !thisAction.RunForwardOnly)
             {
                 thisAction.CurrentState = ActionState.PlayingReverse;
                 thisAction.TweenToStart(thisAction.Duration);
             }
-
         }
 
 

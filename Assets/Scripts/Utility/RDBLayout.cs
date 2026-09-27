@@ -833,6 +833,11 @@ namespace DaggerfallWorkshop.Utility
         {
             Vector3 vector = Vector3.zero;
             float magnitude = action.Magnitude;
+            if (action.ActionAxisRawValue == 11 && action.ModelDescription == "C0X")
+            {
+                axis = DFBlock.RdbActionAxes.NegativeY;
+                action.RunForwardOnly = true;
+            }
             switch (axis)
             {
                 case DFBlock.RdbActionAxes.NegativeX:
@@ -855,6 +860,7 @@ namespace DaggerfallWorkshop.Utility
                     vector.z = -magnitude;
                     break;
                 default:
+                    Debug.LogFormat("Unknown translation action model={0} magnitude={1} axis={2}", action.ModelDescription, action.Magnitude, axis);
                     break;
             }
             action.ActionTranslation = vector * MeshReader.GlobalScale;
