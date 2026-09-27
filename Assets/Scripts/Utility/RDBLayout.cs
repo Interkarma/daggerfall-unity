@@ -700,7 +700,7 @@ namespace DaggerfallWorkshop.Utility
             float degreesY = -obj.Resources.ModelResource.YRotation / BlocksFile.RotationDivisor;
             float degreesZ = -obj.Resources.ModelResource.ZRotation / BlocksFile.RotationDivisor;
 
-            // Calcuate transform
+            // Calculate transform
             Vector3 position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
 
             // Calculate matrix
@@ -785,6 +785,12 @@ namespace DaggerfallWorkshop.Utility
                 axis = DFBlock.RdbActionAxes.NegativeX;
                 action.Magnitude = 400; // Classic magnitude is 392 but player is able to stick to that angle so increasing to 400
             }
+            // Rotating crossings in "traps corridor" in Orsinium
+            if (action.ActionAxisRawValue == 12 && action.ModelDescription == "C0E")
+            {
+                axis = DFBlock.RdbActionAxes.NegativeY;
+                action.ActionDuration = 0;
+            }
 
             Vector3 vector = Vector3.zero;
             float magnitude = action.Magnitude;
@@ -811,6 +817,7 @@ namespace DaggerfallWorkshop.Utility
                     break;
                 default:
                     magnitude = 0f;
+                    Debug.LogFormat("Unknown rotation action model={0} axisrawvalue={1} axis={2}", action.ModelDescription, action.ActionAxisRawValue, axis);
                     break;
             }
 
@@ -824,6 +831,12 @@ namespace DaggerfallWorkshop.Utility
         {
             Vector3 vector = Vector3.zero;
             float magnitude = action.Magnitude;
+            // Portcullis at the beginning of "traps corridor" in Orsinium
+            if (action.ActionAxisRawValue == 11 && action.ModelDescription == "C0X")
+            {
+                axis = DFBlock.RdbActionAxes.NegativeY;
+                action.RunForwardOnly = true;
+            }
             switch (axis)
             {
                 case DFBlock.RdbActionAxes.NegativeX:
@@ -846,6 +859,7 @@ namespace DaggerfallWorkshop.Utility
                     vector.z = -magnitude;
                     break;
                 default:
+                    Debug.LogFormat("Unknown translation action model={0} magnitude={1} axis={2}", action.ModelDescription, action.Magnitude, axis);
                     break;
             }
             action.ActionTranslation = vector * MeshReader.GlobalScale;
