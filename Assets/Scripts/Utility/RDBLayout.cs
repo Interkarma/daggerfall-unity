@@ -700,7 +700,7 @@ namespace DaggerfallWorkshop.Utility
             float degreesY = -obj.Resources.ModelResource.YRotation / BlocksFile.RotationDivisor;
             float degreesZ = -obj.Resources.ModelResource.ZRotation / BlocksFile.RotationDivisor;
 
-            // Calcuate transform
+            // Calculate transform
             Vector3 position = new Vector3(obj.XPos, -obj.YPos, obj.ZPos) * MeshReader.GlobalScale;
 
             // Calculate matrix
@@ -785,6 +785,14 @@ namespace DaggerfallWorkshop.Utility
                 axis = DFBlock.RdbActionAxes.NegativeX;
                 action.Magnitude = 400; // Classic magnitude is 392 but player is able to stick to that angle so increasing to 400
             }
+            if (action.ActionAxisRawValue == 12 && action.ModelDescription == "C0E")
+            {
+                axis = DFBlock.RdbActionAxes.NegativeY;
+                // Debug.LogFormat("Use 1024 instead of {0}", action.Magnitude);
+                // action.Magnitude = 1024; // half turn
+                action.ActionDuration = 0;
+                Debug.Log("It's another trap");
+            }
 
             Vector3 vector = Vector3.zero;
             float magnitude = action.Magnitude;
@@ -811,6 +819,7 @@ namespace DaggerfallWorkshop.Utility
                     break;
                 default:
                     magnitude = 0f;
+                    Debug.LogFormat("Unknown rotation action model={0} axisrawvalue={1} axis={2}", action.ModelDescription, action.ActionAxisRawValue, axis);
                     break;
             }
 
