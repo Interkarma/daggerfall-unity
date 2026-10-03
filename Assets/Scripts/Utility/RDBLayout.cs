@@ -782,7 +782,7 @@ namespace DaggerfallWorkshop.Utility
             // If more examples with a raw axis value > 6 can be found, there's possibly some global bitwise op needed here instead
             if (action.ActionAxisRawValue == 13 && action.ModelDescription == "TRP")
             {
-                axis = DFBlock.RdbActionAxes.NegativeX;
+                axis = DFBlock.RdbActionAxes.PositiveX;
                 action.Magnitude = 400; // Classic magnitude is 392 but player is able to stick to that angle so increasing to 400
             }
 
