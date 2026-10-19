@@ -30,8 +30,8 @@ namespace DaggerfallWorkshop.Game
         public const float classicToUnitySpeedUnitRatio = 39.5f; // was estimated from comparing a walk over the same distance in classic and DF Unity
         public const float dfWalkBase = 150f;
         private const float dfCrouchBase = 50f;
-        private const float dfRideBase = 375f;
-        private const float dfCartBase = 250f;
+        private const float dfRideBase = dfWalkBase + 225f;
+        private const float dfCartBase = dfWalkBase + 100f;
 
         public bool walkSpeedOverride = true;
         private float currentWalkSpeed = 0;
@@ -165,13 +165,8 @@ namespace DaggerfallWorkshop.Game
                 baseSpeed = (playerSpeed + dfCrouchBase) / classicToUnitySpeedUnitRatio;
             else if (playerMotor.IsRiding)
             {
-                float currentRideBase = 0;
-                bool playerIsRidingHorseWithNoCart = GameManager.Instance.TransportManager.TransportMode == TransportModes.Horse;
-                if (playerIsRidingHorseWithNoCart)
-                    currentRideBase = dfRideBase;
-                else
-                    currentRideBase = dfCartBase;
-                baseSpeed = (playerSpeed + currentRideBase) / classicToUnitySpeedUnitRatio;
+                float rideSpeed = (GameManager.Instance.TransportManager.TransportMode == TransportModes.Cart) ? dfCartBase : dfRideBase;
+                baseSpeed = (playerSpeed + rideSpeed) / classicToUnitySpeedUnitRatio;
             }
             else
             {
