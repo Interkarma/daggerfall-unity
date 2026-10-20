@@ -155,7 +155,7 @@ Item _spellScroll_ letter used 1030
 Person _qgiver_ group Questor
 Person _dummydaedra_ face 249 factiontype Daedra remote
 
-Place _mondung_ remote dungeon9
+Place _mondung_ remote dungeon9 only
 Place aide remote dungeon
 
 Clock _queston_ 00:00 0 flag 17 range 0 2

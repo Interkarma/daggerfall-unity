@@ -116,7 +116,7 @@ Item _item_ sapphire
 Person _questgiver_ face 112 group Questor
 Person _qgfriend_ group Local_3.0 remote
 
-Place _itemdung_ remote dungeon13
+Place _itemdung_ remote dungeon13 only
 
 Clock _1stparton_ 00:00 0 flag 1 range 2 5
 --changed flags on timer, was giving very short time limits before

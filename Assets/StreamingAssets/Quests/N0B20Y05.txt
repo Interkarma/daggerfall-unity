@@ -122,7 +122,7 @@ Item _reward_ magic_item
 Person _questgiver_ group Questor
 Person _wizard_ face 249 faction The_Mages_Guild remote
 
-Place _mondung_ remote dungeon9
+Place _mondung_ remote dungeon9 only
 
 Clock _1stparton_ 00:00 0 flag 17 range 0 2
 

@@ -211,7 +211,7 @@ Person _qgiver_ group Questor
 Person _knight_ face 216 faction The_Fighters_Guild remote
 Person _child_ faction Children female
 
-Place _mondung_ remote dungeon1
+Place _mondung_ remote dungeon1 only
 Place _childlocale_ local house2
 
 Clock _queston_ 00:00 0 flag 17 range 0 5

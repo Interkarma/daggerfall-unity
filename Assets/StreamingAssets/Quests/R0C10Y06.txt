@@ -114,7 +114,7 @@ Item _reward_ gold
 
 Person _questgiver_ face 112 group Questor
 
-Place _itemdung_ remote dungeon1
+Place _itemdung_ remote dungeon1 only
 
 Clock _1stparton_ 00:00 0 flag 17 range 0 2
 
