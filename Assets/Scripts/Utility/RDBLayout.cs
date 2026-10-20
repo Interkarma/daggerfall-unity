@@ -835,7 +835,7 @@ namespace DaggerfallWorkshop.Utility
             if (action.ActionAxisRawValue == 11 && action.ModelDescription == "C0X")
             {
                 axis = DFBlock.RdbActionAxes.NegativeY;
-                action.RunForwardOnly = true;
+                action.PlayForwardOnly = true;
             }
             switch (axis)
             {
