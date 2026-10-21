@@ -11,6 +11,7 @@
 
 using UnityEngine;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.MagicAndEffects;
 using System.Collections.Generic;
 using DaggerfallWorkshop.Utility;
@@ -32,6 +33,7 @@ namespace DaggerfallWorkshop.Game
         #region Member Variables
 
         public float OpenDoorDistance = 2f;         // Maximum distance to open door
+        public float fallingDamageThreshold = 5.0f;
         const float attackSpeedDivisor = 2f;        // How much to slow down during attack animations
         float stopDistance = 1.7f;                  // Used to prevent orbiting
         const float doorCrouchingHeight = 1.65f;    // How low enemies dive to pass thru doors
@@ -1383,10 +1385,6 @@ namespace DaggerfallWorkshop.Game
 
         void ApplyFallDamage()
         {
-            // Assuming the same formula is used for the player and enemies
-            const float fallingDamageThreshold = 5.0f;
-            const float HPPerMetre = 5f;
-
             if (controller.isGrounded)
             {
                 // did enemy just land?
@@ -1395,18 +1393,22 @@ namespace DaggerfallWorkshop.Game
                     float fallDistance = LastGroundedY - transform.position.y;
                     if (fallDistance > fallingDamageThreshold)
                     {
-                        int damage = (int)(HPPerMetre * (fallDistance - fallingDamageThreshold));
+                        // Assuming the same formula is used for the player and enemies
+                        int damage = FormulaHelper.CalculateFallDamage(entityBehaviour.Entity, fallingDamageThreshold, fallDistance);
 
-                        EnemyEntity enemyEntity = entityBehaviour.Entity as EnemyEntity;
-                        enemyEntity.DecreaseHealth(damage);
-
-                        if (entityBlood)
+                        if (damage > 0)
                         {
-                            // Like in classic, falling enemies bleed at the center. It must hurt the center of mass ;)
-                            entityBlood.ShowBloodSplash(0, transform.position);
-                        }
+                            EnemyEntity enemyEntity = entityBehaviour.Entity as EnemyEntity;
+                            enemyEntity.DecreaseHealth(damage);
 
-                        DaggerfallUI.Instance.DaggerfallAudioSource.PlayClipAtPoint((int)SoundClips.FallDamage, FindGroundPosition());
+                            if (entityBlood)
+                            {
+                                // Like in classic, falling enemies bleed at the center. It must hurt the center of mass ;)
+                                entityBlood.ShowBloodSplash(0, transform.position);
+                            }
+
+                            DaggerfallUI.Instance.DaggerfallAudioSource.PlayClipAtPoint((int)SoundClips.FallDamage, FindGroundPosition());
+                        }
                     }
                 }
 
