@@ -222,12 +222,19 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
                 foreach (var directory in directoryList)
                 {
-                    DirectoryInfo info = new DirectoryInfo(directory);
-                    if (showHiddenFilesCheck.IsChecked || (info.Attributes & FileAttributes.Hidden) == 0)
+                    try
                     {
-                        string name = Path.GetFileName(directory);
-                        folders.Add(name);
-                        folderList.AddItem(name);
+                        DirectoryInfo info = new DirectoryInfo(directory);
+                        if (showHiddenFilesCheck.IsChecked || (info.Attributes & FileAttributes.Hidden) == 0)
+                        {
+                            string name = Path.GetFileName(directory);
+                            folders.Add(name);
+                            folderList.AddItem(name);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogWarningFormat("FolderBrowser: Skipping inaccessible directory '{0}': {1}", directory, e.Message);
                     }
                 }
 
@@ -236,11 +243,14 @@ namespace DaggerfallWorkshop.Game.UserInterface
                 folderScroller.ScrollIndex = 0;
                 folderList.SelectedIndex = 0;
             }
-            catch
+            catch (Exception e)
             {
+                Debug.LogErrorFormat("FolderBrowser: Failed to enumerate '{0}': {1}", currentPath, e.Message);
                 folders.Clear();
                 folderList.ClearItems();
-                return;
+                if (currentPath != drives[driveList.SelectedIndex])
+                    folderList.AddItem(parentDirectory);
+                folderList.AddItem("(could not read directory)");
             }
         }
 
