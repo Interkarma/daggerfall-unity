@@ -156,7 +156,7 @@ Message:  1051
 <ce>                              It's a trap!
 
 Message:  1052
-<ce>                    Thank you from rescuing me from
+<ce>                    Thank you for rescuing me from
 <ce>                     those assassins.  If you could
 <ce>                        get me to _safehouse_ in
 <ce>                      __safehouse_, I can make my

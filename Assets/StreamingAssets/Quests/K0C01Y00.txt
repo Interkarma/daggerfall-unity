@@ -246,6 +246,14 @@ _S.10_ task:
 	say 1019 
 	start task _victory_
 
+_S.13_ task:
+	toting _gem_ and _qgiver_ clicked 
+	give pc _gold_
+	end quest 
+-- this action was below "pcgetgold" below, and it turns out DFU's order of operations
+-- locked out this action because it was later in the quest file. With this move,
+-- the toting action works properly and quest can be completed with this.
+
 variable _victory_
 _S.11_ task:
 	clicked item _gem_ 
@@ -262,12 +270,6 @@ _pcgetsgold_ task:
 _clearclick_ task:
 	when _qgclicked_ and not _victory_
 	clear _clearclick_ _qgclicked_
-
-_S.13_ task:
-	toting _gem_ and _qgiver_ clicked 
-	give pc _gold_
-	end quest 
---added victory condition here, per message block 1002
 
 _S.14_ task:
 	when _S.10_ or _S.08_

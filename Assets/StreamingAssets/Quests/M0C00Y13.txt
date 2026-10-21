@@ -16,14 +16,14 @@ QuestorOffer:  [1000]
 <ce>                 The Fighters Guild doesn't hand out
 <ce>                  charity work. If I weren't short on
 <ce>                 fighters right now, I'd have to send
-<ce>                 you away %pcn. I do need a fighter to
+<ce>                 you away, %pcn. I do need a fighter to
 <ce>                  chase off some barbarian that's
 <ce>                  running wild. Do it for me and I'll
 <ce>                    make sure everyone knows you're
 <ce>                     a stand up %ra. Is it a deal?
 
 RefuseQuest:  [1001]
-<ce>                    You've just made a big mistake
+<ce>                    You've just made a big mistake,
 <ce>                     %pcn. Don't come looking for
 <ce>                        work here for a while.
 
@@ -51,7 +51,7 @@ RumorsPostsuccess:  [1007]
 <ce>                            the barbarian?
 
 QuestorPostsuccess:  [1008]
-<ce>               You managed that barbarian pretty well
+<ce>               You managed that barbarian pretty well,
 <ce>                         %pcf. Not bad at all.
 
 QuestorPostfailure:  [1009]

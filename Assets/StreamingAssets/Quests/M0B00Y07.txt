@@ -38,21 +38,21 @@ QuestComplete:  [1004]
 <ce>                           your _gold_ gold.
 
 RumorsDuringQuest:  [1005]
-<ce>                   I hear there's a tiger trapped in
-<ce>                      _house_. He's going to have
+<ce>                   I hear there's an animal trapped in
+<ce>                      _house_. Someone's going to have
 <ce>                        to pay to get it slain.
 
 RumorsPostfailure:  [1006]
-A tiger killed some poor bloke in his own home. A terrible tragedy.
+A beast killed some poor bloke in his own home. A terrible tragedy.
 
 RumorsPostsuccess:  [1007]
-Didn't you kill that rampaging tiger that got into _house_?
+Didn't you kill that rampaging animal that got into _house_?
 
 QuestorPostsuccess:  [1008]
-Good going with that tiger.
+Good going with that beast.
 
 QuestorPostfailure:  [1009]
-Tigers are tough. Maybe we should start you out with chipmunks. What a putz.
+Beasts are tough. Maybe we should start you out with chipmunks. What a putz.
 
 QuestLogEntry:  [1010]
 %qdt:

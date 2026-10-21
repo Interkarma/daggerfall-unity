@@ -17,7 +17,7 @@ QuestorOffer:  [1000]
 <ce>                    Seems the monster is attacking
 <ce>                     them when they are out in the
 <ce>                     woods logging. Want to take a
-<ce>                           hack at it %pcn?
+<ce>                           hack at it, %pcn?
 
 RefuseQuest:  [1001]
 <ce>                     Fair enough. Run along. I've
@@ -106,9 +106,9 @@ Message:  1022
 
 Message:  1023
 <ce>                   So the tree creature wants to cut
-<ce>                   a deal, eh? Well I suppose I can
+<ce>                   a deal, eh? Well, I suppose I can
 <ce>                   convince the boys to only log the
-<ce>                   big trees. But if his kind attack
+<ce>                   big trees. But if its kind attack
 <ce>                  us again, we'll burn every sapling
 <ce>                  we can find! You've got yourself a
 <ce>                              deal, %pcn.
@@ -116,7 +116,7 @@ Message:  1023
 Message:  1025
 <ce>                   You worked it so the woodsmen and
 <ce>                   the spriggan ain't fightin'? Very
-<ce>                   clever %pcn. You'll go far if you
+<ce>                   clever, %pcn. You'll go far if you
 <ce>                        keep those wits sharp.
 
 Message:  1030

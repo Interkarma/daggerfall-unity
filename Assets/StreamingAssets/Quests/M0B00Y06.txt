@@ -17,12 +17,12 @@ QuestorOffer:  [1000]
 <ce>                It seems a wild animal has gotten into
 <ce>                 his place. We need someone to go kill
 <ce>              the thing. The guild will pay _gold_ gold.
-<ce>                         Do you want it %pcn?
+<ce>                         Do you want it, %pcn?
 
 RefuseQuest:  [1001]
 <ce>                      I'm sure someone else will
 <ce>                      be willing to take care of
-<ce>                          this nuisance bear.
+<ce>                          this nuisance animal.
 
 AcceptQuest:  [1002]
 <ce>                    "OK, %pcf. Get over to _house_
@@ -46,7 +46,7 @@ RumorsPostfailure:  [1006]
 That creature mauled some woman before being chased out of town. What a pity.
 
 RumorsPostsuccess:  [1007]
-The Fighters Guild killed that bear that got into _house_. It's a good thing we have them around.
+The Fighters Guild killed that animal that got into _house_. It's a good thing we have them around.
 
 QuestorPostsuccess:  [1008]
 Good job killin' that beast. What can I do for you?

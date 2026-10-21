@@ -20,7 +20,7 @@ QuestorOffer:  [1000]
 <ce>             it for a silkworm cocoon. The poor slob can't
 <ce>              afford to pay us to get rid of it. However,
 <ce>               if you take care of it for free the guild
-<ce>             looks good and I'll make sure you look good.
+<ce>             will look good and I'll make sure you look good.
 <ce>                          Are you interested?
 
 RefuseQuest:  [1001]
@@ -34,7 +34,7 @@ AcceptQuest:  [1002]
 <ce>                   I'll put in a good word for you.
 
 QuestComplete:  [1004]
-<ce>                          You got spunk %pcf.
+<ce>                          You've got spunk, %pcf.
 <ce>                       Keep up the good work and
 <ce>                       you'll be Fighters Guild
 <ce>                             material yet.
