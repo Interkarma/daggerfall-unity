@@ -34,6 +34,23 @@ namespace DaggerfallWorkshop.Game
         const float defaultBowReach = 50f;
         public const float defaultWeaponReach = 2.25f;
 
+        float weaponReachOverride = 0;
+        public float WeaponReach
+        {
+            get
+            {
+                if (weaponReachOverride > 0)
+                    return weaponReachOverride;
+
+                return defaultWeaponReach;
+            }
+            set
+            {
+                weaponReachOverride = value;
+                ScreenWeapon.Reach = WeaponReach;
+            }
+        }
+
         // Equip delay times for weapons
         public static ushort[] EquipDelayTimes = { 500, 700, 1200, 900, 900, 1800, 1600, 1700, 1700, 3000, 3400, 2000, 2200, 2000, 2200, 2000, 4000, 5000 };
 
@@ -754,7 +771,7 @@ namespace DaggerfallWorkshop.Game
                     SetWeapon(ScreenWeapon, currentLeftHandWeapon);
             }
 
-            ScreenWeapon.Reach = defaultWeaponReach;
+            ScreenWeapon.Reach = WeaponReach;
         }
 
         void SetMelee(FPSWeapon target)
