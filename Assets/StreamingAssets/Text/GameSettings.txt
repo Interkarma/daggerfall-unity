@@ -60,6 +60,8 @@ bowDrawback,                                        Bows - draw and release
 bowDrawbackInfo,                                    Enables bow drawback while holding RH mouse; release to fire
 toggleSneak,                                        Toggle Sneak
 toggleSneakInfo,                                    Allows the Sneak action to be toggled rather than held
+toggleRun,                                          Toggle Run
+toggleRunInfo,                                      Allows the Run action to be toggled rather than held
 meleeAttackDetection,                               Hit Detection
 meleeAttackDetectionInfo,                           Complexity of melee attack targeting
 meleeAttackFriendlyProtection,                      Protect Friendlies and Neutrals
