@@ -155,7 +155,7 @@ MonoBehaviour:
     m_Key: meleeAttackFriendlyProtection
     m_Metadata:
       m_Items: []
-  - m_Id: 468183406040850432
+  - m_Id: 470546469150793728
     m_Key: toggleRun
     m_Metadata:
       m_Items: []
@@ -165,7 +165,7 @@ MonoBehaviour:
     id: 0
   references:
     version: 1
-	00000000:
+    00000000:
       type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables,
         asm: Unity.Localization}
       data:

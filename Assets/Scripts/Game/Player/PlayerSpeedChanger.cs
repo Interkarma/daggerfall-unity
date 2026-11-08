@@ -21,11 +21,8 @@ namespace DaggerfallWorkshop.Game
         private PlayerMotor playerMotor;
         private LevitateMotor levitateMotor;
 
-        // If checked, the run key toggles between running and walking. Otherwise player runs if the key is held down and walks otherwise
-        // There must be a button set up in the Input Manager called "Run"
-        // There is also an AutoRun key that is set into Advanced commands and that acts as a toogle: press it once and the player is always running without action, press it later and the player stops.
+        // To store the values of corresponding options into the advanced settings panels
         public bool ToggleRun { get; set; }
-        public bool ToggleAutoRun { get; set; }
         public bool ToggleSneak { get; set; }
 
         // Daggerfall base speed constants. (courtesy Allofich)
@@ -50,8 +47,8 @@ namespace DaggerfallWorkshop.Game
         public delegate bool CanPlayerRun();
         public CanPlayerRun CanRun { get; set; }
         public bool runningMode = false;
-        public bool autoRunningMode = false;
         public bool sneakingMode = false;
+		private bool toggleAutoRun = false;
 
         public bool isRunning = false;
         public bool isSneaking = false;
@@ -82,11 +79,12 @@ namespace DaggerfallWorkshop.Game
         public void CaptureInputSpeedAdjustment()
         {
             // ToggleRun is an option into the game Advanced Settings window to make the Run key a toggle key.
-            // If not, you run only while holding the Run key down.
-            if (!ToggleRun)
-                runningMode= InputManager.Instance.HasAction(InputManager.Actions.Run);
-            else
+			// If option is set or if autorun is on, use the Run key as a toggle.
+            // If not, you run only while holding the Run key down (classic behaviour).
+            if (ToggleRun || toggleAutoRun)
                 runningMode = runningMode ^ InputManager.Instance.ActionStarted(InputManager.Actions.Run);
+            else
+                runningMode = InputManager.Instance.HasAction(InputManager.Actions.Run);
 
             // ToggleSneak is an option into the game Advanced Settings window to make the Sneak key a toggle key.
             // If not, you sneak only while holding the Sneak key down.
@@ -95,7 +93,7 @@ namespace DaggerfallWorkshop.Game
             else
                 sneakingMode = sneakingMode ^ InputManager.Instance.ActionStarted(InputManager.Actions.Sneak);
 
-            // AutoRun is a toggle that is activated by the dedicated key.
+            // AutoRun acts as a toggle that is activated by the dedicated key.
             // If activated, the character runs without any action, until the key is pressed again or the player presses MoveBackwards.
 
             // If the AutoRun key is pressed and the player is not moving backwards, toggle the AutoRun state.
@@ -103,13 +101,14 @@ namespace DaggerfallWorkshop.Game
                 && !InputManager.Instance.HasAction(InputManager.Actions.MoveBackwards))
             {
                 InputManager.Instance.ToggleAutorun = !InputManager.Instance.ToggleAutorun;
-                ToggleAutoRun = InputManager.Instance.ToggleAutorun;
+                toggleAutoRun = InputManager.Instance.ToggleAutorun;
+				if (toggleAutoRun && !runningMode) runningMode = true; 
             }
 
-            // If autorunning and press onto MoveBackwards, stop running.
+            // If autorunning and press onto MoveBackwards, stop moving.
             if (InputManager.Instance.ActionStarted(InputManager.Actions.MoveBackwards))
             {
-                ToggleAutoRun = false;
+                toggleAutoRun = false;
             }
         }
 
@@ -121,7 +120,7 @@ namespace DaggerfallWorkshop.Game
         {
             if (playerMotor.IsGrounded)
             {
-                isRunning = CanRun() && (runningMode || ToggleAutoRun);
+                isRunning = CanRun() && runningMode;
                 isSneaking = !isRunning && sneakingMode;
             }
             else if (!CanRun())
