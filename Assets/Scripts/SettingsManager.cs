@@ -295,6 +295,7 @@ namespace DaggerfallWorkshop
         //public float WeaponSensitivity { get; set; }
         public bool MovementAcceleration { get; set; }
         public bool ToggleSneak { get; set; }
+        public bool ToggleRun { get; set; }
         public int WeaponSwingMode { get; set; }
         public int CameraRecoilStrength { get; set; }
         public float MusicVolume { get; set; }
@@ -532,6 +533,7 @@ namespace DaggerfallWorkshop
             JoystickDeadzone = GetFloat(sectionControls, "JoystickDeadzone", 0.001f, 1.0f);
             EnableController = GetBool(sectionControls, "EnableController");
             ToggleSneak = GetBool(sectionControls, "ToggleSneak");
+            ToggleRun = GetBool(sectionControls, "ToggleRun");
             HeadBobbing = GetBool(sectionControls, "HeadBobbing");
             Handedness = GetInt(sectionControls, "Handedness", 0, 3);
             WeaponAttackThreshold = GetFloat(sectionControls, "WeaponAttackThreshold", 0.001f, 1.0f);
@@ -734,6 +736,7 @@ namespace DaggerfallWorkshop
             SetFloat(sectionControls, "JoystickDeadzone", JoystickDeadzone);
             SetBool(sectionControls, "EnableController", EnableController);
             SetBool(sectionControls, "ToggleSneak", ToggleSneak);
+            SetBool(sectionControls, "ToggleRun", ToggleRun);
             SetBool(sectionControls, "HeadBobbing", HeadBobbing);
             SetInt(sectionControls, "Handedness", Handedness);
             SetFloat(sectionControls, "WeaponAttackThreshold", WeaponAttackThreshold);

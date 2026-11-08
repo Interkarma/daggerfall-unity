@@ -155,6 +155,10 @@ MonoBehaviour:
     m_Key: meleeAttackFriendlyProtection
     m_Metadata:
       m_Items: []
+  - m_Id: 470546469150793728
+    m_Key: toggleRun
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

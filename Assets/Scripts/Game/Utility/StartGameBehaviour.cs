@@ -275,6 +275,7 @@ namespace DaggerfallWorkshop.Game.Utility
 
             PlayerSpeedChanger speedChanger = FindPlayerSpeedChanger();
             speedChanger.ToggleSneak = DaggerfallUnity.Settings.ToggleSneak;
+            speedChanger.ToggleRun = DaggerfallUnity.Settings.ToggleRun;
 
             // Enable/disable videos
             DaggerfallUI.Instance.enableVideos = EnableVideos;

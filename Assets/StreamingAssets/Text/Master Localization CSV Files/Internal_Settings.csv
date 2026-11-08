@@ -17,6 +17,7 @@ movementAcceleration,Movement Acceleration
 weaponSwingMode,Weapon Swing Mode
 bowDrawback,Bows - draw and release
 toggleSneak,Toggle Sneak
+toggleRun,Toggle Run
 mouseWeaponAttackThreshold,Mouse Weapon Attack Threshold
 Escape,Escape
 AutoRun,AutoRun
