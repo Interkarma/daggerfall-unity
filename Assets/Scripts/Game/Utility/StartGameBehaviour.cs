@@ -236,15 +236,17 @@ namespace DaggerfallWorkshop.Game.Utility
             GameManager.UpdateShadowResolution();
 
             // VSync settings
+			// Old setting for compatibility with DFU 1.1.1 settings
             if (DaggerfallUnity.Settings.VSync)
                 QualitySettings.vSyncCount = 1;
             else
                 QualitySettings.vSyncCount = 0;
-
+			// New setting VSyncRate (from No sync to FR/4)
+			QualitySettings.vSyncCount = DaggerfallUnity.Settings.VSyncRate;
             // Target frame rate settings
             // Does nothing if VSync enabled
             // Default is 0 but anything below 30 is ignored and treated as disabled
-            if (DaggerfallUnity.Settings.TargetFrameRate >= 30 && !DaggerfallUnity.Settings.VSync)
+            if (DaggerfallUnity.Settings.TargetFrameRate >= 30 && DaggerfallUnity.Settings.VSyncRate != 0)
             {
                 Application.targetFrameRate = DaggerfallUnity.Settings.TargetFrameRate;
             }

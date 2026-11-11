@@ -18,7 +18,7 @@ settingsFolderInfo,         Double-click to open folder
 alwayShowOptions,           Always show this window
 alwayShowOptionsInfo,       Always show this window on startup\rOtherwise use settings.ini to configure
 vsync,                      Vertical Sync
-vsyncInfo,                  Sync FPS with monitor refresh
+vSyncInfo,                  Sync FPS with screen frame rate or a ratio of it
 swapHealthAndFatigue,       Swap Health & Fatigue
 swapHealthAndFatigueInfo,   Swap health & fatigue bar colors
 invertMouseVertical,        Invert Mouse

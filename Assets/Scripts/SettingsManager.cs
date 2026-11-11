@@ -162,6 +162,7 @@ namespace DaggerfallWorkshop
         public int RetroModeAspectCorrection { get; set; }
         public int PalettizationLUTShift { get; set; }
         public bool VSync { get; set; }
+		public int VSyncRate { get; set; }
         public int TargetFrameRate { get; set; }
         public bool Fullscreen { get; set; }
         public bool ExclusiveFullscreen { get; set; }
@@ -412,7 +413,9 @@ namespace DaggerfallWorkshop
             UseMipMapsInRetroMode = GetBool(sectionVideo, "UseMipMapsInRetroMode");
             RetroModeAspectCorrection = GetInt(sectionVideo, "RetroModeAspectCorrection", 0, 2);
             PalettizationLUTShift = GetInt(sectionVideo, "PalettizationLUTShift");
-            VSync = GetBool(sectionVideo, "VSync");
+			VSync = GetBool(sectionVideo, "VSync");
+            VSyncRate = GetInt(sectionVideo, "VSyncRate");
+			if (VSync && VSyncRate == 0) VSyncRate = 1;	//Case VSyncRate not present into Settings.ini
             TargetFrameRate = GetInt(sectionVideo, "TargetFrameRate", 0, 300);
             Fullscreen = GetBool(sectionVideo, "Fullscreen");
             ExclusiveFullscreen = GetBool(sectionVideo, "ExclusiveFullscreen");
@@ -614,7 +617,9 @@ namespace DaggerfallWorkshop
             SetBool(sectionVideo, "UseMipMapsInRetroMode", UseMipMapsInRetroMode);
             SetInt(sectionVideo, "RetroModeAspectCorrection", RetroModeAspectCorrection);
             SetInt(sectionVideo, "PalettizationLUTShift", PalettizationLUTShift);
-            SetBool(sectionVideo, "VSync", VSync);
+			if (VSyncRate >= 1) SetBool(sectionVideo, "VSync", true);
+			else SetBool(sectionVideo, "VSync", false);
+			SetInt(sectionVideo, "VSyncRate", VSyncRate);
             SetInt(sectionVideo, "TargetFrameRate", TargetFrameRate);
             SetBool(sectionVideo, "Fullscreen", Fullscreen);
             SetBool(sectionVideo, "ExclusiveFullscreen", ExclusiveFullscreen);
