@@ -141,7 +141,7 @@ namespace DaggerfallWorkshop.Game
             }
 
             // Clamp target look pitch to range of straight down to straight up
-            lookTarget.y = Mathf.Clamp(lookTarget.y, -pitchMax, -pitchMin);
+            lookTarget.y = Mathf.Clamp(lookTarget.y, pitchMin, pitchMax);
 
             ApplySmoothing();
 

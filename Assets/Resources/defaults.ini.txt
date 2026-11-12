@@ -31,7 +31,6 @@ DungeonShadowDistance=20.0
 InteriorShadowDistance=30.0
 ExteriorShadowDistance=90.0
 EnableTextureArrays=True
-EnableObjectCulling=True
 RandomDungeonTextures=0
 
 [Effects]
@@ -119,10 +118,6 @@ QuestRumorWeight = 50
 DisableEnemyDeathAlert=False
 HideLoginName=False
 
-[MeleeAttacks]
-MeleeAttackDetection=0
-MeleeAttackFriendlyProtection=True
-
 [Spells]
 EnableSpellLighting=True
 EnableSpellShadows=True
@@ -175,8 +170,7 @@ TerrainDistance=3
 TerrainHeightmapPixelError=5
 SmallerDungeons=False
 CustomBooksImport=True
-AssetCacheThreshold=25
-DungeonsPoolSizeTarget=3
+AssetCacheThreshold = 25
 
 [Enhancements]
 LypyL_GameConsole=True

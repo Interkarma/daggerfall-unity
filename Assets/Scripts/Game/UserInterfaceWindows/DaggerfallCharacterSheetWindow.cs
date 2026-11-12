@@ -18,7 +18,6 @@ using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Entity;
 using DaggerfallWorkshop.Game.Formulas;
 using DaggerfallWorkshop.Game.Guilds;
-using DaggerfallWorkshop.Localization;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -395,7 +394,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             // Update main labels
             nameLabel.Text = PlayerEntity.Name;
-            raceLabel.Text = GrammarManager.grammarProcessor.ProcessGrammar(PlayerEntity.RaceTemplate.Name);
+            raceLabel.Text = PlayerEntity.RaceTemplate.Name;
             classLabel.Text = PlayerEntity.Career.Name;
             levelLabel.Text = PlayerEntity.Level.ToString();
             goldLabel.Text = PlayerEntity.GetGoldAmount().ToString();

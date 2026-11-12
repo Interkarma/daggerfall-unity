@@ -1336,7 +1336,7 @@ Gothryd
 0
 
 334 21
-Aubk-i
+Aubki
 2
 0
 0
@@ -1357,14 +1357,14 @@ Popudax
 0
 
 334 5
-Cyndassa
+Cyadasga
 2
 0
 0
 0
 
 334 4
-Mynisera
+Myniseva
 2
 0
 0

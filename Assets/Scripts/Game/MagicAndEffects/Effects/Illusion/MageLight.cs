@@ -159,11 +159,6 @@ namespace DaggerfallWorkshop.Game.MagicAndEffects.MagicEffects
             {
                 myLight.transform.position = GameManager.Instance.PlayerObject.transform.position;
             }
-            else
-            {
-                // We lost the light somehow, recreate it
-                StartLight();
-            }
         }
 
         // IsLikeKind checks if another incumbent effect is equal to this effect

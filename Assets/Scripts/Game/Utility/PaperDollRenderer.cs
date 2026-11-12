@@ -237,9 +237,6 @@ namespace DaggerfallWorkshop.Game.Utility
 
         void DrawTexture(ImageData srcImage, DaggerfallUnityItem item = null)
         {
-            if (srcImage.texture == null || srcImage.offset == null)
-                return;
-
             DrawTexture(
                 srcImage,
                 new Rect(0, 0, 1, 1),
@@ -249,9 +246,6 @@ namespace DaggerfallWorkshop.Game.Utility
 
         void DrawTexture(ImageData srcImage, Rect srcRect, Rect targetRect, DaggerfallUnityItem item = null)
         {
-            if (srcImage.texture == null)
-                return;
-
             // Calculate image position relative to origin
             int posX = (int)targetRect.xMin - paperDollOrigin.X;
             int posY = (int)targetRect.yMin - paperDollOrigin.Y;
@@ -271,7 +265,7 @@ namespace DaggerfallWorkshop.Game.Utility
             TextureReplacement.OverridePaperdollItemRect(item, srcImage, scale, ref screenRect);
 
             // Draw with custom shader for paper doll item masking
-            if (item != null && srcImage.maskTexture != null)
+            if (item != null)
             {
                 paperDollMaterial.SetTexture("_MaskTex", srcImage.maskTexture);
                 Graphics.DrawTexture(screenRect, srcImage.texture, srcRect, 0, 0, 0, 0, paperDollMaterial);

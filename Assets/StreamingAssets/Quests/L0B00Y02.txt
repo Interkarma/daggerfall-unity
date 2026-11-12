@@ -103,7 +103,7 @@ After slaying %n,
 Message:  1012
 %qdt:
  I found a note on =assassin_'s body.
- %G3 employer is =boss_, and %g3
+ %g3 employer is =boss_, and %g3
  stronghold is ___stronghold_.
 
 Message:  1013
@@ -149,7 +149,7 @@ Item _letter_ letter used 1011
 Person _qgiver_ face 110 group Questor
 
 Place _mondung_ remote dungeon
-Place _stronghold_ remote dungeon2,dungeon15 only
+Place _stronghold_ remote dungeon2
 
 Clock _queston_ 00:00 0 flag 17 range 0 5
 

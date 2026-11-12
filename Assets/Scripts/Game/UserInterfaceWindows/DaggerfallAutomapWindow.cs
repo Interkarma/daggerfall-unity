@@ -880,10 +880,10 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     case AutomapViewMode.View2D:
                     default:
-                        dragSpeedCompensated = dragSpeedInTopView * Vector3.Magnitude(automap.ToAutomapPosition(Camera.main.transform.position) - cameraAutomap.transform.position);
+                        dragSpeedCompensated = dragSpeedInTopView * Vector3.Magnitude(Camera.main.transform.position - cameraAutomap.transform.position);
                         break;
                     case AutomapViewMode.View3D:
-                        dragSpeedCompensated = dragSpeedInView3D * Vector3.Magnitude(automap.ToAutomapPosition(Camera.main.transform.position) - cameraAutomap.transform.position);
+                        dragSpeedCompensated = dragSpeedInView3D * Vector3.Magnitude(Camera.main.transform.position - cameraAutomap.transform.position);
                         break;
                 }
 
@@ -1159,9 +1159,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ResetCameraTransformViewFromTop()
         {
-            Vector3 automapPlayerPosition = automap.ToAutomapPosition(Camera.main.transform.position);
-            cameraAutomap.transform.position = automapPlayerPosition + Vector3.up * cameraHeightViewFromTop;
-            cameraAutomap.transform.LookAt(automapPlayerPosition);
+            cameraAutomap.transform.position = Camera.main.transform.position + Vector3.up * cameraHeightViewFromTop;
+            cameraAutomap.transform.LookAt(Camera.main.transform.position);
             SaveCameraTransformViewFromTop();
         }
 
@@ -1171,9 +1170,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void ResetCameraTransformView3D()
         {
             Vector3 viewDirectionInXZ = Vector3.forward;
-            Vector3 automapPlayerPosition = automap.ToAutomapPosition(Camera.main.transform.position);
-            cameraAutomap.transform.position = automapPlayerPosition - viewDirectionInXZ * cameraBackwardDistance + Vector3.up * cameraHeightView3D;
-            cameraAutomap.transform.LookAt(automapPlayerPosition);
+            cameraAutomap.transform.position = Camera.main.transform.position - viewDirectionInXZ * cameraBackwardDistance + Vector3.up * cameraHeightView3D;
+            cameraAutomap.transform.LookAt(Camera.main.transform.position);
             SaveCameraTransformView3D();
         }
 
@@ -1218,7 +1216,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ResetRotationPivotAxisPositionViewFromTop()
         {
-            rotationPivotAxisPositionViewFromTop = automap.ToAutomapPosition(gameObjectPlayerAdvanced.transform.position);
+            rotationPivotAxisPositionViewFromTop = gameObjectPlayerAdvanced.transform.position;
             automap.RotationPivotAxisPosition = rotationPivotAxisPositionViewFromTop;
         }
 
@@ -1227,7 +1225,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ResetRotationPivotAxisPositionView3D()
         {
-            rotationPivotAxisPositionView3D = automap.ToAutomapPosition(gameObjectPlayerAdvanced.transform.position);
+            rotationPivotAxisPositionView3D = gameObjectPlayerAdvanced.transform.position;
             automap.RotationPivotAxisPosition = rotationPivotAxisPositionView3D;
         }
 
@@ -1277,7 +1275,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                     rotationPivotAxisPosition = rotationPivotAxisPositionView3D;
                     break;
                 default:
-                    rotationPivotAxisPosition = automap.ToAutomapPosition(gameObjectPlayerAdvanced.transform.position);
+                    rotationPivotAxisPosition = gameObjectPlayerAdvanced.transform.position;
                     break;
             }
             return (rotationPivotAxisPosition);
@@ -1617,7 +1615,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionZoomIn(float zoomSpeed)
         {
-            float zoomSpeedCompensated = zoomSpeed * Vector3.Magnitude(automap.ToAutomapPosition(Camera.main.transform.position) - cameraAutomap.transform.position);
+            float zoomSpeedCompensated = zoomSpeed * Vector3.Magnitude(Camera.main.transform.position - cameraAutomap.transform.position);
             Vector3 translation = cameraAutomap.transform.forward * zoomSpeedCompensated;
             cameraAutomap.transform.position += translation;
             UpdateAutomapView();
@@ -1628,7 +1626,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// </summary>
         private void ActionZoomOut(float zoomSpeed)
         {
-            float zoomSpeedCompensated = zoomSpeed * Vector3.Magnitude(automap.ToAutomapPosition(Camera.main.transform.position) - cameraAutomap.transform.position);
+            float zoomSpeedCompensated = zoomSpeed * Vector3.Magnitude(Camera.main.transform.position - cameraAutomap.transform.position);
             Vector3 translation = -cameraAutomap.transform.forward * zoomSpeedCompensated;
             cameraAutomap.transform.position += translation;
             UpdateAutomapView();
@@ -1831,20 +1829,19 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         /// <param name="gameobjectInFocus"> the GameObject to focus at </param>        
         private void SwitchFocusToGameObject(GameObject gameobjectInFocus)
         {
-            Vector3 focusPosition = (gameobjectInFocus == gameObjectPlayerAdvanced) ? automap.ToAutomapPosition(gameobjectInFocus.transform.position) : gameobjectInFocus.transform.position;
             Vector3 newPosition;
             switch (automapViewMode)
             {
                 case AutomapViewMode.View2D:
                     newPosition = cameraAutomap.transform.position;
-                    newPosition.x = focusPosition.x;
-                    newPosition.z = focusPosition.z;
+                    newPosition.x = gameobjectInFocus.transform.position.x;
+                    newPosition.z = gameobjectInFocus.transform.position.z;
                     cameraAutomap.transform.position = newPosition;
                     UpdateAutomapView();
                     break;
                 case AutomapViewMode.View3D:
-                    float computedCameraBackwardDistance = Vector3.Magnitude(cameraAutomap.transform.position - focusPosition);
-                    newPosition = focusPosition - cameraAutomap.transform.forward * computedCameraBackwardDistance;
+                    float computedCameraBackwardDistance = Vector3.Magnitude(cameraAutomap.transform.position - gameobjectInFocus.transform.position);
+                    newPosition = gameobjectInFocus.transform.position - cameraAutomap.transform.forward * computedCameraBackwardDistance;                    
                     cameraAutomap.transform.position = newPosition;
                     UpdateAutomapView();
                     break;

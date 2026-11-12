@@ -15,7 +15,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop.Localization;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -227,7 +226,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
             // Use max width if it has been specified
             if (maxTextWidth > 0)
                 textLabel.MaxWidth = maxTextWidth;
-            textLabel.Text = GrammarManager.grammarProcessor.ProcessGrammar(text);
+            textLabel.Text = text;
             textLabel.TextColor = color;
             textLabel.ShadowColor = ShadowColor;
             textLabel.ShadowPosition = ShadowPosition;

@@ -68,7 +68,7 @@ QuestComplete:  [1004]
 <ce>                               enjoyed.
 
 RumorsDuringQuest:  [1005]
-Daedra seem to be attracted to ___mondung_. Must be something spiritual about it.
+Daedras seem to be attracted to ___mondung_. Must be some spiritual about it.
 <--->
 <ce>      Old _qgiver_ is forever summoning things up and
 <ce>                           getting %g2-self in trouble.
@@ -77,7 +77,7 @@ RumorsPostfailure:  [1006]
 The daedric stars last night shone particularly bright.
 
 RumorsPostsuccess:  [1007]
-_qgiver_'s daedra is gone for now. But daedra have a habit of returning.
+_qgiver_'s daedra is gone for now. But daedras have a habit of returning.
 <--->
 ___mondung_ is relatively purged of daedric influence, at least for now.
 
@@ -155,7 +155,7 @@ Item _spellScroll_ letter used 1030
 Person _qgiver_ group Questor
 Person _dummydaedra_ face 249 factiontype Daedra remote
 
-Place _mondung_ remote dungeon9 only
+Place _mondung_ remote dungeon9
 Place aide remote dungeon
 
 Clock _queston_ 00:00 0 flag 17 range 0 2

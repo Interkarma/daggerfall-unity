@@ -13,7 +13,6 @@ using System;
 using UnityEngine;
 using System.Text.RegularExpressions;
 using DaggerfallWorkshop.Utility;
-using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using FullSerializer;
 
@@ -191,9 +190,8 @@ namespace DaggerfallWorkshop.Game.Questing.Actions
             // Open loot reward container once QuestComplete dismissed
             if (rewardLoot != null)
             {
-                UserInterfaceManager uiManager = DaggerfallUI.Instance.UserInterfaceManager;
                 DaggerfallUI.Instance.InventoryWindow.LootTarget = rewardLoot;
-                uiManager.PushWindow(DaggerfallUI.Instance.InventoryWindow);
+                DaggerfallUI.PostMessage(DaggerfallUIMessages.dfuiOpenInventoryWindow);
             }
         }
 

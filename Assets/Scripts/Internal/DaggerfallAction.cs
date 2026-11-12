@@ -55,7 +55,6 @@ namespace DaggerfallWorkshop
 
         AudioSource audioSource;
         ActionState currentState;
-        bool playForwardOnly = false;
         float cooldown;
 
         //lookup for action type12, temp. storing them here
@@ -115,12 +114,6 @@ namespace DaggerfallWorkshop
         public float Duration
         {
             get { return ActionDuration / 20f; }
-        }
-
-        public bool PlayForwardOnly
-         {
-            get { return playForwardOnly; }
-            set { playForwardOnly = value; }
         }
 
         //Action flag -> Action Delegate lookup
@@ -474,11 +467,12 @@ namespace DaggerfallWorkshop
                 thisAction.CurrentState = ActionState.PlayingForward;
                 thisAction.TweenToEnd(thisAction.Duration);
             }
-            else if (thisAction.CurrentState == ActionState.End && !thisAction.PlayForwardOnly)
+            else if (thisAction.CurrentState == ActionState.End)
             {
                 thisAction.CurrentState = ActionState.PlayingReverse;
                 thisAction.TweenToStart(thisAction.Duration);
             }
+
         }
 
 

@@ -135,16 +135,6 @@ namespace DaggerfallWorkshop.Game.UserInterface
             get { return sdfFontInfo.Value; }
         }
 
-        public Texture2D AtlasTexture
-        {
-            get { return atlasTexture; }
-        }
-
-        public Rect[] AtlasRects
-        {
-            get { return atlasRects; }
-        }
-
         #endregion
 
         #region Constructors
@@ -584,7 +574,7 @@ namespace DaggerfallWorkshop.Game.UserInterface
 
         #region Private Methods
 
-        public float GetSDFGlyphScalingRatio(float localYScale)
+        float GetSDFGlyphScalingRatio(float localYScale)
         {
             return GlyphHeight / SDFInfo.pointSize * localYScale;
         }

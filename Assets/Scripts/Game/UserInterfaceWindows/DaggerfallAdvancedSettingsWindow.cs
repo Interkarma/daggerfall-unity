@@ -140,8 +140,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         HorizontalSlider dungeonAmbientLightScale;
         HorizontalSlider nightAmbientLightScale;
         HorizontalSlider playerTorchLightScale;
-        HorizontalSlider meleeAttackDetection;
-        Checkbox meleeAttackFriendlyProtection;
 
         // Video
         HorizontalSlider resolution;
@@ -159,7 +157,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         Checkbox interiorLightShadows;
         Checkbox exteriorLightShadows;
         Checkbox ambientLitInteriors;
-        Checkbox enableObjectCulling;
 
         // Accessibility
         Button automapTempleColor;
@@ -274,12 +271,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             musicVolume.DisplayUnits = 100;
             musicVolume.OnScroll += MusicVolume_OnScroll;
 
-            // Melee Attacks
-            AddSectionTitle(rightPanel, "meleeAttacks");
-            meleeAttackDetection = AddSlider(rightPanel, "meleeAttackDetection",
-                DaggerfallUnity.Settings.MeleeAttackDetection, TextManager.Instance.GetLocalizedTextList("meleeAttackDetectionModes", TextCollections.TextSettings));
-            meleeAttackFriendlyProtection = AddCheckbox(rightPanel, "meleeAttackFriendlyProtection", DaggerfallUnity.Settings.MeleeAttackFriendlyProtection);
-
             // Spells
             AddSectionTitle(rightPanel, "spells");
             spellLighting = AddCheckbox(rightPanel, "spellLighting", DaggerfallUnity.Settings.EnableSpellLighting);
@@ -387,7 +378,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             interiorLightShadows = AddCheckbox(rightPanel, "interiorLightShadows", DaggerfallUnity.Settings.InteriorLightShadows);
             exteriorLightShadows = AddCheckbox(rightPanel, "exteriorLightShadows", DaggerfallUnity.Settings.ExteriorLightShadows);
             ambientLitInteriors = AddCheckbox(rightPanel, "ambientLitInteriors", DaggerfallUnity.Settings.AmbientLitInteriors);
-            enableObjectCulling = AddCheckbox(rightPanel, "enableObjectCulling", DaggerfallUnity.Settings.EnableObjectCulling);
             string textureArrayLabel = TextManager.Instance.GetLocalizedText("textureArrayLabel", TextCollections.TextSettings);
             if (!SystemInfo.supports2DArrayTextures)
                 textureArrayLabel += TextManager.Instance.GetLocalizedText("unsupported", TextCollections.TextSettings);
@@ -453,9 +443,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
             DaggerfallUnity.Settings.EnableSpellLighting = spellLighting.IsChecked;
             DaggerfallUnity.Settings.EnableSpellShadows = spellShadows.IsChecked;
-
-            DaggerfallUnity.Settings.MeleeAttackDetection = meleeAttackDetection.ScrollIndex;
-            DaggerfallUnity.Settings.MeleeAttackFriendlyProtection = meleeAttackFriendlyProtection.IsChecked;
 
             /* GUI */
 
@@ -544,7 +531,6 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.InteriorLightShadows = interiorLightShadows.IsChecked;
             DaggerfallUnity.Settings.ExteriorLightShadows = exteriorLightShadows.IsChecked;
             DaggerfallUnity.Settings.AmbientLitInteriors = ambientLitInteriors.IsChecked;
-            DaggerfallUnity.Settings.EnableObjectCulling = enableObjectCulling.IsChecked;
 
             /* Accessibility */
             DaggerfallUnity.Settings.AutomapTempleColor = automapTempleColor.BackgroundColor;

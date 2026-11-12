@@ -580,7 +580,7 @@
             ]
         },
         {
-            "name": "Chameleon Form",
+            "name": "Chaemelon Form",
             "recipes": [
                 {
                     "ingredients": [

@@ -196,13 +196,9 @@ namespace DaggerfallWorkshop.Game
             //weaponSensitivity = DaggerfallUnity.Settings.WeaponSensitivity;
             mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
             player = transform.gameObject;
-
-            playerLayerMask = Physics.DefaultRaycastLayers;
-            playerLayerMask &= ~(1 << LayerMask.NameToLayer("Player"));
-            playerLayerMask &= ~(1 << LayerMask.NameToLayer("Automap"));
-
+            playerLayerMask = ~(1 << LayerMask.NameToLayer("Player"));
             _gesture = new Gesture();
-            _longestDim = Mathf.Max(Screen.width, Screen.height);
+            _longestDim = Math.Max(Screen.width, Screen.height);
             SetMelee(ScreenWeapon);
         }
 
@@ -903,186 +899,19 @@ namespace DaggerfallWorkshop.Game
             if (!mainCamera || !weapon)
                 return;
 
-            //start of bounding box based attack code
-            //bool radialReach = false;
-
-            DaggerfallUnityItem strikingWeapon = usingRightHand ? currentRightHandWeapon : currentLeftHandWeapon;
-
-            //make bounding box in front of player view
-            float weaponReach = weapon.Reach + SphereCastRadius;
-            Vector3 boundsPos = mainCamera.transform.position + (mainCamera.transform.forward * (weaponReach * 0.5f));
-            Quaternion boundsRot = mainCamera.transform.rotation;
-            Vector3 boundsSize = new Vector3(weaponReach * 2, weaponReach, weaponReach);
-
-            Collider[] colliders = Physics.OverlapBox(boundsPos, boundsSize, boundsRot, playerLayerMask);
-            List<Collider> hitColliders = new List<Collider>();
-
-            RaycastHit hit = new RaycastHit();
+            // Fire ray along player facing using weapon range
+            RaycastHit hit;
             Ray ray = new Ray(mainCamera.transform.position, mainCamera.transform.forward);
-
-            if (colliders.Length > 0)
+            if (Physics.SphereCast(ray, SphereCastRadius, out hit, weapon.Reach, playerLayerMask))
             {
-                Vector3 center = Vector3.zero;
-                foreach (Collider collider in colliders)
+                DaggerfallUnityItem strikingWeapon = usingRightHand ? currentRightHandWeapon : currentLeftHandWeapon;
+                if(!WeaponEnvDamage(strikingWeapon, hit)
+                   // Fall back to simple ray for narrow cages https://forums.dfworkshop.net/viewtopic.php?f=5&t=2195#p39524
+                   || Physics.Raycast(ray, out hit, weapon.Reach, playerLayerMask))
                 {
-                    //check if collider is entity
-                    DaggerfallEntityBehaviour behaviour = collider.GetComponent<DaggerfallEntityBehaviour>();
-                    if (behaviour != null)
-                    {
-                        //exclude allies, pacified NPCs and wandering commoners from bounding box check
-                        if (DaggerfallUnity.Settings.MeleeAttackFriendlyProtection)
-                        {
-                            if (behaviour.Entity.Team == MobileTeams.PlayerAlly)
-                                continue;
-
-                            EnemyMotor motor = collider.GetComponent<EnemyMotor>();
-                            if (motor != null && !motor.IsHostile)
-                                continue;
-
-                            MobilePersonNPC mobileNpc = collider.GetComponent<MobilePersonNPC>();
-                            if (mobileNpc != null)
-                                continue;
-                        }
-
-                        bool canHit = true;
-
-                        CharacterController controller = collider.GetComponent<CharacterController>();
-
-                        //check if target center is in FOV
-                        center = collider.bounds.center;
-                        if (!IsPositionInCameraView(center))
-                        {
-                            //center is not in FOV
-                            canHit = false;
-
-                            if (DaggerfallUnity.Settings.MeleeAttackDetection > 0 && controller != null)
-                            {
-                                //check if other parts of the enemy are in view
-                                if (IsPositionInCameraView(center + (mainCamera.transform.up * (controller.height * 0.25f))))
-                                    canHit = true;
-
-                                if (!canHit && IsPositionInCameraView(center - (mainCamera.transform.up * (controller.height * 0.25f))))
-                                    canHit = true;
-
-                                if (!canHit && IsPositionInCameraView(center + (mainCamera.transform.right * (controller.radius * 0.5f))))
-                                    canHit = true;
-
-                                if (!canHit && IsPositionInCameraView(center - (mainCamera.transform.right * (controller.radius * 0.5f))))
-                                    canHit = true;
-                            }
-                        }
-
-                        //target is out of FOV, no need to check LOS
-                        if (!canHit)
-                            continue;
-
-                        //check if target has clear LOS
-                        center = collider.bounds.center;
-                        ray.direction = center - ray.origin;
-                        if (Physics.Raycast(ray, out hit, weaponReach, playerLayerMask))
-                        {
-                            if (hit.collider != collider)
-                            {
-                                //Target center does not have LOS
-                                canHit = false;
-                            }
-                        }
-                        else
-                        {
-                            //Target center is outside radial weapon reach
-                            canHit = false;
-                        }
-
-                        //If basic collision check fails and setting is Quality, do complex collision check
-                        if (DaggerfallUnity.Settings.MeleeAttackDetection > 0 && !canHit && controller != null)
-                        {
-                            Vector3 point = Vector3.zero;
-                            point = center + (mainCamera.transform.up * (controller.height * 0.25f));
-                            ray.direction = point - ray.origin;
-                            if (Physics.Raycast(ray, out hit, weaponReach, playerLayerMask, QueryTriggerInteraction.Ignore))
-                            {
-                                if (hit.collider == collider)
-                                    canHit = true;
-                            }
-                            if (!canHit)
-                            {
-                                //if head is obstructed, check feet
-                                point = center - (mainCamera.transform.up * (controller.height * 0.25f));
-                                ray.direction = point - ray.origin;
-                                if (Physics.Raycast(ray, out hit, weaponReach, playerLayerMask, QueryTriggerInteraction.Ignore))
-                                {
-                                    if (hit.collider == collider)
-                                        canHit = true;
-                                }
-                            }
-                            if (!canHit)
-                            {
-                                //if feet is obstructed, check right flank
-                                point = center + (mainCamera.transform.right * (controller.radius * 0.5f));
-                                ray.direction = point - ray.origin;
-                                if (Physics.Raycast(ray, out hit, weaponReach, playerLayerMask, QueryTriggerInteraction.Ignore))
-                                {
-                                    if (hit.collider == collider)
-                                        canHit = true;
-                                }
-                            }
-                            if (!canHit)
-                            {
-                                //if right flank is obstructed, check left flank
-                                point = center - (mainCamera.transform.right * (controller.radius * 0.5f));
-                                ray.direction = point - ray.origin;
-                                if (Physics.Raycast(ray, out hit, weaponReach, playerLayerMask, QueryTriggerInteraction.Ignore))
-                                {
-                                    if (hit.collider == collider)
-                                        canHit = true;
-                                }
-                            }
-                        }
-
-                        if (canHit)
-                            hitColliders.Add(collider);
-                    }
+                    hitEnemy = WeaponDamage(strikingWeapon, false, false, hit.transform, hit.point, mainCamera.transform.forward);
                 }
             }
-
-            if (hitColliders.Count > 0)
-            {
-                //perform weapon attack on each collider in list
-                foreach (Collider hitCollider in hitColliders)
-                {
-                    Vector3 hitPoint = hitCollider.ClosestPoint(mainCamera.transform.position);
-                    hitEnemy = WeaponDamage(strikingWeapon, false, false, hitCollider.transform, hitPoint, (hitPoint - mainCamera.transform.position).normalized);
-                }
-            }
-            else
-            {
-                //if no hits were detected from bounds check, do vanilla attack check for bashing and hitting pacified NPCs and wandering commoners
-                //Logic: pacified NPCs and commoners can only be attacked if they are the only targets in front of the player
-                ray.origin = mainCamera.transform.position;
-                ray.direction = mainCamera.transform.forward;
-
-                if (Physics.SphereCast(ray, SphereCastRadius, out hit, weapon.Reach, playerLayerMask))
-                {
-                    if (!WeaponEnvDamage(strikingWeapon, hit) || Physics.Raycast(ray, out hit, weaponReach, playerLayerMask))
-                    {
-                        hitEnemy = WeaponDamage(strikingWeapon, false, false, hit.transform, hit.point, mainCamera.transform.forward);
-                    }
-                }
-            }
-        }
-
-        public bool IsPositionInCameraView(Vector3 worldPos)
-        {
-            Vector3 point = GameManager.Instance.MainCamera.WorldToViewportPoint(worldPos);
-
-            if (point.x < 0 ||
-                point.x > 1 ||
-                point.y < 0 ||
-                point.y > 1 ||
-                point.z < 0)
-                return false;
-
-            return true;
         }
 
         private void UpdateRightHandGfxCache(DaggerfallUnityItem rightHandItem)

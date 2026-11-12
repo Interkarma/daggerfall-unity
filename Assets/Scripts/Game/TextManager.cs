@@ -357,9 +357,7 @@ namespace DaggerfallWorkshop.Game
         {
             string localizedText;
             if (TryGetLocalizedText(GetRuntimeCollectionName(collection), key, out localizedText))
-            {
                 return localizedText;
-            }
             else if (TryGetLocalizedText(GetDefaultCollectionName(collection), key, out localizedText))
                 return localizedText;
             else

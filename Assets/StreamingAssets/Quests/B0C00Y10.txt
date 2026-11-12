@@ -65,10 +65,10 @@ QuestLogEntry:  [1010]
  the knightly order in ___qgiver_
  gave me the task of wiping
  out an orc band that makes
- its home in ___dungeon_.
- In particular, I must get the
- leader, a certain =monster_.
- I need to get back to %g2 in
+ it's home in ___dungeon_.
+ In particular I must get the
+ leader, a certain =monster_
+ I need to get back to %g2
  =2dung_ days or %g will
  assume I'm dead.
 
@@ -95,7 +95,7 @@ QBN:
 Person _qgiver_ group Questor
 Person _local_ face 1 group Resident2 local
 
-Place _dungeon_ remote dungeon1 only
+Place _dungeon_ remote dungeon1
 
 Clock _2dung_ 00:00 0 flag 17 range 0 2
 

@@ -1,4 +1,4 @@
-// Project:         Daggerfall Tools For Unity
+﻿// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -15,7 +15,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
     public class Automap : MonoBehaviour
     {
         public Byte[] automapData;
-        private MeshRenderer meshRenderer;
+        private MeshRenderer renderer;
 
         public void CreateObject(Byte[] automapData)
         {
@@ -26,7 +26,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             groundPlane.transform.localScale = new Vector3(10.24f, 1f, 10.24f);
             groundPlane.transform.position = new Vector3(51.2f, 0, -51.2f);
             groundPlane.transform.rotation = Quaternion.Euler(0, 0, 0);
-            meshRenderer = groundPlane.GetComponent<MeshRenderer>();
+            renderer = groundPlane.GetComponent<MeshRenderer>();
             Update();
         }
 
@@ -99,7 +99,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
 
             tex.SetPixels32(0, 0, 64, 64, colors);
             tex.Apply();
-            meshRenderer.sharedMaterial.mainTexture = tex;
+            renderer.sharedMaterial.mainTexture = tex;
         }
     }
     #endif

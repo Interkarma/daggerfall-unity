@@ -29,7 +29,7 @@ namespace DaggerfallWorkshop
         int Version { get; }
 
         // Terrain heightmap dimension (+1 extra point for end vertex)
-        // Example settings are 129, 257, 513, 1025, etc.
+        // Example settings are 129, 257, 513, 1023, etc.
         // Do not set to a value less than MapsFile.WorldMapTileDim
         int HeightmapDimension { get; set; }
 
