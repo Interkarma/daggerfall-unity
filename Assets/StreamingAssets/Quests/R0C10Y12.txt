@@ -56,7 +56,7 @@ QuestComplete:  [1004]
 RumorsDuringQuest:  [1005]
 Those guards are even searching _questgiver_'s house for that _item_ shipment.
 <--->
-It's a complete mystery where that _item_ disappeared. Everyone's curious.
+It's a complete mystery where that _item_ disappeared to. Everyone's curious.
 
 RumorsPostfailure:  [1006]
 What an embarrassment for _questgiver_. The stolen _item_ was traced to %g2.
@@ -81,7 +81,7 @@ QuestorPostfailure:  [1009]
 Message:  1011
 _questgiver_ is a rather small-time ruler, but a big-time _item_ smuggler.
 <--->
-_questgiver_'s in over %g3 head in this _item_ smuggling business.
+_questgiver_'s in over %g3 head in this _item_-smuggling business.
 
 Message:  1012
 Supposedly _contact_ is a fence for stolen merchandise.

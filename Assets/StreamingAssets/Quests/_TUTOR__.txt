@@ -11,11 +11,11 @@ QRC:
 
 
 RumorsPostfailure:  [1006]
-I'll give you a hint %ra. If you want to succeed in magic, join the mages guild.
+I'll give you a hint %ra. If you want to succeed in magic, join the Mages Guild.
                                      <--->
 A small tip for you. Put your money in the bank of %reg. Have them give you letters of credit. They hardly weigh a thing.
                                      <--->
-Specialty shops are the best place to find unsual items.
+Specialty shops are the best place to find unusual items.
                                      <---> 
 They just passed a vagrancy law. You can't sleep in the streets. The guards even patrol outside the walls. You have to get a room at an Inn.
                                      <--->
@@ -34,23 +34,23 @@ I've heard that Sentinel is a good place to earn quick gold and the opportunity 
 
 QuestLogEntry:  [1010]
 <ce>             Daggerfall Unity has an updated tutorial.
-<ce>           It will teach you the basics of gameplay.
+<ce>             It will teach you the basics of gameplay.
 <ce>          Make sure to take notes on the info it presents.
-<ce>               Do you want to use this tutorial?
+<ce>                 Do you want to use this tutorial?
 
 Message:  1012
 <ce>                           Page 1
 <ce>                                    
 <ce>           The very first thing you want to do is to check
-<ce>           your keybinds. Press Escape and click on Controls.
-<ce>           The most important ones for now are your movement (WASD)
-<ce>           and your Swing Weapon (Mouse1 by default). Attacking
-<ce>           may involve holding the Swing Weapon button down
-<ce>           and moving the mouse; OR clicking the Swing Weapon
+<ce>           your controls. Press Escape and click on Controls.
+<ce>           The most important ones for now are movement (WASD)
+<ce>           and Swing Weapon (right mouse click by default).
+<ce>           Attacking may involve holding the Swing Weapon button
+<ce>           down and moving the mouse, OR clicking the Swing Weapon
 <ce>           button, OR holding it down. This can be changed
 <ce>           in the Advanced section of the Controls screen.
 <ce>           
-<ce>           Make sure your binds are acceptable,
+<ce>           Make sure your controls are acceptable,
 <ce>           and another message will appear in 10 seconds.
 
 Message:  1013
@@ -59,7 +59,7 @@ Message:  1013
 <ce>          Now press F6 to open your inventory. Equip any armor
 <ce>           available to you, and the best weapon you have.
 <ce>           "Best weapon" refers to a weapon that your character is skilled in,
-<ce>           and/or is a very strong material (ie: Elven, Dwarven).
+<ce>           and/or is a very strong material (e.g. Elven, Dwarven).
 <ce>           Without those two advantages, you will almost never hit enemies.
 <ce>           
 <ce>           (Next message in 15 seconds. Press No to end tutorial.)
@@ -87,14 +87,14 @@ Message:  1025
 <ce>                           Page 5
 <ce>                                    
 <ce>         Characters with magic available can also try casting spells,
-<ce>         though enemies will often resist your spells. Press Backspace
+<ce>         though enemies will often resist them. Press Backspace
 <ce>         to open your spellbook, if you are a spellcaster. Double-click
-<ce>         on a spell to ready it.
+<ce>         on a spell to cast it.
 <ce>         
-<ce>         Some spells require a target, and others are cast automatically
+<ce>         Some spells require a target, while others are cast automatically
 <ce>         on yourself. If it's a targeted spell, use left mouse click
-<ce>         to cast it after it's readied. Use Q to re-ready a spell that you
-<ce>         cast before, so you can rapid-fire spells as needed.
+<ce>         to fire it after it's cast. Use Q to re-cast the most recent
+<ce>         spell, so you can rapid-fire spells as needed.
 <ce>           
 <ce>           (Next message in 10 seconds. Press No to end tutorial.)
 
@@ -111,18 +111,18 @@ Message:  1030
 Message:  1031
 <ce>                         Page 7
 <ce>           
-<ce>           Your first step to escape this cave is to exit this room.
+<ce>           Your first step to escaping this cave is to exit this room.
 <ce>           Go down the hallway opposite the campfire.
 <ce>           After the turn, you will find a door resembling a brick wall.
 <ce>           Click on the door to open it. Beyond, you will see a small room
-<ce>           with a rat and a treasure pile on an altar.
+<ce>           with a rat, and a treasure pile on an altar.
 <ce>           
 <ce>           Clicking on the treasure pile will open the inventory.
 <ce>           You will see the treasure pile's contents on the right side
-<ce>           of the inventory screen. With the "remove" option highlighted,
+<ce>           of the inventory screen. With the "Remove" option highlighted,
 <ce>           click on the items to grab them for yourself.
 <ce>           
-<ce>           You can also loot enemy corpses after killing them,
+<ce>           You can also loot enemies after killing them,
 <ce>            but the rat will have no treasure.
 <ce>           
 <ce>           (Next message in 45 seconds. Press No to end tutorial.)
@@ -146,24 +146,24 @@ Message:  1040
 <ce>                                    
 <ce>         Some monsters are stronger than you. You can escape from them
 <ce>         without consequence. If an enemy is giving you a lot of trouble,
-<ce>         run away and leave it behind. You don't gain experience from killing
-<ce>         enemies, so a strong enemy gives no more reward than a weak one.
+<ce>         run away and leave it behind. Character growth is tied to skill
+<ce>         usage, rather than killing challenging enemies.
 <ce>           
 <ce>           (Next message in 5 seconds. Press No to end tutorial.)
 
 Message:  1041
 <ce>                           Page 10
 <ce>         
-<ce>         Some objects can be clicked on. In the main hall of this
-<ce>        dungeon, you will find a throne and a lever next to it.
+<ce>         Some objects can be interacted with. In the main hall of this
+<ce>        dungeon, you will find a throne with a lever next to it.
 <ce>        When you see the lever, click on it to raise the throne
 <ce>        like an elevator. Other dungeons will have objects
 <ce>         with more effects, such as wheels and secret switches.
 <ce>
 <ce>         To escape this dungeon, you need to look for a dark, stone
 <ce>        archway set into a wall, about the same height as you.
-<ce>        When you click on it, you will exit the dungeon and enter
-<ce>        the outdoors. The next message will appear at that time.
+<ce>        When you click on it, you will exit the dungeon and arrive
+<ce>        outdoors.
 <ce>           
 <ce>           (Next message when you exit the dungeon. Press No to end tutorial.)
 
@@ -205,7 +205,7 @@ Message:  1047
 <ce>  
 <ce>    The conversation window also has options for
 <ce>        finding people and asking for news,
-<ce>    including for local quests as "Work." Look at the top left
+<ce>    including for local quests as "Work." Look at the top-left
 <ce>        corner of the conversation window when it's open to see
 <ce>        the different topics you can ask about.
 <ce>           
@@ -247,7 +247,7 @@ Message:  1050
 <ce>        
 <ce>        You can only be a member of one temple and one knightly order. 
 <ce>                                    
-<ce>         There are other hidden guilds in the game as well.
+<ce>         There are other, hidden, guilds in the game as well.
 <ce>           
 <ce>           (Next message in 10 seconds. Press No to end tutorial.)
 
@@ -258,12 +258,13 @@ Message:  1055
 <ce>        Daggerfall's quests are radiant, choosing locations
 <ce>        around you as places where things will happen.
 <ce>  
-<ce>        Doing quests for guilds will help you increase
-<ce>        in rank with them, so they may be a priority for you.
-<ce>        After you have joined the guild, find someone inside the
+<ce>        Guild quests can be the most beneficial ones,
+<ce>        so they may be a priority for you.
+<ce>        After you have joined a guild, find someone inside the
 <ce>        guild building with the button "Get Quest."
 <ce>         Accept or reject the quest you are given.
-<ce>        Rejecting a quest has no consequences.
+<ce>        Rejecting a quest has no consequences, so long as
+<ce>        it's unrelated to the main story.
 <ce>
 <ce>     (Next message will appear immediately. Press No to end tutorial.)
 
@@ -273,10 +274,10 @@ Message:  1056
 <ce>             Page 17
 <ce>
 <ce>  Many quests will send you to other towns.
-<ce>        If they do, enter your journal (normally L) and click
+<ce>  If they do, enter your logbook (normally L) and click
 <ce>  on the quest log entry about that quest.
 <ce>        Many times, it will automatically plan
-<ce>  a travel to your quest destination.
+<ce>  travel to your quest destination.
 <ce>        Otherwise, you can open the travel screen
 <ce>  and choose the location yourself.
 <ce>  

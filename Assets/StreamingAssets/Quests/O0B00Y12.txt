@@ -73,7 +73,7 @@ Message:  1021
 %qdt:
  I just got a note from _contact1_
  saying %g was unable to meet me in
- ___contact1_.  %g told me to
+ ___contact1_.  %G told me to
  go to ___contact2_ instead,
  and deliver the shipment to a
  =contact2_ in __contact2_.

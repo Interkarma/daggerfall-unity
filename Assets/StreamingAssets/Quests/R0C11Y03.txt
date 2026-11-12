@@ -33,7 +33,7 @@ AcceptQuest:  [1002]
 <ce>                 _chemist_'s hands in =1stparton_ days,
 <ce>                it will be too old to be used. After you
 <ce>               have delivered it, return for your reward.
-<ce>                        Good luck and godspeed to ___chemist_.
+<ce>                 Good luck and godspeed to ___chemist_.
 
 --in 1002, added the name of the city you need to go to at the end.
 
@@ -81,7 +81,7 @@ QuestorPostfailure:  [1009]
 <ce>                      decision to return to court.
 
 QuestLogEntry:  [1010]
-<ce>             Oh marvelous. An outstanding aortas daedrae,
+<ce>             Oh, marvelous. An outstanding aortas daedrae,
 <ce>               with minimal decomposition. Hurry back to
 <ce>                        _questgiver_ now, %pcf.
 <ce>                There's a lot on %g3 mind, and if you're
@@ -105,7 +105,7 @@ _questgiver_ has a lot of faith in alchemistry, like a lot of nobles do.
 Message:  1013
 A daedra's heart. It never spoils, but some recipes call for it to be fresh.
 <--->
-The heart of a daedra. Not the sort of thing daedras like in mortals' hands.
+The heart of a daedra. Not the sort of thing daedra like in mortals' hands.
 
 Message:  1015
 %qdt:

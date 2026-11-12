@@ -37,7 +37,7 @@ Message:  1011
 Dear %pcf,
  
  Numidium was Tiber Septim's secret weapon in his
- bid for supreme power: a thousand foot tall automaton,
+ bid for supreme power: a thousand-foot-tall automaton,
  a golem or an atronach of sorts powered by a gem called
  the Mantella. The Mantella was infused with the life
  force of Tiber Septim's Imperial Battlemage, and with
@@ -74,7 +74,7 @@ Dear %pcf,
  all covet. You must know the truth about what you are asked.
  
  The Totem was crafted by the original Imperial Battlemage
- of Tamriel, by orders of Tiber Septim. It is essentially a
+ of Tamriel, by order of Tiber Septim. It is essentially a
  means of controlling a gargantuan creature called the
  Numidium. Without it, the Numidium would simply not
  function. The Imperial Battlemage placed a seal on the
@@ -105,10 +105,10 @@ Message:  1020
 <ce>               the courier. As you take it, the courier
 <ce>                     turns and walks quickly away.
                                      <--->
-<ce>                Reaching into you pack for something to
+<ce>                Reaching into your pack for something to
 <ce>             eat, you spy a note. It wasn't there before.
                                      <--->
-<ce>             A redfaced courier startles you with a cry of
+<ce>             A red-faced courier startles you with a cry of
 <ce>                  "Letter for %pcn! Hey that must be
 <ce>                 you. Here, take this. Gotta go. Other
 <ce>                        deliveries to be made."

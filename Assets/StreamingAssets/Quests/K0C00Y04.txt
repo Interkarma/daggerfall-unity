@@ -36,7 +36,7 @@ QuestorOffer:  [1000]
 RefuseQuest:  [1001]
 <ce>                      No? That is too bad. Well,
 <ce>                     I probably should get someone
-<ce>                        who looks more like me
+<ce>                        who looks more like me,
 <ce>                                anyhow.
 
 AcceptQuest:  [1002]
@@ -62,7 +62,7 @@ _lover_, they say, has caused more deaths than any plague.
 <--->
 _lover_'s last lover died in %g3 arms, trying to satisfy %g3 ... appetite.
 <--->
-If _lover_ finds out they're finding a duel over %g2 ... %oth, that'll be it.
+If _lover_ finds out they're fighting a duel over %g2 ... %oth, that'll be it.
 
 RumorsPostfailure:  [1006]
 _lover_ has left _competitor_ and _qgiver_ too.

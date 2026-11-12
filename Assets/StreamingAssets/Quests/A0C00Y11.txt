@@ -54,7 +54,7 @@ RumorsPostfailure:  [1006]
 <ce>                       might break out there now.
                                      <--->
 <ce>                      _giver_ is overwrought with
-<ce>                    grief. %g3 cousin in ___cousin_
+<ce>                    grief. %G3 cousin in ___cousin_
 <ce>                             died recently.
 
 RumorsPostsuccess:  [1007]
@@ -71,7 +71,7 @@ RumorsPostsuccess:  [1007]
 QuestorPostsuccess:  [1008]
 <ce>                  Bless you, %pcf. I will never forget
 <ce>                    what you did for _cousin_ and I.
-<ce>                    %g has fully recovered from the
+<ce>                    %G has fully recovered from the
 <ce>                              Wizard Bane.
 
 QuestorPostfailure:  [1009]
@@ -84,13 +84,13 @@ QuestLogEntry:  [1010]
  _giver_ of ___giver_ has
  paid me to heal %g3 cousin,
  _cousin_ of ___cousin_.
- %g will most likely die in =questtime_ days.
+ %G will most likely die in =questtime_ days.
  I will receive another _gold2_ gold when I
  have saved %g2.
 
 Message:  1011
 %qdt:
- I have seen _cousin_. %g3 condition
+ I have seen _cousin_. %G3 condition
  is even worse than _giver_ said.
  _cousin_ says that _healer_ in
  ___healer_ might have a cure.
@@ -136,7 +136,7 @@ Message:  1015
 Message:  1017
 %qdt:
  I have bought a Talisman from _healer_ of
- ___healer_ that cures Wizard Fever, the
+ ___healer_ that cures Wizard Bane, the
  disease that is afflicting _cousin_.
 
 Message:  1019
@@ -162,7 +162,7 @@ Message:  1041
 <ce>                     You'll find %g2 in ___healer_.
                                      <--->
 <ce>                 I've heard of _healer_ of ___healer_.
-<ce>    %g has quite a reputation for healing the most difficult cases.
+<ce>    %G has quite a reputation for healing the most difficult cases.
 
 
 -- Symbols used in the QRC file:

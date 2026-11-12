@@ -1,15 +1,15 @@
-﻿// Project:         Daggerfall Tools For Unity
+// Project:         Daggerfall Tools For Unity
 // Copyright:       Copyright (C) 2009-2022 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Podleron (podleron@gmail.com)
 
+using DaggerfallWorkshop.Utility.AssetInjection;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using DaggerfallWorkshop.Utility.AssetInjection;
-using Newtonsoft.Json;
 using UnityEngine;
 
 namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
@@ -44,6 +44,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
                 }
                 catch (Exception error)
                 {
+                    Debug.LogException(error);
                     // The file is corrupt, so save a new one
                     Save();
                 }
@@ -54,6 +55,7 @@ namespace DaggerfallWorkshop.Game.Addons.RmbBlockEditor
             }
             catch (Exception error)
             {
+                Debug.LogException(error);
                 // The file does not exist, so save the default catalog
                 var path = Environment.CurrentDirectory + this.DefaultTemplatesPath;
                 try

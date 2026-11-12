@@ -82,7 +82,7 @@ QuestLogEntry:  [1010]
 <ce>                      Well done, %pcf. I couldn't
 <ce>                  have made it here as easily carrying
 <ce>                   that _weapons_. Here's a sample of
-<ce>                  what I've stolen so far...a _gems_.
+<ce>                  what I've stolen so far... a _gems_.
 <ce>                   Bring it back to _questgiver_ and
 <ce>                     let %g2 know I'm fine. Thanks
 <ce>                      again, %pcf. See you later.

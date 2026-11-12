@@ -42,11 +42,11 @@ QuestFail:  [1003]
 <ce>                     We have not time for chatter.
 
 QuestComplete:  [1004]
-<ce>                  Quick sister, take this %ra's load.
+<ce>                  Quick, sister, take this %ra's load.
 <ce>                           Mince the _item1_,
 <ce>                         peel the _item2_, and
 <ce>                          grind the _item3_ to
-<ce>                  bits. Here we have three glittering
+<ce>                  bits. Here, we have three glittering
 <ce>                 baubles we have no use for. Take them,
 <ce>                   %pcn, as our way of thanking thee.
 
@@ -56,7 +56,7 @@ The weather has been predictable lately. The Witches must be sleeping.
 One of those witches tried to come to town on business, but we chased her out.
 
 RumorsPostfailure:  [1006]
-Remember when the witches cursed our %t. Guess they're losing their spark.
+Remember when the witches cursed our %t? Guess they're losing their spark.
 <--->
 It's said that the ==qgiver_ are losing their skills.
 
@@ -140,9 +140,9 @@ Item _reward3_ jade
 
 Person _qgiver_ group Questor anyInfo 1011
 
-Place _dungeon1_ remote dungeon6
-Place _dungeon2_ remote dungeon12
-Place _dungeon3_ remote dungeon10
+Place _dungeon1_ remote dungeon6,dungeon5 only
+Place _dungeon2_ remote dungeon12 only
+Place _dungeon3_ remote dungeon10 only
 
 Clock _queston_ 6.22:40 10.10:00 flag 17 range 0 5
 

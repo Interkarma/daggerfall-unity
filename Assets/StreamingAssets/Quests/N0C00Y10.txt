@@ -75,7 +75,7 @@ QuestorPostfailure:  [1009]
 QuestLogEntry:  [1010]
 <ce>                          You may want to try
 <ce>                     _informant_ in _informant1_.
-<ce>                           %g seems to know
+<ce>                           %G seems to know
 <ce>                        everything that goes on
 <ce>                         around __informant1_.
                                      <--->

@@ -32,7 +32,7 @@ AcceptQuest:  [1002]
 <ce>                    _item_ to a temple, _itemplace_
 <ce>                     in __itemplace_. It apparently
 <ce>               has some sort of religious significance to
-<ce>              them. In order to avoid embarassment, I need
+<ce>              them. In order to avoid embarrassment, I need
 <ce>                   you to steal the _item_ out of the
 <ce>                  temple and get it to _transporter_.
 <ce>                  You'll find %g2 at _inn_ in __inn_.
@@ -111,7 +111,7 @@ _questgiver_
  _questgiver_'s home in ___questgiver_.
 
 Message:  1020
-<ce>           Stop thief!  Vile desecrator of our holy _item_!
+<ce>           Stop, thief!  Vile desecrator of our holy _item_!
 
 
 -- Symbols used in the QRC file:

@@ -4,7 +4,7 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Gavin Clayton (interkarma@dfworkshop.net)
-// Contributors:    Allofich
+// Contributors:    Allofich, Numidium
 // 
 // Notes:
 //
@@ -27,9 +27,6 @@ namespace DaggerfallWorkshop.Game
     /// Currently ranged missiles can only move in a straight line as per classic.
     /// </summary>
     [RequireComponent(typeof(Light))]
-    [RequireComponent(typeof(SphereCollider))]
-    [RequireComponent(typeof(MeshCollider))]
-    [RequireComponent(typeof(Rigidbody))]
     [RequireComponent(typeof(DaggerfallAudioSource))]
     public class DaggerfallMissile : MonoBehaviour
     {
@@ -64,11 +61,23 @@ namespace DaggerfallWorkshop.Game
         public const float SphereCastRadius = 0.25f;
         public const float TouchRange = 3.0f;
 
+        private static readonly Collider[] aoeBuffer = new Collider[64];
+        private readonly List<DaggerfallEntityBehaviour> tmpTargets = new List<DaggerfallEntityBehaviour>(32);
+
+        // Cached references
+        private GameManager gm;
+        private Camera mainCamera;
+        private WeaponManager weaponManager;
+        private Collider casterCollider;
+        private EnemySenses cachedEnemySenses;
+        private EnemyAttack cachedEnemyAttack;
+        private CharacterController casterController;
+
+        Vector3 colliderPosition;
+
         Vector3 direction;
         Light myLight;
-        SphereCollider myCollider;
         DaggerfallAudioSource audioSource;
-        Rigidbody myRigidbody;
         Billboard myBillboard;
         bool forceDisableSpellLighting;
         bool noSpellsSpatialBlend = false;
@@ -87,6 +96,10 @@ namespace DaggerfallWorkshop.Game
         bool isArrowSummoned = false;
         GameObject goModel = null;
         EnemySenses enemySenses;
+
+        private static int layerMaskDefault = -1;
+        private static int layerMaskPlayer = -1;
+        int layerMask;
 
         List<DaggerfallEntityBehaviour> targetEntities = new List<DaggerfallEntityBehaviour>();
 
@@ -169,88 +182,85 @@ namespace DaggerfallWorkshop.Game
         private void Awake()
         {
             audioSource = transform.GetComponent<DaggerfallAudioSource>();
+
+            gm = GameManager.Instance;
+            mainCamera = gm.MainCamera;
+            weaponManager = gm.WeaponManager;
+            audioSource = GetComponent<DaggerfallAudioSource>();
         }
 
         private void Start()
         {
             // Setup light and shadows
             myLight = GetComponent<Light>();
-            myLight.enabled = EnableLight;
+            myLight.enabled = EnableLight && DaggerfallUnity.Settings.EnableSpellLighting;
             forceDisableSpellLighting = !DaggerfallUnity.Settings.EnableSpellLighting;
-            if (forceDisableSpellLighting) myLight.enabled = false;
-            if (!DaggerfallUnity.Settings.EnableSpellShadows) myLight.shadows = LightShadows.None;
+            if (!DaggerfallUnity.Settings.EnableSpellShadows)
+            {
+                myLight.shadows = LightShadows.None;
+            }
+
             initialRange = myLight.range;
             initialIntensity = myLight.intensity;
-
-            // Setup collider
-            myCollider = GetComponent<SphereCollider>();
-            myCollider.radius = ColliderRadius;
-
-            // Setup rigidbody
-            myRigidbody = GetComponent<Rigidbody>();
-            myRigidbody.useGravity = false;
 
             // Use payload when available
             if (payload != null)
             {
-                // Set payload missile properties
                 caster = payload.CasterEntityBehaviour;
                 targetType = payload.Settings.TargetType;
                 elementType = payload.Settings.ElementType;
 
                 // Set spell billboard anims automatically from payload for mobile missiles
-                if (targetType == TargetTypes.SingleTargetAtRange ||
-                    targetType == TargetTypes.AreaAtRange)
+                if (targetType == TargetTypes.SingleTargetAtRange || targetType == TargetTypes.AreaAtRange)
                 {
                     UseSpellBillboardAnims();
                 }
             }
 
             // Setup senses
-            if (caster && caster != GameManager.Instance.PlayerEntityBehaviour)
+            if (caster)
             {
-                enemySenses = caster.GetComponent<EnemySenses>();
+                casterCollider = caster.GetComponent<Collider>();
+                cachedEnemySenses = caster.GetComponent<EnemySenses>();
+                cachedEnemyAttack = caster.GetComponent<EnemyAttack>();
+                casterController = caster.GetComponent<CharacterController>();
+            }
+
+            if (caster && caster != gm.PlayerEntityBehaviour)
+            {
+                enemySenses = cachedEnemySenses;
             }
 
             // Setup arrow
             if (isArrow)
             {
                 // Create and orient 3d arrow
-                goModel = GameObjectHelper.CreateDaggerfallMeshGameObject(99800, transform);
-                MeshCollider arrowCollider = goModel.GetComponent<MeshCollider>();
-                arrowCollider.sharedMesh = goModel.GetComponent<MeshFilter>().sharedMesh;
-                arrowCollider.convex = true;
-                arrowCollider.isTrigger = true;
+                goModel = GameObjectHelper.CreateDaggerfallMeshGameObject(99800, transform, ignoreCollider: true);
 
-                // Offset up so it comes from same place LOS check is done from
-                Vector3 adjust;
-                if (caster != GameManager.Instance.PlayerEntityBehaviour)
-                {
-                    CharacterController controller = caster.transform.GetComponent<CharacterController>();
-                    adjust = caster.transform.forward * 0.6f;
-                    adjust.y += controller.height / 3;
-                }
-                else
-                {
-                    // Adjust slightly downward to match bow animation
-                    adjust = (GameManager.Instance.MainCamera.transform.rotation * -Caster.transform.up) * 0.11f;
-                    // Offset forward to avoid collision with player
-                    adjust += GameManager.Instance.MainCamera.transform.forward * 0.6f;
-                    // Adjust to the right or left to match bow animation
-                    if (!GameManager.Instance.WeaponManager.ScreenWeapon.FlipHorizontal)
-                        adjust += GameManager.Instance.MainCamera.transform.right * 0.15f;
-                    else
-                        adjust -= GameManager.Instance.MainCamera.transform.right * 0.15f;
-                }
-
-                goModel.transform.localPosition = adjust;
+                goModel.transform.localPosition = Vector3.zero;
                 goModel.transform.rotation = Quaternion.LookRotation(GetAimDirection());
                 goModel.layer = gameObject.layer;
             }
 
-            // Ignore missile collision with caster (this is a different check to AOE targets)
-            if (caster)
-                Physics.IgnoreCollision(caster.GetComponent<Collider>(), this.GetComponent<Collider>());
+            //if layer mask has not yet been initialized, do it now
+            if (layerMaskDefault == -1)
+                InitializeLayerMasks();
+
+            //assign layer mask
+            if (caster && caster == gm.PlayerEntityBehaviour)
+                layerMask = layerMaskPlayer;
+            else
+                layerMask = layerMaskDefault;
+        }
+
+        static void InitializeLayerMasks()
+        {
+            layerMaskDefault = Physics.DefaultRaycastLayers;
+            layerMaskDefault &= ~(1 << LayerMask.NameToLayer("Automap"));
+
+            layerMaskPlayer = Physics.DefaultRaycastLayers;
+            layerMaskPlayer &= ~(1 << LayerMask.NameToLayer("Automap"));
+            layerMaskPlayer &= ~(1 << LayerMask.NameToLayer("Player"));
         }
 
         private void Update()
@@ -283,12 +293,13 @@ namespace DaggerfallWorkshop.Game
                 transform.position += (direction * MovementSpeed) * Time.deltaTime;
 
                 // Update lifespan and self-destruct if expired (e.g. spell fired straight up and will never hit anything)
-                lifespan += Time.deltaTime;
                 if (lifespan > LifespanInSeconds)
                     Destroy(gameObject);
             }
             else
             {
+                transform.position = colliderPosition;
+
                 // Notify listeners work is done and automatically assign impact
                 if (!impactAssigned)
                 {
@@ -313,35 +324,42 @@ namespace DaggerfallWorkshop.Game
             UpdateLight();
         }
 
+        private void FixedUpdate()
+        {
+            if (!missileReleased || impactDetected)
+                return;
+            lifespan += Time.fixedDeltaTime;
+            // Do fixed-interval transformation with raycast lookahead.
+            var displacement = (direction * MovementSpeed) * Time.fixedDeltaTime;
+            RaycastHit hitInfo;
+            bool castFoundHit;
+            if (isArrow || lifespan == Time.fixedDeltaTime) // First test should always be a raycast in case the caster is hugging a wall.
+                castFoundHit = Physics.Raycast(colliderPosition, direction, out hitInfo, displacement.magnitude + ColliderRadius, layerMask);
+            else
+                castFoundHit = Physics.SphereCast(colliderPosition, ColliderRadius, direction, out hitInfo, displacement.magnitude + ColliderRadius, layerMask);
+
+            if (castFoundHit)
+            {
+                // Place self at meeting point with collider and do collision logic.
+                if (isArrow)
+                    colliderPosition = hitInfo.point - transform.forward * ColliderRadius;
+                else
+                    colliderPosition += direction.normalized * hitInfo.distance; // Stop at center of sphere cast.
+                DoCollision(null, hitInfo.collider);
+            }
+            else
+                colliderPosition += displacement;
+        }
+
         #endregion
 
         #region Collision Handling
-
-        private void OnCollisionEnter(Collision collision)
-        {
-            DoCollision(collision, null);
-        }
-
-        private void OnTriggerEnter(Collider other)
-        {
-            DoCollision(null, other);
-        }
 
         void DoCollision(Collision collision, Collider other)
         {
             // Missile collision should only happen once
             if (impactDetected)
                 return;
-
-            // Set my collider to trigger and rigidbody to kinematic immediately after impact
-            // This helps prevent mobiles from walking over low missiles or the missile bouncing off in some other direction
-            // Seems to eliminate the combined worst-case scenario where mobile will "ride" a missile bounce, throwing them high into the air
-            // Now the worst that seems to happen is mobile will "bump" over low missiles occasionally
-            // TODO: Review later and find a better way to eliminate issue other than this quick workaround
-            if (myCollider)
-                myCollider.isTrigger = true;
-            if (myRigidbody)
-                myRigidbody.isKinematic = true;
 
             // Play spell impact animation, this replaces spell missile animation
             if (elementType != ElementTypes.None && targetType != TargetTypes.ByTouch)
@@ -380,7 +398,7 @@ namespace DaggerfallWorkshop.Game
             // If missile is area at range
             if (targetType == TargetTypes.AreaAtRange)
             {
-                DoAreaOfEffect(transform.position);
+                DoAreaOfEffect(colliderPosition);
             }
         }
 
@@ -388,17 +406,41 @@ namespace DaggerfallWorkshop.Game
 
         #region Static Methods
 
-        public static DaggerfallEntityBehaviour GetEntityTargetInTouchRange(Vector3 aimPosition, Vector3 aimDirection)
+        public static DaggerfallEntityBehaviour GetEntityTargetInTouchRange(Vector3 aimPosition, Vector3 aimDirection, int layerMaskTouch = -1)
         {
+            //set the default layer mask if none was passed
+            if (layerMaskTouch == -1)
+            {
+                //Initialize the layer masks if they're still not
+                if (layerMaskDefault == -1)
+                    InitializeLayerMasks();
+
+                layerMaskTouch = layerMaskDefault;
+            }
+
             // Fire ray along caster facing
             // Origin point of ray is set back slightly to fix issue where strikes against target capsules touching caster capsule do not connect
             RaycastHit hit;
-            aimPosition -= aimDirection * 0.1f;
             Ray ray = new Ray(aimPosition, aimDirection);
-            if (Physics.SphereCast(ray, SphereCastRadius, out hit, TouchRange))
+            if (Physics.SphereCast(ray, SphereCastRadius, out hit, TouchRange, layerMaskTouch, QueryTriggerInteraction.Ignore))
+            {
                 return hit.transform.GetComponent<DaggerfallEntityBehaviour>();
-            else
-                return null;
+            }
+
+            return null;
+        }
+
+        //allow other classes to use the layer masks
+        public static int GetLayerMask(bool player)
+        {
+            //Initialize the layer masks if they're still not
+            if (layerMaskDefault == -1)
+                InitializeLayerMasks();
+
+            if (player)
+                return layerMaskPlayer;
+
+            return layerMaskDefault;
         }
 
         #endregion
@@ -410,12 +452,7 @@ namespace DaggerfallWorkshop.Game
         {
             transform.position = caster.transform.position;
 
-            // Touch does not use default missile collider
-            // This prevent touch missile check colliding with self and blocking spell transfer
-            if (myCollider)
-                myCollider.enabled = false;
-
-            DaggerfallEntityBehaviour entityBehaviour = GetEntityTargetInTouchRange(GetAimPosition(), GetAimDirection());
+            DaggerfallEntityBehaviour entityBehaviour = GetEntityTargetInTouchRange(GetAimPosition(), GetAimDirection(), layerMask);
             if (entityBehaviour && entityBehaviour != caster)
             {
                 targetEntities.Add(entityBehaviour);
@@ -431,36 +468,42 @@ namespace DaggerfallWorkshop.Game
         void DoMissile()
         {
             direction = GetAimDirection();
-            transform.position = GetAimPosition() + direction * ArmLength;
+            transform.position = GetAimPosition();
+            colliderPosition = transform.position;
             missileReleased = true;
         }
 
         // AOE can strike any number of targets within range with an option to exclude caster
         void DoAreaOfEffect(Vector3 position, bool ignoreCaster = false)
         {
-            List<DaggerfallEntityBehaviour> entities = new List<DaggerfallEntityBehaviour>();
+            colliderPosition = position;
 
-            transform.position = position;
+            int count = Physics.OverlapSphereNonAlloc(position, ExplosionRadius, aoeBuffer, layerMaskDefault, QueryTriggerInteraction.Ignore);
+            tmpTargets.Clear();
 
-            // Collect AOE targets and ignore duplicates
-            Collider[] overlaps = Physics.OverlapSphere(position, ExplosionRadius);
-            for (int i = 0; i < overlaps.Length; i++)
+            for (int i = 0; i < count; i++)
             {
-                DaggerfallEntityBehaviour aoeEntity = overlaps[i].GetComponent<DaggerfallEntityBehaviour>();
-
-                if (ignoreCaster && aoeEntity == caster)
-                    continue;
-
-                if (aoeEntity && !targetEntities.Contains(aoeEntity))
+                var beh = aoeBuffer[i].GetComponent<DaggerfallEntityBehaviour>();
+                if (!beh)
                 {
-                    entities.Add(aoeEntity);
-                    //Debug.LogFormat("Missile hit target {0} by AOE", aoeEntity.name);
+                    continue;
+                }
+
+                if (ignoreCaster && beh == caster)
+                {
+                    continue;
+                }
+
+                if (!targetEntities.Contains(beh))
+                {
+                    tmpTargets.Add(beh);
                 }
             }
 
-            // Add collection to target entities
-            if (entities.Count > 0)
-                targetEntities.AddRange(entities);
+            if (tmpTargets.Count > 0)
+            {
+                targetEntities.AddRange(tmpTargets);
+            }
 
             impactDetected = true;
             missileReleased = true;
@@ -476,9 +519,36 @@ namespace DaggerfallWorkshop.Game
             // Aim position is from eye level for player or origin for other mobile
             // Player must aim from camera position or it feels out of alignment
             Vector3 aimPosition = caster.transform.position;
-            if (caster == GameManager.Instance.PlayerEntityBehaviour)
+            if (caster == gm.PlayerEntityBehaviour)
             {
-                aimPosition = GameManager.Instance.MainCamera.transform.position;
+                aimPosition = gm.MainCamera.transform.position;
+            }
+
+            //projectile offset code moved here for accuracy
+            if (isArrow)
+            {
+                // Offset up so it comes from same place LOS check is done from
+                Vector3 adjust;
+                if (caster != gm.PlayerEntityBehaviour)
+                {
+                    adjust = caster.transform.forward * 0.6f;
+                    if (casterController)
+                    {
+                        adjust.y += casterController.height / 3;
+                    }
+                }
+                else
+                {
+                    // Adjust slightly downward to match bow animation
+                    adjust = (gm.MainCamera.transform.rotation * -caster.transform.up) * 0.11f;
+                    // Adjust to the right or left to match bow animation
+                    var right = gm.MainCamera.transform.right * 0.15f;
+                    if (!gm.WeaponManager.ScreenWeapon.FlipHorizontal)
+                        adjust += right;
+                    else
+                        adjust -= right;
+                }
+                aimPosition += adjust;
             }
 
             return aimPosition;
@@ -493,9 +563,9 @@ namespace DaggerfallWorkshop.Game
 
             // Aim direction should be from camera for player or facing for other mobile
             Vector3 aimDirection = Vector3.zero;
-            if (caster == GameManager.Instance.PlayerEntityBehaviour)
+            if (caster == gm.PlayerEntityBehaviour)
             {
-                aimDirection = GameManager.Instance.MainCamera.transform.forward;
+                aimDirection = gm.MainCamera.transform.forward;
             }
             else if (enemySenses)
             {
@@ -511,7 +581,7 @@ namespace DaggerfallWorkshop.Game
                     aimDirection = (predictedPosition - caster.transform.position).normalized;
 
                 // Enemy archers must aim lower to compensate for crouched player capsule
-                if (IsArrow && enemySenses.Target?.EntityType == EntityTypes.Player && GameManager.Instance.PlayerMotor.IsCrouching)
+                if (IsArrow && enemySenses.Target?.EntityType == EntityTypes.Player && gm.PlayerMotor.IsCrouching)
                     aimDirection += Vector3.down * 0.05f;
             }
 
@@ -594,7 +664,7 @@ namespace DaggerfallWorkshop.Game
                 return;
             }
 
-            if (caster != GameManager.Instance.PlayerEntityBehaviour)
+            if (caster != gm.PlayerEntityBehaviour)
             {
                 if (targetEntities[0] == caster.GetComponent<EnemySenses>().Target)
                 {
@@ -608,7 +678,13 @@ namespace DaggerfallWorkshop.Game
             else
             {
                 Transform hitTransform = arrowHitCollider.gameObject.transform;
-                GameManager.Instance.WeaponManager.WeaponDamage(GameManager.Instance.WeaponManager.LastBowUsed, true, isArrowSummoned, hitTransform, hitTransform.position, goModel.transform.forward);
+                gm.WeaponManager.WeaponDamage(
+                    gm.WeaponManager.LastBowUsed,
+                    true,
+                    isArrowSummoned,
+                    hitTransform,
+                    hitTransform.position,
+                    goModel.transform.forward);
             }
         }
 

@@ -81,12 +81,12 @@ Old =monster_ moved up north. So I guess we know where plague will follow.
 I hear the Daedra themselves fear =monster_ and its power.
 
 RumorsPostsuccess:  [1007]
-=monster_ they say fancied itself more powerful than the daedra themselves.
+=monster_ they say fancied itself more powerful than the Daedra themselves.
 <--->
 =monster_ got its reward for boasting about its power over life and death.
 
 Message:  1011
-They say _qgfriend_ is a very pleasant and charming =qgfriend_, who is also a daedra-worshipper.
+They say _qgfriend_ is a very pleasant and charming =qgfriend_, who is also a Daedra-worshipper.
 <--->
 _qgfriend_ is rumored to be Peryite's slave in %reg.
 

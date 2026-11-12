@@ -8,7 +8,7 @@ DisplayName: Freeing Medora
 QRC:
 
 QuestorOffer:  [1000]
-<ce>                      Greetings %pcf. I am Medora
+<ce>                      Greetings, %pcf. I am Medora
 <ce>               Direnni, former sorceress to the court of
 <ce>               Daggerfall. I have an interest in helping
 <ce>               you in your aim to exorcise the spirit of
@@ -108,7 +108,7 @@ QuestorPostsuccess:  [1008]
 QuestorPostfailure:  [1009]
 <ce>               Of course I will give Medora the horn of
 <ce>               the Great Unicorn. She was a favorite of
-<ce>                    my beloved Lysandus after all.
+<ce>                    my beloved Lysandus, after all.
 
 QuestLogEntry:  [1010]
 %qdt:

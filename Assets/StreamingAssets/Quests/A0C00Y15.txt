@@ -42,13 +42,13 @@ AcceptQuest:  [1002]
 <ce>                       Great! Take this package
 <ce>                        to ___pickupregion_ and
 <ce>                        ask for _pickupregion_.
-<ce>                       %g will pay you. It needs
+<ce>                       %G will pay you. It needs
 <ce>                   to be there in =traveltime_ days.
 <ce>                          Here is the package.
                                      <--->
 <ce>                What luck! My friend is _pickupregion_
 <ce>                     in ___pickupregion_. Just ask
-<ce>                  around, everyone knows %g2. %g will
+<ce>                  around, everyone knows %g2. %G will
 <ce>                    pay you right away. If you take
 <ce>                   longer than =traveltime_ days, you
 <ce>                      might as well throw it away.
@@ -57,7 +57,7 @@ AcceptQuest:  [1002]
 QuestComplete:  [1004]
 <ce>                       I was hoping _questgiver_
 <ce>                would be able to get this to me in time.
-<ce>                      %g has been so busy lately.
+<ce>                      %G has been so busy lately.
 <ce>                 Here is the _gold_ you were promised.
 
 RumorsDuringQuest:  [1005]

@@ -64,10 +64,10 @@ Message:  1026
 <ce>               Reaching into your pack for something to
 <ce>             eat, you spy a note. It wasn't there before.
                                      <--->
-<ce>             A redfaced courier startles you with a cry of
+<ce>             A red-faced courier startles you with a cry of
 <ce>                  "Letter for %pcn! Hey that must be
 <ce>                 you. Here, take this. Gotta go. Other
-<ce>                        deliveries to be made.
+<ce>                        deliveries to be made."
 
 Message:  1031
 <ce>                        %pcn, I have a special
@@ -80,32 +80,32 @@ Message:  1031
                                      <--->
 <ce>              Your bravery and skill are beyond reproach.
 <ce>             If I felt I could trust you, I would send you
-<ce>            on a particularly sensative mission. Come back
-<ce>             and visit me when you shown I can trust you.
+<ce>            on a particularly-sensitive mission. Come back
+<ce>            and visit me when you've shown I can trust you.
 
 Message:  1032
 <ce>                      %pcn, I have a special task
 <ce>            that would be perfect for you. However, I would
 <ce>            just be signing your death warrant if I were to
-<ce>            give it to you now. When you are more skillful
+<ce>            give it to you now. When you are more skillful,
 <ce>              return to me and I may give it to you then.
                                      <--->
-<ce>                   Its really too bad, %pcf. I have
+<ce>                   It's really too bad, %pcf. I have
 <ce>             a special assignment that requires someone I
 <ce>            trust, such as yourself. However, it also needs
-<ce>             someone of greater skill in order to survive.
+<ce>            someone of greater skill in order to survive it.
 <ce>             Come back and visit me when you have improved
 <ce>                        your skills some more.
 
 Message:  1033
-<ce>                      %pcn, You might be just the
+<ce>                      %pcn, you might be just the
 <ce>               person ta help me. But I don't trusts ya
-<ce>                well nuff yet. If I hears that you are
+<ce>                well 'nuff yet. If I hears that you are
 <ce>                 a standup %ra, maybe you should come
 <ce>                        back and ask me again.
 
 Message:  1034
-<ce>                    I could sure use yer help %pcn.
+<ce>                    I could sure use yer help, %pcn.
 <ce>               But you just ain't tough enough ta handle
 <ce>              what I gotta have done. You get better and
 <ce>                           then come see me.

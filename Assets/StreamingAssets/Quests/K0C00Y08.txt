@@ -73,7 +73,7 @@ I heard a great joke. %jok
 <--->
 %jok Can you explain that to me?
 <--->
-The legal system in %reg has good points and bad ones.
+The legal system in %reg has its good points and bad ones.
 
 RumorsPostfailure:  [1006]
 I got a boil the other day ... but it healed.
@@ -102,7 +102,7 @@ I heard a great joke. %jok
 <--->
 %jok Can you explain that to me?
 <--->
-The legal system in %reg has it good points and bad ones.
+The legal system in %reg has its good points and bad ones.
 
 RumorsPostsuccess:  [1007]
 _qgiver_ is happy as a harpy about %g3 new acquisition.

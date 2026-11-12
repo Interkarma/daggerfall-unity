@@ -25,7 +25,7 @@ QuestComplete:  [1004]
 <ce>                             Here is yours.
 
 RumorsDuringQuest:  [1005]
-_npc_ ought to watch %g3 step. %g has a number of enemies.
+_npc_ ought to watch %g3 step. %G has a number of enemies.
 
 RumorsPostfailure:  [1006]
 It is unwise to disregard the Dark Brotherhood. Unwise and fatal.

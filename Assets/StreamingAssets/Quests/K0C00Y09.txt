@@ -129,7 +129,7 @@ Message:  1012
 <ce>                               surrender!
                                      <--->
 <ce>                              I give up!
-<ce>                               I give up!
+<ce>                              I give up!
                                      <--->
 <ce>                            Don't kill me!
 <ce>                              I surrender!

@@ -79,6 +79,7 @@ namespace DaggerfallWorkshop
         const string sectionChildGuard = "ChildGuard";
         const string sectionGUI = "GUI";
         const string sectionSpells = "Spells";
+        const string sectionMeleeAttacks = "MeleeAttacks";
         const string sectionControls = "Controls";
         const string sectionMap = "Map";
         const string sectionStartup = "Startup";
@@ -179,6 +180,7 @@ namespace DaggerfallWorkshop
         public float InteriorShadowDistance { get; set; }
         public float ExteriorShadowDistance { get; set; }
         public bool EnableTextureArrays { get; set; }
+        public bool EnableObjectCulling { get; set; }
         public int RandomDungeonTextures { get; set; }
         public int CursorWidth { get; set; }
         public int CursorHeight { get; set; }
@@ -273,6 +275,10 @@ namespace DaggerfallWorkshop
         public bool EnableSpellLighting { get; set; }
         public bool EnableSpellShadows { get; set; }
 
+        // [MeleeAttacks]
+        public int MeleeAttackDetection { get; set; }
+        public bool MeleeAttackFriendlyProtection { get; set; }
+
         // [Controls]
         public bool InvertMouseVertical { get; set; }
         public float MouseLookSmoothingFactor { get; set; }
@@ -322,6 +328,7 @@ namespace DaggerfallWorkshop
         public float TerrainHeightmapPixelError { get; set; }
         public bool SmallerDungeons { get; set; }
         public int AssetCacheThreshold { get; set; }
+        public int DungeonsPoolSizeTarget { get; set; }
 
         // [Enhancements]
         public bool LypyL_GameConsole { get; set; }
@@ -425,6 +432,7 @@ namespace DaggerfallWorkshop
             InteriorShadowDistance = GetFloat(sectionVideo, "InteriorShadowDistance", 0.1f, 50.0f);
             ExteriorShadowDistance = GetFloat(sectionVideo, "ExteriorShadowDistance", 0.1f, 150.0f);
             EnableTextureArrays = GetBool(sectionVideo, "EnableTextureArrays");
+            EnableObjectCulling = GetBool(sectionVideo, "EnableObjectCulling");
             RandomDungeonTextures = GetInt(sectionVideo, "RandomDungeonTextures", 0, 4);
 
             AntialiasingMethod = GetInt(sectionEffects, "AntialiasingMethod", 0, 3);
@@ -508,6 +516,9 @@ namespace DaggerfallWorkshop
             DisableEnemyDeathAlert = GetBool(sectionGUI, "DisableEnemyDeathAlert");
             HideLoginName = GetBool(sectionGUI, "HideLoginName");
 
+            MeleeAttackDetection = GetInt(sectionMeleeAttacks, "MeleeAttackDetection", 0, 1);
+            MeleeAttackFriendlyProtection = GetBool(sectionMeleeAttacks, "MeleeAttackFriendlyProtection");
+
             EnableSpellLighting = GetBool(sectionSpells, "EnableSpellLighting");
             EnableSpellShadows = GetBool(sectionSpells, "EnableSpellShadows");
 
@@ -555,6 +566,7 @@ namespace DaggerfallWorkshop
             TerrainHeightmapPixelError = GetFloat(sectionExperimental, "TerrainHeightmapPixelError", 1, 10);
             SmallerDungeons = GetBool(sectionExperimental, "SmallerDungeons");
             AssetCacheThreshold = GetInt(sectionExperimental, "AssetCacheThreshold", 0, 120);
+            DungeonsPoolSizeTarget = GetInt(sectionExperimental, "DungeonsPoolSizeTarget", 0, 999);
 
             LypyL_GameConsole = GetBool(sectionEnhancements, "LypyL_GameConsole");
             LypyL_ModSystem = GetBool(sectionEnhancements, "LypyL_ModSystem");
@@ -622,6 +634,7 @@ namespace DaggerfallWorkshop
             SetFloat(sectionVideo, "InteriorShadowDistance", InteriorShadowDistance);
             SetFloat(sectionVideo, "ExteriorShadowDistance", ExteriorShadowDistance);
             SetBool(sectionVideo, "EnableTextureArrays", EnableTextureArrays);
+            SetBool(sectionVideo, "EnableObjectCulling", EnableObjectCulling);
             SetInt(sectionVideo, "RandomDungeonTextures", RandomDungeonTextures);
 
             SetInt(sectionEffects, "AntialiasingMethod", AntialiasingMethod);
@@ -705,6 +718,9 @@ namespace DaggerfallWorkshop
             SetBool(sectionGUI, "DisableEnemyDeathAlert", DisableEnemyDeathAlert);
             SetBool(sectionGUI, "HideLoginName", HideLoginName);
 
+            SetInt(sectionMeleeAttacks, "MeleeAttackDetection", MeleeAttackDetection);
+            SetBool(sectionMeleeAttacks, "MeleeAttackFriendlyProtection", MeleeAttackFriendlyProtection);
+
             SetBool(sectionSpells, "EnableSpellLighting", EnableSpellLighting);
             SetBool(sectionSpells, "EnableSpellShadows", EnableSpellShadows);
 
@@ -747,6 +763,7 @@ namespace DaggerfallWorkshop
             SetFloat(sectionExperimental, "TerrainHeightmapPixelError", TerrainHeightmapPixelError);
             SetBool(sectionExperimental, "SmallerDungeons", SmallerDungeons);
             SetInt(sectionExperimental, "AssetCacheThreshold", AssetCacheThreshold);
+            SetInt(sectionExperimental, "DungeonsPoolSizeTarget", DungeonsPoolSizeTarget);
 
             SetBool(sectionEnhancements, "LypyL_GameConsole", LypyL_GameConsole);
             SetBool(sectionEnhancements, "LypyL_ModSystem", LypyL_ModSystem);

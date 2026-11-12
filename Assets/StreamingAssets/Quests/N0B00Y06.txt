@@ -25,10 +25,10 @@ QuestorOffer:  [1000]
                                      <--->
 <ce>                  Recipes are a daft business, %pct.
 <ce>               I'm working on a formula that calls for a
-<ce>                  "goodly piece of =mummy_. What is a
+<ce>                  "goodly piece of =mummy_." What is a
 <ce>                   =mummy_? An herb? A mineral? Well,
 <ce>              I've researched the matter and found =mummy_
-<ce>            is a mummy. Imagine that. And this particularly
+<ce>             is a mummy. Imagine that. And this particular
 <ce>                  mummy is right here in %reg. Could I
 <ce>              talk you into going to its tomb and grabbing
 <ce>            a piece of =mummy_ for, say, _gold_ gold pieces?
@@ -94,7 +94,7 @@ I heard a great joke. %jok
 <--->
 %jok Can you explain that to me?
 <--->
-The legal system in %reg has it good points and bad ones.
+The legal system in %reg has its good points and bad ones.
 
 RumorsPostsuccess:  [1007]
 =mummy_'s reign in %reg began before the First Era and ended with you.
@@ -102,7 +102,7 @@ RumorsPostsuccess:  [1007]
 _qgiver_ finally can finish %g3 potion thanks to =mummy_'s contribution.
 
 QuestorPostsuccess:  [1008]
-How are you, %pcf? I hope you aren't coming down with mummy rot or anything.
+How are you, %pcf? I hope you aren't coming down with Mummy Rot or anything.
 
 QuestorPostfailure:  [1009]
 <ce>                     I needed that wrapping, %pcf.

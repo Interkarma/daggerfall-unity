@@ -29,7 +29,7 @@ AcceptQuest:  [1002]
 <ce>               continued survival.  We have learned that
 <ce>            %g is currently doing some kind of unsanctioned
 <ce>               research over in ___rebelhouse_, apparently
-<ce>            oblivious to %g3 danger.  You have =qtime_ days
+<ce>            oblivious to the danger.  You have =qtime_ days
 <ce>            to dispose of this menace and report back to me.
 
 QuestFail:  [1003]
@@ -61,7 +61,7 @@ Message:  1021
 Message:  1030
 <ce>                   So, _questgiver_ has sent another
 <ce>                  of %g3 lackeys to bring me to heel.
-<ce>                 The old women who run the Mages Guild
+<ce>                 The old men who run the Mages Guild
 <ce>               have no sense of adventure, take no risks,
 <ce>                dare nothing, and learn nothing.  I have
 <ce>               never lifted a finger against them, except
@@ -106,7 +106,7 @@ Dear _questgiver_,
 <ce>                                _rebel_
 
 Message:  1041
-<ce>                     Why...that impertinent!  I am
+<ce>                     Why... that impertinent!  I am
 <ce>                      speechless!  You can now see
 <ce>                      why _rebel_ must be stopped
 <ce>                   at all costs, before he undermines
@@ -127,7 +127,7 @@ Message:  1050
 
 Message:  1051
 <ce>                    Surely you are ready to concede
-<ce>              my point.  We could have such fun together!
+<ce>              my point?  We could have such fun together!
 
 Message:  1052
 <ce>               _questgiver_ has taught you persistence,

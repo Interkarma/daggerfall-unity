@@ -9,14 +9,14 @@ QRC:
 Message:  1015
 <ce>                 Queen Akorithi has sent us to relieve
 <ce>                 you of a heavy burden. The Totem must
-<ce>                  be such a weight on your mind. Its
+<ce>                  be such a weight on your mind. It's
 <ce>                 too bad you didn't try harder to stay
 <ce>                 on her good side. She also ordered us
-<ce>                 to kill you. No witnesses of course.
+<ce>                 to kill you. No witnesses, of course.
                                      <--->
-<ce>                     We're here to kill you %pcn.
+<ce>                     We're here to kill you, %pcn.
 <ce>                  No hard feelings. We just want the
-<ce>                     Totem and you're in the way.
+<ce>                     Totem, and you're in the way.
 
 
 -- Symbols used in the QRC file:

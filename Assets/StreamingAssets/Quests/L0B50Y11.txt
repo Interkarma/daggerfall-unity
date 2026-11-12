@@ -13,7 +13,7 @@ QRC:
 
 QuestorOffer:  [1000]
 <ce>                 We have an interesting job available
-<ce>                       to a high ranking member
+<ce>                       to a high-ranking member
 <ce>                  of the Thieves Guild. This will be
 <ce>                     a tough one. Do you want it?
 
@@ -26,7 +26,7 @@ RefuseQuest:  [1001]
 AcceptQuest:  [1002]
 <ce>                   You are a sharp one. The target's
 <ce>                      name is _marknpc_, here in
-<ce>                       ___questgiver_. %g moves
+<ce>                       ___questgiver_. %G moves
 <ce>                      around a lot and is usually
 <ce>                 protected by bodyguards. Be careful.
 <ce>                 You have seven days. When it is done,
@@ -80,8 +80,8 @@ Message:  1015
 
 Message:  1020
 <ce>                    _marknpc_ enjoys an occasional
-<ce>                rendezvous with me. %g never stays long.
-<ce>                   %g just uses me for %g3 pleasure.
+<ce>                rendezvous with me. %G never stays long.
+<ce>                   %G just uses me for %g3 pleasure.
 <ce>                 For 50 gold I'll gladly sell %g2 out.
 
 Message:  1021
@@ -95,8 +95,8 @@ Message:  1022
 
 Message:  1023
 <ce>                     _marknpc_ comes here every day
-<ce>                   at around 6 o'clock. %g sends %g3
-<ce>                   bodyguards away. %g is only here
+<ce>                   at around 6 o'clock. %G sends %g3
+<ce>                   bodyguards away. %G is only here
 <ce>                          for an hour or so.
 
 Message:  1030

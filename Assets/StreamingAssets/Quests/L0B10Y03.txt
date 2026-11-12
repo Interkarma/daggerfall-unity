@@ -67,7 +67,7 @@ RumorsPostfailure:  [1006]
 Some say that =target_ is dead. But others have seen %g2 ... at night only.
 
 RumorsPostsuccess:  [1007]
-Funny, the Brotherhood offing that bloodsucker. You think they'd get along.
+Funny, the Brotherhood offing that bloodsucker. You'd think they'd get along.
 <--->
 Apparently, =target_'s last target was more than %g expected him to be.
 

@@ -23,7 +23,7 @@ AcceptQuest:  [1002]
 <ce>                           brought you here.
 
 QuestComplete:  [1004]
-<ce>                  You are a credit to the guild %pcf.
+<ce>                  You are a credit to the guild, %pcf.
 
 RumorsDuringQuest:  [1005]
 _noble_ is certainly one of the greatest nobles in %reg.
@@ -64,7 +64,7 @@ Message:  1011
                      The Acolyte
 
 Message:  1012
-The Acolyte was said to be nobleman before he became the Oracle's disciple.
+The Acolyte was said to be a nobleman before he became the Oracle's disciple.
 <--->
 The Acolyte does all of the Oracle's footwork. Understandable at her age.
 <--->
@@ -120,8 +120,8 @@ Message:  1016
 %qdt:
  The Acolyte told me that
  he is attempting to convince
- _noble_, to leave _noblehouse_
- lest %g die and by dying, bring
+ _noble_ to leave _noblehouse_
+ lest %g die, and by dying, bring
  calamity to all %reg. I have been
  asked either to speak with _noble_
  myself or go to __oracletemple_
@@ -168,7 +168,7 @@ Message:  1020
 <ce>               interested in hiding my head because some
 <ce>                mad old crone had a bad dream about me.
 <ce>               As it happens, I am waiting for some word
-<ce>                         about my love, _love_
+<ce>                         about my love _love_,
 <ce>                who was kidnapped. I will listen to %g3
 <ce>               advice on this matter, but I will not go
 <ce>                into hiding while %g remains in danger.

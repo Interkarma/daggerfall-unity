@@ -32,7 +32,7 @@ RefuseQuest:  [1001]
 AcceptQuest:  [1002]
 <ce>            My prayers have been answered. _missingperson_
 <ce>             has not been seen for four days, and I am very
-<ce>             worried about %g2. %g has been seen consorting
+<ce>             worried about %g2. %G has been seen consorting
 <ce>                   with _friend1_ and _friend2_. You
 <ce>              might want to start with them. If you can't
 <ce>                 find _missingperson_ within two days,
@@ -47,7 +47,7 @@ RumorsDuringQuest:  [1005]
 
 RumorsPostfailure:  [1006]
 <ce>                    No one has seen _missingperson_
-<ce>                 for days now. %g has been given up for
+<ce>                 for days now. %G has been given up for
 <ce>                  dead. I hear _questgiver_ is grief-
 <ce>                           stricken over it.
 
@@ -67,7 +67,7 @@ QuestorPostfailure:  [1009]
 QuestLogEntry:  [1010]
 On %qdt,
  I agreed to help _questgiver_ find
- _missingperson_. %g has been missing
+ _missingperson_. %G has been missing
  for four days. My only clues are that
  %g has been seen with _friend2_
  and _friend1_ recently. If
@@ -100,7 +100,7 @@ Message:  1023
 Message:  1024
 <ce>                       _missingperson_? Yeah, I
 <ce>                       know what happened to %g2.
-<ce>                      %g got killed, that's what.
+<ce>                      %G got killed, that's what.
 <ce>                       My friend Smiley asked %g2
 <ce>                      real nice for %g3 gold, and
 <ce>                        %g wouldn't hand it over.
@@ -111,7 +111,7 @@ Message:  1024
 Message:  1031
 <ce>                     _missingperson_? Naw. Haven't
 <ce>                     seen %g2 for a couple of days.
-<ce>                     Try asking _friend3_. %g might
+<ce>                     Try asking _friend3_. %G might
 <ce>                                 know.
 
 Message:  1032
@@ -137,7 +137,7 @@ Message:  1034
 Message:  1040
 <ce>                      What are you doing here? I
 <ce>                         don't ever want to see
-<ce>                      _questgiver_ again. Hey! let
+<ce>                      _questgiver_ again. Hey! Let
 <ce>                     me go! You can't just drag me
 <ce>                      through the streets to %g2.
 
@@ -162,7 +162,7 @@ Message:  1052
 
 Message:  1053
 <ce>                        So _missingperson_ has
-<ce>                    left town? %g didn't need to do
+<ce>                    left town? %G didn't need to do
 <ce>                    that. I would have forgiven %g2.
 
 Message:  1054

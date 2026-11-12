@@ -14,7 +14,7 @@ QuestorOffer:  [1000]
 <ce>                       You can call me _qgiver_.
 <ce>                     I have wind of some _coastal_
 <ce>                      that some pig of a merchant
-<ce>                       just bought. I want to you
+<ce>                       just bought. I want you to
 <ce>                       pinch it an bring it here.
 <ce>                       I'll pay you _gold_ gold.
 <ce>                          Are you interested?

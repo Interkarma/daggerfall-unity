@@ -48,19 +48,19 @@ QuestComplete:  [1004]
 
 RumorsDuringQuest:  [1005]
 <ce>                   I hear the guards are looking for
-<ce>                 _questgiver_. %g had to flee the town.
+<ce>                 _questgiver_. %G had to flee town.
                                      <--->
 <ce>                 Don't you know? The Thieves Guild is
 <ce>                   after _questgiver_. Or was it the
 <ce>                      Dark Brotherhood? I forget.
                                      <--->
 <ce>                     I heard _questgiver_ has been
-<ce>                   forced to marry. %g has to get to
+<ce>                   forced to marry. %G has to get to
 <ce>                       __destination_ before the
 <ce>                       pregnancy begins to show.
 
 RumorsPostfailure:  [1006]
-<ce>                     They caught _questgiver_. %g
+<ce>                     They caught _questgiver_. %G
 <ce>                      will stand trial next week.
 
 RumorsPostsuccess:  [1007]
@@ -77,12 +77,12 @@ QuestorPostsuccess:  [1008]
 QuestorPostfailure:  [1009]
 <ce>                    You! Because you wouldn't help
 <ce>                    me get out of town, the Thieves
-<ce>                      Guild took my shop! Go away.
+<ce>                     Guild took my shop! Go away.
 
 QuestLogEntry:  [1010]
 %qdt:
  I met _questgiver_
- in ___questgiver_. %g
+ in ___questgiver_. %G
  will pay me to escort %g2 to
  _destination_ in __destination_.
  In particular, %g needs to get to _destination_

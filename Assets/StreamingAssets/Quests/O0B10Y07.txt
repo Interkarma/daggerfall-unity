@@ -14,7 +14,7 @@ QRC:
 QuestorOffer:  [1000]
 <ce>                      We have had our eye on you
 <ce>                          %pcf. Never mind who
-<ce>                       "we" are. You're an up and
+<ce>                      "we" are. You're an up-and-
 <ce>                      coming member of this guild.
 <ce>                      If you were to do a special
 <ce>                       job for us, for no pay, we
@@ -23,7 +23,7 @@ QuestorOffer:  [1000]
 <ce>                            What do you say?
 
 RefuseQuest:  [1001]
-<ce>                       Watch your back you dirty
+<ce>                       Watch your back, you dirty
 <ce>                            little turncoat!
 
 AcceptQuest:  [1002]

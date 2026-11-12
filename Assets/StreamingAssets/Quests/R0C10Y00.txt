@@ -23,7 +23,7 @@ RefuseQuest:  [1001]
 AcceptQuest:  [1002]
 <ce>            Very good. I'm giving you an emerald for you to
 <ce>                       give my contact, _npc1_ of
-<ce>                    ___npc1_.  %g will be waiting in
+<ce>                    ___npc1_.  %G will be waiting in
 <ce>                      __npc1_.  The item needs to
 <ce>               be there in =1stparton_ days. That's very
 <ce>                important. Once you've made it that far,

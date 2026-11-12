@@ -3,7 +3,7 @@
 -- QuestId: 2
 Messages: 51
 Quest: S0000002
-DisplayName: Blackmailing Prince Helseth
+DisplayName: Prince Helseth's Blackmail
 -- Message panels
 QRC:
 
@@ -16,7 +16,7 @@ QuestorOffer:  [1000]
 <ce>              for this, I will not only reward you with a
 <ce>                _magicitem_, but also put in a positive
 <ce>           word for you with the king and queen of Wayrest,
-<ce>          but I will give you some information on the affair
+<ce>          and I will give you some information on the affair
 <ce>         with Daggerfall I doubt you would receive elsewhere.
 <ce>            Does this sound like an agreeable arrangement?
 
@@ -26,7 +26,7 @@ RefuseQuest:  [1001]
 
 AcceptQuest:  [1002]
 <ce>            Excellent. Meet me here this time tomorrow and
-<ce>              I will give you the letter and the name and
+<ce>              I will give you the letter, and the name and
 <ce>                      location of the recipient.
 
 QuestFail:  [1003]
@@ -46,10 +46,10 @@ QuestComplete:  [1004]
 <ce>               the eve of the Battle of Cryngaine Field.
 <ce>            Lysandus was disgustingly loyal to the emperor,
 <ce>             where Camaron was fighting for more autonomy.
-<ce>            According to the advisor's report, they arrived
+<ce>            According to the advisors' report, they arrived
 <ce>            too late because they were waylaid by the orcs
 <ce>              of Gortwog en route. However, I have heard
-<ce>              stories that, at least some of our advisors
+<ce>              stories that at least some of our advisors
 <ce>              arrived at Lysandus' tent and spoke to him
 <ce>             briefly. At this time, I cannot say more. If
 <ce>            I receive more information or if the situation
@@ -117,13 +117,13 @@ My Dear Lord Castellian,
 <ce>                           Prince of Wayrest
 
 Message:  1011
-<ce>                            Well done %pcn.
+<ce>                            Well done, %pcn.
 <ce>            Your budding reputation appears to be deserved.
 <ce>                 Lord Castellian is quite pliable now.
 
 Message:  1012
 <ce>             It is really too bad that you were not a bit
-<ce>                   faster %pcf. My sister Elysana is
+<ce>                   faster, %pcf. My sister Elysana is
 <ce>             betrothed. Without her opposition, it was not
 <ce>            truly necessary to deliver that letter to Lord
 <ce>             Castellian. However, I'm sure I can turn this
@@ -165,7 +165,7 @@ Message:  1024
 Prince Helseth,
     I appreciate your kindness, and I
  will meet with you very shortly at
- your convenience."
+ your convenience.
  
 <ce>                            Lord Castellian
 
@@ -180,7 +180,7 @@ My Dear Lord Castellian,
       Forgive this rough delivery, but it
  would have been impolitic to approach you
  at the palace with this potential problem.
- Unfortunately, your much deserved vacation
+ Unfortunately, your much-deserved vacation
  will have to be temporarily suspended until
  this matter is settled.
  
@@ -207,8 +207,8 @@ My Dear Lord Castellian,
  
       Do not doubt, sir, that I am convinced
  of your integrity as senior member of the
- Elder Circle of Wayrest. I only wish for the
- matter of the financial records be straightened
+ Elder Council of Wayrest. I only wish for the
+ matter of the financial records to be straightened
  so if they are brought to Eadwyre's attention,
  they can be confidently defended.
  
@@ -253,12 +253,12 @@ Message:  1030
 Message:  1031
 <ce>                   So you like to read the missives
 <ce>                   of your betters. Don't expect me
-<ce>                     trust you again anytime soon.
+<ce>                   to trust you again anytime soon.
 
 Message:  1040
 Dear %pcn,
  
- Due to the recent marraige of my sister Elysana,
+ Due to the recent marriage of my sister Elysana,
  I shall not be needing your services with regard
  to the delivery of the letter to Lord Castellian.
  Since you have acted on my behalf with honor, I

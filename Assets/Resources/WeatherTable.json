@@ -159,6 +159,7 @@
       "Cloudy": 15,
       "Overcast": 20,
       "Fog": 5,
+	  "Rain": 10,
       "Snow": 25
     },
     "Spring": {

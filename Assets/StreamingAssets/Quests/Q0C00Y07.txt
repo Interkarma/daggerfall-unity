@@ -114,7 +114,7 @@ Person _qgiver_ group Questor
 Person _witch_ face 1 faction The_Prostitutes female remote
 Person _daedra_ face 105 factiontype Daedra
 
-Place _mondung_ remote dungeon3
+Place _mondung_ remote dungeon3 only
 
 Clock _queston_ 00:00 0 flag 17 range 0 2
 

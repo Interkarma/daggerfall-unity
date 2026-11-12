@@ -343,19 +343,8 @@ namespace DaggerfallWorkshop.Game.Items
                     {
                         Message msg = quest.GetMessage(questItem.UsedMessageID);
                         TextFile.Token[] tokens = msg.GetTextTokens(expandMacros:false);
-                        string signoff = "";
-                        int lines = 0;
-                        for (int i = tokens.Length-1; i >= 0; i--)
-                        {
-                            TextFile.Token token = tokens[i];
-                            if (!string.IsNullOrEmpty(token.text))
-                            {
-                                signoff = token.text.Trim() + " " + signoff;
-                                lines++;
-                            }
-                            if (lines >= 1)
-                                return TextManager.Instance.GetLocalizedText("letterPrefix") + signoff;
-                        }
+                        QuestMacroHelper macroHelper = new QuestMacroHelper();
+                        return macroHelper.ExpandLetterSignoff(quest, tokens);
                     }
                 }
             }

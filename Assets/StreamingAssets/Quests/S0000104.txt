@@ -11,7 +11,7 @@ Message:  1015
 <ce>                             You must die.
                                      <--->
 <ce>                   You have shown no loyalty to the
-<ce>                   Underking. Therefore you must die
+<ce>                  Underking. Therefore, you must die
 <ce>                       for him to get the Totem.
                                      <--->
 <ce>                  I have come for the Totem of Tiber

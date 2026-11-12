@@ -12,6 +12,7 @@
 using UnityEngine;
 using System;
 using DaggerfallWorkshop.Game.UserInterface;
+using DaggerfallWorkshop.Localization;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -874,14 +875,14 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.TextColor = DaggerfallUnity.Settings.ToolTipTextColor;                
                 exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.Parent = dummyPanelAutomap; // use dummyPanelAutomap (the render panel in native daggerfall resolution)
                 exteriorAutomap.buildingNameplates[i].textLabel.ToolTip.Position /= dummyPanelAutomap.LocalScale;                
-                exteriorAutomap.buildingNameplates[i].textLabel.ToolTipText = exteriorAutomap.buildingNameplates[i].name;
+                exteriorAutomap.buildingNameplates[i].textLabel.ToolTipText = GrammarManager.grammarProcessor.ProcessGrammar(exteriorAutomap.buildingNameplates[i].name);
                 panelRenderAutomap.Components.Add(exteriorAutomap.buildingNameplates[i].textLabel);
 
                 // use long name or custom name for nameplate label
                 string displayName = !string.IsNullOrEmpty(exteriorAutomap.buildingNameplates[i].customName) ? exteriorAutomap.buildingNameplates[i].customName : exteriorAutomap.buildingNameplates[i].name;
 
                 exteriorAutomap.buildingNameplates[i].gameObject.name = String.Format("building name plate for [{0}]+", exteriorAutomap.buildingNameplates[i].name);
-                exteriorAutomap.buildingNameplates[i].textLabel.Text = displayName;
+                exteriorAutomap.buildingNameplates[i].textLabel.Text = GrammarManager.grammarProcessor.ProcessGrammar(displayName);
                 exteriorAutomap.buildingNameplates[i].width = exteriorAutomap.buildingNameplates[i].textLabel.TextWidth;
                 exteriorAutomap.buildingNameplates[i].height = exteriorAutomap.buildingNameplates[i].textLabel.TextHeight;
                 exteriorAutomap.buildingNameplates[i].offset = Vector2.zero;

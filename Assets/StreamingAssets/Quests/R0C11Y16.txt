@@ -19,7 +19,7 @@ QuestorOffer:  [1000]
 RefuseQuest:  [1001]
 <ce>                     No? I wasn't expecting you to
 <ce>                   turn down _reward_ gold for a few
-<ce>                   days work. How many peasants would
+<ce>                  days' work. How many peasants would
 <ce>                   murder for that kind of money? Ah,
 <ce>                      well. Your life, I suppose.
 
@@ -27,7 +27,7 @@ AcceptQuest:  [1002]
 <ce>                     Excellent, %pcf. Now, I have
 <ce>                       a spy, _npc1_ in ___npc1_
 <ce>                 who needs a telescope to continue %g3
-<ce>                  survelliance activities. I am given
+<ce>                  surveillance activities. I am given
 <ce>                  to understand %g has found something
 <ce>                   of interest to a mutual friend of
 <ce>                  ours, which needs to be delivered as
@@ -47,17 +47,17 @@ QuestComplete:  [1004]
 <ce>                     _npc1_ told me to expect you.
 <ce>                          I am _npc2_. Let me
 <ce>                    have a look at that relic. Very
-<ce>                    interesting indeed. Well, here's
+<ce>                    interesting, indeed. Well, here's
 <ce>                  your _reward_ gold pieces. You never
 <ce>                            saw me, got it?
 
 RumorsDuringQuest:  [1005]
-If _questgiver_ really has a spy network, it must be pretty well hidden.
+If _questgiver_ really has a spy network, it must be pretty well-hidden.
 <--->
 It's said that _npc1_ is a spy, but %g never leaves __npc1_.
 
 RumorsPostfailure:  [1006]
-Turns out they caught _npc1_ and confiscated %g3 illgotten loot.
+Turns out they caught _npc1_ and confiscated %g3 ill-gotten loot.
 <--->
 They say _npc1_ was a spy in the service of _questgiver_.
 
@@ -88,8 +88,8 @@ QuestLogEntry:  [1010]
 <ce>                         a =npc2_ in ___npc2_.
 <ce>                         The name's _npc2_ and
 <ce>                      you'll find %g2 at __npc2_.
-<ce>                Your gold will be waiting for you there
-<ce>                 as well. Be better be on your way; %g
+<ce>                Your gold will be waiting for you there,
+<ce>                  as well. Better be on your way; %g
 <ce>                 expects you there in =2ndparton_ days.
 
 Message:  1015

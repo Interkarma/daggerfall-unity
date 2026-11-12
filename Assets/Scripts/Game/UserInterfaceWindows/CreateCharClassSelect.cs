@@ -19,6 +19,7 @@ using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop;
 using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Player;
+using DaggerfallWorkshop.Localization;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -45,6 +46,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 
         protected override void Setup()
         {
+            string careerName;
             base.Setup();
 
             // Read all CLASS*.CFG files and add to listbox
@@ -55,7 +57,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
                 {
                     ClassFile classFile = new ClassFile(files[i]);
                     classList.Add(classFile.Career);
-                    listBox.AddItem(TextManager.Instance.GetLocalizedText(classFile.Career.Name));
+                    careerName = TextManager.Instance.GetLocalizedText(classFile.Career.Name);
+                    listBox.AddItem(GrammarManager.grammarProcessor.ProcessGrammar(careerName));
                 }
             }
             // Last option is for creating custom classes

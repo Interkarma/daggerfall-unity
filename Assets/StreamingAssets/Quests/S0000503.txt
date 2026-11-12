@@ -112,7 +112,7 @@ Message:  1053
 <ce>                     is now mine, and mine alone!
 
 Message:  1054
-<ce>             "Well, friend %pcf, an enjoyable little jaunt
+<ce>             "Well, friend %pcf, an enjoyable little jaunt,
 <ce>             eh?  I'll take the _item_ and be on my way."
 <ce>                                    
 <ce>                  Do you give the _item_ to _rebel_?

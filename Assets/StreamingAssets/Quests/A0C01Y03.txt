@@ -30,7 +30,7 @@ RefuseQuest:  [1001]
 AcceptQuest:  [1002]
 <ce>                The only person who might help you find
 <ce>                         _hermit_ is _spouse_.
-<ce>                     %g can be found in ___spouse_.
+<ce>                     %G can be found in ___spouse_.
 <ce>              Take these flowers. They are %g3 favorites.
 <ce>                 They may gain you some favor with %g2.
 <ce>                    Here is a letter with _hermit_'s
@@ -49,7 +49,7 @@ QuestComplete:  [1004]
 
 RumorsDuringQuest:  [1005]
 <ce>                    _qgiver_ is smitten with love.
-<ce>                   %g has been trying to get _spouse_
+<ce>                   %G has been trying to get _spouse_
 <ce>                to accept a marriage proposal for ages.
 
 RumorsPostfailure:  [1006]
@@ -113,7 +113,7 @@ Speak not of love or hate, but tell
 
 Message:  1015
 On %qdt, I spoke with
- _spouse_. %g told me that
+ _spouse_. %G told me that
  _hermit_ left to
  study under _teacher_
  in __school_.
@@ -122,14 +122,14 @@ Message:  1016
 On %qdt, I met with
  _hermit_'s teacher,
  _teacher_ of
- __school_. %g said that
+ __school_. %G said that
  _hermit_ had secluded %g2self in
  ___dungeon_.
 
 Message:  1017
 Speak not of love or hate, but tell
  me this: what gift can you give to
- to me that I can never buy for myself?
+ me that I can never buy for myself?
  
  'It's KINDNESS, stupid!'
 

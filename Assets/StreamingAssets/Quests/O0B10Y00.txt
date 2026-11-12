@@ -36,7 +36,7 @@ AcceptQuest:  [1002]
 <ce>                      in. Get over to __contact_
 <ce>                          and give _contact_
 <ce>                 this hunk of _metal_ in exchange for
-<ce>                  the _gems_, and then you bring the
+<ce>                  the _gems_, and then you bring
 <ce>                     it back here. You understand?
 <ce>                  Good. Now, hurry, there ain't time.
 
@@ -60,10 +60,10 @@ QuestComplete:  [1004]
 RumorsDuringQuest:  [1005]
 Well, everyone knows that _contact_ stole that jewel. Why don't they get %g2?
 <--->
-There's a lot of poshes at __contact_. Guards aren't wanted in there.
+There's a lot of posses at __contact_. Guards aren't wanted in there.
 
 RumorsPostfailure:  [1006]
-The guards finally got _contact_. Guess %g couldn't hold 'em out forever.
+The guards finally got _contact_. Guess %g couldn't hold 'em off forever.
 <--->
 Yeah, they found the %t's _gems_ and arrested that =contact_ alright.
 

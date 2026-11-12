@@ -35,7 +35,7 @@ RefuseQuest:  [1001]
 AcceptQuest:  [1002]
 <ce>                You are my savior! My name is _qgiver_.
 <ce>             Quickly now, for you only have =timeforq_ days
-<ce>                 before they kill _child_. %g is being
+<ce>                 before they kill _child_. %G is being
 <ce>                    held in _dbguild_ in __dbguild_.
 
 QuestFail:  [1003]
@@ -57,7 +57,7 @@ RumorsDuringQuest:  [1005]
 
 RumorsPostfailure:  [1006]
 <ce>                   I don't think that _qgiver_ will
-<ce>                   survive the season. %g'll probably
+<ce>                   survive the season. %G'll probably
 <ce>                 commit suicide. You did hear that the
 <ce>         Dark Brotherhood kidnapped and slew %g3 child, _child_?
 
@@ -92,7 +92,7 @@ On %qdt, _qgiver_
  %g3 child _child_ by the Dark
  Brotherhood. I immediately agreed to
  rescue %g2 from _dbguild_ in
- __dbguild_. %g3 family will wait
+ __dbguild_. %G3 family will wait
  =timeforq_ days for my return to
  __qgiver_ in ___qgiver_.
 

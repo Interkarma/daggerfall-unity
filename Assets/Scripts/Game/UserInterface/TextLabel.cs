@@ -231,12 +231,149 @@ namespace DaggerfallWorkshop.Game.UserInterface
             DrawLabel();
         }
 
+        void DrawLabelSingleCallSDF(Color color, Vector2 offset)
+        {
+            if (glyphLayout.Count == 0)
+                return;
+
+            Material material = font.GetMaterial();
+            Vector4 scissorRect = (UseRestrictedRenderArea) ? GetRestrictedRenderScissorRect() : new Vector4(0, 1, 0, 1);
+            material.SetVector("_ScissorRect", scissorRect);
+            material.SetTexture("_MainTex", font.SDFInfo.atlasTexture);
+            material.SetColor(UIShaderParam._Color, color);
+            material.SetPass(0);
+
+            Rect totalRect = Rectangle;
+            float scaleX = LocalScale.x * textScale;
+            float scaleY = LocalScale.y * textScale;
+            float glyphHeight = font.GlyphHeight * scaleY;
+            float baseline = font.SDFInfo.baseline - 2 * scaleY;
+
+            GL.PushMatrix();
+            GL.LoadPixelMatrix(0, Screen.width, Screen.height, 0);
+            GL.Begin(GL.QUADS);
+            GL.Color(color);
+
+            for (int i = 0; i < glyphLayout.Count; i++)
+            {
+                GlyphLayoutData glyph = glyphLayout[i];
+                if (glyph.code == DaggerfallFont.SpaceCode)
+                    continue;
+
+                if (!font.SDFInfo.glyphs.TryGetValue(glyph.code, out DaggerfallFont.SDFGlyphInfo glyphInfo))
+                    continue;
+
+                if (glyphInfo.size.x <= 0 || glyphInfo.size.y <= 0)
+                    continue;
+
+                float sdfScale = font.GetSDFGlyphScalingRatio(scaleY);
+                float w = glyphInfo.size.x * sdfScale;
+                float h = glyphInfo.size.y * sdfScale;
+                float baseX = (int)(totalRect.x + glyph.x * scaleX + HorzPixelScrollOffset * scaleX + offset.x);
+                float baseY = (int)(totalRect.y + glyph.y * scaleY + offset.y);
+                float x = baseX + glyphInfo.offset.x * sdfScale;
+                float y = baseY + glyphHeight + baseline - glyphInfo.offset.y * sdfScale;
+
+                Rect uv = glyphInfo.rect;
+                float u0 = uv.xMin;
+                float u1 = uv.xMax;
+                float v0 = uv.yMax;
+                float v1 = uv.yMin;
+
+                GL.TexCoord2(u0, v0); GL.Vertex3(x, y, 0);
+                GL.TexCoord2(u1, v0); GL.Vertex3(x + w, y, 0);
+                GL.TexCoord2(u1, v1); GL.Vertex3(x + w, y + h, 0);
+                GL.TexCoord2(u0, v1); GL.Vertex3(x, y + h, 0);
+            }
+
+            GL.End();
+            GL.PopMatrix();
+        }
+
+        void DrawLabelSingleCallClassic(Color color, Vector2 offset)
+        {
+            if (glyphLayout.Count == 0)
+                return;
+
+            Material material = DaggerfallUI.Instance.PixelFontMaterial;
+            Vector4 scissorRect = (UseRestrictedRenderArea) ? GetRestrictedRenderScissorRect() : new Vector4(0, 1, 0, 1);
+            material.SetVector("_ScissorRect", scissorRect);
+            material.SetTexture("_MainTex", font.AtlasTexture);
+            material.SetColor(UIShaderParam._Color, color);
+            material.SetPass(0);
+
+            Rect totalRect = Rectangle;
+            float scaleX = LocalScale.x * textScale;
+            float scaleY = LocalScale.y * textScale;
+            float h = Mathf.Round(font.GlyphHeight * scaleY);
+
+            GL.PushMatrix();
+            GL.LoadPixelMatrix(0, Screen.width, Screen.height, 0);
+            GL.Begin(GL.QUADS);
+            GL.Color(color);
+
+            for (int i = 0; i < glyphLayout.Count; i++)
+            {
+                GlyphLayoutData glyph = glyphLayout[i];
+                if (glyph.code == DaggerfallFont.SpaceCode)
+                    continue;
+
+                int glyphIndex = glyph.code - font.AsciiStart;
+                if (glyphIndex < 0 || glyphIndex >= font.AtlasRects.Length)
+                    continue;
+
+                Rect uv = font.AtlasRects[glyphIndex];
+                float w = (int)(glyph.width * scaleX);
+                float x = (int)(totalRect.x + glyph.x * scaleX + HorzPixelScrollOffset * scaleX + offset.x);
+                float y = (int)(totalRect.y + glyph.y * scaleY + offset.y);
+
+                float u0 = uv.xMin;
+                float u1 = uv.xMax;
+                float v0 = uv.yMax;
+                float v1 = uv.yMin;
+
+                GL.TexCoord2(u0, v0); GL.Vertex3(x, y, 0);
+                GL.TexCoord2(u1, v0); GL.Vertex3(x + w, y, 0);
+                GL.TexCoord2(u1, v1); GL.Vertex3(x + w, y + h, 0);
+                GL.TexCoord2(u0, v1); GL.Vertex3(x, y + h, 0);
+            }
+
+            GL.End();
+            GL.PopMatrix();
+        }
+
         void DrawLabel()
         {
             // Exit if no layout
             if (glyphLayout.Count == 0)
                 return;
 
+            try
+            {
+                if (!font.IsSDFCapable)
+                {
+                    if (shadowPosition != Vector2.zero && shadowColor != Color.clear)
+                        DrawLabelSingleCallClassic(shadowColor, shadowPosition * LocalScale);
+
+                    DrawLabelSingleCallClassic(textColor, Vector2.zero);
+                }
+                else
+                {
+                    if (shadowPosition != Vector2.zero && shadowColor != Color.clear)
+                        DrawLabelSingleCallSDF(shadowColor, shadowPosition * LocalScale * 0.4f);
+
+                    DrawLabelSingleCallSDF(textColor, Vector2.zero);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+                DrawLabelMultiCall();
+            }
+        }
+
+        void DrawLabelMultiCall()
+        {
             // Set render area
             Material material = font.GetMaterial();
             Vector4 scissorRect = (UseRestrictedRenderArea) ? GetRestrictedRenderScissorRect() : new Vector4(0, 1, 0, 1);

@@ -82,6 +82,8 @@ namespace DaggerfallWorkshop
                     // Example is the treasury in Daggerfall castle, some action records flow through the quest item marker
                     meshRenderer.enabled = false;
                 }
+
+                ActiveGameObjectDatabase.RegisterBillboard(gameObject);
             }
         }
 

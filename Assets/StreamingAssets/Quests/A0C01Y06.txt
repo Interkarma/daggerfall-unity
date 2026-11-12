@@ -70,7 +70,7 @@ QuestLogEntry:  [1010]
  who told me %g3 master,
  _master_, would pay _gold_ gold
  pieces for an unknown but certainly
- dangerous task. %g1 is staying in
+ dangerous task. %G1 is staying in
  _meetingplace_ in __meetingplace_.
 
 Message:  1011
@@ -88,7 +88,7 @@ Message:  1012
 Message:  1013
 <ce>                    Don't hurt me, %pcn! I didn't
 <ce>               know what _master_ was planning. I ain't
-<ce>               got no beef with you, honest. %g didn't
+<ce>               got no beef with you, honest. %G didn't
 <ce>                   tell me nothin', I swear, %g just
 <ce>                 paid me to send you to %g2. It's %g2
 <ce>                   you want, not me, right? I hear

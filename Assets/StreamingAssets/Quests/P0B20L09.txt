@@ -55,7 +55,7 @@ QuestLogEntry:  [1010]
  Come immediately.
  
  
-                  Yours in death,
+                  Yours in Death,
  
                   _vamp_
 

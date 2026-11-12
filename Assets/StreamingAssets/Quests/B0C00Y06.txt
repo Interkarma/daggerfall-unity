@@ -72,7 +72,7 @@ QuestLogEntry:  [1010]
  I only have =2dung_ days.
 
 Message:  1011
-<ce>                        On it's back is a large
+<ce>                        On its back is a large
 <ce>                      scorched area. This must be
 <ce>                       the one _qgiver_ spoke of.
 

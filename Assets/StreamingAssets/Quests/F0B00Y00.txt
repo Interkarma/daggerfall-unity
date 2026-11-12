@@ -97,7 +97,7 @@ QuestLogEntry:  [1010]
 <ce>                 By Dibella, I've been a nervous wreck
 <ce>                 waitin' for you to show up. Here's the
 <ce>                icon -- I'm glad to be rid of it. I can
-<ce>                  feel every cutthroat's eyes on on it.
+<ce>                   feel every cutthroat's eyes on it.
 <ce>                You better get back to the House before
 <ce>                    they think you ran off with it.
 

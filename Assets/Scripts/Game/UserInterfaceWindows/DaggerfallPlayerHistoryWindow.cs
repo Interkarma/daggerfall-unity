@@ -17,6 +17,7 @@ using DaggerfallWorkshop.Game.UserInterface;
 using DaggerfallWorkshop.Game.Items;
 using System.IO;
 using System.Text.RegularExpressions;
+using DaggerfallWorkshop.Localization;
 
 namespace DaggerfallWorkshop.Game.UserInterfaceWindows
 {
@@ -148,7 +149,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             int x = 20, y = 25;
             for (int i = pageStartLine; i < GameManager.Instance.PlayerEntity.BackStory.Count; i++)
             {
-                TextLabel label = DaggerfallUI.AddTextLabel(currentFont, new Vector2(x, y), GameManager.Instance.PlayerEntity.BackStory[i], NativePanel);
+                TextLabel label = DaggerfallUI.AddTextLabel(currentFont, new Vector2(x, y), GrammarManager.grammarProcessor.ProcessGrammar(GameManager.Instance.PlayerEntity.BackStory[i]), NativePanel);
                 label.HorizontalAlignment = HorizontalAlignment.None;
                 label.TextColor = DaggerfallUI.DaggerfallDefaultTextColor;
                 label.ShadowColor = DaggerfallUI.DaggerfallDefaultShadowColor;

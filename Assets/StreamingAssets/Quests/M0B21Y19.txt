@@ -17,16 +17,16 @@ QuestorOffer:  [1000]
 <ce>                 Standard protection job.  Interested?
 
 RefuseQuest:  [1001]
-<ce>               Sure, you're lookin' for more high class
+<ce>               Sure, you're lookin' for more high-class
 <ce>                        work these days, right?
 
 AcceptQuest:  [1002]
 <ce>                   All right.  The client's name is
 <ce>                    _victim_, over at _victimhouse_
-<ce>                just up the street from here.  %g wants
+<ce>                just up the street from here.  %G wants
 <ce>                   you over there right away.  Seemed
 <ce>                   very agitated, you know the type.
-<ce>                     %g'll give you all the details
+<ce>                     %G'll give you all the details
 <ce>                          when you get there.
 
 QuestFail:  [1003]
@@ -50,7 +50,7 @@ QuestorPostfailure:  [1009]
 <ce>                        more seriously, I guess.
 
 Message:  1015
-<ce>   _darkb_ lives in ___darkb_, I think.  %g's always hanging around
+<ce>   _darkb_ lives in ___darkb_, I think.  %G's always hanging around
 <ce>    with sinister types, though, so don't go looking for %g2 unless
 <ce>                      you're looking for trouble.
                                      <--->
@@ -58,7 +58,7 @@ Message:  1015
 
 Message:  1016
 <ce>     _darkb_ is one of the leaders of the local Dark Brotherhood.
-<ce>             %g3 headquarters is in __darkb_ in ___darkb_.
+<ce>             %G3 headquarters is in __darkb_ in ___darkb_.
 
 Message:  1020
 %qdt:
@@ -143,7 +143,7 @@ Message:  1041
                                      <--->
 <ce>         The Dark Brotherhood has vowed to track down whoever
 <ce>              broke into their headquarters in ___darkb_.
-<ce>                 I'm sure glad it's not me their after.
+<ce>                 I'm sure glad it's not me they're after.
 
 Message:  1050
 <ce>               Yes...?  Wait, you're that Fighters Guild

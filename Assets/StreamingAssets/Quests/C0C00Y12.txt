@@ -14,7 +14,7 @@ QuestorOffer:  [1000]
 <ce>                       Normally I would not give
 <ce>                         work to someone not a
 <ce>                          member of __qgiver_.
-<ce>                      However, we are short handed
+<ce>                      However, we are short-handed
 <ce>                       right now. A brazen thief
 <ce>                          stole a _religitem_
 <ce>                       from the temple. A priest

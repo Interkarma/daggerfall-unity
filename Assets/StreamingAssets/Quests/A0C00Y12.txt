@@ -44,7 +44,7 @@ RumorsPostfailure:  [1006]
 
 RumorsPostsuccess:  [1007]
 <ce>                    You must be the %ra that found
-<ce>                 _giver_'s book for %g2. %g is telling
+<ce>                 _giver_'s book for %g2. %G is telling
 <ce>                 everyone about it. You'd think it was
 <ce>                     the king that had been saved.
 
@@ -66,7 +66,7 @@ QuestLogEntry:  [1010]
 
 Message:  1014
 <ce>                  You may want to try _informant_ in
-<ce>              _informant1_. %g seems to know everything
+<ce>              _informant1_. %G seems to know everything
 <ce>                 that goes on around __informant1_.
                                      <--->
 <ce>                   You should ask at the local inns.
@@ -93,7 +93,7 @@ Message:  1025
 <ce>                          through these ears.
 <ce>              Enough about me. I did hear something about
 <ce>                _giver_'s misfortunes. You want to find
-<ce>                     _thief_. %g has been looking
+<ce>                     _thief_. %G has been looking
 <ce>                    for a first printing of _book_
 <ce>                for some time. And %g is also the type
 <ce>                   who takes things without asking,
@@ -103,7 +103,7 @@ Message:  1035
 %qdt:
  _informant_ has given me valuable
  information about the missing
- _book_. %g seems to think that
+ _book_. %G seems to think that
  _thief_ might be mixed up in it
  somehow. Now if I could just find %g2...
 
@@ -114,7 +114,7 @@ _thief_ lives in __house_.
 <--->
 _thief_ spends %g3 nights at _house_.
 <--->
-You should try to find _thief_ at %g3 home. %g lives in __house_.
+You should try to find _thief_ at %g3 home. %G lives in __house_.
 <--->
 _thief_ does a lot of trading at _store_.
 <--->

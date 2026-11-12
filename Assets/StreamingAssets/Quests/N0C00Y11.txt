@@ -82,7 +82,7 @@ I heard a great joke. %jok
 <--->
 %jok Can you explain that to me?
 <--->
-The legal system in %reg has it good points and bad ones.
+The legal system in %reg has its good points and bad ones.
 
 RumorsPostsuccess:  [1007]
 I got a boil the other day ... but it healed.
@@ -111,7 +111,7 @@ I heard a great joke. %jok
 <--->
 %jok Can you explain that to me?
 <--->
-The legal system in %reg has it good points and bad ones.
+The legal system in %reg has its good points and bad ones.
 
 QuestorPostsuccess:  [1008]
 I haven't forgotten you, %pcf. You're the %ra who got the _ingredient_.

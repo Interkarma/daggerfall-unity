@@ -68,7 +68,7 @@ QuestorPostsuccess:  [1008]
 
 QuestorPostfailure:  [1009]
 <ce>                  I have lost my _betrothed_ forever!
-<ce>                   %g has been forced to wed _ruler_.
+<ce>                   %G has been forced to wed _ruler_.
 <ce>                 And you want me to help you? Get out!
 
 QuestLogEntry:  [1010]

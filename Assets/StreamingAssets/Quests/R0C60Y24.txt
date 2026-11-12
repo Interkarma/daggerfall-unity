@@ -54,9 +54,9 @@ Someone found a very lovely _item_ around here recently.
 I hear _questgiver_ is mad as hell at some %ra adventurer.
 
 RumorsPostsuccess:  [1007]
-It seems safer to walk the streets in %reg I've noticed.
+It seems safer to walk the streets in %reg, I've noticed.
 <--->
-Sure vampire attacks are becoming rarer. But it's not time to get cocky yet.
+Sure, vampire attacks are becoming rarer. But it's not time to get cocky yet.
 
 QuestorPostsuccess:  [1008]
 I guess the bloodsuckers learned their lesson, eh, %pcf? What can I do for you?
@@ -139,7 +139,7 @@ Message:  1040
  once -- I will wait for you at _vamphouse_ in
  __vamphouse_.
  
-                            Yours in death,
+                            Yours in Death,
  
                             _vampire_
 

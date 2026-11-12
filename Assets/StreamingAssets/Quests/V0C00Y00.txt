@@ -51,7 +51,7 @@ QuestFail:  [1003]
 <ce>              I'll tell you this -- he don't like anything
 <ce>                done halfway. I know that werewolf ain't
 <ce>               dead, and if you think you can fool Vile,
-<ce>  you're an idiot. No dead werewolf, no _artifact_.  Simple as that.
+<ce>  you're an idiot. No dead werewolf, no _artifact_. Simple as that.
 
 QuestComplete:  [1004]
 <ce>                   Ah, %pcf, Vile told me to expect
@@ -68,9 +68,9 @@ I hear the werewolf's found a lair in someplace called ___mondung_.
 Didja hear that howling last night? Wolf howling?
 
 RumorsPostfailure:  [1006]
-Werewolves are real nomads, I guess. I hear our loop moved down south.
+Werewolves are real nomads, I guess. I hear our loup moved down south.
 <--->
-My cousin tells me that our werewolf was spotted down south aways.
+My cousin tells me that our werewolf was spotted down south a ways.
 
 RumorsPostsuccess:  [1007]
 Some kind of weird cult activity started up over by ___mondung_.
@@ -82,10 +82,10 @@ You heard about that werewolf some %ra hunted down?
 Message:  1011
 Clavicus Vile is the consummate politician of Oblivion.
 <--->
-You won't find a more carefully neutral Daedric Prince that Clavicus Vile.
+You won't find a more carefully neutral Daedric Prince than Clavicus Vile.
 
 Message:  1012
-That smooth talking =contact_ is %di of here in __contact_.
+That smooth-talking =contact_ is %di of here in __contact_.
 <--->
 If you go %di of here in __contact_, just look for a =contact_.
 

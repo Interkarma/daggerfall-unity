@@ -24,7 +24,7 @@ QuestorOffer:  [1000]
 <ce>                          Are you interested?
 
 RefuseQuest:  [1001]
-<ce>                     I should have known you were
+<ce>                    I should have known you were not
 <ce>                          serious about work.
 
 AcceptQuest:  [1002]
@@ -36,13 +36,13 @@ AcceptQuest:  [1002]
 QuestComplete:  [1004]
 <ce>                          You got spunk %pcf.
 <ce>                       Keep up the good work and
-<ce>                       you'll be Fighter's Guild
+<ce>                       you'll be Fighters Guild
 <ce>                             material yet.
 
 RumorsDuringQuest:  [1005]
 <ce>               Did you hear about the idiot that brought
-<ce>                home a giant spider's egg. Now he's got
-<ce>                an eight legged pet thats trying to eat
+<ce>                home a giant spider's egg? Now he's got
+<ce>                an eight-legged pet that's trying to eat
 <ce>                            him for dinner!
 
 RumorsPostfailure:  [1006]
@@ -51,7 +51,7 @@ RumorsPostfailure:  [1006]
 
 RumorsPostsuccess:  [1007]
 <ce>             You're that guy that killed the giant spider.
-<ce>           You should join the Fighter's Guild or something.
+<ce>           You should join the Fighters Guild or something.
 
 QuestorPostsuccess:  [1008]
 <ce>                  Nicely done with that giant spider.
@@ -65,7 +65,7 @@ QuestLogEntry:  [1010]
 %qdt:
  The Fighters Guild of
  ___qgiver_ has
- offered to let me to kill
+ offered to let me kill
  a giant spider which hatched
  in _house_.
  It's got be done today.

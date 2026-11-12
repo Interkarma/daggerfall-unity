@@ -62,7 +62,7 @@ Message:  1011
  of these fiefdoms.
 
 Message:  1012
-Lady Magnessen? She's the emmisary of the Blades in Daggerfall.
+Lady Magnessen? She's the emissary of the Blades in Daggerfall.
 <--->
 Lady Magnessen is a part of the set regularly at Castle Daggerfall.
 <--->
@@ -78,7 +78,7 @@ I heard Lady Magnessen was accused of spying. Nobody knows where she is now.
 Message:  1015
 <ce>              Ah, thank you for responding to my letter,
 <ce>                    %pcf. I am Lady Brisienna. Let
-<ce>             me bring you to date on affairs. The spectre
+<ce>            me bring you up to date on affairs. The spectre
 <ce>                of King Lysandus haunts the streets of
 <ce>              Daggerfall at night. Trying to communicate
 <ce>               with him is futile. He will occasionally
@@ -198,7 +198,7 @@ Message:  1026
 <ce>             A redfaced courier startles you with a cry of
 <ce>                  "Letter for %pcn! Hey that must be
 <ce>                 you. Here, take this. Gotta go. Other
-<ce>                        deliveries to be made.
+<ce>                        deliveries to be made."
 
 Message:  1025
 <ce>             You wake and look around the room. Some hours

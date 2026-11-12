@@ -42,7 +42,7 @@ QuestFail:  [1003]
 %qdt:
  Someone has been spreading rumors around
  ___giver_ about _giver_.
- %g has hired me to put a stop
+ %G has hired me to put a stop
  to them for _gold_ gold. I have 1 month to
  return with proof of my success.
 
@@ -113,7 +113,7 @@ Message:  1018
  outlining the plan to kidnap _lover_,
  and _giver_ has now divulged that
  %g hired some bandits to lock him away in
- ___dungeon_. %g begged for his life
+ ___dungeon_. %G begged for his life
  and asked that I rescue _lover_.
 
 Message:  1020

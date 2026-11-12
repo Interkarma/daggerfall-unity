@@ -5,7 +5,7 @@
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: Lypyl (lypyldf@gmail.com), Gavin Clayton (interkarma@dfworkshop.net)
 // Contributors:    Hazelnut
-// 
+//
 // Notes:
 //
 
@@ -19,7 +19,7 @@ using FullSerializer;
 using DaggerfallWorkshop.Game.Guilds;
 
 /*Example patterns:
- * 
+ *
  * Item _gold_ gold
  * Item _gold1_ gold range 5 to 25
  * Item talisman talisman
@@ -281,8 +281,19 @@ namespace DaggerfallWorkshop.Game.Questing
             madePermanent = true;
 
             // Set current DaggerfallUnityItem instance as permanent
-            if (DaggerfallUnityItem != null)
-                DaggerfallUnityItem.MakePermanent();
+            if (item != null)
+                item.MakePermanent();
+
+            // Make sure permanency is synced for items in player item collections
+            Entity.PlayerEntity playerEntity = GameManager.Instance.PlayerEntity;
+            DaggerfallUnityItem[] items = playerEntity.Items.ExportQuestItems(ParentQuest.UID, Symbol);
+            if (items == null || items.Length == 0)
+                return;
+
+            foreach (DaggerfallUnityItem dfitem in items)
+            {
+                dfitem.MakePermanent();
+            }
         }
 
         #endregion

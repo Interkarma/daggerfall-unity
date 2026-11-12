@@ -143,6 +143,18 @@ MonoBehaviour:
     m_Key: textureArrayInfo
     m_Metadata:
       m_Items: []
+  - m_Id: 392878225761951744
+    m_Key: meleeAttackDetectionModes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 392920400377864192
+    m_Key: meleeAttackDetection
+    m_Metadata:
+      m_Items: []
+  - m_Id: 392920453876211712
+    m_Key: meleeAttackFriendlyProtection
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

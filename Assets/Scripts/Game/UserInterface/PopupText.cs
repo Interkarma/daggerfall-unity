@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Unity
+// Project:         Daggerfall Unity
 // Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -14,6 +14,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DaggerfallConnect.Arena2;
+using DaggerfallWorkshop.Localization;
 
 namespace DaggerfallWorkshop.Game.UserInterface
 {
@@ -113,11 +114,13 @@ namespace DaggerfallWorkshop.Game.UserInterface
             else
                 // set next no-scroll delay
                 nextPopDelay = Mathf.Max(nextPopDelay, delayInSeconds);
-            TextLabel label = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, text);
+            // Apply grammar processor before display
+            string pgText = GrammarManager.grammarProcessor.ProcessGrammar(text);
+			TextLabel label = DaggerfallUI.AddTextLabel(DaggerfallUI.DefaultFont, Vector2.zero, pgText);
             label.HorizontalAlignment = HorizontalAlignment.Center;
             label.Parent = Parent;
             textRows.AddLast(label);
-            GameManager.Instance.PlayerEntity.Notebook.AddMessage(text);
+            GameManager.Instance.PlayerEntity.Notebook.AddMessage(pgText);
         }
 
         /// <summary>

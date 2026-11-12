@@ -103,7 +103,7 @@ Message:  1012
 Message:  1013
 _oblivion_ is a powerful mage living in ___oblivion_.
 <--->
-_oblivion_ of ___oblivion_?  %g's in league with the Daedra, I hear.
+_oblivion_ of ___oblivion_?  %G's in league with the Daedra, I hear.
 
 Message:  1014
 _oblivion_ is some kind of sorcerer, I think.  Try __oblivion_ in ___oblivion_.

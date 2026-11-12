@@ -14,7 +14,7 @@ QuestorOffer:  [1000]
 <ce>              I need someone to bring a certain item to a
 <ce>                    contact of mine in ___contact_.
 <ce>              You will receive an item in return. If you
-<ce>              bring that item back to me, I will happy to
+<ce>              bring that item back to me, I will be happy to
 <ce>                 reward you with _reward_ gold pieces.
 <ce>                             Do you agree?
 

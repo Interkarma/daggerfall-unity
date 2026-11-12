@@ -72,7 +72,7 @@ QuestLogEntry:  [1010]
  ==qgiver_ in ___qgiver_
  gave me the task of wiping
  out an orc band that makes
- it's home in __dungeon_.
+ its home in __dungeon_.
  In particular I must get the
  leader, a certain _monster_.
  I need to get back to %g2
@@ -108,7 +108,7 @@ QBN:
 Person _qgiver_ group Questor
 Person _local_ face 1 group Resident2 local
 
-Place _dungeon_ remote dungeon1
+Place _dungeon_ remote dungeon1 only
 
 Clock _2dung_ 00:00 0 flag 17 range 0 2
 

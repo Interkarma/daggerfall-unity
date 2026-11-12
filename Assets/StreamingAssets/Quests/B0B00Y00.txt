@@ -73,7 +73,7 @@ _qgiver_ promised Princess _lady_'s father that she would be protected.
 RumorsPostfailure:  [1006]
 The Princess managed to escape ___mondung_ by herself. Some knightly valor.
 <--->
-The Princess just wandered in ___qgiver_ by herself, pale from bloodloss.
+The Princess just wandered in ___qgiver_ by herself, pale from blood loss.
 
 RumorsPostsuccess:  [1007]
 The knights are celebrating the heroism of the great %ra who rescued _lady_.
@@ -117,7 +117,7 @@ Dear %pcf,
  of %reg would not want you to foil the
  rather lascivious plans of one of its order, do not
  fear. =monster_ is about
- as precious to our cold hearts as a puddle of month
+ as precious to our cold hearts as a puddle of month-
  old spew.
       Enjoy yourself. And, if you are so inclined,
  enjoy _lady_.

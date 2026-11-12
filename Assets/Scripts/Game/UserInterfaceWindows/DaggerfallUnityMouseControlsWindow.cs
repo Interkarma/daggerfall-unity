@@ -49,6 +49,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         protected TextBox weaponAttackThresholdTextbox;
         protected Button continueButton;
 
+        protected HorizontalSlider meleeAttackDetectionSlider;
+        protected Checkbox meleeAttackFriendlyProtectionCheckbox;
+
         protected List<Button> buttonGroup = new List<Button>();
 
         bool waitingForInput = false;
@@ -125,6 +128,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             weaponSwingModeSlider = CreateSlider(TextManager.Instance.GetLocalizedText("weaponSwingMode", TextCollections.TextSettings), 150, 90, DaggerfallUnity.Settings.WeaponSwingMode, TextManager.Instance.GetLocalizedTextList("weaponSwingModes", TextCollections.TextSettings));
             bowDrawbackCheckbox = AddOption(150, 120, TextManager.Instance.GetLocalizedText("bowDrawback", TextCollections.TextSettings), DaggerfallUnity.Settings.BowDrawback);
             toggleSneakCheckbox = AddOption(150, 130, TextManager.Instance.GetLocalizedText("toggleSneak", TextCollections.TextSettings), DaggerfallUnity.Settings.ToggleSneak);
+
+            meleeAttackDetectionSlider = CreateSlider(TextManager.Instance.GetLocalizedText("meleeAttackDetection", TextCollections.TextSettings),20, 145, DaggerfallUnity.Settings.MeleeAttackDetection, TextManager.Instance.GetLocalizedTextList("meleeAttackDetectionModes", TextCollections.TextSettings));
+            meleeAttackFriendlyProtectionCheckbox = AddOption(150, 145, TextManager.Instance.GetLocalizedText("meleeAttackFriendlyProtection", TextCollections.TextSettings), DaggerfallUnity.Settings.MeleeAttackFriendlyProtection);
 
             weaponAttackThresholdTextbox = AddTextbox(TextManager.Instance.GetLocalizedText("mouseWeaponAttackThreshold", TextCollections.TextSettings), 20, 90, DaggerfallUnity.Settings.WeaponAttackThreshold.ToString());
 
@@ -352,6 +358,8 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             DaggerfallUnity.Settings.WeaponSwingMode = weaponSwingModeSlider.ScrollIndex;
             DaggerfallUnity.Settings.BowDrawback = bowDrawbackCheckbox.IsChecked;
             DaggerfallUnity.Settings.ToggleSneak = toggleSneakCheckbox.IsChecked;
+            DaggerfallUnity.Settings.MeleeAttackDetection = meleeAttackDetectionSlider.ScrollIndex;
+            DaggerfallUnity.Settings.MeleeAttackFriendlyProtection = meleeAttackFriendlyProtectionCheckbox.IsChecked;
 
             float weaponAttackThresholdValue;
             if (float.TryParse(weaponAttackThresholdTextbox.Text, out weaponAttackThresholdValue))

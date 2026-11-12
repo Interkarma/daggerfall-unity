@@ -495,6 +495,9 @@ namespace DaggerfallWorkshop.Game
             // first restore general outdoor weather (which sets fog)
             SetWeather(saveData.playerData.playerPosition.weather);
 
+            DaggerfallSky.SetSkyFogColor(DaggerfallSky.skyColors);
+            previousOutdoorFogColor = RenderSettings.fogColor;
+
             // then check if player is inside and set fog accordingly
             if (GameManager.Instance.IsPlayerInsideBuilding)
             {
