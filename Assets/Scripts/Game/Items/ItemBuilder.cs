@@ -19,7 +19,6 @@ using DaggerfallConnect.FallExe;
 using DaggerfallConnect.Arena2;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Utility.AssetInjection;
-using DaggerfallWorkshop.Game.Utility;
 using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game.Items
@@ -379,6 +378,11 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>DaggerfallUnityItem</returns>
         public static DaggerfallUnityItem CreateRandomWeapon(int playerLevel)
         {
+            ItemHelper itemHelper = DaggerfallUnity.Instance.ItemHelper;
+            Array enumArray = itemHelper.GetEnumArray(ItemGroups.Weapons);
+            int[] customItemTemplates = itemHelper.GetCustomItemsForGroup(ItemGroups.Weapons);
+            int groupIndex = UnityEngine.Random.Range(0, enumArray.Length + customItemTemplates.Length);
+
             // Create a random weapon type, including any custom items registered as weapons
             DaggerfallUnityItem newItem = CreateRandomItem(ItemGroups.Weapons);
  
@@ -654,8 +658,6 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>DaggerfallUnityItem</returns>
         public static DaggerfallUnityItem CreateRandomIngredient(ItemGroups ingredientGroup)
         {
-            int groupIndex;
-            Array enumArray;
             switch (ingredientGroup)
             {
                 case ItemGroups.CreatureIngredients1:
@@ -686,7 +688,6 @@ namespace DaggerfallWorkshop.Game.Items
             // Randomise ingredient group
             ItemGroups itemGroup;
             int group = UnityEngine.Random.Range(0, 8);
-            Array enumArray;
             switch (group)
             {
                 case 0:
