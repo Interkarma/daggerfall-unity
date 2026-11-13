@@ -38,7 +38,7 @@ QuestFail:  [1003]
 
 QuestComplete:  [1004]
 <ce>                     %oth, them giants didn't know
-<ce>                     what him 'em, did they, %pcf?
+<ce>                     what hit 'em, did they, %pcf?
 <ce>                Here's your _reward_ gold, as promised.
 
 RumorsDuringQuest:  [1005]
@@ -61,7 +61,7 @@ QuestorPostsuccess:  [1008]
 <ce>                   %pcf. You'll go far in the guild.
 
 QuestorPostfailure:  [1009]
-<ce>                   Giants were too much for you huh?
+<ce>                   Giants were too much for you, huh?
 <ce>                    Maybe the guild should have sent
 <ce>                     you out after pygmies instead.
 
@@ -132,8 +132,14 @@ _pcgetsgold_ task:
 	give pc _reward_ 
 	end quest 
 
-_S.01_ task:
-	create foe _monster_ every 15 minutes 15 times with 50% success 
+variable _S.01_
+-- added the new variable below to ensure monsters stop spawning when you've killed six, as the game says.
+
+_spawnmonster_ task:
+	when _S.01_ and not _mondead_
+	create foe _monster_ every 45 minutes 15 times with 25% success 
+-- this spawn rate was accelerated in 2017, player feedback says it's rather unfair.
+-- players need time to heal for several hours amid enemy spawns.
 
 _mondead_ task:
 	killed 6 _monster_ 

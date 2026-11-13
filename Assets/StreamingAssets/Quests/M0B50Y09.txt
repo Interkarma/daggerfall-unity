@@ -53,7 +53,7 @@ RumorsPostsuccess:  [1007]
 <ce>                  Those guys are good to have around.
 
 QuestorPostsuccess:  [1008]
-<ce>                   Well done with the gargoyle %pcn.
+<ce>                   Well done with the gargoyle, %pcn.
 
 QuestorPostfailure:  [1009]
 <ce>                  That gargoyle killed the merchant.

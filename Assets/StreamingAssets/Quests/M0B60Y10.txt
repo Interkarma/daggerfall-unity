@@ -21,10 +21,10 @@ RefuseQuest:  [1001]
 <ce>                       jobs, like hunting rats.
 
 AcceptQuest:  [1002]
-<ce>                  A young dandy what I have sworn to
-<ce>                   keep unnamed, was screwing around
+<ce>                  A young dandy that I have sworn to
+<ce>                   keep unnamed was screwing around
 <ce>               with magic, illegally. Like a melonhead,
-<ce>                  he up and conjures an atronach. The
+<ce>                  he up and conjured an atronach. The
 <ce>                thing's gotta be destroyed before those
 <ce>                Mages Guild blokes find out. The thing
 <ce>                 fled into the depths of ___dungeon_.

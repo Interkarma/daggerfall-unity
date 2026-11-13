@@ -254,4 +254,8 @@ _giantWaveWhileInDungeon_ task:
 	pc at _mondung_ set _spawnGiants_
 
 _spawnGiants_ task:
-	create foe _giantFriends_ every 3 minutes 6 times with 50% success 
+	create foe _giantFriends_ every 15 minutes 6 times with 50% success 
+
+-- slowed spawn rate. this is a rank 0 quest, and I recognize that this is only after
+-- the giant has been injured, but the previous setup risked
+-- a new player getting surrounded by overwhelming spawns in the middle of combat.

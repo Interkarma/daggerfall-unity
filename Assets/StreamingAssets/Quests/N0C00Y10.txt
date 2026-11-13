@@ -14,7 +14,7 @@ QRC:
 QuestorOffer:  [1000]
 <ce>                     My name is _giver_. You want
 <ce>               work but you aren't a member of the Mages
-<ce>              guild? I'm sure you can understand that we
+<ce>              Guild? I'm sure you can understand that we
 <ce>              only provide quality work for our members.
 <ce>                However, I do have a little errand that
 <ce>                 needs to be done. One of our books is

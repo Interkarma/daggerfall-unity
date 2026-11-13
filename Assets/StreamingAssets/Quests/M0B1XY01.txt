@@ -16,7 +16,7 @@ QuestorOffer:  [1000]
 <ce>                 of flyin' carnivores -- harpies -- who
 <ce>               are making a bunch of travelling merchants
 <ce>                real nervous. Will _reward_ gold get you
-<ce>                       over to ___mondung_ and a
+<ce>                       over to ___mondung_ for a
 <ce>                      little hackin' 'n slashin'?
 
 RefuseQuest:  [1001]
@@ -136,8 +136,12 @@ _qgclicked_ task:
 _1stparton_ task:
 	end quest 
 
-_S.04_ task:
-	create foe _monster_ every 15 minutes 20 times with 50% success 
+variable _S.04_
+_spawnmonster_ task:
+	when _S.04_ and not _mondead_
+	create foe _monster_ every 45 minutes 15 times with 25% success 
+-- this spawn rate was accelerated in 2017, player feedback says it's rather unfair.
+-- players need time to heal for several hours amid enemy spawns.
 
 _clearclick_ task:
 	when _qgclicked_ and not _mondead_
