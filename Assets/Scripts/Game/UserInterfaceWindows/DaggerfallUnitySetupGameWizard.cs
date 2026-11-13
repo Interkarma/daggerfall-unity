@@ -11,21 +11,10 @@
 
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using System;
-using System.IO;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using DaggerfallConnect;
-using DaggerfallConnect.Arena2;
 using DaggerfallConnect.Utility;
-using DaggerfallConnect.FallExe;
-using DaggerfallWorkshop;
 using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterface;
-using DaggerfallWorkshop.Game.Player;
-using DaggerfallWorkshop.Game.Entity;
-using DaggerfallWorkshop.Game.Items;
 using DaggerfallWorkshop.Game.Utility.ModSupport;
 using DaggerfallWorkshop.Utility.AssetInjection;
 
@@ -59,7 +48,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         ListBox qualityList = new ListBox();
 
         Checkbox alwayShowOptions;
-        Checkbox vsync;
+        HorizontalSlider vSync;
         Checkbox swapHealthAndFatigue;
         Checkbox invertMouseVertical;
         HorizontalSlider mouseSmoothing;
@@ -542,7 +531,9 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
             float x = 8;
             optionPos = 60;
             alwayShowOptions = AddOption(x, "alwayShowOptions", DaggerfallUnity.Settings.ShowOptionsAtStart);
-            vsync = AddOption(x, "vsync", DaggerfallUnity.Settings.VSync);
+			optionPos = 70;
+			vSync = AddSlider(x, "vsync", "vSyncInfo", DaggerfallUnity.Settings.VSyncRate, TextManager.Instance.GetLocalizedTextList("vSyncValues", TextCollections.TextSettings));
+			optionPos = 84;
             swapHealthAndFatigue = AddOption(x, "swapHealthAndFatigue", DaggerfallUnity.Settings.SwapHealthAndFatigueColors);
             invertMouseVertical = AddOption(x, "invertMouseVertical", DaggerfallUnity.Settings.InvertMouseVertical);
             mouseSmoothing = AddSlider(x, "mouseSmoothing", "mouseSmoothingInfo", SettingsManager.GetMouseLookSmoothingStrength(DaggerfallUnity.Settings.MouseLookSmoothingFactor), TextManager.Instance.GetLocalizedTextList("mouseLookSmoothingStrengths", TextCollections.TextSettings));
@@ -887,7 +878,7 @@ namespace DaggerfallWorkshop.Game.UserInterfaceWindows
         private void SaveOptionsAndContinue()
         {
             DaggerfallUnity.Settings.ShowOptionsAtStart = alwayShowOptions.IsChecked;
-            DaggerfallUnity.Settings.VSync = vsync.IsChecked;
+            DaggerfallUnity.Settings.VSyncRate = vSync.Value;
             DaggerfallUnity.Settings.SwapHealthAndFatigueColors = swapHealthAndFatigue.IsChecked;
             DaggerfallUnity.Settings.InvertMouseVertical = invertMouseVertical.IsChecked;
             DaggerfallUnity.Settings.MouseLookSmoothingFactor = SettingsManager.GetMouseLookSmoothingFactor(mouseSmoothing.ScrollIndex);

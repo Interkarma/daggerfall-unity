@@ -250,5 +250,18 @@ MonoBehaviour:
     m_Localized: Protect Friendlies and Neutrals
     m_Metadata:
       m_Items: []
+  - m_Id: 471377790454472704
+    m_Localized: 'No VSync
+
+      Screen Frame Rate
+
+      Screen FR/2
+
+      Screen
+      FR/3
+
+      Screen FR/4'
+    m_Metadata:
+      m_Items: []
   references:
     version: 1
