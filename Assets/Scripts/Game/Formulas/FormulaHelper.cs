@@ -770,9 +770,9 @@ namespace DaggerfallWorkshop.Game.Formulas
 
         public static int CalculateHandToHandAttackDamage(DaggerfallEntity attacker, DaggerfallEntity target, int damageModifier, bool player)
         {
-            Func<DaggerfallEntity, DaggerfallEntity, int, int> del;
+            Func<DaggerfallEntity, DaggerfallEntity, int, bool, int> del;
             if (TryGetOverride("CalculateHandToHandAttackDamage", out del))
-                return del(attacker, target, damageModifier);
+                return del(attacker, target, damageModifier, player);
 
             int minBaseDamage = CalculateHandToHandMinDamage(attacker.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand));
             int maxBaseDamage = CalculateHandToHandMaxDamage(attacker.Skills.GetLiveSkillValue(DFCareer.Skills.HandToHand));
