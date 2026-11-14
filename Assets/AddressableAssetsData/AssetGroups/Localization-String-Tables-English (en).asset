@@ -16,56 +16,7 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: 34f132804662c444fb381d77458210e1
-  m_SerializeEntries:
-  - m_GUID: 2073d367f5107aa43b0558116e4af3af
-    m_Address: Internal_Flats_en
-    m_ReadOnly: 1
-    m_SerializedLabels:
-    - Locale-en
-    - Preload
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 3271e089f79ce4f418dcc46d2bbf17f3
-    m_Address: Internal_Quests_en
-    m_ReadOnly: 1
-    m_SerializedLabels:
-    - Locale-en
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 78311872af2509a4fbe824adf6323f64
-    m_Address: Internal_Locations_en
-    m_ReadOnly: 1
-    m_SerializedLabels:
-    - Locale-en
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 370845e8f09a49047b19bb35ace82148
-    m_Address: Internal_Settings_en
-    m_ReadOnly: 1
-    m_SerializedLabels:
-    - Locale-en
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 4c34c3fc483eec543b6d4b1c00ba4d14
-    m_Address: Internal_Spells_en
-    m_ReadOnly: 1
-    m_SerializedLabels:
-    - Locale-en
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 524dc306a656baf4f8f2659fff946a7e
-    m_Address: Internal_Items_en
-    m_ReadOnly: 1
-    m_SerializedLabels:
-    - Locale-en
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5bf75379373c11b48a5eec8eb18ef3bb
-    m_Address: Internal_MagicItems_en
-    m_ReadOnly: 1
-    m_SerializedLabels:
-    - Locale-en
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 342c389699bc9a74da46f47afb5ed51c
-    m_Address: Internal_Factions_en
-    m_ReadOnly: 1
-    m_SerializedLabels:
-    - Locale-en
-    FlaggedDuringContentUpdateRestriction: 0
+  m_SerializeEntries: []
   m_ReadOnly: 1
   m_Settings: {fileID: 11400000, guid: d18e8e9fddb22f341a7e4df0a26a67e2, type: 2}
   m_SchemaSet:

@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using FullSerializer;
+using System.Diagnostics.CodeAnalysis;
 
 namespace DaggerfallWorkshop.Game.Utility.ModSupport
 {
@@ -30,9 +31,9 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
     {
         #region Fields
 
-        public const string MODEXTENSION        = ".dfmod";
-        public const string MODINFOEXTENSION    = ".dfmod.json";
-        public const string MODCONFIGFILENAME   = "Mod_Settings.json";
+        public const string MODEXTENSION = ".dfmod";
+        public const string MODINFOEXTENSION = ".dfmod.json";
+        public const string MODCONFIGFILENAME = "Mod_Settings.json";
 
 #if UNITY_EDITOR
         const string dataFolder = "EditorData";
@@ -40,8 +41,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         const string dataFolder = "GameData";
 #endif
 
-        bool alreadyAtStartMenuState            = false;
-        static bool alreadyStartedInit          = false;
+        bool alreadyAtStartMenuState = false;
+        static bool alreadyStartedInit = false;
         [SerializeField]
         List<Mod> mods;
         public static readonly fsSerializer _serializer = new fsSerializer();
@@ -431,7 +432,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             var query = from mod in EnumerateEnabledModsReverse()
 #if UNITY_EDITOR
                         where mod.AssetBundle != null || mod.IsVirtual
-                        from name in names where mod.IsVirtual ? mod.HasAsset(name) : mod.AssetBundle.Contains(name)
+                        from name in names
+                        where mod.IsVirtual ? mod.HasAsset(name) : mod.AssetBundle.Contains(name)
 #else
                         where mod.AssetBundle != null
                         from name in names where mod.AssetBundle.Contains(name)
@@ -473,7 +475,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                             assets.Add(asset);
                         }
                     }
-                }  
+                }
             }
 
             return assets;
@@ -523,7 +525,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             }
             return lines;
         }
-        
+
         /// <summary>
         /// Goes through all mods and checks if any of them contain a quest with a given name.
         /// </summary>
@@ -638,7 +640,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         }
 
         // Loads Asset bundle and adds to ModLookUp dictionary
-        private static bool LoadModAssetBundle(string modFilePath, out AssetBundle ab)
+        private static bool LoadModAssetBundle(string modFilePath, [NotNullWhen(true)] out AssetBundle ab)
         {
             ab = null;
             if (!File.Exists(modFilePath))
@@ -765,28 +767,33 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <summary>
         /// Compiles source files in mod bundle to assembly.
         /// </summary>
-        /// <param name="source">The content of source files.</param>
+        /// <param name="sources">The content of source files.</param>
         /// <returns>The compiled assembly or null.</returns>
-        public static Assembly CompileFromSourceAssets(string[] source, string modName = "(no mod name)")
+        public static Assembly CompileFromSourceAssets(string[] sources, string modName = "(no mod name)")
         {
-            if (source == null || source.Length < 1)
+            if (sources == null || sources.Length < 1)
             {
                 Debug.Log("nothing to compile");
                 return null;
             }
 
-            Assembly assembly;
-
             try
             {
-                assembly = Compiler.CompileSource(source, true);
-                return assembly;
+                if (Roslyn.Compiler.Instance.CompileSource(modName, sources, out var assembly))
+                {
+                    return assembly;
+                }
+                else
+                {
+                    Debug.LogWarning("Failed to compile");
+                }
             }
             catch (Exception ex)
             {
                 Debug.LogError($"[{modName}] {ex.Message}");
-                return null;
             }
+
+            return null;
         }
 
         #endregion
@@ -830,7 +837,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
         /// <returns>True if settings loaded successfully.</returns>
         public static bool LoadModSettings()
         {
-           fsResult result = new fsResult();
+            fsResult result = new fsResult();
 
             try
             {
@@ -1132,7 +1139,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
                             string referenceVersion = index != -1 ? target.ModInfo.ModVersion.Remove(index) : target.ModInfo.ModVersion;
                             if (IsVersionLowerOrEqual(dependency.Version, referenceVersion) != true)
                                 errorMessages.Add(string.Format(GetText("dependencyWithIncompatibleVersion"), target.Title, target.ModInfo.ModVersion, dependency.Version));
-                        }   
+                        }
                     }
                 }
             }

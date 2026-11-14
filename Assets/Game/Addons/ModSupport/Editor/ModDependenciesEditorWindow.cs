@@ -4,8 +4,8 @@
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
 // Source Code:     https://github.com/Interkarma/daggerfall-unity
 // Original Author: TheLacus
-// Contributors:    
-// 
+// Contributors:
+//
 // Notes:
 //
 
@@ -32,7 +32,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             internal bool DeletionRequest;
         }
 
-        readonly GUIContent modName = new GUIContent("Name:", "Filename without extension. Use <other> to manually input a name if missing."); 
+        readonly GUIContent modName = new GUIContent("Name:", "Filename without extension. Use <other> to manually input a name if missing.");
         readonly GUIContent requirement = new GUIContent("Requirement:", "Defines if target mod must be available.");
         readonly GUIContent[] requirementOptions = new GUIContent[] { new GUIContent("Is required for core functionalities."), new GUIContent("Is compatible but not required.") };
         readonly GUIContent loadOrder = new GUIContent("Load Order:", "Defines if target mod must be placed above.");
@@ -203,7 +203,7 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport
             this.dependencies = editorDataGroup.ToList();
         }
 
-        private void SaveChanges()
+        public override void SaveChanges() 
         {
             if (modInfo == null)
                 return;

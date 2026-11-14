@@ -26,7 +26,7 @@ namespace DaggerfallWorkshop.Game.Utility
         /// <param name="assemblyPath">Path to .dll to be created (directory must exist and be writable).</param>
         /// <param name="scriptPaths">Paths to C# files.</param>
         /// <returns>Value indicating if operation was succesful.</returns>
-        internal static bool Compile(string assemblyPath, params string[] scriptPaths)
+        internal static bool Compile(string assemblyPath, bool buildDebugSymbols, params string[] scriptPaths)
         {
             var assemblyBuilder = new AssemblyBuilder(assemblyPath, scriptPaths)
             {
@@ -34,6 +34,11 @@ namespace DaggerfallWorkshop.Game.Utility
                 buildTargetGroup = BuildTargetGroup.Standalone,
                 additionalReferences = GetAdditionalReferences()
             };
+
+            if (buildDebugSymbols)
+            {
+                assemblyBuilder.flags = AssemblyBuilderFlags.DevelopmentBuild;
+            }
 
             assemblyBuilder.buildFinished += AssemblyBuilder_buildFinished;
 

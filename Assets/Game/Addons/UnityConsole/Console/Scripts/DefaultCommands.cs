@@ -82,7 +82,6 @@ namespace Wenzil.Console
             ConsoleCommandsDatabase.RegisterCommand(GetLocationMapPixel.name, GetLocationMapPixel.description, GetLocationMapPixel.usage, GetLocationMapPixel.Execute);
             ConsoleCommandsDatabase.RegisterCommand(Teleport.name, Teleport.description, Teleport.usage, Teleport.Execute);
             ConsoleCommandsDatabase.RegisterCommand(Groundme.name, Groundme.description, Groundme.usage, Groundme.Execute);
-            ConsoleCommandsDatabase.RegisterCommand(ExecuteScript.name, ExecuteScript.description, ExecuteScript.usage, ExecuteScript.Execute);
             ConsoleCommandsDatabase.RegisterCommand(AddInventoryItem.name, AddInventoryItem.description, AddInventoryItem.usage, AddInventoryItem.Execute);
             ConsoleCommandsDatabase.RegisterCommand(AddArtifact.name, AddArtifact.description, AddArtifact.usage, AddArtifact.Execute);
             ConsoleCommandsDatabase.RegisterCommand(AddWeapon.name, AddWeapon.description, AddWeapon.usage, AddWeapon.Execute);
@@ -2388,83 +2387,6 @@ namespace Wenzil.Console
                 FormulaHelper.InflictPoison(GameManager.Instance.PlayerEntity, GameManager.Instance.PlayerEntity, poisonType, true);
 
                 return string.Format("Player poisoned with {0}", poisonType.ToString());
-            }
-        }
-
-        private static class ExecuteScript
-        {
-            public static readonly string name = "execute";
-            public static readonly string description = "compiles source files (and instanties objects when possible) from streaming assets path.";
-            public static readonly string error = "invalid paramater.";
-
-            public static readonly string usage = "execute Script00.cs Script01.cs Script02.cs....";
-
-
-            public static string Execute(params string[] args)
-            {
-                if (args == null)
-                    return error;
-                else if (args.Length < 1)
-                    return error;
-
-                int count = 0;
-                string[] files = new string[args.Length];
-
-                for (int i = 0; i < args.Length; i++)
-                {
-                    if (string.IsNullOrEmpty(args[i]))
-                        continue;
-
-                    string fullName = Path.Combine(Application.streamingAssetsPath, args[i]);
-
-                    if (!fullName.EndsWith(".cs"))   //limiting to only .cs files isn't really necessary - any text file should work fine
-                        return error;
-
-                    if (!File.Exists(fullName))
-                        return error;
-                    else
-                    {
-                        Console.Log("Found File: " + fullName);
-                        files[i] = fullName;
-                        count++;
-                    }
-                }
-
-                if (count < 1)
-                    return error;
-                //string[] source = new string[files.Length];
-                //for (int i = 0; i < files.Length; i++)
-                //{
-                //    source[i] = File.ReadAllText(files[i]);
-                //}
-
-                try
-                {
-                    System.Reflection.Assembly assembly = DaggerfallWorkshop.Game.Utility.Compiler.CompileSource(files, false);//(files.ToArray(), false);
-                    var loadableTypes = DaggerfallWorkshop.Game.Utility.Compiler.GetLoadableTypes(assembly);
-
-                    foreach (Type t in loadableTypes)
-                    {
-                        bool isAssignable = typeof(Component).IsAssignableFrom(t);
-                        bool hasDefaultConstructor = (t.GetConstructor(Type.EmptyTypes) != null && !t.IsAbstract);
-
-                        if (isAssignable)
-                        {
-                            GameObject newObj = new GameObject(t.Name);
-                            newObj.AddComponent(t);
-                        }
-                        else if (hasDefaultConstructor)
-                        {
-                            Activator.CreateInstance(t); //only works if has a default constructor
-                        }
-                    }
-
-                    return "Finished";
-                }
-                catch (Exception ex)
-                {
-                    return ex.Message;
-                }
             }
         }
 
