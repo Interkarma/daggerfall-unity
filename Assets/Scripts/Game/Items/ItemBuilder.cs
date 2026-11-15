@@ -358,7 +358,7 @@ namespace DaggerfallWorkshop.Game.Items
             int groupIndex = DaggerfallUnity.Instance.ItemHelper.GetGroupIndex(ItemGroups.Weapons, (int)weapon);
             DaggerfallUnityItem newItem = new DaggerfallUnityItem(ItemGroups.Weapons, groupIndex);
 
-            if (weapon == Weapons.Arrow)
+            if (newItem.GroupIndex == 18)
             {   // Handle arrows
                 newItem.stackCount = UnityEngine.Random.Range(1, 20 + 1);
                 newItem.currentCondition = 0; // not sure if this is necessary, but classic does it
@@ -378,18 +378,13 @@ namespace DaggerfallWorkshop.Game.Items
         /// <returns>DaggerfallUnityItem</returns>
         public static DaggerfallUnityItem CreateRandomWeapon(int playerLevel)
         {
-            ItemHelper itemHelper = DaggerfallUnity.Instance.ItemHelper;
-            Array enumArray = itemHelper.GetEnumArray(ItemGroups.Weapons);
-            int[] customItemTemplates = itemHelper.GetCustomItemsForGroup(ItemGroups.Weapons);
-            int groupIndex = UnityEngine.Random.Range(0, enumArray.Length + customItemTemplates.Length);
-
             // Create a random weapon type, including any custom items registered as weapons
             DaggerfallUnityItem newItem = CreateRandomItem(ItemGroups.Weapons);
  
             // Random weapon material
             WeaponMaterialTypes material = FormulaHelper.RandomMaterial(playerLevel);
 
-            if (groupIndex == 18)
+            if (newItem.GroupIndex == 18)
             {   // Handle arrows
                 newItem.stackCount = UnityEngine.Random.Range(1, 20 + 1);
                 newItem.currentCondition = 0; // not sure if this is necessary, but classic does it
