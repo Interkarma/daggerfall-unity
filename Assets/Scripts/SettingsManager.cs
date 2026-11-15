@@ -617,8 +617,7 @@ namespace DaggerfallWorkshop
             SetBool(sectionVideo, "UseMipMapsInRetroMode", UseMipMapsInRetroMode);
             SetInt(sectionVideo, "RetroModeAspectCorrection", RetroModeAspectCorrection);
             SetInt(sectionVideo, "PalettizationLUTShift", PalettizationLUTShift);
-			if (VSyncRate >= 1) SetBool(sectionVideo, "VSync", true);
-			else SetBool(sectionVideo, "VSync", false);
+			SetBool(sectionVideo, "VSync", VSyncRate >= 1);
 			SetInt(sectionVideo, "VSyncRate", VSyncRate);
             SetInt(sectionVideo, "TargetFrameRate", TargetFrameRate);
             SetBool(sectionVideo, "Fullscreen", Fullscreen);
