@@ -325,7 +325,7 @@ namespace DaggerfallWorkshop.Game.Items
         /// <summary>
         /// Checks if this item is of any shield type.
         /// </summary>
-        public bool IsShield
+        public virtual bool IsShield
         {
             get { return GetIsShield(); }
         }
