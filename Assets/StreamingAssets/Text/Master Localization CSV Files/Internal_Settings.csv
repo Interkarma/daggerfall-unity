@@ -8,6 +8,11 @@ Low
 Medium
 High
 Highest"
+vSyncValues,"No VSync,
+Screen Frame Rate
+Screen FR/2
+Screen FR/3
+Screen FR/4"
 configureAdvancedControls,Configure Advanced Controls
 continueUpper,CONTINUE
 mouseLookSmoothing,Mouse Look Smoothing
@@ -17,6 +22,7 @@ movementAcceleration,Movement Acceleration
 weaponSwingMode,Weapon Swing Mode
 bowDrawback,Bows - draw and release
 toggleSneak,Toggle Sneak
+meleeAttackFriendlyProtection,Protect Friendlies and Neutrals
 mouseWeaponAttackThreshold,Mouse Weapon Attack Threshold
 Escape,Escape
 AutoRun,AutoRun
@@ -73,3 +79,6 @@ unsupported,Unsupported
 enabled,Enabled
 disabled,Disabled
 textureArrayInfo,"Improved implementation of terrain textures, with better performance and modding support"
+meleeAttackDetectionModes,"Performance
+Quality"
+meleeAttackDetection,"Hit Detection"

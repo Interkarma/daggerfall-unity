@@ -12,6 +12,7 @@ UseMipMapsInRetroMode=False
 RetroModeAspectCorrection=0
 PalettizationLUTShift=1
 VSync=True
+VSyncRate=0
 TargetFrameRate=0
 Fullscreen=True
 ExclusiveFullscreen=False
