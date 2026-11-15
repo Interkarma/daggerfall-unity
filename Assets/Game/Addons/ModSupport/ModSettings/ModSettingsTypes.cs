@@ -19,6 +19,7 @@ using UnityEditor;
 using UnityEditorInternal;
 #endif
 using DaggerfallWorkshop.Game.UserInterface;
+using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Utility;
 using FullSerializer;
 
@@ -153,7 +154,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         TupleInt,
         TupleFloat,
         Text,
-        Color
+        Color,
+        Keybind
     }
 
     /// <summary>
@@ -241,6 +243,8 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
                     return new TextKey();
                 case KeyType.Color:
                     return new ColorKey();
+                case KeyType.Keybind:
+                    return new KeybindKey();
             }
 
             throw new ArgumentException(string.Format("KeyType {0} is not defined!", keyType));
@@ -690,6 +694,131 @@ namespace DaggerfallWorkshop.Game.Utility.ModSupport.ModSettings
         protected override void Deserialize(string textValue)
         {
             Value = textValue;
+        }
+    }
+
+    /// <summary>
+    /// Holds a Unity key code as a string.
+    /// </summary>
+    public class KeybindKey : TextKey
+    {
+        public override KeyType KeyType { get { return KeyType.Keybind; } }
+
+        public KeybindKey()
+        {
+            Value = KeyCode.None.ToString();
+        }
+
+        public override BaseScreenComponent OnWindow(ModSettingsWindow window, float x, float y, ref int height)
+        {
+            height += 8;
+            KeybindButton button = new KeybindButton()
+            {
+                Position = new Vector2(x + 2, y + 6),
+                Size = new Vector2(window.LineWidth - 4, 8),
+                BackgroundColor = new Color(0, 0.5f, 0, 0.4f),
+            };
+            button.Outline.Enabled = true;
+            button.Label.TextScale = window.TextScale;
+            OnRefreshWindow(button);
+            button.OnMouseClick += (sender, position) =>
+            {
+                KeybindCaptureWindow capture = new KeybindCaptureWindow(window, button.SetBinding);
+                capture.Show();
+            };
+            return button;
+        }
+
+        public override void OnRefreshWindow(BaseScreenComponent control)
+        {
+            ((KeybindButton)control).SetBinding(Value);
+        }
+
+        public override void OnSaveWindow(BaseScreenComponent control)
+        {
+            Value = ((KeybindButton)control).Binding;
+        }
+
+#if UNITY_EDITOR
+        public override int OnEditorWindow(Rect rect, HorizontalCallback horizontal, VerticalCallback vertical, Dictionary<string, object> cache)
+        {
+            KeyCode current;
+            if (!Enum.TryParse(Value, true, out current) || !Enum.IsDefined(typeof(KeyCode), current))
+                current = KeyCode.None;
+
+            horizontal(rect, null, (r) =>
+            {
+                KeyCode selected = (KeyCode)EditorGUI.EnumPopup(r, current);
+                if (selected != KeyCode.Escape)
+                    Value = selected.ToString();
+            });
+            return 1;
+        }
+#endif
+
+        class KeybindButton : Button
+        {
+            public string Binding { get; private set; }
+
+            public void SetBinding(string binding)
+            {
+                Binding = binding ?? KeyCode.None.ToString();
+                //If the binding was "Z" the button label will show "Press a key to change binding (Z)" in the mod settings window.
+                Label.Text = string.Format(ModManager.GetText("changeKeybind"), Binding);
+            }
+        }
+
+        class KeybindCaptureWindow : DaggerfallMessageBox
+        {
+            static readonly KeyCode[] keyCodes = (KeyCode[])Enum.GetValues(typeof(KeyCode));
+            readonly Action<string> onSelectedCallback;
+            bool armed;
+            bool finished;
+            KeyCode pendingKey = KeyCode.None;
+
+            public KeybindCaptureWindow(ModSettingsWindow previous, Action<string> onSelectedCallback) : base(previous.UiManager, previous)
+            {
+                this.onSelectedCallback = onSelectedCallback;
+                AllowCancel = false;
+                SetText(ModManager.GetText("pressKeyToBind"));
+            }
+
+            public override void Update()
+            {
+                // Skip normal message box input so Enter can be bound and Escape only closes the picker.
+                if (finished)
+                    return;
+
+                // Ignore the mouse click or held keys that opened the picker.
+                if (!armed)
+                {
+                    armed = !Input.anyKey;
+                    return;
+                }
+
+                if (pendingKey == KeyCode.None)
+                {
+                    // The gameplay InputManager is not required in the setup scene.
+                    foreach (KeyCode key in keyCodes)
+                    {
+                        if (key != KeyCode.None && Input.GetKeyDown(key))
+                        {
+                            pendingKey = key;
+                            break;
+                        }
+                    }
+                    return;
+                }
+
+                // Consume the release too, so it cannot activate a control underneath.
+                if (Input.GetKey(pendingKey))
+                    return;
+
+                finished = true;
+                if (pendingKey != KeyCode.Escape)
+                    onSelectedCallback(pendingKey.ToString());
+                CloseWindow();
+            }
         }
     }
 

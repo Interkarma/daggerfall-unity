@@ -56,6 +56,8 @@ modsSearch,                 Search
 modsNoMatching,             No matching mod found
 settings,                   Settings
 settingsInfo,               Change mod settings
+changeKeybind,              Change keybind: {0}
+pressKeyToBind,             Press a key to bind. Press Escape to cancel.
 presets,                    Presets
 
 presetCreator,              Preset Creator
