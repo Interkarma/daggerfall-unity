@@ -620,6 +620,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36bb43919da808741adb733009f14b91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerJumpSkillMultiplier: 0.5
+  athleticismMultiplier: 0.1
+  improvedAthleticismMultiplier: 0.1
+  jumpSpellMultiplier: 0.6
   jumpSpeed: 4.5
   gravity: 20
   crouchingJumpDelta: 0.8
@@ -837,6 +841,24 @@ MonoBehaviour:
     type: 2}
   RetroTexture640x400: {fileID: 8400000, guid: 5e6db3b61ca69e848afa2ff94164313b, type: 2}
   RetroTexture640x400_HUD: {fileID: 8400000, guid: 1af2073506665c64180188b569dfba46,
+    type: 2}
+  RetroTexture960x540: {fileID: 8400000, guid: 54a8ebda44c8b7b4ab190e3f090a084a, type: 2}
+  RetroTexture960x540_HUD: {fileID: 8400000, guid: 69d4de192dadcb848a902f4e47114382,
+    type: 2}
+  RetroTexture960x600: {fileID: 8400000, guid: a09840ac31b862f4badb806d35d6bb55, type: 2}
+  RetroTexture960x600_HUD: {fileID: 8400000, guid: f91b2ccadae06684f945db499289f2b2,
+    type: 2}
+  RetroTexture1280x720: {fileID: 8400000, guid: 6704fb8be64abe54faf0a4a2a72c0331,
+    type: 2}
+  RetroTexture1280x720_HUD: {fileID: 8400000, guid: 65da2274993c2f9478c6fc1a741cdf43,
+    type: 2}
+  RetroTexture1280x800: {fileID: 8400000, guid: 4fd1fe394b4a6124da53441565c432fc,
+    type: 2}
+  RetroTexture1280x800_HUD: {fileID: 8400000, guid: 6adba8db9b87718458a1a5168fe64d1b,
+    type: 2}
+  RetroTexture1440x1080: {fileID: 8400000, guid: c48b9240abb6bdb458adf00f99ebfb50,
+    type: 2}
+  RetroTexture1440x1080_HUD: {fileID: 8400000, guid: 20beaa7e90fbc764ea3be16ce00ae35b,
     type: 2}
   RetroPresentationTarget: {fileID: 8400000, guid: 570bcf8f70408ce44be2d1357054b448,
     type: 2}

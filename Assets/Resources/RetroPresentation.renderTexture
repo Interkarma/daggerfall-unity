@@ -13,8 +13,8 @@ RenderTexture:
   m_ForcedFallbackFormat: 4
   m_DownscaleFallback: 0
   serializedVersion: 3
-  m_Width: 640
-  m_Height: 400
+  m_Width: 3840
+  m_Height: 2160
   m_AntiAliasing: 1
   m_MipCount: -1
   m_DepthFormat: 2
