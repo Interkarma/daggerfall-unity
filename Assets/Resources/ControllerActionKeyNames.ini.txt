@@ -1,0 +1,23 @@
+﻿// Give the names of the buttons as they are on your controller
+// so that they are displayed on the commands screen in game.
+// You can express the names in your own language with accented letters
+// as far as you keep the format of this file in UTF8-BOM.
+
+// The following values are for XBox controller.
+
+Joy B0 = A
+Joy B1 = B
+Joy B2 = X
+Joy B3 = Y
+Joy B4 = LB
+Joy B5 = RB
+Joy B6 = Back
+Joy B7 = Start
+Joy B8 = LSB
+Joy B9 = RSB
+Joy3 B0 = RT
+Joy3 B1 = LT
+Joy6 B0 = DP-R
+Joy6 B1 = DP-L
+Joy7 B0 = DP-U
+Joy7 B1 = DP-D

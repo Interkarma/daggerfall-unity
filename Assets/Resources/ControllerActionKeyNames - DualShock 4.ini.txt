@@ -1,0 +1,25 @@
+﻿// Give the names of the buttons as they are on your controller
+// so that they are displayed on the commands screen in game.
+// You can express the names in your own language with accented letters
+// as far as you keep the format of this file in UTF8-BOM.
+
+// The following values are for Playstation DualShock 4 controller.
+
+Joy B0 = Square
+Joy B1 = Cross
+Joy B2 = Circle
+Joy B3 = Triangle
+Joy B4 = L1
+Joy B5 = R1
+Joy B6 = L2
+Joy B7 = R2
+Joy B8 = Share
+Joy B9 = Start
+Joy B10 = LSB
+Joy B11 = RSB
+Joy B12 = PS Button
+Joy B13 = Touchpad
+Joy7 B0 = DP-R
+Joy7 B1 = DP-L
+Joy8 B1 = DP-U
+Joy8 B1 = DP-D
