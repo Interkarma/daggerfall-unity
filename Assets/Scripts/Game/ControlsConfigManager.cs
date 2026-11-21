@@ -11,15 +11,11 @@
 
 using UnityEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using DaggerfallConnect.Arena2;
-using DaggerfallWorkshop.Utility;
 using DaggerfallWorkshop.Game.UserInterfaceWindows;
 using DaggerfallWorkshop.Game.UserInterface;
-using DaggerfallWorkshop.Game.Utility;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -517,6 +513,10 @@ namespace DaggerfallWorkshop.Game
             {
                 text = FormatButtonText(InputManager.Instance.GetKeyString((KeyCode)key), fullString);
             }
+
+            // Replace with controller name if it exist into ControllerActionKeyNames.ini
+            if (SettingsManager.ControllerActionKeyNames.ContainsKey(text))
+                SettingsManager.ControllerActionKeyNames.TryGetValue(text, out text);
 
             return DaggerfallUnity.Settings.SDFFontRendering ? text : text.ToUpper();
         }

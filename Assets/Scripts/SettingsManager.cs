@@ -71,6 +71,9 @@ namespace DaggerfallWorkshop
         const string settingsIniName = "settings.ini";
         const string settingsBakExt = ".bak";
         const string settingsDistIniName = "settings-{0}.ini";
+        const string controllerActionKeyNamesIniName = "ControllerActionKeyNames.ini";
+        const string controllerActionKeyNamesIniXBoxName = "ControllerActionKeyNames - XBox.ini";
+        const string controllerActionKeyNamesIniDS4Name = "ControllerActionKeyNames - DualShock 4.ini";
 
         const string sectionDaggerfall = "Daggerfall";
         const string sectionVideo = "Video";
@@ -349,6 +352,9 @@ namespace DaggerfallWorkshop
         public bool BowLeftHandWithSwitching { get; set; }
         public int LoiterLimitInHours { get; set; }
 
+        // Controller action key names
+        public static Dictionary<String, String> ControllerActionKeyNames = new Dictionary<String, String>();
+
         #endregion
 
         #region Public Methods
@@ -585,6 +591,10 @@ namespace DaggerfallWorkshop
             GuildQuestListBox = GetBool(sectionEnhancements, "GuildQuestListBox");
             BowLeftHandWithSwitching = GetBool(sectionEnhancements, "BowLeftHandWithSwitching");
             LoiterLimitInHours = GetInt(sectionEnhancements, "LoiterLimitInHours");
+
+            // Load action key names for controllers
+            LoadControllerActionKeyNames();
+
         }
 
         /// <summary>
@@ -879,6 +889,48 @@ namespace DaggerfallWorkshop
                     Debug.LogFormat("Failed to write {0}", name);
                 }
             }
+        }
+
+        void CreateDefaultActionKeyNamesFile(string userIniPath, string iniName)
+        {
+            // Load the ini file put into Resources folder at build time.
+            TextAsset asset = Resources.Load<TextAsset>(iniName);
+
+            // Convert to string with UTF8 encoding and create file with UTF8 encoding.
+            // Needed to keep non-ASCII characters used by other languages than English.
+            string iniText = System.Text.Encoding.UTF8.GetString(asset.bytes);
+            File.WriteAllText(userIniPath, iniText, System.Text.Encoding.UTF8);
+
+            Debug.LogFormat("Creating new '{0}' at path '{1}'", iniName, PersistentDataPath);
+        }
+
+        void LoadControllerActionKeyNames()
+        {
+            // Must have ControllerActionKeyNames.ini in persistent data path
+            string controllerIniPath = Path.Combine(PersistentDataPath, controllerActionKeyNamesIniName);
+            if (!File.Exists(controllerIniPath))
+                CreateDefaultActionKeyNamesFile(controllerIniPath, controllerActionKeyNamesIniName);
+
+            // Load controller key names from ini file
+            IniData controllerIniData;
+            controllerIniData = iniParser.ReadFile(controllerIniPath);
+
+            // Store controller key names into dictionary
+            ControllerActionKeyNames = controllerIniData.Global.ToDictionary(kd => kd.KeyName, kd => kd.Value);
+
+            // Log ini path in use
+            Debug.LogFormat("Using '{0}' at path '{1}'", controllerActionKeyNamesIniName, controllerIniPath);
+
+            // Check if both ini file examples are present in the persistent data path.
+            // If not, extract them from the Resources folder and create them in the persistent data path.
+
+            controllerIniPath = Path.Combine(PersistentDataPath, controllerActionKeyNamesIniXBoxName);
+            if (!File.Exists(controllerIniPath))
+                CreateDefaultActionKeyNamesFile(controllerIniPath, controllerActionKeyNamesIniXBoxName);
+
+            controllerIniPath = Path.Combine(PersistentDataPath, controllerActionKeyNamesIniDS4Name);
+            if (!File.Exists(controllerIniPath))
+                CreateDefaultActionKeyNamesFile(controllerIniPath, controllerActionKeyNamesIniDS4Name);
         }
 
         string GetData(string sectionName, string valueName)
