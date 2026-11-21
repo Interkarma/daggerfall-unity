@@ -893,12 +893,12 @@ namespace DaggerfallWorkshop
 
         void CreateDefaultActionKeyNamesFile(string userIniPath, string iniName)
         {
-            // Load the default .ini put into Resources folder at build time.
+            // Load the ini file put into Resources folder at build time.
             TextAsset asset = Resources.Load<TextAsset>(iniName);
 
-            // Convert to string
+            // Convert to string with UTF8 encoding and create file with UTF8 encoding.
+            // Needed to keep non-ASCII characters used by other languages than English.
             string iniText = System.Text.Encoding.UTF8.GetString(asset.bytes);
-            // Create file
             File.WriteAllText(userIniPath, iniText, System.Text.Encoding.UTF8);
 
             Debug.LogFormat("Creating new '{0}' at path '{1}'", iniName, PersistentDataPath);
@@ -911,23 +911,12 @@ namespace DaggerfallWorkshop
             if (!File.Exists(controllerIniPath))
                 CreateDefaultActionKeyNamesFile(controllerIniPath, controllerActionKeyNamesIniName);
 
-            // Read controller key names from ini file
-            string[] keyNames = File.ReadAllLines(controllerIniPath);
-            string key = " ";
-            string name = " ";
-            // Parse successive lines
-            for (int i = 0; i < keyNames.Length; i++)
-            {
-                bool parseResult = ParseControllerIniKeysLine(keyNames[i], ref key, ref name);
-                if (parseResult)
-                {
-                    // Add controller key name into dictionnary
-                    if (!ControllerActionKeyNames.ContainsKey(key))
-                        ControllerActionKeyNames.Add(key, name);
-                    else
-                        ControllerActionKeyNames[key] = name;
-                }
-            }
+            // Load controller key names from ini file
+            IniData controllerIniData;
+            controllerIniData = iniParser.ReadFile(controllerIniPath);
+
+            // Store controller key names into dictionary
+            ControllerActionKeyNames = controllerIniData.Global.ToDictionary(kd => kd.KeyName, kd => kd.Value);
 
             // Log ini path in use
             Debug.LogFormat("Using '{0}' at path '{1}'", controllerActionKeyNamesIniName, controllerIniPath);
@@ -942,23 +931,6 @@ namespace DaggerfallWorkshop
             controllerIniPath = Path.Combine(PersistentDataPath, controllerActionKeyNamesIniDS4Name);
             if (!File.Exists(controllerIniPath))
                 CreateDefaultActionKeyNamesFile(controllerIniPath, controllerActionKeyNamesIniDS4Name);
-        }
-
-        bool ParseControllerIniKeysLine(string line, ref string key, ref string value)
-        {
-            if (line == "") return false;
-            if (line.StartsWith("/")) return false;
-
-            // Take each side of '=' and suppress leading and final spaces
-            string[] content = line.Split('=');
-            if (content.Length == 2)
-            {
-                key = content[0].Trim();
-                value = content[1].Trim();
-                if (key != "" && value != "") return true;
-                else return false;
-            }
-            else return false;
         }
 
         string GetData(string sectionName, string valueName)

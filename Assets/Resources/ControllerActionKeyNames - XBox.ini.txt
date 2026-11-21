@@ -1,9 +1,9 @@
-﻿// Give the names of the buttons as they are on your controller
-// so that they are displayed on the commands screen in game.
-// You can express the names in your own language with accented letters
-// as far as you keep the format of this file in UTF8-BOM.
+﻿; Give the names of the buttons as they are on your controller
+; so that they are displayed on the commands screen in game.
+; You can express the names in your own language with accented letters
+; as far as you keep the format of this file in UTF8-BOM.
 
-// The following values are for XBox controller.
+; The following values are for XBox controller.
 
 Joy B0 = A
 Joy B1 = B
