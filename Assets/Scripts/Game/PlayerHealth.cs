@@ -1,4 +1,4 @@
-﻿// Project:         Daggerfall Unity
+// Project:         Daggerfall Unity
 // Copyright:       Copyright (C) 2009-2023 Daggerfall Workshop
 // Web Site:        http://www.dfworkshop.net
 // License:         MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -12,6 +12,7 @@
 using UnityEngine;
 using System.Collections;
 using DaggerfallWorkshop.Game.Entity;
+using DaggerfallWorkshop.Game.Formulas;
 
 namespace DaggerfallWorkshop.Game
 {
@@ -48,13 +49,12 @@ namespace DaggerfallWorkshop.Game
         /// </summary>
         void ApplyPlayerFallDamage(float fallDistance)
         {
-            const float threshold = 5f;
-            const float HPPerMetre = 5f;
-
             if (entityBehaviour)
             {
-                int damage = (int)(HPPerMetre * (fallDistance - threshold));
-                RemoveHealth(damage);
+                int damage = FormulaHelper.CalculateFallDamage(entityBehaviour.Entity,GameManager.Instance.AcrobatMotor.fallingDamageThreshold,fallDistance);
+
+                if (damage > 0)
+                    RemoveHealth(damage);
             }
         }
     }

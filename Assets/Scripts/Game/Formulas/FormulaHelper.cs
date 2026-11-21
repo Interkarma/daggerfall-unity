@@ -427,6 +427,19 @@ namespace DaggerfallWorkshop.Game.Formulas
             return VampireClans.Lyrezi;
         }
 
+        public static int CalculateFallDamage(DaggerfallEntity entity, float threshold, float distance)
+        {
+            Func<DaggerfallEntity, float, float, int> del;
+            if (TryGetOverride("CalculateFallDamage", out del))
+                return del(entity, threshold, distance);
+
+            float HPPerMetre = 5;
+
+            int damage = (int)(HPPerMetre * (distance - threshold));
+
+            return damage;
+        }
+
         #endregion
 
         #region Combat & Damage
